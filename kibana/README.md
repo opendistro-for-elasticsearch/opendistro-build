@@ -50,7 +50,6 @@ Then log out and back in again.
     ```
 
 ### Running a build
-To build an image with the latest nightly snapshot of Kibana, run:
 
 To build an image with a released version of Kibana, run Make while specifying the exact version Open Distro for Elasticsearch AND Elasticsearch.
 For example:
