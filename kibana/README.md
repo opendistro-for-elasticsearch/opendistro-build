@@ -74,12 +74,12 @@ docker run -it opendistroforelasticsearch/jsenv:v1
 
 Within the docker container, clone this repo
 ```
-git clone https://github.com/opendistro-for-elasticsearch/kibana-build.git
+git clone https://github.com/opendistro-for-elasticsearch/opendistro-build.git
 ```
 
-Change into linux distributions dir
+Change into Kibana linux distributions dir
 ```
-cd kibana-build/linux_distributions
+cd opendistro-build/kibana/linux_distributions
 ```
 
 

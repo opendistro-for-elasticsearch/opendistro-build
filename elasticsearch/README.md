@@ -52,7 +52,7 @@ Then log out and back in again.
 
 ### Running a build
 
-Make sure you are in the docker folder.
+Make sure you are in the directory elasticsearch/docker.
 
 Run
 ```
@@ -98,7 +98,7 @@ make test
 
 ### Requirements
 
-Make sure you are in the linux_distributions folder and have Java installed (assume you are using ubuntu 18.04).
+Make sure you are in the directory elasticsearch/linux_distributions folder and have Java installed (assume you are using ubuntu 18.04).
 
 - Java
 ```

@@ -31,7 +31,6 @@ mkdir target opendistroforelasticsearch-kibana
 
 PACKAGE_TYPE=$1
 
-
 # If the input is set, but it's set to neither rpm nor deb, then exit.
 if [[ -n $PACKAGE_TYPE ]] && [[ "$PACKAGE_TYPE" != "rpm" ]] && [[ "$PACKAGE_TYPE" != "deb" ]]; then
 	printf "You entered %s. Please enter 'rpm' to build rpm or 'deb' to build deb or nothing to build both.\n" "$PACKAGE_TYPE"
