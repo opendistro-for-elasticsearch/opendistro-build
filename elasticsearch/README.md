@@ -1,15 +1,15 @@
 # Open Distro for Elasticsearch build
 
-This repo contains the scripts for building Open Distro for Elasticsearch docker images in docker/ and linux distributions (RPM & DEB) in linux_distributions/.
+This repo contains the scripts for building Open Distro for Elasticsearch Docker images in the directory docker/ and Linux distributions (RPM & DEB) in the directory linux_distributions/.
 
-The default version to build is set in version.json for both docker and linux distributions.
+The default version to build is set in version.json for both Docker and Linux distributions.
 
 ## Getting started
 ```
 git clone https://github.com/opendistro-for-elasticsearch/opendistro-build.git
 ```
 
-Then change directory into either elasticsearch/docker or elasticsearch/linux_distributions.
+Change directory to make sure you're in the right directory either elasticsearch/docker or elasticsearch/linux_distributions.
 
 ## Docker
 
@@ -26,7 +26,7 @@ The images have been tested on Docker 18.09.2.
 ### Requirements
 
 A full build and test requires the following 
-(assume you are on ubuntu 18.04):
+(assume you are on Ubuntu 18.04):
 
 - Docker
 ```
@@ -61,6 +61,7 @@ make build
 to build an image based on the versions set in version.json
 
 To build an image with a different version of Open Distro for Elasticsearch, either change version.json or run Make while specifying the exact version of Open Distro for Elasticsearch AND Elasticsearch.
+
 For example:
 ```
 OPENDISTRO_VERSION=0.8.0 ELASTIC_VERSION=6.6.2 make build
@@ -98,7 +99,7 @@ make test
 
 ### Requirements
 
-Make sure you are in the directory elasticsearch/linux_distributions folder and have Java installed (assume you are using ubuntu 18.04).
+Make sure you are in the directory elasticsearch/linux_distributions folder and have Java installed (assume you are using Ubuntu 18.04).
 
 - Java
 ```
@@ -124,7 +125,7 @@ To build rpm & deb packages
 
 ## Contributing
 
-Open Distro for Elasticsearch is and will remain 100% open source under the Apache 2.0 license. As the project grows, we hope you will join us and contribute. We want to make it easy for you to get started and remove friction—no lengthy Contributor License Agreement—so you can focus on writing great code.
+Open Distro for Elasticsearch is and will remain 100% open source under the Apache 2.0 license. As the project grows, we invite you to join the project and contribute. We want to make it easy for you to get started and remove friction — no lengthy Contributor License Agreement — so you can focus on writing great code.
 
 ## Questions
 
