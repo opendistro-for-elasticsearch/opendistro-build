@@ -4,6 +4,13 @@ This repo contains the scripts for building Open Distro for Elasticsearch Kibana
 
 The default version to build is set in version.json for both docker and linux distributions.
 
+## Getting started
+```
+git clone https://github.com/opendistro-for-elasticsearch/opendistro-build.git
+```
+
+Then change directory into either kibana/docker or kibana/linux_distributions.
+
 ## Docker
 
 ### Credit

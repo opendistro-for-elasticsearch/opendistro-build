@@ -6,10 +6,10 @@ The default version to build is set in version.json for both docker and linux di
 
 ## Getting started
 ```
-git clone https://github.com/opendistro-for-elasticsearch/elasticsearch-build.git
+git clone https://github.com/opendistro-for-elasticsearch/opendistro-build.git
 ```
 
-Then change directory into either docker or linux_distributions.
+Then change directory into either elasticsearch/docker or elasticsearch/linux_distributions.
 
 ## Docker
 
