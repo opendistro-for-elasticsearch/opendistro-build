@@ -1,0 +1,159 @@
+# Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License").
+# You may not use this file except in compliance with the License.
+# A copy of the License is located at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# or in the "license" file accompanying this file. This file is distributed
+# on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+# express or implied. See the License for the specific language governing
+# permissions and limitations under the License.
+
+# Description: 
+# Dockerfile for building the docker image for open distro for elasticsearch
+# 
+# This file was generated from the template at templates/Dockerfile.j2
+
+################################################################################
+# This Dockerfile was generated from the template at templates/Dockerfile.j2
+#
+# Beginning of multi stage Dockerfile
+################################################################################
+
+{% set tarball = 'elasticsearch-oss-%s.tar.gz' % elastic_version -%}
+
+{% if artifacts_dir %}
+{% set artifact_repo_url = 'file:///%s' % artifacts_dir -%}
+{% endif %}
+################################################################################
+# Build stage 0 `prep_es_files`:
+# Extract elasticsearch artifact
+# Install required plugins
+# Set gid=0 and make group perms==owner perms
+################################################################################
+
+FROM centos:7 AS prep_es_files
+
+ENV PATH /usr/share/elasticsearch/bin:$PATH
+RUN curl -s https://download.java.net/java/GA/jdk11/13/GPL/openjdk-11.0.1_linux-x64_bin.tar.gz | tar -C /opt -zxf -
+ENV JAVA_HOME /opt/jdk-11.0.1
+RUN yum install -y unzip
+
+RUN groupadd -g 1000 elasticsearch && \
+    adduser -u 1000 -g 1000 -d /usr/share/elasticsearch elasticsearch
+
+USER 1000
+{% if artifacts_dir %}
+COPY --chown=1000:0 {{ '%s/' % artifacts_dir }} {{ artifacts_dir }}
+{% endif %}
+
+WORKDIR /usr/share/elasticsearch
+
+# Bust cache for wgets
+ENV BUST_CACHE {{ bust_cache }}
+
+# Download and extract defined ES version.
+RUN curl -fsSL {{ elastic_artifacts_url }}/{{ tarball }} | \
+    tar zx --strip-components=1
+
+RUN set -ex && for esdirs in config data logs; do \
+        mkdir -p "$esdirs"; \
+    done
+
+# Install the required modules
+RUN for plugin_path in {{ plugin_url_paths }}; do \
+      elasticsearch-plugin install --batch "{{ artifact_repo_url }}/elasticsearch-plugins/$plugin_path"; \
+    done
+
+# Make the certificate installer script executable. This script has to be executed before ES is started.
+RUN chmod +x /usr/share/elasticsearch/plugins/opendistro_security/tools/install_demo_configuration.sh
+
+COPY --chown=1000:0 elasticsearch.yml log4j2.properties config/
+
+USER 0
+
+# Set gid to 0 for opendistroforelasticsearch and make group permission similar to that of user
+RUN chown -R elasticsearch:0 . && \
+    chmod -R g=u /usr/share/elasticsearch
+
+RUN chmod 755 /usr/share/elasticsearch/plugins/opendistro_performance_analyzer/pa_bin/performance-analyzer-agent
+RUN chmod -R 755 /dev/shm
+################################################################################
+# Build stage 1 (the actual opendistroforelasticsearch image):
+# Copy opendistroforelasticsearch from stage 0
+# Add entrypoint
+################################################################################
+
+FROM centos:7
+
+ENV ELASTIC_CONTAINER true
+
+RUN \
+  rpm --rebuilddb && yum clean all && \
+  yum install -y epel-release && \
+  yum update -y && \
+  yum install -y \
+                  iproute \
+                  python-setuptools \
+                  hostname \
+                  inotify-tools \
+                  yum-utils \
+                  which \
+                  jq \
+                  rsync && \
+  yum clean all && \
+  easy_install supervisor
+
+RUN yum update -y && \
+    yum install -y nc unzip wget which && \
+    yum clean all
+COPY CENTOS_LICENSING.txt /root
+COPY --from=prep_es_files --chown=1000:0 /opt/jdk-11.0.1 /opt/jdk-11.0.1
+ENV JAVA_HOME /opt/jdk-11.0.1
+
+# Replace OpenJDK's built-in CA certificate keystore with the one from the OS
+# vendor. The latter is superior in several ways.
+RUN ln -sf /etc/pki/ca-trust/extracted/java/cacerts /opt/jdk-11.0.1/lib/security/cacerts
+
+ENV PATH $PATH:$JAVA_HOME/bin
+
+RUN mkdir /usr/share/elasticsearch && \
+    groupadd -g 1000 elasticsearch && \
+    adduser -u 1000 -g 1000 -G 0 -d /usr/share/elasticsearch elasticsearch && \
+    chmod 0775 /usr/share/elasticsearch && \
+    chgrp 0 /usr/share/elasticsearch
+
+RUN mkdir /usr/share/supervisor
+
+WORKDIR /usr/share/elasticsearch
+COPY --from=prep_es_files --chown=1000:0 /usr/share/elasticsearch /usr/share/elasticsearch
+ENV PATH /usr/share/elasticsearch/bin:$PATH
+
+ADD --chown=1000:0 bin/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+
+# Openshift overrides USER and uses ones with randomly uid>1024 and gid=0
+# Allow ENTRYPOINT (and ES) to run even with a different user
+RUN chgrp 0 /usr/local/bin/docker-entrypoint.sh && \
+    chmod g=u /etc/passwd && \
+    chmod 0775 /usr/local/bin/docker-entrypoint.sh
+
+EXPOSE 9200 9300 9600
+
+LABEL org.label-schema.schema-version="1.0" \
+  org.label-schema.name="opendistroforelasticsearch" \
+  org.label-schema.version="{{ version_tag }}" \
+  org.label-schema.url="https://opendistroforelasticsearch.github.io" \
+  org.label-schema.vcs-url="" \
+  org.label-schema.license="Apache-2.0" \
+  org.label-schema.vendor="Amazon" \
+  org.label-schema.build-date="{{ build_date }}"
+
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+# Dummy overridable parameter parsed by entrypoint
+CMD ["eswrapper"]
+
+################################################################################
+# End of multi-stage Dockerfile
+################################################################################

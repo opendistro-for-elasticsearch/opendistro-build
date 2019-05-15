@@ -1,6 +1,3 @@
-*Issue #, if available:*
+Does this PR include tests?
 
-*Description of changes:*
-
-
-By submitting this pull request, I confirm that my contribution is made under the terms of the Apache 2.0 license.
+This project is developed under a test-driven workflow, so please refrain from submitting patches without test coverage. If you are not familiar with testing in Python, please raise an issue instead.

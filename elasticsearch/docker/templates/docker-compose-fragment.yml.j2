@@ -1,0 +1,77 @@
+---
+# Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License").
+# You may not use this file except in compliance with the License.
+# A copy of the License is located at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# or in the "license" file accompanying this file. This file is distributed
+# on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+# express or implied. See the License for the specific language governing
+# permissions and limitations under the License.
+
+
+# Description: 
+# docker-compose-fragment.yml is used to map elasticsearch ports
+#
+# This file was generated from the template at templates/docker-compose-fragment.yml.j2
+# The docker-compose fragment file provides settings that are specific to
+# running the test suite. Some of the settings are useful as "canaries", for
+# making assertions about the configuration.
+
+version: '2.1'
+services:
+  elasticsearch1:
+    # Let Testinfra infer the container name by making the hostname the same.
+    hostname: elasticsearch1
+    environment:
+      {% if image_flavor == 'platinum' -%}
+      # Specify the bootstrap password for elastic user.
+      - ELASTIC_PASSWORD=pleasechangeme
+      {% endif -%}
+      {% if image_flavor == 'platinum' -%}
+      # Enable Security audit logging so we can check the output for correctness.
+      - xpack.security.audit.enabled=true
+      {% endif -%}
+      # Try setting a few options with environment variables.
+      - cluster.name=docker-test-cluster
+      - node.name=docker-test-node-1
+      # Also try a parameter containing an underscore character.
+      - thread_pool.bulk.queue_size=500
+      # And try the special processors setting.
+      - processors=1
+      # Test setting max heap to a non default value with environment variables.
+      - "ES_JAVA_OPTS=-Xms1152M -Xmx1152M"
+      # Env vars not followed by a dot, should not be parsed by the wrapper script.
+      - irrelevantsetting=foo
+      # Capitalized or all-caps env vars should not be parsed either.
+      - NonESRelatedVariable=bar
+      # Tell ES to use mlockall to prevent it from swapping out.
+      - bootstrap.memory_lock=true
+      # Avoid test failures due to small disks.
+      - cluster.routing.allocation.disk.threshold_enabled=false
+    # Expose Elasticsearch to the host system, so that the test suite can see it.
+    ports:
+      - 9200:9200
+      - 9600:9600
+
+  elasticsearch2:
+    hostname: elasticsearch2
+    environment:
+      {% if image_flavor == 'platinum' -%}
+      - ELASTIC_PASSWORD=pleasechangeme
+      {% endif -%}
+      {% if image_flavor == 'platinum' -%}
+      - xpack.security.audit.enabled=true
+      {% endif -%}
+      - cluster.name=docker-test-cluster
+      - node.name=docker-test-node-2
+      - thread_pool.bulk.queue_size=500
+      - processors=1
+      - "ES_JAVA_OPTS=-Xms1152M -Xmx1152M"
+      - irrelevantsetting=foo
+      - NonESRelatedVariable=bar
+      - bootstrap.memory_lock=true
+      - cluster.routing.allocation.disk.threshold_enabled=false
