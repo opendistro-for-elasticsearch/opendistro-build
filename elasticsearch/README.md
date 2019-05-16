@@ -47,7 +47,7 @@ Then log out and back in again.
   and virtualenv
 
   ```
-  sudo apt-get install python-virtualenv
+  sudo apt-get install python3-venv
   ```
 
 ### Running a build

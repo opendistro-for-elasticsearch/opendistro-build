@@ -14,6 +14,7 @@
 # Description:
 # Test if various settings are working.
 
+from .fixtures import elasticsearch
 import pytest
 
 

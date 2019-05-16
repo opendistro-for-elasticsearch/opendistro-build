@@ -118,8 +118,8 @@ venv: requirements.txt
 		export PYTHON3="python3.$$PY3_MINOR_VER";\
 	    fi;\
 	fi;\
-	test -d venv || virtualenv --python=$$PYTHON3 venv || python3 -m virtualenv --python=$$PYTHON3 venv;\
-	pip install -r --user requirements || pip install -r requirements.txt;\
+	test -d venv || python3 -m venv venv || virtualenv --python=$$PYTHON3 venv;\
+	pip install -r requirements.txt;\
 	touch venv;\
 
 # Generate the Dockerfiles from a Jinja2 template.
