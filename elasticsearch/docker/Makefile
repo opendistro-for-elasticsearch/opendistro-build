@@ -23,7 +23,7 @@ ELASTIC_VERSION ?= $(shell ../bin/version-info --es)
 OPENDISTRO_VERSION ?= $(shell ../bin/version-info --od)
 OPENDISTRO_PLUGIN_VERSION ?= $(OPENDISTRO_VERSION).0
 
-ENDS_WITH := SNAPSHOT
+#ENDS_WITH := SNAPSHOT
 BUILD_TYPE := artifacts
 ARTIFACT_REPO_URL ?= https://d3g5vo6xdbdb9a.cloudfront.net/downloads
 
@@ -31,13 +31,14 @@ PUSH_TAG ?= OPENDISTRO_VERSION
 BUILD_DATE := $(shell date +'%y.%m.%d')
 BUST_CACHE ?= $(shell date +'%s')
 
-ifeq ($(patsubst %$(ENDS_WITH),,$(lastword $(ELASTIC_VERSION))),)
-        BUILD_TYPE := snapshots
-        OPENDISTRO_PLUGIN_VERSION := $(OPENDISTRO_PLUGIN_VERSION)-SNAPSHOT
-        ARTIFACT_REPO_URL := https://d1mbdmiycff3en.cloudfront.net/downloads
-        OPENDISTRO_VERSION := $(OPENDISTRO_VERSION)-SNAPSHOT
+# Snapshot not used at the moment.
+# ifeq ($(patsubst %$(ENDS_WITH),,$(lastword $(ELASTIC_VERSION))),)
+#         BUILD_TYPE := snapshots
+#         OPENDISTRO_PLUGIN_VERSION := $(OPENDISTRO_PLUGIN_VERSION)-SNAPSHOT
+#         ARTIFACT_REPO_URL := https://d1mbdmiycff3en.cloudfront.net/downloads
+#         OPENDISTRO_VERSION := $(OPENDISTRO_VERSION)-SNAPSHOT
  
-endif
+# endif
 
 ELASTIC_ARTIFACTS_URL ?= https://$(BUILD_TYPE).elastic.co/downloads/elasticsearch
 PLUGIN_URL_PATHS ?= opendistro-sql/opendistro_sql-$(OPENDISTRO_PLUGIN_VERSION).zip opendistro-alerting/opendistro_alerting-$(OPENDISTRO_PLUGIN_VERSION).zip opendistro-security/opendistro_security-$(OPENDISTRO_PLUGIN_VERSION).zip performance-analyzer/opendistro_performance_analyzer-$(OPENDISTRO_PLUGIN_VERSION).zip
@@ -117,8 +118,8 @@ venv: requirements.txt
 		export PYTHON3="python3.$$PY3_MINOR_VER";\
 	    fi;\
 	fi;\
-	test -d venv || virtualenv --python=$$PYTHON3 venv;\
-	pip install -r requirements.txt;\
+	test -d venv || virtualenv --python=$$PYTHON3 venv || python3 -m virtualenv --python=$$PYTHON3 venv;\
+	pip install -r --user requirements || pip install -r requirements.txt;\
 	touch venv;\
 
 # Generate the Dockerfiles from a Jinja2 template.
