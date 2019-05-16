@@ -118,7 +118,7 @@ venv: requirements.txt
 		export PYTHON3="python3.$$PY3_MINOR_VER";\
 	    fi;\
 	fi;\
-	test -d venv || python3 -m venv venv || virtualenv --python=$$PYTHON3 venv;\
+	test -d venv || virtualenv --python=$$PYTHON3 venv || python3 -m venv venv;\
 	pip install -r requirements.txt;\
 	touch venv;\
 

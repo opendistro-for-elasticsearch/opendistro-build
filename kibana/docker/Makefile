@@ -65,7 +65,7 @@ pristine: clean
 	rm -rf venv
 
 venv: requirements.txt
-	test -d venv || python3 -m venv venv || virtualenv --python=$(PYTHON) venv
+	test -d venv || virtualenv --python=$$PYTHON3 venv || python3 -m venv venv;\
 	pip install -r requirements.txt
 	touch venv
 
