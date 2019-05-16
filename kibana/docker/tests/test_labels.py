@@ -21,7 +21,7 @@ def test_labels(kibana):
     labels = kibana.docker_metadata['Config']['Labels']
     assert labels['org.label-schema.name'] == 'opendistroforelasticsearch-kibana'
     assert labels['org.label-schema.schema-version'] == '1.0'
-    assert labels['org.label-schema.url'] == 'https://opendistroforelasticsearch.github.io'
-    assert labels['org.label-schema.vcs-url'] == 'https://github.com/opendistro-for-elasticsearch/kibana-oss-distro'
+    assert labels['org.label-schema.url'] == 'https://opendistro.github.io'
+    assert labels['org.label-schema.vcs-url'] == 'https://github.com/opendistro-for-elasticsearch/opendistro-build'
     assert labels['org.label-schema.vendor'] == 'Amazon'
     assert labels['org.label-schema.version'] == '0.9.0'

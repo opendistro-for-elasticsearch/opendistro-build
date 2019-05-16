@@ -60,10 +60,10 @@ ospackage {
 
     license 'ASL-2.0'
     maintainer 'OpenDistro for Elasticsearch Team <opendistro@amazon.com>'
-    url 'https://opendistro.github.io/elasticsearch/downloads'
+    url 'https://opendistro.github.io/for-elasticsearch/downloads.html'
     summary '''
          OpenDistro for Elasticsearch. 
-         Reference documentation can be found at https://opendistro.github.io/elasticsearch/docs.
+         Reference documentation can be found at https://opendistro.github.io/for-elasticsearch-docs/.
     '''.stripIndent().replace('\n', ' ').trim()
 }
 
