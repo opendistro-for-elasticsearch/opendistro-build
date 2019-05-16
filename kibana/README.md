@@ -25,7 +25,8 @@ The images have been tested on Docker 18.09.2.
 
 ### Requirements
 
-A full build and test requires (assume you are on Ubuntu 18.04):
+A full build and test requires the dependencies listed below.
+The build scripts have been tested on Ubuntu 18.04 and Mac OS X. The following installation instructions assume Ubuntu 18.04.
 
 - Docker
 ```
