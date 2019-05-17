@@ -40,7 +40,11 @@ def test_restart(elasticsearch):
 
     assert n_pid != o_pid
 
+    # PA needs some time to restart
+    time.sleep(20)
+
     metrics = elasticsearch.get_metrics(["CPU_Utilization"], ["sum"])
+
     assert metrics['fields'][0]['name'] == 'CPU_Utilization'
     assert metrics['fields'][0]['type'] == 'DOUBLE'
 
