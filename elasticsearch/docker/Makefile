@@ -59,7 +59,7 @@ all: build test
 test: lint docker-compose
 	docker run --rm -v "$(PWD):/mnt" bash rm -rf /mnt/tests/datadir1 /mnt/tests/datadir2
 	pyfiglet -w 160 -f puffy "test: single"; \
-	VERSION_TAG=${OPENDISTRO_VERSION} IMAGE_REPO=${IMAGE_TAG} ./bin/pytest --single-node tests;
+	VERSION_TAG=${OPENDISTRO_VERSION} IMAGE_REPO=${IMAGE_TAG} ./bin/pytest --single-node tests; \
 	pyfiglet -w 160 -f puffy "test: multi"; \
 	VERSION_TAG=${OPENDISTRO_VERSION} IMAGE_REPO=${IMAGE_TAG} ./bin/pytest tests;
 
@@ -69,7 +69,7 @@ test-selected: lint docker-compose
 	pyfiglet -w 160 -f puffy "test: selected"; \
 	VERSION_TAG=${OPENDISTRO_VERSION} IMAGE_REPO=${IMAGE_TAG} ./bin/pytest --single-node tests -k "${SELECTED_TESTS}" -s;
 
-# Build and test
+# Build test
 test-build: lint build docker-compose
 
 lint: venv
