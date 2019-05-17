@@ -36,6 +36,11 @@ test: lint docker-compose
 	$(FIGLET) "test: $(BUILD_TYPE)"; \
 	./bin/pytest tests; \
 
+# Run selected test(s). Pass the file name(s) as an environment variable SELECTED_TESTS
+test-selected: lint docker-compose
+	pyfiglet -w 160 -f puffy "test: selected"; \
+	./bin/pytest tests -k "${SELECTED_TESTS}" -s;
+
 lint: venv
 	  flake8 tests
 
