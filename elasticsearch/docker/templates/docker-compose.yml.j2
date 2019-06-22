@@ -42,7 +42,6 @@ services:
   elasticsearch2:
     container_name: elasticsearch2
     environment:
-      - discovery.zen.ping.unicast.hosts=elasticsearch1
       - node.master=false
     image: {{ elasticsearch_repository }}:{{ version_tag }}
     mem_limit: 4g

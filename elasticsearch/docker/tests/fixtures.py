@@ -126,10 +126,10 @@ def elasticsearch(host):
             nodes = self.get('/_nodes/plugins').json()['nodes'].values()
             return [node['plugins'] for node in nodes]
 
-        def get_node_thread_pool_bulk_queue_size(self):
-            """Return an array of thread_pool bulk queue size settings for nodes"""
+        def get_node_thread_pool_write_queue_size(self):
+            """Return an array of thread_pool write queue size settings for nodes"""
             nodes = self.get('/_nodes?filter_path=**.thread_pool').json()['nodes'].values()
-            return [node['settings']['thread_pool']['bulk']['queue_size'] for node in nodes]
+            return [node['settings']['thread_pool']['write']['queue_size'] for node in nodes]
 
         def get_processors_setting(self):
             nodes = self.get('/_nodes/settings?filter_path=**.processors').json()['nodes'].values()
@@ -203,6 +203,7 @@ def elasticsearch(host):
                                                    datadir_uid=1000,
                                                    datadir_gid=0):
             cwd = os.getcwd()
+            print("I am here")
             (datavolume1_path, datavolume2_path) = (os.path.join(cwd, datadir1),
                                                     os.path.join(cwd, datadir2))
             config.option.mount_datavolume1 = datavolume1_path
@@ -214,6 +215,7 @@ def elasticsearch(host):
             proc1 = delete_dir(datavolume1_path)
             proc2 = delete_dir(datavolume2_path)
 
+            print("I am after delete")
             assert proc1.returncode == 0
             assert proc2.returncode == 0
 

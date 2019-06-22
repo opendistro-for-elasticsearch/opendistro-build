@@ -22,7 +22,8 @@ FIGLET := pyfiglet -w 160 -f puffy
 BUILD_TYPE ?= OpenDistroForElasticSearch
 BUILD_DATE := $(shell date +'%y.%m.%d')
 
-OPENDISTRO_REGISTRY ?= amazon
+OPENDISTRO_REGISTRY ?= 745719312218.dkr.ecr.us-east-1.amazonaws.com
+# amazon
 ES_VERSION ?= $(shell ../bin/version-info --es)
 OPENDISTRO_VERSION ?= $(shell ../bin/version-info --od)
 IMAGE_TAG ?= $(OPENDISTRO_REGISTRY)/opendistro-for-elasticsearch-kibana

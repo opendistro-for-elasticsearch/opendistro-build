@@ -15,7 +15,8 @@
 # Makefile for building & testing elasticsearch docker image.
 
 SHELL=/bin/bash
-OPENDISTRO_REPOSITORY ?= amazon/opendistro-for-elasticsearch
+OPENDISTRO_REPOSITORY ?= 745719312218.dkr.ecr.us-east-1.amazonaws.com/opendistroforelasticsearch
+# amazon/opendistro-for-elasticsearch
 export PATH := ./bin:./venv/bin:$(PATH)
 
 # Determine the version to build. Override by setting ELASTIC_VERSION env var.
@@ -63,8 +64,18 @@ test: lint docker-compose
 	pyfiglet -w 160 -f puffy "test: multi"; \
 	VERSION_TAG=${OPENDISTRO_VERSION} IMAGE_REPO=${IMAGE_TAG} ./bin/pytest tests;
 
+test-cluster: lint docker-compose
+	docker run --rm -v "$(PWD):/mnt" bash rm -rf /mnt/tests/datadir1 /mnt/tests/datadir2
+	pyfiglet -w 160 -f puffy "test: multi"; \
+	VERSION_TAG=${OPENDISTRO_VERSION} IMAGE_REPO=${IMAGE_TAG} ./bin/pytest tests;
+
+test-cluster-selected: lint docker-compose
+	docker run --rm -v "$(PWD):/mnt" bash rm -rf /mnt/tests/datadir1 /mnt/tests/datadir2
+	pyfiglet -w 160 -f puffy "test: selected"; \
+	VERSION_TAG=${OPENDISTRO_VERSION} IMAGE_REPO=${IMAGE_TAG} ./bin/pytest tests -k "${SELECTED_TESTS}" -s;
+
 # Run selected test(s). Pass the file name(s) as an environment variable SELECTED_TESTS
-test-selected: lint docker-compose
+test-single-selected: lint docker-compose
 	docker run --rm -v "$(PWD):/mnt" bash rm -rf /mnt/tests/datadir1 /mnt/tests/datadir2
 	pyfiglet -w 160 -f puffy "test: selected"; \
 	VERSION_TAG=${OPENDISTRO_VERSION} IMAGE_REPO=${IMAGE_TAG} ./bin/pytest --single-node tests -k "${SELECTED_TESTS}" -s;
@@ -90,10 +101,10 @@ pristine: clean
 run: run-single
 
 run-single: docker-compose
-	DATA_VOLUME1=esdata1 $(DOCKER_COMPOSE) up elasticsearch1
+	DATA_VOLUME1=esdata1 $(DOCKER_COMPOSE) -f docker-compose.single.yml up elasticsearch1
 
 run-cluster: docker-compose
-	DATA_VOLUME1=esdata1 DATA_VOLUME2=esdata2 $(DOCKER_COMPOSE) up elasticsearch1 elasticsearch2
+	DATA_VOLUME1=esdata1 DATA_VOLUME2=esdata2 $(DOCKER_COMPOSE) -f docker-compose.cluster.yml up elasticsearch1 elasticsearch2
 
 build: clean venv dockerfile docker-compose
 	-pyfiglet -f puffy -w 160 "Building "; \

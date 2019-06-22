@@ -27,23 +27,18 @@ services:
     # Let Testinfra infer the container name by making the hostname the same.
     hostname: elasticsearch1
     environment:
-      {% if image_flavor == 'platinum' -%}
-      # Specify the bootstrap password for elastic user.
-      - ELASTIC_PASSWORD=pleasechangeme
-      {% endif -%}
-      {% if image_flavor == 'platinum' -%}
-      # Enable Security audit logging so we can check the output for correctness.
-      - xpack.security.audit.enabled=true
-      {% endif -%}
-      # Try setting a few options with environment variables.
+     # Try setting a few options with environment variables.
       - cluster.name=docker-test-cluster
-      - node.name=docker-test-node-1
+      - node.name=elasticsearch1
       # Also try a parameter containing an underscore character.
-      - thread_pool.bulk.queue_size=500
+      # The bulk threadpool was renamed to write in 6.3.0
+      # Support for the legacy bulk name was removed in 7.0.0 10.
+      - thread_pool.write.queue_size=500
       # And try the special processors setting.
       - processors=1
       # Test setting max heap to a non default value with environment variables.
-      - "ES_JAVA_OPTS=-Xms1152M -Xmx1152M"
+      # Allen Yin: This setting is causing trouble in ES7.0.1. Disabling for now
+      # - "ES_JAVA_OPTS=-Xms1152M -Xmx1152M"
       # Env vars not followed by a dot, should not be parsed by the wrapper script.
       - irrelevantsetting=foo
       # Capitalized or all-caps env vars should not be parsed either.
@@ -60,17 +55,14 @@ services:
   elasticsearch2:
     hostname: elasticsearch2
     environment:
-      {% if image_flavor == 'platinum' -%}
-      - ELASTIC_PASSWORD=pleasechangeme
-      {% endif -%}
-      {% if image_flavor == 'platinum' -%}
-      - xpack.security.audit.enabled=true
-      {% endif -%}
       - cluster.name=docker-test-cluster
-      - node.name=docker-test-node-2
-      - thread_pool.bulk.queue_size=500
+      - node.name=elasticsearch2
+      # The bulk threadpool was renamed to write in 6.3.0
+      # Support for the legacy bulk name was removed in 7.0.0 10.
+      - thread_pool.write.queue_size=500
       - processors=1
-      - "ES_JAVA_OPTS=-Xms1152M -Xmx1152M"
+      # Allen Yin: This setting is causing trouble in ES7.0.1. Disabling for now
+      # - "ES_JAVA_OPTS=-Xms1152M -Xmx1152M"
       - irrelevantsetting=foo
       - NonESRelatedVariable=bar
       - bootstrap.memory_lock=true
