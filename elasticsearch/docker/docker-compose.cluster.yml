@@ -21,7 +21,7 @@ services:
   elasticsearch1:
     environment:
       - node.name=elasticsearch1
-      - discovery.seed_hosts=elasticsearch2,el
+      - discovery.seed_hosts=elasticsearch2
       - cluster.initial_master_nodes=elasticsearch1
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
