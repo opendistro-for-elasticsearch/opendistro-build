@@ -37,8 +37,7 @@ services:
       # And try the special processors setting.
       - processors=1
       # Test setting max heap to a non default value with environment variables.
-      # Allen Yin: This setting is causing trouble in ES7.0.1. Disabling for now
-      # - "ES_JAVA_OPTS=-Xms1152M -Xmx1152M"
+      - "ES_JAVA_OPTS=-Xms1152M -Xmx1152M"
       # Env vars not followed by a dot, should not be parsed by the wrapper script.
       - irrelevantsetting=foo
       # Capitalized or all-caps env vars should not be parsed either.
@@ -61,8 +60,7 @@ services:
       # Support for the legacy bulk name was removed in 7.0.0 10.
       - thread_pool.write.queue_size=500
       - processors=1
-      # Allen Yin: This setting is causing trouble in ES7.0.1. Disabling for now
-      # - "ES_JAVA_OPTS=-Xms1152M -Xmx1152M"
+      - "ES_JAVA_OPTS=-Xms1152M -Xmx1152M"
       - irrelevantsetting=foo
       - NonESRelatedVariable=bar
       - bootstrap.memory_lock=true

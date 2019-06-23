@@ -24,7 +24,7 @@ services:
       - 5601:5601
     networks: [opendistroforelasticsearch]
     environment:
-      ELASTICSEARCH_URL: https://elasticsearch:9200
+      ELASTICSEARCH_HOSTS: https://elasticsearch:9200
 
     # Configure certificate and key files to enable SSL. The certificate
     # provided in the example is self-signed, and thus insecure. It should

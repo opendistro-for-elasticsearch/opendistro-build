@@ -15,8 +15,7 @@
 # Makefile for building & testing elasticsearch docker image.
 
 SHELL=/bin/bash
-OPENDISTRO_REPOSITORY ?= 745719312218.dkr.ecr.us-east-1.amazonaws.com/opendistroforelasticsearch
-# amazon/opendistro-for-elasticsearch
+OPENDISTRO_REPOSITORY ?= amazon/opendistro-for-elasticsearch
 export PATH := ./bin:./venv/bin:$(PATH)
 
 # Determine the version to build. Override by setting ELASTIC_VERSION env var.
@@ -42,7 +41,7 @@ BUST_CACHE ?= $(shell date +'%s')
 # endif
 
 ELASTIC_ARTIFACTS_URL ?= https://$(BUILD_TYPE).elastic.co/downloads/elasticsearch
-PLUGIN_URL_PATHS ?= opendistro-sql/opendistro_sql-$(OPENDISTRO_PLUGIN_VERSION).zip opendistro-alerting/opendistro_alerting-$(OPENDISTRO_PLUGIN_VERSION).zip opendistro-security/opendistro_security-$(OPENDISTRO_PLUGIN_VERSION).zip performance-analyzer/opendistro_performance_analyzer-$(OPENDISTRO_PLUGIN_VERSION).zip
+PLUGIN_URL_PATHS ?= opendistro-sql/opendistro_sql-$(OPENDISTRO_PLUGIN_VERSION).zip opendistro-alerting/opendistro_alerting-$(OPENDISTRO_PLUGIN_VERSION).zip opendistro-job-scheduler/opendistro-job-scheduler-$(OPENDISTRO_PLUGIN_VERSION).zip opendistro-security/opendistro_security-$(OPENDISTRO_PLUGIN_VERSION).zip performance-analyzer/opendistro_performance_analyzer-$(OPENDISTRO_PLUGIN_VERSION).zip
 
 IMAGE_TAG ?= $(OPENDISTRO_REPOSITORY)
 # When invoking docker-compose, use an extra config fragment to map Elasticsearch's
