@@ -203,7 +203,6 @@ def elasticsearch(host):
                                                    datadir_uid=1000,
                                                    datadir_gid=0):
             cwd = os.getcwd()
-            print("I am here")
             (datavolume1_path, datavolume2_path) = (os.path.join(cwd, datadir1),
                                                     os.path.join(cwd, datadir2))
             config.option.mount_datavolume1 = datavolume1_path
@@ -215,7 +214,6 @@ def elasticsearch(host):
             proc1 = delete_dir(datavolume1_path)
             proc2 = delete_dir(datavolume2_path)
 
-            print("I am after delete")
             assert proc1.returncode == 0
             assert proc2.returncode == 0
 
