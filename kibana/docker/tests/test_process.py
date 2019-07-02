@@ -30,7 +30,7 @@ def test_default_environment_contains_no_kibana_config(kibana):
     acceptable_vars = [
         'ELASTIC_CONTAINER', 'HOME', 'HOSTNAME',
         'TERM', 'PATH', 'PWD',
-        'SHLVL', '_', 'ELASTICSEARCH_URL'
+        'SHLVL', '_', 'ELASTICSEARCH_HOSTS'
     ]
     for var in kibana.environment.keys():
         assert var in acceptable_vars

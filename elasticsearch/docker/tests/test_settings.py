@@ -20,7 +20,7 @@ import pytest
 
 def test_setting_node_name_with_an_environment_variable(elasticsearch):
     # The fixture for this test comes from tests/docker-compose.yml
-    assert elasticsearch.get_root_page()['name'].startswith('docker-test-node')
+    assert elasticsearch.get_root_page()['name'].startswith('elasticsearch')
 
 
 def test_setting_cluster_name_with_an_environment_variable(elasticsearch):
@@ -45,7 +45,7 @@ def test_setting_heapsize_with_an_environment_variable(elasticsearch):
 
 def test_parameter_containing_underscore_with_an_environment_variable(elasticsearch):
     # The fixture for this test comes from tests/docker-compose.yml
-    for thread_pool_queue_size in elasticsearch.get_node_thread_pool_bulk_queue_size():
+    for thread_pool_queue_size in elasticsearch.get_node_thread_pool_write_queue_size():
         assert '500' == thread_pool_queue_size
 
 

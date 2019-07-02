@@ -27,10 +27,10 @@ plugins {
 
 ext {
     // Remember to increment both of these when rolling out a new version
-    es_version = System.getProperty("es.version", "6.7.1")
-    opendistroVersion = "0.9.0"
-    baseODPluginsVersion = "0.9.0"
-    nextODPluginsVersion = "0.9.1"
+    es_version = System.getProperty("es.version", "7.0.1")
+    opendistroVersion = "1.0.0"
+    baseODPluginsVersion = "1.0.0"
+    nextODPluginsVersion = "1.0.1"
 
     isSnapshot = "true" == System.getProperty("build.snapshot", "true")
 }
@@ -47,11 +47,13 @@ ospackage {
     requires('opendistro-sql', baseODPluginsVersion, GREATER | EQUAL)
     requires('opendistro-security', baseODPluginsVersion, GREATER | EQUAL)
     requires('opendistro-performance-analyzer', baseODPluginsVersion, GREATER | EQUAL)
+    requires('opendistro-job-scheduler', baseODPluginsVersion, GREATER | EQUAL)
 
     requires('opendistro-alerting', nextODPluginsVersion, LESS)
     requires('opendistro-sql', nextODPluginsVersion, LESS)
     requires('opendistro-security', nextODPluginsVersion, LESS)
     requires('opendistro-performance-analyzer', nextODPluginsVersion, LESS)
+    requires('opendistro-job-scheduler', nextODPluginsVersion, LESS)
 
     packager = 'Amazon'
     vendor = 'Amazon'

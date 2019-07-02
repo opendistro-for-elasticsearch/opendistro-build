@@ -126,10 +126,10 @@ def elasticsearch(host):
             nodes = self.get('/_nodes/plugins').json()['nodes'].values()
             return [node['plugins'] for node in nodes]
 
-        def get_node_thread_pool_bulk_queue_size(self):
-            """Return an array of thread_pool bulk queue size settings for nodes"""
+        def get_node_thread_pool_write_queue_size(self):
+            """Return an array of thread_pool write queue size settings for nodes"""
             nodes = self.get('/_nodes?filter_path=**.thread_pool').json()['nodes'].values()
-            return [node['settings']['thread_pool']['bulk']['queue_size'] for node in nodes]
+            return [node['settings']['thread_pool']['write']['queue_size'] for node in nodes]
 
         def get_processors_setting(self):
             nodes = self.get('/_nodes/settings?filter_path=**.processors').json()['nodes'].values()

@@ -44,10 +44,17 @@ def pytest_configure(config):
     (datavolume1, datavolume2) = ("esdata1", "esdata2")
     # Our default is not to override uid; empty strings for --user are ignored by Docker.
     process_uid = ''
-    compose_flags = ('-f docker-compose.yml -f tests/docker-compose.yml up -d').split(' ')
 
+    # Run in single or cluster mode
     if config.getoption('--single-node'):
+        compose_flags = ("-f docker-compose.yml "
+                         "-f docker-compose.single.yml "
+                         "-f tests/docker-compose.yml up -d").split(' ')
         compose_flags.append('elasticsearch1')
+    else:
+        compose_flags = ("-f docker-compose.yml "
+                         "-f docker-compose.cluster.yml "
+                         "-f tests/docker-compose.yml up -d").split(' ')
 
     # Use a host dir for the data volume of Elasticsearch, if specified
     if config.getoption('--mount-datavolume1'):

@@ -23,6 +23,7 @@ BUILD_TYPE ?= OpenDistroForElasticSearch
 BUILD_DATE := $(shell date +'%y.%m.%d')
 
 OPENDISTRO_REGISTRY ?= amazon
+
 ES_VERSION ?= $(shell ../bin/version-info --es)
 OPENDISTRO_VERSION ?= $(shell ../bin/version-info --od)
 IMAGE_TAG ?= $(OPENDISTRO_REGISTRY)/opendistro-for-elasticsearch-kibana
@@ -47,7 +48,7 @@ lint: venv
 build: dockerfile
 	docker pull centos:7
 	 $(FIGLET) "build: $(BUILD_TYPE)"; \
-	 docker build -t $(IMAGE_TAG):$(OPENDISTRO_VERSION) \
+	docker build --no-cache -t $(IMAGE_TAG):$(OPENDISTRO_VERSION) \
 	  -f build/kibana/Dockerfile build/kibana; \
     docker tag $(IMAGE_TAG):$(OPENDISTRO_VERSION) $(IMAGE_TAG):$(OPENDISTRO_VERSION);
 

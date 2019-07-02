@@ -41,7 +41,7 @@ BUST_CACHE ?= $(shell date +'%s')
 # endif
 
 ELASTIC_ARTIFACTS_URL ?= https://$(BUILD_TYPE).elastic.co/downloads/elasticsearch
-PLUGIN_URL_PATHS ?= opendistro-sql/opendistro_sql-$(OPENDISTRO_PLUGIN_VERSION).zip opendistro-alerting/opendistro_alerting-$(OPENDISTRO_PLUGIN_VERSION).zip opendistro-security/opendistro_security-$(OPENDISTRO_PLUGIN_VERSION).zip performance-analyzer/opendistro_performance_analyzer-$(OPENDISTRO_PLUGIN_VERSION).zip
+PLUGIN_URL_PATHS ?= opendistro-sql/opendistro_sql-$(OPENDISTRO_PLUGIN_VERSION).zip opendistro-alerting/opendistro_alerting-$(OPENDISTRO_PLUGIN_VERSION).zip opendistro-job-scheduler/opendistro-job-scheduler-$(OPENDISTRO_PLUGIN_VERSION).zip opendistro-security/opendistro_security-$(OPENDISTRO_PLUGIN_VERSION).zip performance-analyzer/opendistro_performance_analyzer-$(OPENDISTRO_PLUGIN_VERSION).zip
 
 IMAGE_TAG ?= $(OPENDISTRO_REPOSITORY)
 # When invoking docker-compose, use an extra config fragment to map Elasticsearch's
@@ -63,8 +63,18 @@ test: lint docker-compose
 	pyfiglet -w 160 -f puffy "test: multi"; \
 	VERSION_TAG=${OPENDISTRO_VERSION} IMAGE_REPO=${IMAGE_TAG} ./bin/pytest tests;
 
+test-cluster: lint docker-compose
+	docker run --rm -v "$(PWD):/mnt" bash rm -rf /mnt/tests/datadir1 /mnt/tests/datadir2
+	pyfiglet -w 160 -f puffy "test: multi"; \
+	VERSION_TAG=${OPENDISTRO_VERSION} IMAGE_REPO=${IMAGE_TAG} ./bin/pytest tests;
+
+test-cluster-selected: lint docker-compose
+	docker run --rm -v "$(PWD):/mnt" bash rm -rf /mnt/tests/datadir1 /mnt/tests/datadir2
+	pyfiglet -w 160 -f puffy "test: selected"; \
+	VERSION_TAG=${OPENDISTRO_VERSION} IMAGE_REPO=${IMAGE_TAG} ./bin/pytest tests -k "${SELECTED_TESTS}" -s;
+
 # Run selected test(s). Pass the file name(s) as an environment variable SELECTED_TESTS
-test-selected: lint docker-compose
+test-single-selected: lint docker-compose
 	docker run --rm -v "$(PWD):/mnt" bash rm -rf /mnt/tests/datadir1 /mnt/tests/datadir2
 	pyfiglet -w 160 -f puffy "test: selected"; \
 	VERSION_TAG=${OPENDISTRO_VERSION} IMAGE_REPO=${IMAGE_TAG} ./bin/pytest --single-node tests -k "${SELECTED_TESTS}" -s;
@@ -90,10 +100,10 @@ pristine: clean
 run: run-single
 
 run-single: docker-compose
-	DATA_VOLUME1=esdata1 $(DOCKER_COMPOSE) up elasticsearch1
+	DATA_VOLUME1=esdata1 $(DOCKER_COMPOSE) -f docker-compose.single.yml up elasticsearch1
 
 run-cluster: docker-compose
-	DATA_VOLUME1=esdata1 DATA_VOLUME2=esdata2 $(DOCKER_COMPOSE) up elasticsearch1 elasticsearch2
+	DATA_VOLUME1=esdata1 DATA_VOLUME2=esdata2 $(DOCKER_COMPOSE) -f docker-compose.cluster.yml up elasticsearch1 elasticsearch2
 
 build: clean venv dockerfile docker-compose
 	-pyfiglet -f puffy -w 160 "Building "; \
