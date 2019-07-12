@@ -42,7 +42,7 @@ TARGET_DIR="$ROOT/target"
 ES_VERSION=$(../bin/version-info --es)
 OPENDISTRO_VERSION=$(../bin/version-info --od)
 ARTIFACTS_URL=https://d3g5vo6xdbdb9a.cloudfront.net
-PLUGINS="opendistro-security/opendistro_security_kibana_plugin-$OPENDISTRO_VERSION.1.zip opendistro-alerting/opendistro-alerting-$OPENDISTRO_VERSION.0.zip"
+PLUGINS="opendistro-security/opendistro_security_kibana_plugin-1.0.0.1.zip opendistro-alerting/opendistro-alerting-1.0.0.0.zip"
 
 if [ -z "$PLUGINS" ]; then
     echo "Provide plugin list to install (separated by space)"
