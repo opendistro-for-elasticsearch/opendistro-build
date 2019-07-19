@@ -28,9 +28,9 @@ plugins {
 ext {
     // Remember to increment both of these when rolling out a new version
     es_version = System.getProperty("es.version", "7.0.1")
-    opendistroVersion = "1.0.1"
+    opendistroVersion = "1.0.2"
     baseODPluginsVersion = "1.0.0"
-    nextODPluginsVersion = "1.0.1"
+    nextODPluginsVersion = "1.0.2"
 
     isSnapshot = "true" == System.getProperty("build.snapshot", "true")
 }
