@@ -21,7 +21,7 @@ export PATH := ./bin:./venv/bin:$(PATH)
 # Determine the version to build. Override by setting ELASTIC_VERSION env var.
 ELASTIC_VERSION ?= $(shell ../bin/version-info --es)
 OPENDISTRO_VERSION ?= $(shell ../bin/version-info --od)
-OPENDISTRO_PLUGIN_VERSION ?= $(OPENDISTRO_VERSION).0
+OPENDISTRO_PLUGIN_VERSION ?= 1.0.0.0
 
 #ENDS_WITH := SNAPSHOT
 BUILD_TYPE := artifacts
@@ -41,7 +41,7 @@ BUST_CACHE ?= $(shell date +'%s')
 # endif
 
 ELASTIC_ARTIFACTS_URL ?= https://$(BUILD_TYPE).elastic.co/downloads/elasticsearch
-PLUGIN_URL_PATHS ?= opendistro-sql/opendistro_sql-$(OPENDISTRO_PLUGIN_VERSION).zip opendistro-alerting/opendistro_alerting-$(OPENDISTRO_PLUGIN_VERSION).zip opendistro-job-scheduler/opendistro-job-scheduler-$(OPENDISTRO_PLUGIN_VERSION).zip opendistro-security/opendistro_security-$(OPENDISTRO_PLUGIN_VERSION).zip performance-analyzer/opendistro_performance_analyzer-$(OPENDISTRO_PLUGIN_VERSION).zip
+PLUGIN_URL_PATHS ?= opendistro-sql/opendistro_sql-$(OPENDISTRO_PLUGIN_VERSION).zip opendistro-alerting/opendistro_alerting-$(OPENDISTRO_PLUGIN_VERSION).zip opendistro-job-scheduler/opendistro-job-scheduler-$(OPENDISTRO_PLUGIN_VERSION).zip opendistro-security/opendistro_security-1.0.0.2.zip performance-analyzer/opendistro_performance_analyzer-$(OPENDISTRO_PLUGIN_VERSION).zip
 
 IMAGE_TAG ?= $(OPENDISTRO_REPOSITORY)
 # When invoking docker-compose, use an extra config fragment to map Elasticsearch's

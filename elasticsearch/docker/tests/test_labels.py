@@ -23,5 +23,5 @@ def test_labels(elasticsearch):
     assert labels['org.label-schema.schema-version'] == '1.0'
     assert labels['org.label-schema.url'] == 'https://opendistro.github.io'
     assert labels['org.label-schema.vcs-url'] == 'https://github.com/opendistro-for-elasticsearch/opendistro-build'
-    assert labels['org.label-schema.version'] == '1.0.0'
+    assert labels['org.label-schema.version'] == '1.0.2'
     assert labels['org.label-schema.license'] == 'Apache-2.0'
