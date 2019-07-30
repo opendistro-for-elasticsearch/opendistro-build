@@ -24,4 +24,4 @@ def test_labels(kibana):
     assert labels['org.label-schema.url'] == 'https://opendistro.github.io'
     assert labels['org.label-schema.vcs-url'] == 'https://github.com/opendistro-for-elasticsearch/opendistro-build'
     assert labels['org.label-schema.vendor'] == 'Amazon'
-    assert labels['org.label-schema.version'] == '0.9.0'
+    assert labels['org.label-schema.version'] == '0.10.0'
