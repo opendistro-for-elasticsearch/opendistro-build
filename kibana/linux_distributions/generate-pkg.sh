@@ -136,3 +136,10 @@ fpm --force \
     $ROOT/service_templates/sysv/etc/=/etc/ \
     $ROOT/service_templates/systemd/etc/=/etc/
 fi
+
+if [ $# -eq 0 ] || [ $PACKAGE_TYPE == "tar" ]; then
+echo "generating tar"
+    tar -vczf $TARGET_DIR/$PACKAGE_NAME-$OPENDISTRO_VERSION.tar.gz $PACKAGE_NAME
+    shasum -a 512 $TARGET_DIR/$PACKAGE_NAME-$OPENDISTRO_VERSION.tar.gz  > $TARGET_DIR/$PACKAGE_NAME-$OPENDISTRO_VERSION.tar.gz.sha512
+    shasum -a 512 -c $TARGET_DIR/$PACKAGE_NAME-$OPENDISTRO_VERSION.tar.gz.sha512
+fi
