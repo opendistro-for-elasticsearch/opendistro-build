@@ -22,7 +22,7 @@ version: '2.1'
 services:
   elasticsearch1:
     container_name: elasticsearch1
-    image: amazon/opendistro-for-elasticsearch:1.1.0
+    image: amazon/opendistro-for-elasticsearch:1.2.0
     mem_limit: 4g
     networks:
       esnet:
@@ -43,7 +43,7 @@ services:
     container_name: elasticsearch2
     environment:
       - node.master=false
-    image: amazon/opendistro-for-elasticsearch:1.1.0
+    image: amazon/opendistro-for-elasticsearch:1.2.0
     mem_limit: 4g
     networks:
       - esnet

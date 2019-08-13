@@ -19,7 +19,7 @@ version: '3'
 services:
   kibana:
     container_name: opendistroforelasticsearch-kibana-test
-    image: amazon/opendistro-for-elasticsearch-kibana:1.1.0
+    image: amazon/opendistro-for-elasticsearch-kibana:1.2.0
     ports:
       - 5601:5601
     networks: [opendistroforelasticsearch]

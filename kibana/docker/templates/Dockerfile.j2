@@ -31,7 +31,7 @@ ENV PATH=/usr/share/kibana/bin:$PATH
 
 RUN curl -Ls {{ kibana_url }}/{{ tarball }} | tar --strip-components=1 -zxf - && \
     for plugin in {{ plugins }}; do \
-        kibana-plugin install "https://d3g5vo6xdbdb9a.cloudfront.net/downloads/kibana-plugins/$plugin"; \
+        kibana-plugin install --allow-root "https://d3g5vo6xdbdb9a.cloudfront.net/downloads/kibana-plugins/$plugin"; \
     done && \
     ln -s /usr/share/kibana /opt/kibana && \
     chown -R 1000:0 . && \
@@ -56,7 +56,6 @@ RUN find /usr/share/kibana -gid 0 -and -not -perm /g+w -exec chmod g+w {} \; && 
       useradd --uid 1000 --gid 1000 \
       --home-dir /usr/share/kibana --no-create-home kibana && \
       echo $'= CentOS Licensing and Source Code =\n\nThis image is built from CentOS and DockerHub\'s official build of CentOS (https://hub.docker.com/_/centos). Their image contains various Open Source licensed packages and their DockerHub home page provides information on licensing.\n\nYou can list the packages installed in the image by running \'rpm -qa\', and you can download the source code for the packages CentOS and DockerHub provide via the yumdownloader tool.' > /root/CENTOS_LICENSING.txt
-
 
 USER 1000
 
