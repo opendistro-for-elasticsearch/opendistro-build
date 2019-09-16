@@ -40,4 +40,4 @@ fi
 echo "done plugins"
 
 ##Start Elastic Search
-sh $ES_HOME/bin/elasticsearch
+sh $ES_HOME/bin/elasticsearch "$@"
