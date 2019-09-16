@@ -15,8 +15,8 @@
 
 
 #Download opensourceversion
-ES_VERSION=7.1.1
-OD_VERSION=1.1.0
+ES_VERSION=7.2.0
+OD_VERSION=1.2.0
 OD_PLUGINVERSION=$OD_VERSION.0
 PACKAGE=opendistroforelasticsearch
 wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$ES_VERSION-linux-x86_64.tar.gz
