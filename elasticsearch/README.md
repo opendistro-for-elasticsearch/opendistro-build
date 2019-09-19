@@ -131,7 +131,7 @@ wget https://d3g5vo6xdbdb9a.cloudfront.net/tarball/opendistro-elasticsearch/open
 wget https://d3g5vo6xdbdb9a.cloudfront.net/tarball/opendistro-elasticsearch/opendistroforelasticsearch-1.2.0.tar.gz.sha512 
 shasum -a 512 -c opendistroforelasticsearch-1.2.0.tar.gz.sha512
 tar -zxvf opendistroforelasticsearch-1.2.0.tar.gz
-cd opendistroforelasticsearch-1.1.0
+cd opendistroforelasticsearch-1.2.0
 ./opendistro-tar-install.sh
 ```
 Single Node cluster:
