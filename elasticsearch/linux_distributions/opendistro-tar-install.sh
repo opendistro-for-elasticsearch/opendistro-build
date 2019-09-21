@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
@@ -15,7 +15,7 @@
 
 ES_HOME=`pwd`
 ##Security Plugin
-sh $ES_HOME/plugins/opendistro_security/tools/install_demo_configuration.sh -y -i -s
+bash $ES_HOME/plugins/opendistro_security/tools/install_demo_configuration.sh -y -i -s
 
 ##Perf Plugin
 chmod 755 $ES_HOME/plugins/opendistro_performance_analyzer/pa_bin/performance-analyzer-agent
@@ -40,4 +40,4 @@ fi
 echo "done plugins"
 
 ##Start Elastic Search
-sh $ES_HOME/bin/elasticsearch "$@"
+bash $ES_HOME/bin/elasticsearch "$@"
