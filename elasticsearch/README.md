@@ -123,6 +123,23 @@ To build rpm & deb packages
 ./gradlew buildPackages --console=plain -Dbuild.snapshot=false -b build.gradle
 ```
 
+Download and install ES Linux Tar ball
+
+The .tar.gz archive for Open distro for Elasticsearch v1.2.0 can be downloaded and installed as follows:
+```
+wget https://d3g5vo6xdbdb9a.cloudfront.net/tarball/opendistro-elasticsearch/opendistroforelasticsearch-1.2.0.tar.gz
+wget https://d3g5vo6xdbdb9a.cloudfront.net/tarball/opendistro-elasticsearch/opendistroforelasticsearch-1.2.0.tar.gz.sha512 
+shasum -a 512 -c opendistroforelasticsearch-1.2.0.tar.gz.sha512
+tar -zxvf opendistroforelasticsearch-1.2.0.tar.gz
+cd opendistroforelasticsearch-1.2.0
+./opendistro-tar-install.sh
+```
+Single Node cluster:
+```
+./opendistro-tar-install.sh -Ecluster.name=my_cluster -Enode.name=node_1 -Ehttp.host=0.0.0.0 -Etransport.host=0.0.0.0 -Ediscovery.type=single-node
+```
+
+
 ## Contributing
 
 Open Distro for Elasticsearch is and will remain 100% open source under the Apache 2.0 license. As the project grows, we invite you to join the project and contribute. We want to make it easy for you to get started and remove friction — no lengthy Contributor License Agreement — so you can focus on writing great code.
@@ -134,4 +151,5 @@ If you have any questions, please join our community forum [here](https://discus
 ## Issues
 
 File any issues [here](https://github.com/opendistro-for-elasticsearch/community/issues).
+
 
