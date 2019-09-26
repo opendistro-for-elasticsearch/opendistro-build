@@ -48,7 +48,7 @@ lint: venv
 build: dockerfile
 	docker pull centos:7
 	 $(FIGLET) "build: $(BUILD_TYPE)"; \
-	docker build --no-cache -t $(IMAGE_TAG):$(OPENDISTRO_VERSION) \
+	docker build -t $(IMAGE_TAG):$(OPENDISTRO_VERSION) \
 	  -f build/kibana/Dockerfile build/kibana; \
     docker tag $(IMAGE_TAG):$(OPENDISTRO_VERSION) $(IMAGE_TAG):$(OPENDISTRO_VERSION);
 
