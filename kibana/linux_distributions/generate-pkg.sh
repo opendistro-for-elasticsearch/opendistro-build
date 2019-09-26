@@ -32,8 +32,8 @@ mkdir target opendistroforelasticsearch-kibana
 PACKAGE_TYPE=$1
 
 # If the input is set, but it's set to neither rpm nor deb, then exit.
-if [[ -n $PACKAGE_TYPE ]] && [[ "$PACKAGE_TYPE" != "rpm" ]] && [[ "$PACKAGE_TYPE" != "deb" ]]; then
-	printf "You entered %s. Please enter 'rpm' to build rpm or 'deb' to build deb or nothing to build both.\n" "$PACKAGE_TYPE"
+if [[ -n $PACKAGE_TYPE ]] && [[ "$PACKAGE_TYPE" != "rpm" ]] && [[ "$PACKAGE_TYPE" != "deb" ]] && [[ "$PACKAGE_TYPE" != "tar" ]]; then
+	printf "You entered %s. Please enter 'rpm' to build rpm or 'deb' or 'tar' to build deb or nothing to build both.\n" "$PACKAGE_TYPE"
 	exit 1
 fi
 
@@ -135,4 +135,11 @@ fpm --force \
     $ROOT/opendistroforelasticsearch-kibana/data/=/var/lib/kibana/ \
     $ROOT/service_templates/sysv/etc/=/etc/ \
     $ROOT/service_templates/systemd/etc/=/etc/
+fi
+
+if [ $# -eq 0 ] || [ $PACKAGE_TYPE == "tar" ]; then
+echo "generating tar"
+    tar -vczf $TARGET_DIR/$PACKAGE_NAME-$OPENDISTRO_VERSION.tar.gz $PACKAGE_NAME
+    shasum -a 512 $TARGET_DIR/$PACKAGE_NAME-$OPENDISTRO_VERSION.tar.gz  > $TARGET_DIR/$PACKAGE_NAME-$OPENDISTRO_VERSION.tar.gz.sha512
+    shasum -a 512 -c $TARGET_DIR/$PACKAGE_NAME-$OPENDISTRO_VERSION.tar.gz.sha512
 fi
