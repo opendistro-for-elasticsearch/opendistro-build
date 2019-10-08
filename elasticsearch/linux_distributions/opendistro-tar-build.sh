@@ -13,8 +13,8 @@
 # express or implied. See the License for the specific language governing
 # permissions and limitations under the License.
 #Download opensourceversion
-ES_VERSION=7.2.0
-OD_VERSION=1.2.0
+ES_VERSION=$(../bin/version-info --es)
+OD_VERSION=$(../bin/version-info --od)
 OD_PLUGINVERSION=$OD_VERSION.0
 PACKAGE=opendistroforelasticsearch
 ROOT=$(dirname "$0")
