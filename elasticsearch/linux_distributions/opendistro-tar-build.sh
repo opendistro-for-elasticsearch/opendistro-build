@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
@@ -12,8 +12,6 @@
 # on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
 # express or implied. See the License for the specific language governing
 # permissions and limitations under the License.
-
-
 #Download opensourceversion
 ES_VERSION=7.2.0
 OD_VERSION=1.2.0
@@ -22,7 +20,7 @@ PACKAGE=opendistroforelasticsearch
 wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$ES_VERSION-linux-x86_64.tar.gz
 #Untar
 tar -xzf elasticsearch-oss-$ES_VERSION-linux-x86_64.tar.gz 
-
+rm -rf elasticsearch-oss-$ES_VERSION-linux-x86_64.tar.gz
 #Install Plugin
 for plugin_path in  opendistro-sql/opendistro_sql-$OD_PLUGINVERSION.zip opendistro-alerting/opendistro_alerting-$OD_PLUGINVERSION.zip opendistro-job-scheduler/opendistro-job-scheduler-$OD_PLUGINVERSION.zip opendistro-security/opendistro_security-$OD_PLUGINVERSION.zip performance-analyzer/opendistro_performance_analyzer-$OD_PLUGINVERSION.zip; 
 do
@@ -30,8 +28,27 @@ do
 done
 
 cp opendistro-tar-install.sh elasticsearch-$ES_VERSION
-
 mv elasticsearch-$ES_VERSION $PACKAGE-$OD_VERSION
+
+for d in $PACKAGE-$OD_VERSION/plugins/* ; do
+    echo "$d"
+done
+
+basedir=$PWD/$PACKAGE-$OD_VERSION/plugins
+arr=("$basedir/opendistro-job-scheduler" "$basedir/opendistro_alerting" "$basedir/opendistro_performance_analyzer" "$basedir/opendistro_security" "$basedir/opendistro_sql")
+
+echo "validating that plugins has been installed"
+for d in "${arr[@]}"; do
+    echo "$d" 
+    if [ -d "$d" ]; then
+        echo "directoy "$d" is present"
+    else
+        echo "ERROR: "$d" is not present"
+        exit 1;
+    fi
+done
+echo "validated that plugins has been installed"
+
 tar -vczf $PACKAGE-$OD_VERSION.tar.gz $PACKAGE-$OD_VERSION
 shasum -a 512 $PACKAGE-$OD_VERSION.tar.gz  > $PACKAGE-$OD_VERSION.tar.gz.sha512
-shasum -a 512 -c $PACKAGE-$OD_VERSION.tar.gz.sha512
+shasum -a 512 -c $PACAGE-$OD_VERSION.tar.gz.sha512
