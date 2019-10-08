@@ -17,6 +17,7 @@ ES_VERSION=7.2.0
 OD_VERSION=1.2.0
 OD_PLUGINVERSION=$OD_VERSION.0
 PACKAGE=opendistroforelasticsearch
+ROOT=$(dirname "$0")
 wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$ES_VERSION-linux-x86_64.tar.gz
 #Untar
 tar -xzf elasticsearch-oss-$ES_VERSION-linux-x86_64.tar.gz 
@@ -44,13 +45,10 @@ for d in "${arr[@]}"; do
 done
 echo "validated that plugins has been installed"
 
-tar -vczf $PACKAGE-$OD_VERSION.tar.gz $PACKAGE-$OD_VERSION
-shasum -a 512 $PACKAGE-$OD_VERSION.tar.gz  > $PACKAGE-$OD_VERSION.tar.gz.sha512
-shasum -a 512 -c $PACKAGE-$OD_VERSION.tar.gz.sha512
 rm -rf tarfiles
 mkdir tarfiles
-mv $PACKAGE-$OD_VERSION.tar.gz tarfiles/
-mv $PACKAGE-$OD_VERSION.tar.gz.sha512 tarfiles/
-rm -rf $PACKAGE-$OD_VERSION.tar.gz
-rm -rf $PACKAGE-$OD_VERSION.tar.gz.sha512
+TARGET_DIR="$ROOT/tarfiles"
+tar -vczf $TARGET_DIR/$PACKAGE-$OD_VERSION.tar.gz $PACKAGE-$OD_VERSION
+shasum -a 512 $TARGET_DIR/$PACKAGE-$OD_VERSION.tar.gz  > $TARGET_DIR/$PACKAGE-$OD_VERSION.tar.gz.sha512
+shasum -a 512 -c $TARGET_DIR/$PACKAGE-$OD_VERSION.tar.gz.sha512
 rm -rf $PACKAGE-$OD_VERSION

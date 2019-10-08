@@ -138,6 +138,7 @@ fpm --force \
 fi
 
 if [ $# -eq 0 ] || [ $PACKAGE_TYPE == "tar" ]; then
+rm -rf $TARGET_DIR/*tar*
 echo "generating tar"
     tar -vczf $TARGET_DIR/$PACKAGE_NAME-$OPENDISTRO_VERSION.tar.gz $PACKAGE_NAME
     shasum -a 512 $TARGET_DIR/$PACKAGE_NAME-$OPENDISTRO_VERSION.tar.gz  > $TARGET_DIR/$PACKAGE_NAME-$OPENDISTRO_VERSION.tar.gz.sha512
