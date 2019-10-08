@@ -13,8 +13,8 @@
 # express or implied. See the License for the specific language governing
 # permissions and limitations under the License.
 #Download opensourceversion
-ES_VERSION=7.2.0
-OD_VERSION=1.2.0
+ES_VERSION=$(../bin/version-info --es)
+OD_VERSION=$(../bin/version-info --od)
 OD_PLUGINVERSION=$OD_VERSION.0
 PACKAGE=opendistroforelasticsearch
 ROOT=$(dirname "$0")
@@ -49,6 +49,6 @@ rm -rf tarfiles
 mkdir tarfiles
 TARGET_DIR="$ROOT/tarfiles"
 tar -vczf $TARGET_DIR/$PACKAGE-$OD_VERSION.tar.gz $PACKAGE-$OD_VERSION
-shasum -a 512 $TARGET_DIR/$PACKAGE-$OD_VERSION.tar.gz  > $TARGET_DIR/$PACKAGE-$OD_VERSION.tar.gz.sha512
-shasum -a 512 -c $TARGET_DIR/$PACKAGE-$OD_VERSION.tar.gz.sha512
+sha512sum $TARGET_DIR/$PACKAGE-$OD_VERSION.tar.gz  > $TARGET_DIR/$PACKAGE-$OD_VERSION.tar.gz.sha512
+sha512sum -c $TARGET_DIR/$PACKAGE-$OD_VERSION.tar.gz.sha512
 rm -rf $PACKAGE-$OD_VERSION
