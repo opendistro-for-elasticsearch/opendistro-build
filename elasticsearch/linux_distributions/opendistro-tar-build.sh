@@ -30,14 +30,9 @@ done
 cp opendistro-tar-install.sh elasticsearch-$ES_VERSION
 mv elasticsearch-$ES_VERSION $PACKAGE-$OD_VERSION
 
-for d in $PACKAGE-$OD_VERSION/plugins/* ; do
-    echo "$d"
-done
-
+echo "validating that plugins has been installed"
 basedir=$PWD/$PACKAGE-$OD_VERSION/plugins
 arr=("$basedir/opendistro-job-scheduler" "$basedir/opendistro_alerting" "$basedir/opendistro_performance_analyzer" "$basedir/opendistro_security" "$basedir/opendistro_sql")
-
-echo "validating that plugins has been installed"
 for d in "${arr[@]}"; do
     echo "$d" 
     if [ -d "$d" ]; then
