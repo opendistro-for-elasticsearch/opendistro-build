@@ -49,8 +49,10 @@ rm -rf tarfiles
 mkdir tarfiles
 TARGET_DIR="$ROOT/tarfiles"
 tar -vczf $TARGET_DIR/$PACKAGE-$OD_VERSION.tar.gz $PACKAGE-$OD_VERSION
-shasum -a 512 $TARGET_DIR/$PACKAGE-$OD_VERSION.tar.gz  > $TARGET_DIR/$PACKAGE-$OD_VERSION.tar.gz.sha512
+sha512sum $TARGET_DIR/$PACKAGE-$OD_VERSION.tar.gz  > $TARGET_DIR/$PACKAGE-$OD_VERSION.tar.gz.sha512
+sha512sum -c $TARGET_DIR/$PACKAGE-$OD_VERSION.tar.gz.sha512
+#shasum -a 512 $TARGET_DIR/$PACKAGE-$OD_VERSION.tar.gz  > $TARGET_DIR/$PACKAGE-$OD_VERSION.tar.gz.sha512
 echo " CHECKSUM FILE "
 echo "$(cat $TARGET_DIR/$PACKAGE-$OD_VERSION.tar.gz.sha512)"
-shasum -a 512 -c $TARGET_DIR/$PACKAGE-$OD_VERSION.tar.gz.sha512
+#shasum -a 512 -c $TARGET_DIR/$PACKAGE-$OD_VERSION.tar.gz.sha512
 rm -rf $PACKAGE-$OD_VERSION
