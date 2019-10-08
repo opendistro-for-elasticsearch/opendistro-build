@@ -47,3 +47,10 @@ echo "validated that plugins has been installed"
 tar -vczf $PACKAGE-$OD_VERSION.tar.gz $PACKAGE-$OD_VERSION
 shasum -a 512 $PACKAGE-$OD_VERSION.tar.gz  > $PACKAGE-$OD_VERSION.tar.gz.sha512
 shasum -a 512 -c $PACKAGE-$OD_VERSION.tar.gz.sha512
+rm -rf tarfiles
+mkdir tarfiles
+mv $PACKAGE-$OD_VERSION.tar.gz tarfiles/
+mv $PACKAGE-$OD_VERSION.tar.gz.sha512 tarfiles/
+rm -rf $PACKAGE-$OD_VERSION.tar.gz
+rm -rf $PACKAGE-$OD_VERSION.tar.gz.sha512
+rm -rf $PACKAGE-$OD_VERSION
