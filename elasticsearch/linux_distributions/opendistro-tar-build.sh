@@ -31,7 +31,20 @@ done
 cp opendistro-tar-install.sh elasticsearch-$ES_VERSION
 mv elasticsearch-$ES_VERSION $PACKAGE-$OD_VERSION
 
-#
+echo "validating that plugins has been installed"
+basedir=$PWD/$PACKAGE-$OD_VERSION/plugins
+arr=("$basedir/opendistro-job-scheduler" "$basedir/opendistro_alerting" "$basedir/opendistro_performance_analyzer" "$basedir/opendistro_security" "$basedir/opendistro_sql")
+for d in "${arr[@]}"; do
+    echo "$d" 
+    if [ -d "$d" ]; then
+        echo "directoy "$d" is present"
+    else
+        echo "ERROR: "$d" is not present"
+        exit 1;
+    fi
+done
+echo "validated that plugins has been installed"
+
 rm -rf tarfiles
 mkdir tarfiles
 TARGET_DIR="$ROOT/tarfiles"
