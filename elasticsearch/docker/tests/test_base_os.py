@@ -37,3 +37,12 @@ def test_all_elasticsearch_files_are_gid_0(host):
     )
 
     assert host.run(check_for_files_with_gid_0_command).exit_status != 0
+
+
+def test_supervisord_log_dir_is_gid_0_and_writable_for_group(host):
+    check_supervisor_dir_permissions_command = (
+        "find /usr/share -name supervisor -gid 0 -perm -g+w | "
+        "egrep '.*'"
+    )
+
+    assert host.run(check_supervisor_dir_permissions_command).exit_status == 0

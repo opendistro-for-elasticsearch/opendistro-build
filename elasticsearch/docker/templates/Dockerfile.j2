@@ -11,9 +11,9 @@
 # express or implied. See the License for the specific language governing
 # permissions and limitations under the License.
 
-# Description: 
+# Description:
 # Dockerfile for building the docker image for open distro for elasticsearch
-# 
+#
 # This file was generated from the template at templates/Dockerfile.j2
 
 ################################################################################
@@ -125,7 +125,9 @@ RUN mkdir /usr/share/elasticsearch && \
     chmod 0775 /usr/share/elasticsearch && \
     chgrp 0 /usr/share/elasticsearch
 
-RUN mkdir /usr/share/supervisor
+RUN mkdir /usr/share/supervisor && \
+  chgrp 0 /usr/share/supervisor && \
+  chmod g+w /usr/share/supervisor
 
 WORKDIR /usr/share/elasticsearch
 COPY --from=prep_es_files --chown=1000:0 /usr/share/elasticsearch /usr/share/elasticsearch
