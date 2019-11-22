@@ -48,12 +48,14 @@ ospackage {
     requires('opendistro-security', baseODPluginsVersion, GREATER | EQUAL)
     requires('opendistro-performance-analyzer', baseODPluginsVersion, GREATER | EQUAL)
     requires('opendistro-job-scheduler', baseODPluginsVersion, GREATER | EQUAL)
+    requires('opendistro-index-management', baseODPluginsVersion, GREATER | EQUAL)
 
     requires('opendistro-alerting', nextODPluginsVersion, LESS)
     requires('opendistro-sql', nextODPluginsVersion, LESS)
     requires('opendistro-security', nextODPluginsVersion, LESS)
     requires('opendistro-performance-analyzer', nextODPluginsVersion, LESS)
     requires('opendistro-job-scheduler', nextODPluginsVersion, LESS)
+    requires('opendistro-index-management', nextODPluginsVersion, LESS)
 
     packager = 'Amazon'
     vendor = 'Amazon'
