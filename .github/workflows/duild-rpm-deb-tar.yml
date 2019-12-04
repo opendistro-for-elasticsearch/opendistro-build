@@ -45,7 +45,7 @@ jobs:
     name: Build Kibana Artifacts
     runs-on: [ubuntu-latest]
     container:
-        image: mayehm6788/jsenv:v3
+        image: mayhem6788/jsenv:v3
     steps:
       - uses: actions/checkout@v1
       - name: Configure AWS Credentials
