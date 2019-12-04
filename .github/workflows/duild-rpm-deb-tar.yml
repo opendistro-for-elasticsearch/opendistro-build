@@ -8,8 +8,8 @@ jobs:
   build-es-artifacts:
     name: Build ES Artifacts
     runs-on: ubuntu-latest
-    container:
-      image: opendistroforelasticsearch/multijava08101112-git:v1
+    #container:
+      #image: opendistroforelasticsearch/multijava08101112-git:v1
 
     steps:
     - uses: actions/checkout@v1
@@ -45,7 +45,7 @@ jobs:
     name: Build Kibana Artifacts
     runs-on: [ubuntu-latest]
     container:
-        image: opendistroforelasticsearch/jsenv:v1
+        image: mayehm6788/jsenv:v3
     steps:
       - uses: actions/checkout@v1
       - name: Configure AWS Credentials
