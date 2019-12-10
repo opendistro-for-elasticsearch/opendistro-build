@@ -108,7 +108,7 @@ jobs:
           gpg --import pgp-public-key
           gpg --import --no-tty --batch --yes pgp-private-key
           
-          aptly publish snapshot -batch -passphrase="25f0bb87fc4277c17833c1ea4c601609" opendistroforelasticsearch
+          aptly publish snapshot -batch=true -passphrase="25f0bb87fc4277c17833c1ea4c601609" opendistroforelasticsearch
 
 
 
