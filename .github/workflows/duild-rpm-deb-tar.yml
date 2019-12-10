@@ -85,8 +85,8 @@ jobs:
           #!/bin/bash -x
           echo "deb http://repo.aptly.info/ squeeze main" | sudo tee -a /etc/apt/sources.list.d/aptly.list
           sudo apt-get install -y gnupg1
-          sudo apt install -y gpgv1
-          alias gpg=gpg1 
+          sudo apt install -y gnupg2
+          alias gpg=gpg2
           
           wget -qO - https://www.aptly.info/pubkey.txt | sudo apt-key add -
           sudo apt-get update -y
@@ -97,18 +97,17 @@ jobs:
           aptly repo create -distribution=stable -component=main odfe-release
           
           mkdir -p downloads/debs
-          aws s3 sync s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/debs downloads/debs
+          #aws s3 sync s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/debs downloads/debs
           aptly repo add odfe-release downloads
           
           aptly repo show -with-packages odfe-release
           aptly snapshot create opendistroforelasticsearch from repo odfe-release
           aptly snapshot list
           
-          gpg1 --import pgp-public-key
-          gpg1 --allow-secret-key-import --import pgp-private-key
+          gpg --import pgp-public-key
+          gpg --allow-secret-key-import --import pgp-private-key
           
-          aptly publish snapshot -passphrase $passphrase opendistroforelasticsearch
-
+          aptly publish snapshot --passphrase $passphrase opendistroforelasticsearch
 
 
 
