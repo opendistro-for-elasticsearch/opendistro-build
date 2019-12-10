@@ -86,10 +86,10 @@ jobs:
 
           echo "deb http://repo.aptly.info/ squeeze main" | sudo tee -a /etc/apt/sources.list.d/aptly.list
           sudo apt-get install -y gnupg1
-          sudo apt install gpgv1
+          sudo apt install -y gpgv1
           alias gpg=gpg1
-          
-          wget -qO - https://www.aptly.info/pubkey.txt | sudo apt-key add -
+          sudo apt-key adv --keyserver pool.sks-keyservers.net --recv-keys ED75B5A4483DA07C
+
           sudo apt-get update -y
           sudo apt-get install -y aptly
           aws s3 cp s3://opendistro-docs/github-actions/pgp-public-key .
