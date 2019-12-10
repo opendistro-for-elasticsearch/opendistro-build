@@ -44,8 +44,8 @@ jobs:
     needs: [build-es-artifacts]
     name: Build Kibana Artifacts
     runs-on: [ubuntu-latest]
-    container:
-        image: mayhem6788/jsenv:v3
+    #container:
+        #image: mayhem6788/jsenv:v3
     steps:
       - uses: actions/checkout@v1
       - name: Configure AWS Credentials
@@ -84,9 +84,8 @@ jobs:
         run: |
           #!/bin/bash -x
           echo "deb http://repo.aptly.info/ squeeze main" | sudo tee -a /etc/apt/sources.list.d/aptly.list
-          sudo apt-get install -y gnupg1
-          #sudo apt install -y gnupg2
-          #alias gpg=gpg2
+          sudo apt install -y gpgv1 gpgv2 gnupg1
+          alias gpg=gpg1
           
           wget -qO - https://www.aptly.info/pubkey.txt | sudo apt-key add -
           sudo apt-get update -y
