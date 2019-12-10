@@ -88,7 +88,7 @@ jobs:
           sudo apt-get install -y gnupg1
           sudo apt install -y gpgv1
           alias gpg=gpg1
-          sudo apt-key adv --keyserver pool.sks-keyservers.net --recv-keys ED75B5A4483DA07C
+          
 
           sudo apt-get update -y
           #sudo apt-get install -y aptly
@@ -105,11 +105,8 @@ jobs:
           #aptly snapshot create opendistroforelasticsearch from repo odfe-release
           #aptly snapshot list
           
+          sudo apt-key adv --keyserver pool.sks-keyservers.net --recv-keys ED75B5A4483DA07C
           gpg --import pgp-public-key
-          
-          sudo touch /home/runner/.gnupg/secring.gpg
-          sudo chmod 777 /home/runner/.gnupg/secring.gpg
-          
           gpg --keyring secring.gpg --allow-secret-key-import --import --batch --yes pgp-private-key
           echo "Printing Secret List"
           ls -ltr /home/runner/.gnupg/
