@@ -58,13 +58,37 @@ jobs:
         run: |
           #!/bin/bash -x
           cd kibana/linux_distributions 
-          sh generate-pkg.sh
-          rpm_artifact=`ls target/*.rpm`
-          deb_artifact=`ls target/*.deb`
-          tar_artifact=`ls target/*.tar.gz`
-          tar_checksum_artifact=`ls target/*.tar.gz.sha512`
-          aws s3 cp $rpm_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/rpms/opendistroforelasticsearch-kibana/
-          aws s3 cp $deb_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/debs/opendistroforelasticsearch-kibana/
-          aws s3 cp $tar_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistroforelasticsearch-kibana/
-          aws s3 cp $tar_checksum_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistroforelasticsearch-kibana/
+          #sh generate-pkg.sh
+          #rpm_artifact=`ls target/*.rpm`
+          #deb_artifact=`ls target/*.deb`
+          #tar_artifact=`ls target/*.tar.gz`
+          #tar_checksum_artifact=`ls target/*.tar.gz.sha512`
+          #aws s3 cp $rpm_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/rpms/opendistroforelasticsearch-kibana/
+          #aws s3 cp $deb_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/debs/opendistroforelasticsearch-kibana/
+          #aws s3 cp $tar_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistroforelasticsearch-kibana/
+          #aws s3 cp $tar_checksum_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistroforelasticsearch-kibana/
+          
+  sign-deb-artifacts:
+    needs: [build-es-artifacts, build-kibana-artifacts]
+    runs-on: [ubuntu-latest]
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Sign Deb Artifacts
+        run: |
+          #!/bin/bash -x
+          echo "deb http://repo.aptly.info/ squeeze main" | sudo tee -a /etc/apt/sources.list.d/aptly.list
+          sudo apt-get install -y gnupg1
+          sudo apt install -y gpgv1
+          alias gpg=gpg1 
+          
+          wget -qO - https://www.aptly.info/pubkey.txt | sudo apt-key add -
+          sudo apt-get update -y
+          sudo apt-get install -y aptly
+          
+          aptly repo create -distribution=stable -component=main odfe-release
 
