@@ -59,3 +59,28 @@ jobs:
           #docker tag $kibana_image_id opendistroforelasticsearch/opendistroforelasticsearch-kibana:$ODFE_VER
           #docker push opendistroforelasticsearch/opendistroforelasticsearch-kibana:$ODFE_VER
         
+  test-es-docker-image:
+    needs: [build-es-docker]
+    name: Test ES Docker Container
+    runs-on: [ubuntu-16.04]
+    steps:
+      - uses: actions/checkout@v1
+        with:
+          repository: rishabh6788/odfe-test
+          ref: master
+          token: ${{ secrets.GitHub_PAT }}
+      - name: Run Docker Container
+        run: |
+          docker run -d -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" opendistroforelasticsearch/opendistroforelasticsearch:1.2.1
+      - name: Run ES Tests
+        run: |
+          sleep 3m
+          cd ..
+          cd odfe-test
+          ls -ltr
+          cd odfe-test
+          sudo pip3 install pytest
+          sudo pip3 install requests
+          pytest
+           
+    
