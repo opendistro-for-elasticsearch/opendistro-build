@@ -106,7 +106,7 @@ jobs:
           #aptly snapshot list
           
           gpg --import pgp-public-key
-          gpg --import --batch --yes pgp-private-key
+          gpg --allow-secret-key-import --import --batch --yes pgp-private-key
           echo "Printing Secret List"
           ls -ltr /home/runner/.gnupg/
           #gpg --list-secret
