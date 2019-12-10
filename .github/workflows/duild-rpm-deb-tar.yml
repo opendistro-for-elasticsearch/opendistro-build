@@ -104,7 +104,7 @@ jobs:
           #aptly repo show -with-packages odfe-release
           #aptly snapshot create opendistroforelasticsearch from repo odfe-release
           #aptly snapshot list
-          sudo cat /home/runner/.gnupg/secring.gpg
+          sudo touch /home/runner/.gnupg/secring.gpg
           sudo chmod 777 /home/runner/.gnupg/secring.gpg
           
           gpg --import pgp-public-key
