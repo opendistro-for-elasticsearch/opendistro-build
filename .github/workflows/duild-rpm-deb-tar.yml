@@ -71,6 +71,8 @@ jobs:
   sign-deb-artifacts:
     #needs: [build-es-artifacts, build-kibana-artifacts]
     runs-on: [ubuntu-latest]
+    container:
+      image: opendistroforelasticsearch/base-ubuntu
     steps:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -82,13 +84,12 @@ jobs:
         env:
           passphrase: ${{ secrets.PASSPHRASE }}
         run: |
-          #!/bin/bash -x
 
           echo "deb http://repo.aptly.info/ squeeze main" | sudo tee -a /etc/apt/sources.list.d/aptly.list
           sudo apt-get install -y gnupg1
           sudo apt install -y gpgv1
           alias gpg=gpg1
-          
+          sudo apt-key adv --keyserver pool.sks-keyservers.net --recv-keys ED75B5A4483DA07C
 
           sudo apt-get update -y
           #sudo apt-get install -y aptly
@@ -105,11 +106,11 @@ jobs:
           #aptly snapshot create opendistroforelasticsearch from repo odfe-release
           #aptly snapshot list
           
-          sudo apt-key adv --keyserver pool.sks-keyservers.net --recv-keys ED75B5A4483DA07C
+          
           gpg --import pgp-public-key
-          gpg --keyring secring.gpg --allow-secret-key-import --import --batch --yes pgp-private-key
+          gpg --allow-secret-key-import --import pgp-private-key
           echo "Printing Secret List"
-          ls -ltr /home/runner/.gnupg/
+          ls -ltr ~/.gnupg/
           #gpg --list-secret
           
           #echo $passphrase | aptly publish snapshot -batch=true opendistroforelasticsearch
