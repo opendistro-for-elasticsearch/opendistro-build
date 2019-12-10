@@ -106,7 +106,7 @@ jobs:
           aptly snapshot list
           
           gpg --import pgp-public-key
-          gpg --allow-secret-key-import --import pgp-private-key
+          gpg --import pgp-private-key
           
           aptly publish snapshot -passphrase $passphrase opendistroforelasticsearch
 
