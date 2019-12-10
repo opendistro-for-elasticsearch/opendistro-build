@@ -69,7 +69,7 @@ jobs:
           #aws s3 cp $tar_checksum_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistroforelasticsearch-kibana/
           
   sign-deb-artifacts:
-    needs: [build-es-artifacts, build-kibana-artifacts]
+    #needs: [build-es-artifacts, build-kibana-artifacts]
     runs-on: [ubuntu-latest]
     steps:
       - name: Configure AWS Credentials
@@ -83,9 +83,10 @@ jobs:
           passphrase: ${{ secrets.PASSPHRASE }}
         run: |
           #!/bin/bash -x
-          export GPG_TTY=$(tty)
+
           echo "deb http://repo.aptly.info/ squeeze main" | sudo tee -a /etc/apt/sources.list.d/aptly.list
-          sudo apt install -y gpgv1 gnupg1
+          sudo apt-get install -y gnupg1
+          sudo apt install gpgv1
           alias gpg=gpg1
           
           wget -qO - https://www.aptly.info/pubkey.txt | sudo apt-key add -
