@@ -104,10 +104,11 @@ jobs:
           #aptly repo show -with-packages odfe-release
           #aptly snapshot create opendistroforelasticsearch from repo odfe-release
           #aptly snapshot list
-          ls -ltr /home/runner/.gnupg/
+          
           gpg --import pgp-public-key
           gpg --import --batch --yes pgp-private-key
           echo "Printing Secret List"
+          ls -ltr /home/runner/.gnupg/
           #gpg --list-secret
           
           #echo $passphrase | aptly publish snapshot -batch=true opendistroforelasticsearch
