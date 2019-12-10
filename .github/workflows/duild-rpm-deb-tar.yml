@@ -83,6 +83,7 @@ jobs:
           passphrase: ${{ secrets.PASSPHRASE }}
         run: |
           #!/bin/bash -x
+          export GPG_TTY=$(tty)
           echo "deb http://repo.aptly.info/ squeeze main" | sudo tee -a /etc/apt/sources.list.d/aptly.list
           sudo apt install -y gpgv1 gpgv2 gnupg1
           alias gpg=gpg1
