@@ -98,7 +98,7 @@ jobs:
           aptly repo create -distribution=stable -component=main odfe-release
           
           mkdir -p downloads/debs
-          #aws s3 sync s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/debs downloads/debs
+          aws s3 sync s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/debs downloads/debs
           aptly repo add odfe-release downloads
           
           #aptly repo show -with-packages odfe-release
@@ -108,7 +108,7 @@ jobs:
           gpg --import pgp-public-key
           gpg --import --no-tty --batch --yes pgp-private-key
           
-          #aptly publish snapshot -passphrase $passphrase opendistroforelasticsearch
+          aptly publish snapshot -passphrase $passphrase opendistroforelasticsearch
 
 
 
