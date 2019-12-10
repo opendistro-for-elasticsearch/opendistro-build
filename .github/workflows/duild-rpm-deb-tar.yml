@@ -79,6 +79,8 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
       - name: Sign Deb Artifacts
+        env:
+          passphrase: ${{ secrets.PASSPHRASE }}
         run: |
           #!/bin/bash -x
           echo "deb http://repo.aptly.info/ squeeze main" | sudo tee -a /etc/apt/sources.list.d/aptly.list
@@ -104,7 +106,8 @@ jobs:
           
           gpg1 --import pgp-public-key
           gpg1 --allow-secret-key-import --import pgp-private-key
-
+          
+          aptly publish snapshot -passphrase $passphrase opendistroforelasticsearch
 
 
 
