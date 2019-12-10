@@ -104,10 +104,12 @@ jobs:
           #aptly repo show -with-packages odfe-release
           #aptly snapshot create opendistroforelasticsearch from repo odfe-release
           #aptly snapshot list
+          
+          gpg --import pgp-public-key
+          
           sudo touch /home/runner/.gnupg/secring.gpg
           sudo chmod 777 /home/runner/.gnupg/secring.gpg
           
-          gpg --import pgp-public-key
           gpg --keyring secring.gpg --allow-secret-key-import --import --batch --yes pgp-private-key
           echo "Printing Secret List"
           ls -ltr /home/runner/.gnupg/
