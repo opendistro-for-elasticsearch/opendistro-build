@@ -74,7 +74,7 @@ jobs:
           docker run -d -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" opendistroforelasticsearch/opendistroforelasticsearch:1.2.1
       - name: Run ES Tests
         run: |
-          sleep 3m
+          sleep 1m
           cd ..
           cd odfe-test
           ls -ltr
