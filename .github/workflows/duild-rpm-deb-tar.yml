@@ -8,8 +8,8 @@ jobs:
   build-es-artifacts:
     name: Build ES Artifacts
     runs-on: ubuntu-latest
-    #container:
-      #image: opendistroforelasticsearch/multijava08101112-git:v1
+    container:
+      image: opendistroforelasticsearch/multijava08101112-git:v1
 
     steps:
     - uses: actions/checkout@v1
@@ -27,25 +27,25 @@ jobs:
         export JAVA_HOME=/openjdk12
         export PATH=$JAVA_HOME:$PATH
         cd elasticsearch/linux_distributions
-        #./gradlew buildDeb buildRpm --console=plain -Dbuild.snapshot=false -b ./build.gradle
-        #./opendistro-tar-build.sh
-        #tar_artifact=`ls tarfiles/*.tar.gz`
-        #tar_checksum_artifact=`ls tarfiles/*.tar.gz.sha512`
-        #rpm_artifact=`ls build/distributions/*.rpm`
-        #deb_artifact=`ls build/distributions/*.deb`
-        #aws s3 cp $rpm_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/rpms/opendistro-elasticsearch/
-        #aws s3 cp $deb_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/debs/opendistro-elasticsearch/
-        #aws s3 cp $tar_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistro-elasticsearch/
-        #aws s3 cp $tar_checksum_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistro-elasticsearch/
-        #aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/*"
+        ./gradlew buildDeb buildRpm --console=plain -Dbuild.snapshot=false -b ./build.gradle
+        ./opendistro-tar-build.sh
+        tar_artifact=`ls tarfiles/*.tar.gz`
+        tar_checksum_artifact=`ls tarfiles/*.tar.gz.sha512`
+        rpm_artifact=`ls build/distributions/*.rpm`
+        deb_artifact=`ls build/distributions/*.deb`
+        aws s3 cp $rpm_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/rpms/opendistro-elasticsearch/
+        aws s3 cp $deb_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/debs/opendistro-elasticsearch/
+        aws s3 cp $tar_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistro-elasticsearch/
+        aws s3 cp $tar_checksum_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistro-elasticsearch/
+        aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/*"
         echo "DEB, RPM and TAR creation for ES completed"
         
   build-kibana-artifacts:
     needs: [build-es-artifacts]
     name: Build Kibana Artifacts
     runs-on: [ubuntu-latest]
-    #container:
-        #image: mayhem6788/jsenv:v3
+    container:
+        image: mayhem6788/jsenv:v3
     steps:
       - uses: actions/checkout@v1
       - name: Configure AWS Credentials
@@ -58,18 +58,18 @@ jobs:
         run: |
           #!/bin/bash -x
           cd kibana/linux_distributions 
-          #sh generate-pkg.sh
-          #rpm_artifact=`ls target/*.rpm`
-          #deb_artifact=`ls target/*.deb`
-          #tar_artifact=`ls target/*.tar.gz`
-          #tar_checksum_artifact=`ls target/*.tar.gz.sha512`
-          #aws s3 cp $rpm_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/rpms/opendistroforelasticsearch-kibana/
-          #aws s3 cp $deb_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/debs/opendistroforelasticsearch-kibana/
-          #aws s3 cp $tar_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistroforelasticsearch-kibana/
-          #aws s3 cp $tar_checksum_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistroforelasticsearch-kibana/
+          sh generate-pkg.sh
+          rpm_artifact=`ls target/*.rpm`
+          deb_artifact=`ls target/*.deb`
+          tar_artifact=`ls target/*.tar.gz`
+          tar_checksum_artifact=`ls target/*.tar.gz.sha512`
+          aws s3 cp $rpm_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/rpms/opendistroforelasticsearch-kibana/
+          aws s3 cp $deb_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/debs/opendistroforelasticsearch-kibana/
+          aws s3 cp $tar_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistroforelasticsearch-kibana/
+          aws s3 cp $tar_checksum_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistroforelasticsearch-kibana/
           
   sign-deb-artifacts:
-    #needs: [build-es-artifacts, build-kibana-artifacts]
+    needs: [build-es-artifacts, build-kibana-artifacts]
     runs-on: [ubuntu-latest]
     container:
       image: opendistroforelasticsearch/base-ubuntu
@@ -114,6 +114,10 @@ jobs:
           #gpg --list-secret
           
           aptly publish snapshot -batch=true -passphrase=$passphrase opendistroforelasticsearch
+
+          aws s3 sync ~/.aptly/public/ s3://artifacts.opendistroforelasticsearch.amazon.com/staging/apt
+
+          aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/staging/apt/*"
 
 
 
