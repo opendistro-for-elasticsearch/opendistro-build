@@ -56,7 +56,7 @@ jobs:
           aws-region: us-east-1
       - name: Build Kibana tar, deb and rpm
         run: |
-          !/bin/bash -x
+          #!/bin/bash -x
           cd kibana/linux_distributions 
           sh generate-pkg.sh
           rpm_artifact=`ls target/*.rpm`
