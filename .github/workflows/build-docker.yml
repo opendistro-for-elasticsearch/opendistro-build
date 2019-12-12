@@ -2,7 +2,7 @@ name: Build ODFE Docker Image and Upload
 
 on:
   push:
-    branches-ignore:
+    branches:
       - master
 jobs:
   build-es-docker:

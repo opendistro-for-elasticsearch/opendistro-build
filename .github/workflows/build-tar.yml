@@ -19,7 +19,7 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
-    - name: Build tar, deb and rpm
+    - name: Build tar
       run: |
         #!/bin/bash -x
         set -e
@@ -51,13 +51,13 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
-      - name: Build Kibana tar, deb and rpm
+      - name: Build Kibana
         run: |
           #!/bin/bash -x
           cd kibana/linux_distributions 
-          sh generate-pkg.sh
-          rpm_artifact=`ls target/*.rpm`
-          tar_artifact=`ls target/*.tar.gz`
-          tar_checksum_artifact=`ls target/*.tar.gz.sha512`
+          #sh generate-pkg.sh
+          #rpm_artifact=`ls target/*.rpm`
+          #tar_artifact=`ls target/*.tar.gz`
+          #tar_checksum_artifact=`ls target/*.tar.gz.sha512`
           #aws s3 cp $tar_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistroforelasticsearch-kibana/
           #aws s3 cp $tar_checksum_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistroforelasticsearch-kibana/
