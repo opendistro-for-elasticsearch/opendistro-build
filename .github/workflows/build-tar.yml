@@ -64,26 +64,47 @@ jobs:
           
   test-odfe-tarball:
     needs: [build-es-artifacts]
-    name: Test ODFE Tarball
+    name: Run Tar Test
     runs-on: [ubuntu-16.04]
     steps:
       - uses: actions/checkout@v1
-      - name: Run ODFE Tarball
+      - uses: actions/checkout@v1
+        with:
+          repository: rishabh6788/odfe-test
+          ref: master
+          token: ${{ secrets.GitHub_PAT }}
+      - uses: actions/setup-java@v1
+        with:
+          java-version: '11.0.x'
+          java-package: jdk
+          architecture: x64
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Run Tar
         run: |
+          sudo pip3 install pytest
+          sudo pip3 install requests
+          
           cd elasticsearch/linux_distributions
           odfe_version=`../bin/version-info --od`
           echo $odfe_version
-          
-          curl https://d3g5vo6xdbdb9a.cloudfront.net/downloads/tarball/opendistro-elasticsearch/opendistroforelasticsearch-$odfe_version-.tar.gz -o opendistroforelasticsearch-$odfe_version.tar.gz
-          
+          cd $home
+    
+          aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistro-elasticsearch/opendistroforelasticsearch-$odfe_version.tar.gz .
+          ls -ltr
           tar -zxf opendistroforelasticsearch-$odfe_version.tar.gz
           cd opendistroforelasticsearch-$odfe_version
+          ls -ltr
           
-          ./opendistro-tar-install.sh
-          
-          sleep 30
-          sudo cat /var/log/elasticsearch/elasticsearch.log
-          curl -XGET https://localhost:9200 -u admin:admin --insecure
+          nohup ./opendistro-tar-install.sh &
+          sleep 1m
+
+          cd /home/runner/work/opendistro-build/odfe-test/odfe-test
+          pytest
           
           
           
