@@ -78,17 +78,12 @@ jobs:
           sleep 1m
 
           cd ..
-          echo `pwd`
           cd odfe-test
           ls -ltr
           cd odfe-test
           sudo pip3 install pytest
-          sudo pip3 install pytest-html
           sudo pip3 install requests
-          start_time=`date +%s`
-          report_file="odfe_test_run_${start_time}.html"
-          pytest --html=/home/runner/work/opendistro-build/report.html --self-contained-html
-          ls -ltr /home/runner/work/opendistro-build/
+          pytest
 
   test-alerting-plugin:
     needs: [build-es-docker]
@@ -109,16 +104,11 @@ jobs:
           sleep 1m
 
           cd ..
-          echo `pwd`
           cd odfe-test
           ls -ltr
           cd odfe-test
           sudo pip3 install pytest
-          sudo pip3 install pytest-html
           sudo pip3 install requests
-          start_time=`date +%s`
-          report_file="odfe_test_run_${start_time}.html"
-          pytest --html=/home/runner/work/opendistro-build/$report_file --self-contained-html
-          ls -ltr /home/runner/work/opendistro-build
+          pytest
            
     
