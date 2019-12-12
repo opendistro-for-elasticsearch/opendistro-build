@@ -83,15 +83,15 @@ jobs:
           ls -ltr
           cd odfe-test
           sudo pip3 install pytest
-          sudo pip install pytest-html
+          sudo pip3 install pytest-html
           sudo pip3 install requests
           start_time=`date +%s`
           report_file="odfe_test_run_${start_time}.html"
-          pytest --html=$report_file --self-contained-html
+          pytest --html=$report_file
 
   test-alerting-plugin:
     needs: [build-es-docker]
-    name: Test ES Docker Container
+    name: Test Alerting Plugin
     runs-on: [ubuntu-16.04]
     steps:
       - uses: actions/checkout@v1
@@ -117,7 +117,7 @@ jobs:
           sudo pip3 install requests
           start_time=`date +%s`
           report_file="odfe_test_run_${start_time}.html"
-          pytest --html=$report_file --self-contained-html
+          pytest --html=$report_file
           ls -ltr
            
     
