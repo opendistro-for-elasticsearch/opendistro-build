@@ -61,3 +61,35 @@ jobs:
           #tar_checksum_artifact=`ls target/*.tar.gz.sha512`
           #aws s3 cp $tar_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistroforelasticsearch-kibana/
           #aws s3 cp $tar_checksum_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistroforelasticsearch-kibana/
+          
+  test-odfe-tarball:
+    needs: [build-es-artifacts]
+    name: Test ODFE Tarball
+    runs-on: [ubuntu-16.04]
+    steps:
+      - uses: actions/checkout@v1
+      - name: Run ODFE Tarball
+        run: |
+          cd elasticsearch/linux_distributions
+          odfe_version=`../bin/version-info --od`
+          echo $odfe_version
+          
+          curl https://d3g5vo6xdbdb9a.cloudfront.net/downloads/tarball/opendistro-elasticsearch/opendistroforelasticsearch-$odfe_version-.tar.gz -o opendistroforelasticsearch-$odfe_version.tar.gz
+          
+          tar -zxf opendistroforelasticsearch-$odfe_version.tar.gz
+          cd opendistroforelasticsearch-$odfe_version
+          
+          ./opendistro-tar-install.sh
+          
+          sleep 30
+          sudo cat /var/log/elasticsearch/elasticsearch.log
+          curl -XGET https://localhost:9200 -u admin:admin --insecure
+          
+          
+          
+          
+          
+          
+          
+          
+          
