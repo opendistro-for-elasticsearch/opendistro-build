@@ -19,7 +19,7 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
-      - name: Build tar, deb and rpm
+      - name: Build deb
         run: |
           #!/bin/bash -x
           set -e
@@ -49,14 +49,14 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
-      - name: Build Kibana tar, deb and rpm
+      - name: Build Kibana deb
         run: |
           #!/bin/bash -x
           cd kibana/linux_distributions
-          sh generate-pkg.sh
-          deb_artifact=`ls target/*.deb`
-          ls -ltr target/
-          tar_checksum_artifact=`ls target/*.tar.gz.sha512`
+          #sh generate-pkg.sh
+          #deb_artifact=`ls target/*.deb`
+          #ls -ltr target/
+          #tar_checksum_artifact=`ls target/*.tar.gz.sha512`
           #aws s3 cp $deb_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/debs/opendistroforelasticsearch-kibana/
 
   sign-deb-artifacts:
@@ -110,47 +110,47 @@ jobs:
 
           #aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/staging/apt/*"
 
-    test-deb-artifacts:
-      needs: [sign-deb-artifacts]
-      runs-on: [ubuntu-16.04]
-      steps:
-        - uses: actions/checkout@v1
-          with:
-            repository: rishabh6788/odfe-test
-            ref: master
-            token: ${{ secrets.GitHub_PAT }}
-        - name: Run Debian Staging Distrubution
-          run: |
-            sleep 20
-            sudo sysctl -w vm.max_map_count=262144
+  test-deb-artifacts:
+    needs: [sign-deb-artifacts]
+    runs-on: [ubuntu-16.04]
+    steps:
+      - uses: actions/checkout@v1
+        with:
+          repository: rishabh6788/odfe-test
+          ref: master
+          token: ${{ secrets.GitHub_PAT }}
+      - name: Run Debian Staging Distrubution
+        run: |
+          sleep 20
+          sudo sysctl -w vm.max_map_count=262144
 
-            sudo add-apt-repository -y ppa:openjdk-r/ppa
-            sudo apt update -y
-            sudo apt install -y openjdk-11-jdk
-            sudo sudo apt install -y net-tools
+          sudo add-apt-repository -y ppa:openjdk-r/ppa
+          sudo apt update -y
+          sudo apt install -y openjdk-11-jdk
+          sudo sudo apt install -y net-tools
 
-            wget -qO - https://d3g5vo6xdbdb9a.cloudfront.net/GPG-KEY-opendistroforelasticsearch | sudo apt-key add -
-            echo "deb https://d3g5vo6xdbdb9a.cloudfront.net/staging/apt stable main" | sudo tee -a /etc/apt/sources.list.d/opendistroforelasticsearch.list
+          wget -qO - https://d3g5vo6xdbdb9a.cloudfront.net/GPG-KEY-opendistroforelasticsearch | sudo apt-key add -
+          echo "deb https://d3g5vo6xdbdb9a.cloudfront.net/staging/apt stable main" | sudo tee -a /etc/apt/sources.list.d/opendistroforelasticsearch.list
 
-            wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-7.3.2-amd64.deb
-            sudo dpkg -i elasticsearch-oss-7.3.2-amd64.deb
+          wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-7.3.2-amd64.deb
+          sudo dpkg -i elasticsearch-oss-7.3.2-amd64.deb
 
-            sudo apt-get -y update
-            sudo apt install -y opendistroforelasticsearch
+          sudo apt-get -y update
+          sudo apt install -y opendistroforelasticsearch
 
-            sudo /etc/init.d/elasticsearch start
+          sudo /etc/init.d/elasticsearch start
 
-            sleep 30
-            sudo ls -ltr /var/log/elasticsearch/
-            sudo cat /var/log/elasticsearch/elasticsearch.log
-            sudo netstat -natp
+          sleep 30
+          sudo ls -ltr /var/log/elasticsearch/
+          sudo cat /var/log/elasticsearch/elasticsearch.log
+          sudo netstat -natp
 
-        - name: Run ES Tests
-          run: |
-            cd ..
-            cd odfe-test
-            ls -ltr
-            cd odfe-test
-            sudo pip3 install pytest
-            sudo pip3 install requests
-            pytest
+      - name: Run ES Tests
+        run: |
+          cd ..
+          cd odfe-test
+          ls -ltr
+          cd odfe-test
+          sudo pip3 install pytest
+          sudo pip3 install requests
+          pytest
