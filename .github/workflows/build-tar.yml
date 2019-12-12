@@ -27,10 +27,10 @@ jobs:
         export JAVA_HOME=/openjdk12
         export PATH=$JAVA_HOME:$PATH
         cd elasticsearch/linux_distributions
-        ./opendistro-tar-build.sh
-        tar_artifact=`ls tarfiles/*.tar.gz`
-        ls -ltr tarfiles/
-        tar_checksum_artifact=`ls tarfiles/*.tar.gz.sha512`
+        #./opendistro-tar-build.sh
+        #tar_artifact=`ls tarfiles/*.tar.gz`
+        #ls -ltr tarfiles/
+        #tar_checksum_artifact=`ls tarfiles/*.tar.gz.sha512`
 
         #aws s3 cp $tar_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistro-elasticsearch/
         #aws s3 cp $tar_checksum_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistro-elasticsearch/
