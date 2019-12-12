@@ -87,7 +87,8 @@ jobs:
           sudo pip3 install requests
           start_time=`date +%s`
           report_file="odfe_test_run_${start_time}.html"
-          pytest --html=$report_file
+          pytest --html=/home/runner/work/opendistro-build/report.html
+          ls -ltr /home/runner/work/opendistro-build/
 
   test-alerting-plugin:
     needs: [build-es-docker]
@@ -117,7 +118,7 @@ jobs:
           sudo pip3 install requests
           start_time=`date +%s`
           report_file="odfe_test_run_${start_time}.html"
-          pytest --html=$report_file
-          ls -ltr
+          pytest --html=/home/runner/work/opendistro-build/$report_file
+          ls -ltr /home/runner/work/opendistro-build
            
     
