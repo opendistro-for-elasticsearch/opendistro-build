@@ -20,18 +20,18 @@ jobs:
         work_dir=`pwd`
         echo $work_dir
         cd elasticsearch/docker
-        make build
+        #make build
         
         echo "******************************"
         echo "Login to Docker"
         echo "******************************"
-        docker login --username $DOCKER_USER --password $DOCKER_PASS
-        docker images|grep "amazon/opendistro-for-elasticsearch" > docker_id.out
-        image_id=`awk -F' ' '{print $3}' docker_id.out`
-        echo "Docker Id is $image_id"
-        docker tag $image_id opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER
-        docker images
-        docker push opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER
+        #docker login --username $DOCKER_USER --password $DOCKER_PASS
+        #docker images|grep "amazon/opendistro-for-elasticsearch" > docker_id.out
+        #image_id=`awk -F' ' '{print $3}' docker_id.out`
+        #echo "Docker Id is $image_id"
+        #docker tag $image_id opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER
+        #docker images
+        #docker push opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER
   
   build-kibana-docker:
     needs: [build-es-docker]
