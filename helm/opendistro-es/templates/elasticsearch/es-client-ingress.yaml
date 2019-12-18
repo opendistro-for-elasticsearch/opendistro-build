@@ -1,0 +1,48 @@
+# Copyright 2019 Viasat, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License").
+# You may not use this file except in compliance with the License.
+# A copy of the License is located at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# or in the "license" file accompanying this file. This file is distributed
+# on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+# express or implied. See the License for the specific language governing
+# permissions and limitations under the License.
+
+{{- if and .Values.elasticsearch.client.ingress.enabled .Values.elasticsearch.client.enabled }}
+{{ $fullName := printf "%s-%s"  (include "opendistro-es.fullname" .) "client-service" }}
+{{ $ingressPath := .Values.elasticsearch.client.ingress.path }}
+kind: Ingress
+apiVersion: extensions/v1beta1
+metadata:
+  name: {{ $fullName }}
+  labels:
+{{ include "opendistro-es.labels.standard" . | indent 4 }}
+{{- with .Values.elasticsearch.client.ingress.annotations }}
+  annotations:
+{{ toYaml . | indent 4 }}
+{{- end }}
+spec:
+{{- if .Values.elasticsearch.client.ingress.tls }}
+  tls:
+  {{- range .Values.elasticsearch.client.ingress.tls }}
+    - hosts:
+      {{- range .hosts }}
+        - {{ . | quote }}
+      {{- end }}
+      secretName: {{ .secretName }}
+  {{- end }}
+{{- end }}
+  rules:
+  {{- range .Values.elasticsearch.client.ingress.hosts }}
+    - host: {{ . | quote }}
+      http:
+        paths:
+          - path: {{ $ingressPath }}
+            backend:
+              serviceName: {{ $fullName }}
+              servicePort: http
+  {{- end }}
+{{- end }}

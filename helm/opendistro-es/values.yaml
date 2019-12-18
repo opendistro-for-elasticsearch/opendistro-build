@@ -1,0 +1,358 @@
+# Copyright 2019 Viasat, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License").
+# You may not use this file except in compliance with the License.
+# A copy of the License is located at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# or in the "license" file accompanying this file. This file is distributed
+# on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+# express or implied. See the License for the specific language governing
+# permissions and limitations under the License.
+
+kibana:
+  enabled: true
+  image: amazon/opendistro-for-elasticsearch-kibana
+  imageTag: 1.3.0
+  replicas: 1
+  port: 5601
+  externalPort: 443
+  resources:
+    limits:
+      cpu: 2500m
+      memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 512Mi
+  readinessProbe: []
+  livenessProbe: []
+
+  elasticsearchAccount:
+    secret: ""
+    keyPassphrase:
+      enabled: false
+
+  extraEnvs: []
+
+  ssl:
+    kibana:
+      enabled: false
+      existingCertSecret:
+    elasticsearch:
+      enabled: false
+      existingCertSecret:
+
+
+
+  configDirectory: "/usr/share/kibana/config"
+  certsDirectory: "/usr/share/kibana/certs"
+
+  ingress:
+    enabled: false
+    annotations: {}
+      # kubernetes.io/ingress.class: nginx
+      # kubernetes.io/tls-acme: "true"
+    labels: {}
+    path: /
+    hosts:
+      - chart-example.local
+    tls: []
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - chart-example.local
+
+  service:
+    type: ClusterIP
+    annotations: {}
+
+  config: {}
+    ## Default Kibana configuration from kibana-docker.
+    # server.name: kibana
+    # server.host: "0"
+
+    ## Replace with Elasticsearch DNS name picked during Service deployment
+    # elasticsearch.hosts: ${ELASTIC_URL}
+    # elasticsearch.requestTimeout: 360000
+
+    ## Kibana TLS Config
+    # server.ssl.enabled: true
+    # server.ssl.key: /usr/share/kibana/certs/kibana-key.pem
+    # server.ssl.certificate: /usr/share/kibana/certs/kibana-crt.pem
+    # elasticsearch.ssl.certificateAuthorities: /usr/share/kibana/certs/kibana-root-ca.pem
+
+    # opendistro_security.cookie.secure: true
+    # opendistro_security.cookie.password: ${COOKIE_PASS}
+
+
+
+  ## Node labels for pod assignment
+  ## ref: https://kubernetes.io/docs/user-guide/node-selection/
+  #
+  nodeSelector: {}
+
+  ## Tolerations for pod assignment
+  ## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+  ##
+  tolerations: []
+
+
+  serviceAccount:
+    # Specifies whether a ServiceAccount should be created
+    create: true
+    # The name of the ServiceAccount to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name:
+
+
+global:
+  clusterName: elasticsearch
+
+  psp:
+    create: true
+
+  rbac:
+    enabled: true
+  ## Optionally specify an array of imagePullSecrets.
+  ## Secrets must be manually created in the namespace.
+  # imagePullSecrets:
+  #   - myRegistryKeySecretName
+
+
+elasticsearch:
+  ## Used when deploying hot/warm architecture. Allows second aliased deployment to find cluster.
+  ## Default {{ template opendistro-es.fullname }}-discovery.
+  discoveryOverride: ""
+  securityConfig:
+    enabled: true
+    path: "/usr/share/elasticsearch/plugins/opendistro_security/securityconfig"
+    actionGroupsSecret:
+    configSecret:
+    internalUsersSecret:
+    rolesSecret:
+    rolesMappingSecret:
+    tenantsSecret:
+
+  extraEnvs: []
+
+  initContainer:
+    image: busybox
+    imageTag: 1.27.2
+
+  ssl:
+    transport:
+      enabled: false
+      existingCertSecret:
+    rest:
+      enabled: false
+      existingCertSecret:
+    admin:
+      enabled: false
+      existingCertSecret:
+
+  master:
+    enabled: true
+    replicas: 3
+    updateStrategy: "RollingUpdate"
+    nodeAffinity: {}
+    storageClassName: gp2-encrypted
+    storage: 50Gi
+    resources:
+      limits:
+        cpu: 1
+        memory: 1024Mi
+      requests:
+        cpu: 200m
+        memory: 1024Mi
+    javaOpts: "-Xms512m -Xmx512m"
+    podDisruptionBudget:
+      enabled: false
+      minAvailable: 1
+    tolerations: []
+    readinessProbe: []
+    livenessProbe:
+      tcpSocket:
+        port: transport
+      initialDelaySeconds: 60
+      periodSeconds: 10
+    nodeSelector: {}
+    podAnnotations: {}
+
+  data:
+    enabled: true
+    replicas: 3
+    updateStrategy: "RollingUpdate"
+    nodeAffinity: {}
+    storageClassName: gp2-encrypted
+    storage: 100Gi
+    resources:
+      limits:
+        cpu: 1
+        memory: 1024Mi
+      requests:
+        cpu: 200m
+        memory: 1024Mi
+    javaOpts: "-Xms512m -Xmx512m"
+    podDisruptionBudget:
+      enabled: false
+      minAvailable: 1
+    tolerations: []
+    readinessProbe: []
+    livenessProbe:
+      tcpSocket:
+        port: transport
+      initialDelaySeconds: 60
+      periodSeconds: 10
+    nodeSelector: {}
+    podAnnotations: {}
+
+  client:
+    enabled: true
+    service:
+      type: ClusterIP
+      annotations: {}
+        # # Defined ELB backend protocol as HTTPS to allow connection to Elasticsearch API
+        # service.beta.kubernetes.io/aws-load-balancer-backend-protocol: https
+
+        # # ARN of ACM certificate registered to the deployed ELB for handling connections over TLS
+        # # ACM certificate should be issued to the DNS hostname defined earlier (elk.sec.example.com)
+        # service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "arn:aws:acm:us-east-1:111222333444:certificate/c69f6022-b24f-43d9-b9c8-dfe288d9443d"
+        # service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "https"
+
+        # service.beta.kubernetes.io/aws-load-balancer-connection-draining-enabled: "true"
+        # service.beta.kubernetes.io/aws-load-balancer-connection-draining-timeout: "60"
+        # service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+
+        # # Annotation to create internal only ELB
+        # service.beta.kubernetes.io/aws-load-balancer-internal: 0.0.0.0/0
+    replicas: 2
+    javaOpts: "-Xms512m -Xmx512m"
+    nodeAffinity: {}
+    ingress:
+      enabled: true
+      annotations: {}
+        # kubernetes.io/ingress.class: nginx
+        # kubernetes.io/tls-acme: "true"
+      labels: {}
+      path: /
+      hosts:
+        - chart-example.local
+      tls: []
+      #  - secretName: chart-example-tls
+      #    hosts:
+      #      - chart-example.local
+    resources:
+      limits:
+        cpu: 1
+        memory: 1024Mi
+      requests:
+        cpu: 200m
+        memory: 1024Mi
+    podDisruptionBudget:
+      enabled: false
+      minAvailable: 1
+    tolerations: []
+    readinessProbe: []
+    livenessProbe:
+      tcpSocket:
+        port: transport
+      initialDelaySeconds: 60
+      periodSeconds: 10
+    nodeSelector: {}
+    podAnnotations: {}
+
+  config: {}
+    ## Example Config
+    # opendistro_security.allow_unsafe_democertificates: false
+    # opendistro_security.allow_default_init_securityindex: true
+    # opendistro_security.audit.type: internal_elasticsearch
+    # opendistro_security.enable_snapshot_restore_privilege: true
+    # opendistro_security.check_snapshot_restore_write_privileges: true
+    # cluster.routing.allocation.disk.threshold_enabled: false
+    # opendistro_security.audit.config.disabled_rest_categories: NONE
+    # opendistro_security.audit.config.disabled_transport_categories: NONE
+    # cluster:
+    #   name: ${CLUSTER_NAME}
+    # node:
+    #   master: ${NODE_MASTER}
+    #   data: ${NODE_DATA}
+    #   name: ${NODE_NAME}
+    #   ingest: ${NODE_INGEST}
+    #   max_local_storage_nodes: 1
+    #   attr.box_type: hot
+
+    # processors: ${PROCESSORS:1}
+
+    # network.host: ${NETWORK_HOST}
+
+    # thread_pool.bulk.queue_size: 800
+
+    # path:
+    #   data: /usr/share/elasticsearch/data
+    #   logs: /usr/share/elasticsearch/logs
+
+    # http:
+    #   enabled: ${HTTP_ENABLE}
+    #   compression: true
+
+    # discovery:
+    #   zen:
+    #     ping.unicast.hosts: ${DISCOVERY_SERVICE}
+    #     minimum_master_nodes: ${NUMBER_OF_MASTERS}
+
+    # # TLS Configuration Transport Layer
+    # opendistro_security.ssl.transport.pemcert_filepath: elk-transport-crt.pem
+    # opendistro_security.ssl.transport.pemkey_filepath: elk-transport-key.pem
+    # opendistro_security.ssl.transport.pemtrustedcas_filepath: elk-transport-root-ca.pem
+    # opendistro_security.ssl.transport.enforce_hostname_verification: false
+
+    # # TLS Configuration REST Layer
+    # opendistro_security.ssl.http.enabled: true
+    # opendistro_security.ssl.http.pemcert_filepath: elk-rest-crt.pem
+    # opendistro_security.ssl.http.pemkey_filepath: elk-rest-key.pem
+    # opendistro_security.ssl.http.pemtrustedcas_filepath: elk-rest-root-ca.pem
+
+  log4jConfig: ""
+
+  loggingConfig:
+    ## Default config
+    # you can override this using by setting a system property, for example -Des.logger.level=DEBUG
+    es.logger.level: INFO
+    rootLogger: ${es.logger.level}, console
+    logger:
+      # log action execution errors for easier debugging
+      action: DEBUG
+      # reduce the logging for aws, too much is logged under the default INFO
+      com.amazonaws: WARN
+    appender:
+      console:
+        type: console
+        layout:
+          type: consolePattern
+          conversionPattern: "[%d{ISO8601}][%-5p][%-25c] %m%n"
+
+  transportKeyPassphrase:
+    enabled: false
+    passPhrase:
+
+  sslKeyPassphrase:
+    enabled: false
+    passPhrase:
+
+  maxMapCount: 262144
+
+  image: amazon/opendistro-for-elasticsearch
+  imageTag: 1.3.0
+
+  configDirectory: /usr/share/elasticsearch/config
+
+  serviceAccount:
+    # Specifies whether a ServiceAccount should be created
+    create: true
+    # The name of the ServiceAccount to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name:
+
+
+nameOverride: ""
+fullnameOverride: ""
