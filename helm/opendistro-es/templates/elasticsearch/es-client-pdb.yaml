@@ -29,5 +29,5 @@ spec:
   selector:
     matchLabels:
       app: {{ template "opendistro-es.fullname" . }}
-      role: client
+      role: {{ .Values.elasticsearch.selectorOverride | default "client" | quote }}
 {{- end }}

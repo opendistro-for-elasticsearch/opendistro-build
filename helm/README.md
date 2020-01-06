@@ -426,6 +426,11 @@ It is then down to the business use-case to decide how data is routed to either 
 
 For supporting automated migration of the data, use the [Elasticsearch Curator](https://github.com/helm/charts/tree/master/stable/elasticsearch-curator)
 
+#### Client.selectorOverride Explanation
+To coincide with the [Hot/Warm Architecture](#hotwarm-architectures), another elasticsearch chart dependency may be added for dedicated Kibana clients to manage queries (separate from the ingestion clients). 
+
+By default, these clients will be added and load balanced via the "client" service. This override allows a separate set of dedicated clients to be deployed for different purposes (E.G. Kibana querying)
+
 #### logging.yml Config
 All values defined under `elasticsearch.loggingConfig` will be converted to yaml and mounted into the config directory.
 
@@ -515,6 +520,7 @@ The following table lists the configurable parameters of the opendistro elastics
 | `elasticsearch.client.ingress.labels`                     | Elasticsearch clients Ingress labels                                                                                                                     | `{}`                                                                    |
 | `elasticsearch.client.livenessProbe`                      | Configuration for the [livenessProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/)                     | `[]`                                                                    |
 | `elasticsearch.client.readinessProbe`                     | Configuration for the [readinessProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/)                    | `[]`                                                                    |
+| `elasticsearch.client.selectorOverride`                   | Override for selector on client. Explained [here](#clientselectoroverride-explaination)                                                                  | `""`                                                                  |
 | `elasticsearch.client.podDisruptionBudget.enabled`        | If true, create a disruption budget for elasticsearch client                                                                                             | `false`                                                                 |
 | `elasticsearch.client.podDisruptionBudget.minAvailable`   | Minimum number / percentage of pods that should remain scheduled                                                                                         | `1`                                                                     |
 | `elasticsearch.client.podDisruptionBudget.maxUnavailable` | Maximum number / percentage of pods that should remain scheduled                                                                                         | `""`                                                                    |

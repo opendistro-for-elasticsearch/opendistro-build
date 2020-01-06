@@ -260,7 +260,8 @@ elasticsearch:
       periodSeconds: 10
     nodeSelector: {}
     podAnnotations: {}
-
+    selectorOverride: ""
+  
   config: {}
     ## Example Config
     # opendistro_security.allow_unsafe_democertificates: false

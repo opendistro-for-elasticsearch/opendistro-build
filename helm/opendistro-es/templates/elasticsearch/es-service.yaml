@@ -20,7 +20,7 @@ metadata:
 {{ toYaml .Values.elasticsearch.client.service.annotations | indent 4 }}
   labels:
 {{ include "opendistro-es.labels.standard" . | indent 4 }}
-    role: client
+    role: {{ .Values.elasticsearch.selectorOverride | default "client" | quote }}
   name: {{ template "opendistro-es.fullname" . }}-client-service
   namespace: {{ .Release.Namespace }}
 spec:
@@ -32,6 +32,6 @@ spec:
     - name: metrics
       port: 9600
   selector:
-    role: client
+    role: {{ .Values.elasticsearch.selectorOverride | default "client" | quote }}
   type: {{ .Values.elasticsearch.client.service.type }}
 {{- end }}

@@ -18,7 +18,7 @@ kind: Deployment
 metadata:
   labels:
 {{ include "opendistro-es.labels.standard" . | indent 4 }}
-    role: client
+    role: {{ .Values.elasticsearch.selectorOverride | default "client" | quote }}
   name: {{ template "opendistro-es.fullname" . }}-client
   namespace: {{ .Release.Namespace }}
 spec:
@@ -27,7 +27,7 @@ spec:
     metadata:
       labels:
 {{ include "opendistro-es.labels.standard" . | indent 8 }}
-        role: client
+        role: {{ .Values.elasticsearch.selectorOverride | default "client" | quote }}
       annotations:
         {{/* This forces a restart if the secret config has changed */}}
         {{- if .Values.elasticsearch.config }}
@@ -56,7 +56,7 @@ spec:
                 topologyKey: "kubernetes.io/hostname"
                 labelSelector:
                   matchLabels:
-                    role: client
+                    role: {{ .Values.elasticsearch.selectorOverride | default "client" | quote }}
       {{- with .Values.elasticsearch.client.nodeAffinity }}
         nodeAffinity:
 {{ toYaml . | indent 10 }}
@@ -88,7 +88,7 @@ spec:
             fieldRef:
               fieldPath: metadata.name
         - name: discovery.seed_hosts
-          value: {{ template "opendistro-es.fullname" . }}-discovery
+          value: {{ .Values.elasticsearch.discoveryOverride | default (printf "%s-discovery" (include "opendistro-es.fullname" .)) | quote }}
         - name: KUBERNETES_NAMESPACE
           valueFrom:
             fieldRef:
