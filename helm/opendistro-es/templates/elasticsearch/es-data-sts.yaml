@@ -64,7 +64,7 @@ spec:
           privileged: true
       - name: fixmount
         command: [ 'sh', '-c', 'chown -R 1000:1000 /usr/share/elasticsearch/data' ]
-        image: busybox
+        image: {{ .Values.elasticsearch.initContainer.image }}:{{ .Values.elasticsearch.initContainer.imageTag }}
         volumeMounts:
           - mountPath: /usr/share/elasticsearch/data
             name: data
