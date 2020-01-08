@@ -12,7 +12,7 @@
 # permissions and limitations under the License.
 
 {{- if .Values.global.psp.create }}
-apiVersion: extensions/v1beta1
+apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
   labels:
