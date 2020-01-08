@@ -23,6 +23,10 @@ metadata:
   namespace: {{ .Release.Namespace }}
 spec:
   replicas: {{ .Values.elasticsearch.master.replicas }}
+  selector:
+    matchLabels:
+{{ include "opendistro-es.labels.standard" . | indent 6 }}
+      role: master
   updateStrategy:
     type: {{ .Values.elasticsearch.master.updateStrategy }}
   serviceName: {{ template "opendistro-es.fullname" . }}-discovery

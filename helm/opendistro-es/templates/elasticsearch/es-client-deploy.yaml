@@ -23,6 +23,10 @@ metadata:
   namespace: {{ .Release.Namespace }}
 spec:
   replicas: {{ .Values.elasticsearch.client.replicas }}
+  selector:
+    matchLabels:
+{{ include "opendistro-es.labels.standard" . | indent 6 }}
+      role: client
   template:
     metadata:
       labels:
