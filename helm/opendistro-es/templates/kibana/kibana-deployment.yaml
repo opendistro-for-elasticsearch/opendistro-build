@@ -31,7 +31,6 @@ spec:
       labels:
 {{ include "opendistro-es.labels.standard" . | indent 8 }}
         role: kibana
-        app: {{ template "opendistro-es.fullname" . }}-kibana
       annotations:
         {{/* This forces a restart if the secret config has changed */}}
         {{- if .Values.kibana.config }}
