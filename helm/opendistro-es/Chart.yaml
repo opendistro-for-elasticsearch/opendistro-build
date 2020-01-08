@@ -11,6 +11,7 @@
 # express or implied. See the License for the specific language governing
 # permissions and limitations under the License.
 
+apiVersion: v1
 appVersion: 1.0.0
 description: 'Open Distro for Elasticsearch'
 engine: gotpl
