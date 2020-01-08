@@ -68,6 +68,7 @@ spec:
         volumeMounts:
           - mountPath: /usr/share/elasticsearch/data
             name: data
+            subPath: {{ .Values.elasticsearch.data.persistence.subPath }}
       # Weighted anti-affinity to disallow deploying client node to the same worker node as master node
       affinity:
         podAntiAffinity:
@@ -135,6 +136,7 @@ spec:
         volumeMounts:
         - mountPath: /usr/share/elasticsearch/data
           name: data
+          subPath: {{ .Values.elasticsearch.data.persistence.subPath }}
         {{- if .Values.elasticsearch.config }}
         - mountPath: {{ .Values.elasticsearch.configDirectory }}/elasticsearch.yml
           name: config
@@ -200,13 +202,38 @@ spec:
         secret:
           secretName: {{ .Values.elasticsearch.ssl.admin.existingCertSecret }}
       {{- end }}
+      {{- if not .Values.elasticsearch.data.persistence.enabled }}
+      - name: "data"
+        emptyDir: {}
+      {{- else }}
+      {{- if .Values.elasticsearch.data.persistence.existingClaim }}
+      - name: "data"
+        persistentVolumeClaim:
+          claimName: {{ .Values.elasticsearch.data.persistence.existingClaim }}
+      {{- end }}
+      {{- end }}
+  {{- if and .Values.elasticsearch.data.persistence.enabled (not .Values.elasticsearch.data.persistence.existingClaim) }}
   volumeClaimTemplates:
   - metadata:
       name: data
+      annotations:
+      {{- range $key, $value := .Values.elasticsearch.data.persistence.annotations }}
+        {{ $key }}: {{ $value }}
+      {{- end }}
     spec:
-      accessModes: [ ReadWriteOnce ]
-      storageClassName: {{ .Values.elasticsearch.data.storageClassName }}
+      accessModes:
+      {{- range .Values.elasticsearch.data.persistence.accessModes }}
+        - {{ . | quote }}
+      {{- end }}
       resources:
         requests:
-          storage: {{ .Values.elasticsearch.data.storage }}
+          storage: {{ .Values.elasticsearch.data.persistence.size | quote }}
+    {{- if .Values.elasticsearch.data.persistence.storageClass }}
+    {{- if (eq "-" .Values.elasticsearch.data.persistence.storageClass) }}
+      storageClassName: ""
+    {{- else }}
+      storageClassName: "{{ .Values.elasticsearch.data.persistence.storageClass }}"
+    {{- end }}
+    {{- end }}
+  {{- end }}
 {{- end }}
