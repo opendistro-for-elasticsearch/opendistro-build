@@ -69,20 +69,10 @@ spec:
           - mountPath: /usr/share/elasticsearch/data
             name: data
             subPath: {{ .Values.elasticsearch.data.persistence.subPath }}
-      # Weighted anti-affinity to disallow deploying client node to the same worker node as master node
+    {{- with .Values.elasticsearch.data.affinity }}
       affinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 1
-            podAffinityTerm:
-              topologyKey: "kubernetes.io/hostname"
-              labelSelector:
-                matchLabels:
-                  role: data
-      {{- with .Values.elasticsearch.data.nodeAffinity }}
-        nodeAffinity:
-{{ toYaml . | indent 10 }}
-      {{- end }}
+{{- toYaml . | nindent 8 }}
+    {{- end }}
       serviceAccountName: {{ template "opendistro-es.elasticsearch.serviceAccountName" . }}
       containers:
       - name: elasticsearch

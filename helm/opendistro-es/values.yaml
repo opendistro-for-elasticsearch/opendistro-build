@@ -96,6 +96,7 @@ kibana:
   ##
   tolerations: []
 
+  affinity: {}
 
   serviceAccount:
     # Specifies whether a ServiceAccount should be created
@@ -154,7 +155,6 @@ elasticsearch:
     enabled: true
     replicas: 3
     updateStrategy: "RollingUpdate"
-    nodeAffinity: {}
 
     ## Enable persistence using Persistent Volume Claims
     ## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
@@ -196,7 +196,6 @@ elasticsearch:
     podDisruptionBudget:
       enabled: false
       minAvailable: 1
-    tolerations: []
     readinessProbe: []
     livenessProbe:
       tcpSocket:
@@ -204,13 +203,21 @@ elasticsearch:
       initialDelaySeconds: 60
       periodSeconds: 10
     nodeSelector: {}
+    tolerations: []
+    # Anti-affinity to disallow deploying client and master nodes on the same worker node
+    affinity: {}
+    #  podAntiAffinity:
+    #    requiredDuringSchedulingIgnoredDuringExecution:
+    #      - topologyKey: "kubernetes.io/hostname"
+    #        labelSelector:
+    #          matchLabels:
+    #            role: master
     podAnnotations: {}
 
   data:
     enabled: true
     replicas: 3
     updateStrategy: "RollingUpdate"
-    nodeAffinity: {}
 
     ## Enable persistence using Persistent Volume Claims
     ## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
@@ -252,7 +259,6 @@ elasticsearch:
     podDisruptionBudget:
       enabled: false
       minAvailable: 1
-    tolerations: []
     readinessProbe: []
     livenessProbe:
       tcpSocket:
@@ -260,6 +266,17 @@ elasticsearch:
       initialDelaySeconds: 60
       periodSeconds: 10
     nodeSelector: {}
+    tolerations: []
+    # Anti-affinity to disallow deploying client and master nodes on the same worker node
+    affinity: {}
+    #  podAntiAffinity:
+    #    preferredDuringSchedulingIgnoredDuringExecution:
+    #      - weight: 1
+    #        podAffinityTerm:
+    #          topologyKey: "kubernetes.io/hostname"
+    #          labelSelector:
+    #            matchLabels:
+    #              role: data
     podAnnotations: {}
 
   client:
@@ -283,7 +300,6 @@ elasticsearch:
         # service.beta.kubernetes.io/aws-load-balancer-internal: 0.0.0.0/0
     replicas: 2
     javaOpts: "-Xms512m -Xmx512m"
-    nodeAffinity: {}
     ingress:
       enabled: true
       annotations: {}
@@ -307,7 +323,6 @@ elasticsearch:
     podDisruptionBudget:
       enabled: false
       minAvailable: 1
-    tolerations: []
     readinessProbe: []
     livenessProbe:
       tcpSocket:
@@ -315,6 +330,17 @@ elasticsearch:
       initialDelaySeconds: 60
       periodSeconds: 10
     nodeSelector: {}
+    tolerations: []
+    # Weighted anti-affinity to disallow deploying client node to the same worker node as master node
+    affinity: {}
+    #  podAntiAffinity:
+    #    preferredDuringSchedulingIgnoredDuringExecution:
+    #      - weight: 1
+    #        podAffinityTerm:
+    #          topologyKey: "kubernetes.io/hostname"
+    #          labelSelector:
+    #            matchLabels:
+    #              role: client
     podAnnotations: {}
 
   config: {}

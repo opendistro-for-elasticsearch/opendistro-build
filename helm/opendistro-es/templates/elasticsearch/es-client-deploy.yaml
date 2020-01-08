@@ -51,20 +51,10 @@ spec:
       nodeSelector:
 {{ toYaml . | indent 8 }}
     {{- end }}
-      # Weighted anti-affinity to disallow deploying client node to the same worker node as master node
+    {{- with .Values.elasticsearch.client.affinity }}
       affinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 1
-              podAffinityTerm:
-                topologyKey: "kubernetes.io/hostname"
-                labelSelector:
-                  matchLabels:
-                    role: client
-      {{- with .Values.elasticsearch.client.nodeAffinity }}
-        nodeAffinity:
-{{ toYaml . | indent 10 }}
-      {{- end }}
+{{- toYaml . | nindent 8 }}
+    {{- end }}
       initContainers:
       - name: init-sysctl
         image: {{ .Values.elasticsearch.initContainer.image }}:{{ .Values.elasticsearch.initContainer.imageTag }}
