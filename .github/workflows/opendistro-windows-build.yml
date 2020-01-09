@@ -27,7 +27,7 @@ jobs:
         echo inside container
         ls -ltr
         echo $JAVA_HOME
-        echo java --version
+        echo `java --version`
       #  cd elasticsearch/linux_distributions
        # ./opendistro-windows-build.sh
         
