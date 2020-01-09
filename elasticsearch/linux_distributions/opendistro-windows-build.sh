@@ -15,7 +15,7 @@ aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball
 echo after downloading tar to TARGET_DIR
 ls -ltr $TARGET_DIR
 #Untar the built tar artifact
-tar -vxzf $TARGET_DIR/$PACKAGE-$OD_VERSION.tar.gz
+tar -vxzf $TARGET_DIR/$PACKAGE-$OD_VERSION.tar.gz --directory $TARGET_DIR
 rm -rf $TARGET_DIR/*.tar.gz
 echo content after untarring inside TARGET_DIR
 ls -ltr $TARGET_DIR
