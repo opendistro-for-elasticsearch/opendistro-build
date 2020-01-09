@@ -15,7 +15,7 @@ aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball
 echo after downloading tar to TARGET_DIR
 ls -ltr $TARGET_DIR
 #Untar the built tar artifact
-tar -vxzf $TARGET_DIR/$PACKAGE-$OD_VERSION.tar.gz --directory $TARGET_DIR
+tar -xzf $TARGET_DIR/$PACKAGE-$OD_VERSION.tar.gz --directory $TARGET_DIR
 rm -rf $TARGET_DIR/*.tar.gz
 echo content after untarring inside TARGET_DIR
 ls -ltr $TARGET_DIR
@@ -32,7 +32,8 @@ BAT_FILES=`ls $ROOT/elasticsearch-$ES_VERSION/bin/*.bat`
 cp $BAT_FILES $TARGET_DIR/$PACKAGE-$OD_VERSION/bin
 #ls -ltr $TARGET_DIR/$PACKAGE-$OD_VERSION/bin
 rm -rf $ROOT/elasticsearch-oss-$ES_VERSION-windows-x86_64
-
+echo inside bin of es
+ls -ltr $TARGET_DIR/$PACKAGE-$OD_VERSION/bin
 #Download install4j software
 wget https://download-gcdn.ej-technologies.com/install4j/install4j_unix_4_2_8.tar.gz -P $ROOT
 #Untar
