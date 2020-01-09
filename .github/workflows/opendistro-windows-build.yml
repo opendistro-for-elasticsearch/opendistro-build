@@ -30,6 +30,8 @@ jobs:
         ./opendistro-tar-build.sh
     - name: Build exe
       run: |
+        export JAVA_HOME=/openjdk12
+        export PATH=$JAVA_HOME:$PATH
         pwd
         cd elasticsearch/linux_distributions
         ./opendistro-windows-build.sh
