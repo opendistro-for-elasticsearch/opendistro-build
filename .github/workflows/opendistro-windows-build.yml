@@ -23,7 +23,5 @@ jobs:
         export JAVA_HOME=/openjdk12
         export PATH=$JAVA_HOME:$PATH
         cd elasticsearch/linux_distributions
-        ls -ltr
-        #sudo chmod 755 opendistro-windows-build.sh
-        #./opendistro-windows-build.sh
+        ./opendistro-windows-build.sh
         
