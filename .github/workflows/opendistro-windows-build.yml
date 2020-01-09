@@ -28,6 +28,7 @@ jobs:
         ls -ltr
         echo $JAVA_HOME
         echo `java -version`
+        ls -ltr $JAVA_HOME
       #  cd elasticsearch/linux_distributions
        # ./opendistro-windows-build.sh
         
