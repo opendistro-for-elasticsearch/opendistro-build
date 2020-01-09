@@ -24,15 +24,17 @@ jobs:
         #!/bin/bash -x
         set -e
         set -u
-        #export JAVA_HOME=/openjdk12
-        #export PATH=$JAVA_HOME:$PATH
+        export JAVA_HOME=/openjdk12
+        export PATH=$JAVA_HOME:$PATH
         cd elasticsearch/linux_distributions
-        #./opendistro-tar-build.sh
-        echo ********the path is*********
-        pwd
-        #cd elasticsearch/linux_distributions
-        
+        ./opendistro-tar-build.sh
+         
     - name: Build Windows
       run: |
-        echo `pwd`
+        set -e
+        set -u
+        export JAVA_HOME=/openjdk12
+        export PATH=$JAVA_HOME:$PATH
+        cd elasticsearch/linux_distributions
+        ./opendistro-windows-build.sh
         
