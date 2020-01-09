@@ -30,6 +30,8 @@ jobs:
         ./opendistro-tar-build.sh
     - name: Build exe
       run: |
+        pwd
+        cd elasticsearch/linux_distributions
         ./opendistro-windows-build.sh
         echo "Exe creation for ES completed"
         
