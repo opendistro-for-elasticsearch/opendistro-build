@@ -35,6 +35,7 @@ aws s3 cp s3://odfe-windows/ODFE.install4j $ROOT/
 #build the exe using install4jc
 #sudo apt install default-jre
 #INSTALL4J_JAVA_HOME="/usr/lib/jvm/open-jdk"
+export JAVA_HOME=/usr/lib/jvm/jdk-12
 cd $ROOT/install4j/bin/
 ./install4jc -d $TARGET_DIR/EXE -D sourcedir=$TARGET_DIR/$PACKAGE-$OD_VERSION,version=$OD_VERSION --license=L-M8-AMAZON_DEVELOPMENT_CENTER_INDIA_PVT_LTD#50047687020001-3rhvir3mkx479#484b6 ./ODFE.install4j
  
