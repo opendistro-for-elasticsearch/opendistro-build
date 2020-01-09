@@ -3,7 +3,7 @@ name: Build Windows Exe using TAR artifacts
 on:
   push:
     branches: 
-      - master
+      - rish1397-patch-1
 jobs:
   build-es-artifacts:
     name: Build ES Artifacts
