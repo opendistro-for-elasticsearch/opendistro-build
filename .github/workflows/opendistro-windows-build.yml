@@ -23,11 +23,6 @@ jobs:
         set -u
         export JAVA_HOME=/openjdk12
         export PATH=$JAVA_HOME:$PATH
-        echo in root of runner
-        ls -ltr
-        which java
-        where java
-        java --version
         cd elasticsearch/linux_distributions
         ./opendistro-windows-build.sh
         
