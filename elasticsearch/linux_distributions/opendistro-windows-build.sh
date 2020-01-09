@@ -11,22 +11,22 @@ ROOT=$(dirname "$0")
 TARGET_DIR="$ROOT/Windowsfiles"
 
 #Downloading tar from s3
-aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistro-elasticsearch/$PACKAGE-$ES_VERSION.tar.gz $TARGET_DIR/
+aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistro-elasticsearch/$PACKAGE-$OD_VERSION.tar.gz $TARGET_DIR/
 #Untar the built tar artifact
 tar -vxzf $TARGET_DIR/$PACKAGE-$OD_VERSION.tar.gz
 rm -rf $TARGET_DIR/*.tar.gz
 
 #Download windowss oss for copying batch files
-wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$OD_VERSION-windows-x86_64.zip -P $ROOT/
+wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$ES_VERSION-windows-x86_64.zip -P $ROOT/
 #Unzip the oss
-unzip $ROOT/elasticsearch-oss-$OD_VERSION-windows-x86_64.zip
-rm -rf $ROOT/elasticsearch-oss-$OD_VERSION-windows-x86_64.zip
+unzip $ROOT/elasticsearch-oss-$ES_VERSION-windows-x86_64.zip
+rm -rf $ROOT/elasticsearch-oss-$ES_VERSION-windows-x86_64.zip
 
 #Copy all the bat files in the bin directory
-BAT_FILES=`ls $ROOT/elasticsearch-oss-$OD_VERSION-windows-x86_64/bin/*.bat`
+BAT_FILES=`ls $ROOT/elasticsearch-oss-$ES_VERSION-windows-x86_64/bin/*.bat`
 cp BAT_FILES $TARGET_DIR/$PACKAGE-$OD_VERSION/bin
 #ls -ltr $TARGET_DIR/$PACKAGE-$OD_VERSION/bin
-rm -rf $ROOT/elasticsearch-oss-$OD_VERSION-windows-x86_64
+rm -rf $ROOT/elasticsearch-oss-$ES_VERSION-windows-x86_64
 
 #Download install4j software
 wget https://download-gcdn.ej-technologies.com/install4j/install4j_unix_4_2_8.tar.gz -P $ROOT
