@@ -22,7 +22,7 @@ jobs:
       run: |
         set -e
         set -u
-        # export JAVA_HOME=/openjdk12
+        export JAVA_HOME=/openjdk12/usr/lib/jvm/jdk-12
         # export PATH=$JAVA_HOME:$PATH
         echo inside container
         ls -ltr
