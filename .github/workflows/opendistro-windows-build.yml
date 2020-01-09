@@ -22,8 +22,8 @@ jobs:
       run: |
         set -e
         set -u
-        export JAVA_HOME=/usr/lib/jvm/jdk-12/bin
-        # export PATH=$JAVA_HOME:$PATH
+        export JAVA_HOME=/openjdk12
+        export PATH=$JAVA_HOME:$PATH
          
         cd elasticsearch/linux_distributions
         ./opendistro-windows-build.sh
