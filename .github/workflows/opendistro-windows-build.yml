@@ -8,9 +8,6 @@ jobs:
   build-es-artifacts:
     name: Build ES Artifacts
     runs-on: ubuntu-latest
-    container:
-      image: opendistroforelasticsearch/multijava08101112-git:v1
-
     steps:
     - uses: actions/checkout@v1
     - name: Configure AWS Credentials
@@ -19,16 +16,6 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
-    - name: Build tar
-      run: |
-        #!/bin/bash -x
-        set -e
-        set -u
-        export JAVA_HOME=/openjdk12
-        export PATH=$JAVA_HOME:$PATH
-        cd elasticsearch/linux_distributions
-        ./opendistro-tar-build.sh
-         
     - name: Build Windows
       run: |
         set -e
@@ -36,5 +23,7 @@ jobs:
         export JAVA_HOME=/openjdk12
         export PATH=$JAVA_HOME:$PATH
         cd elasticsearch/linux_distributions
-        ./opendistro-windows-build.sh
+        ls -ltr
+        #sudo chmod 755 opendistro-windows-build.sh
+        #./opendistro-windows-build.sh
         
