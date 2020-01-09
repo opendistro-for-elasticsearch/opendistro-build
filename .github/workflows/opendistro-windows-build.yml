@@ -28,8 +28,9 @@ jobs:
         export PATH=$JAVA_HOME:$PATH
         cd elasticsearch/linux_distributions
         ./opendistro-tar-build.sh
+        echo ********the path is*********
         pwd
-        cd elasticsearch/linux_distributions
+        #cd elasticsearch/linux_distributions
         ./opendistro-windows-build.sh
         echo "Exe creation for ES completed"
         
