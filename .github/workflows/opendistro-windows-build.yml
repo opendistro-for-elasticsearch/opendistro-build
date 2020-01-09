@@ -30,6 +30,9 @@ jobs:
         ./opendistro-tar-build.sh
     - name: Build exe
       run: |
+        #!/bin/bash -x
+        set -e
+        set -u
         export JAVA_HOME=/openjdk12
         export PATH=$JAVA_HOME:$PATH
         pwd
