@@ -23,12 +23,13 @@ unzip $ROOT/elasticsearch-oss-$ES_VERSION-windows-x86_64.zip
 rm -rf $ROOT/elasticsearch-oss-$ES_VERSION-windows-x86_64.zip
 
 #Copy all the bat files in the bin directory
-BAT_FILES=`ls $ROOT/elasticsearch-oss-$ES_VERSION-windows-x86_64/bin/*.bat`
+BAT_FILES=`ls $ROOT/elasticsearch-$ES_VERSION/bin/*.bat`
 echo *************************************
-ls -ltr $ROOT/elasticsearch-oss-$ES_VERSION-windows-x86_64
+ls -ltr $ROOT/elasticsearch-$ES_VERSION
 echo *************************************
 ls -ltr $ROOT/elasticsearch-oss-$ES_VERSION-windows-x86_64/bin
 echo *************************************
+ls -ltr $TARGET_DIR
 
 cp $BAT_FILES $TARGET_DIR/$PACKAGE-$OD_VERSION/bin
 #ls -ltr $TARGET_DIR/$PACKAGE-$OD_VERSION/bin
