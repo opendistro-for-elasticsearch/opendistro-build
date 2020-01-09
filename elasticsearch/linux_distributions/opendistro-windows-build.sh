@@ -33,7 +33,8 @@ rm -rf $ROOT/install4j_unix_4_2_8.tar.gz
 aws s3 cp s3://odfe-windows/ODFE.install4j $ROOT/
 
 #build the exe using install4jc
-INSTALL4j_JAVA_HOME=$JAVA_HOME
+INSTALL4J_JAVA_HOME=$JAVA_HOME
+echo `$JAVA_HOME`
 $ROOT/install4j/bin/install4jc -d $TARGET_DIR/EXE -D sourcedir=$TARGET_DIR/$PACKAGE-$OD_VERSION,version=$OD_VERSION --license=L-M8-AMAZON_DEVELOPMENT_CENTER_INDIA_PVT_LTD#50047687020001-3rhvir3mkx479#484b6 ./ODFE.install4j
  
 #Copy to s3
