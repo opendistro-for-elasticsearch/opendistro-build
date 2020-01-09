@@ -17,14 +17,16 @@ ls -ltr $TARGET_DIR
 #Untar the built tar artifact
 tar -vxzf $TARGET_DIR/$PACKAGE-$OD_VERSION.tar.gz
 rm -rf $TARGET_DIR/*.tar.gz
+echo content after untarring inside TARGET_DIR
+ls -ltr $TARGET_DIR
 
 #Download windowss oss for copying batch files
 wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$ES_VERSION-windows-x86_64.zip -P $ROOT/
 #Unzip the oss
 unzip $ROOT/elasticsearch-oss-$ES_VERSION-windows-x86_64.zip
 rm -rf $ROOT/elasticsearch-oss-$ES_VERSION-windows-x86_64.zip
-echo In Target DIR 
-ls -ltr $TARGET_DIR
+echo inside ROOT 
+ls -ltr $ROOT
 #Copy all the bat files in the bin directory
 BAT_FILES=`ls $ROOT/elasticsearch-$ES_VERSION/bin/*.bat`
 cp $BAT_FILES $TARGET_DIR/$PACKAGE-$OD_VERSION/bin
