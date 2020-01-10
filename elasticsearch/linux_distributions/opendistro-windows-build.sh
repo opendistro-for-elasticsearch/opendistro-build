@@ -24,10 +24,10 @@ cp $BAT_FILES $TARGET_DIR/$PACKAGE-$OD_VERSION/bin
 rm -rf $ROOT/elasticsearch-oss-$ES_VERSION-windows-x86_64
 
 #Download install4j software
-wget https://download-gcdn.ej-technologies.com/install4j/install4j_unix_4_2_8.tar.gz -P $ROOT
+wget https://download-gcdn.ej-technologies.com/install4j/install4j_unix_8_0_4.tar.gz -P $ROOT
 #Untar
-tar -xzf $ROOT/install4j_unix_4_2_8.tar.gz --directory $ROOT 
-rm -rf $ROOT/install4j_unix_4_2_8.tar.gz
+tar -xzf $ROOT/install4j_unix_8_0_4.tar.gz --directory $ROOT 
+rm -rf $ROOT/install4j_unix_8_0_4.tar.gz
 
 #Download the .install4j file from s3
 aws s3 cp s3://odfe-windows/ODFE.install4j $ROOT/
