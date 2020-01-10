@@ -153,7 +153,7 @@ elasticsearch:
 
   master:
     enabled: true
-    replicas: 3
+    replicas: 1
     updateStrategy: "RollingUpdate"
 
     ## Enable persistence using Persistent Volume Claims
@@ -216,7 +216,7 @@ elasticsearch:
 
   data:
     enabled: true
-    replicas: 3
+    replicas: 1
     updateStrategy: "RollingUpdate"
 
     ## Enable persistence using Persistent Volume Claims
@@ -298,7 +298,7 @@ elasticsearch:
 
         # # Annotation to create internal only ELB
         # service.beta.kubernetes.io/aws-load-balancer-internal: 0.0.0.0/0
-    replicas: 2
+    replicas: 1
     javaOpts: "-Xms512m -Xmx512m"
     ingress:
       enabled: true
