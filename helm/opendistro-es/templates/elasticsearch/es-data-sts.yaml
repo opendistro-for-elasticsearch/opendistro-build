@@ -151,8 +151,8 @@ spec:
         - mountPath: {{ .Values.elasticsearch.configDirectory }}/elk-transport-root-ca.pem
           name: transport-certs
           subPath: elk-transport-root-ca.pem
-         {{- end }}
-         {{- if and .Values.elasticsearch.ssl.rest.enabled .Values.elasticsearch.ssl.rest.existingCertSecret }}
+        {{- end }}
+        {{- if and .Values.elasticsearch.ssl.rest.enabled .Values.elasticsearch.ssl.rest.existingCertSecret }}
         - mountPath: {{ .Values.elasticsearch.configDirectory }}/elk-rest-crt.pem
           name: rest-certs
           subPath: elk-rest-crt.pem
@@ -162,8 +162,8 @@ spec:
         - mountPath: {{ .Values.elasticsearch.configDirectory }}/elk-rest-root-ca.pem
           name: rest-certs
           subPath: elk-rest-root-ca.pem
-         {{- end }}
-         {{- if and .Values.elasticsearch.ssl.admin.enabled .Values.elasticsearch.ssl.admin.existingCertSecret }}
+        {{- end }}
+        {{- if and .Values.elasticsearch.ssl.admin.enabled .Values.elasticsearch.ssl.admin.existingCertSecret }}
         - mountPath: {{ .Values.elasticsearch.configDirectory }}/admin-crt.pem
           name: admin-certs
           subPath: admin-crt.pem

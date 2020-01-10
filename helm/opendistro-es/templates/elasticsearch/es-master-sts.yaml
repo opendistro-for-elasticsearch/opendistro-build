@@ -164,8 +164,8 @@ spec:
         - mountPath: {{ .Values.elasticsearch.configDirectory }}/elk-transport-root-ca.pem
           name: transport-certs
           subPath: elk-transport-root-ca.pem
-         {{- end }}
-         {{- if and .Values.elasticsearch.ssl.rest.enabled .Values.elasticsearch.ssl.rest.existingCertSecret }}
+        {{- end }}
+        {{- if and .Values.elasticsearch.ssl.rest.enabled .Values.elasticsearch.ssl.rest.existingCertSecret }}
         - mountPath: {{ .Values.elasticsearch.configDirectory }}/elk-rest-crt.pem
           name: rest-certs
           subPath: elk-rest-crt.pem
@@ -186,38 +186,38 @@ spec:
         - mountPath: {{ .Values.elasticsearch.configDirectory }}/admin-root-ca.pem
           name: admin-certs
           subPath: admin-root-ca.pem
-       {{- end }}
-      {{- if .Values.elasticsearch.securityConfig.enabled }}
-      {{- if .Values.elasticsearch.securityConfig.actionGroupsSecret }}
+        {{- end }}
+        {{- if .Values.elasticsearch.securityConfig.enabled }}
+        {{- if .Values.elasticsearch.securityConfig.actionGroupsSecret }}
         - mountPath: {{ .Values.elasticsearch.securityConfig.path }}/action_groups.yml
           name: action-groups
           subPath: action_groups.yml
-       {{- end }}
-       {{- if .Values.elasticsearch.securityConfig.configSecret }}
+        {{- end }}
+        {{- if .Values.elasticsearch.securityConfig.configSecret }}
         - mountPath: {{ .Values.elasticsearch.securityConfig.path }}/config.yml
           name: security-config
           subPath: config.yml
-       {{- end }}
-       {{- if .Values.elasticsearch.securityConfig.internalUsersSecret }}
+        {{- end }}
+        {{- if .Values.elasticsearch.securityConfig.internalUsersSecret }}
         - mountPath: {{ .Values.elasticsearch.securityConfig.path }}/internal_users.yml
           name: internal-users-config
           subPath: internal_users.yml
-       {{- end }}
-       {{- if .Values.elasticsearch.securityConfig.rolesSecret }}
+        {{- end }}
+        {{- if .Values.elasticsearch.securityConfig.rolesSecret }}
         - mountPath: {{ .Values.elasticsearch.securityConfig.path }}/roles.yml
           name: roles
           subPath: roles.yml
-       {{- end }}
-       {{- if .Values.elasticsearch.securityConfig.rolesMappingSecret }}
+        {{- end }}
+        {{- if .Values.elasticsearch.securityConfig.rolesMappingSecret }}
         - mountPath: {{ .Values.elasticsearch.securityConfig.path }}/roles_mapping.yml
           name: role-mapping
           subPath: roles_mapping.yml
-      {{- end }}
-       {{- if .Values.elasticsearch.securityConfig.tenantsSecret }}
+        {{- end }}
+        {{- if .Values.elasticsearch.securityConfig.tenantsSecret }}
         - mountPath: {{ .Values.elasticsearch.securityConfig.path }}/tenants.yml
           name: tenants
           subPath: tenants.yml
-      {{- end }}
+        {{- end }}
       {{- end }}
       volumes:
       - name: config
