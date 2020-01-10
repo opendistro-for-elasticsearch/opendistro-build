@@ -130,7 +130,7 @@ spec:
         - mountPath: {{ .Values.elasticsearch.configDirectory }}/logging.yml
           name: config
           subPath: logging.yml
-        {{- if and .Values.elasticsearch.ssl.transport.enabled .Values.elasticsearch.ssl.transport.existingCertSecret }}
+        {{- if .Values.elasticsearch.ssl.transport.existingCertSecret }}
         - mountPath: {{ .Values.elasticsearch.configDirectory }}/elk-transport-crt.pem
           name: transport-certs
           subPath: elk-transport-crt.pem
@@ -167,7 +167,7 @@ spec:
       - name: config
         secret:
           secretName: {{ template "opendistro-es.fullname" . }}-es-config
-      {{- if and .Values.elasticsearch.ssl.transport.enabled .Values.elasticsearch.ssl.transport.existingCertSecret }}
+      {{- if .Values.elasticsearch.ssl.transport.existingCertSecret }}
       - name: transport-certs
         secret:
           secretName: {{ .Values.elasticsearch.ssl.transport.existingCertSecret }}

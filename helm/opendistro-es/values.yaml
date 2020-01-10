@@ -141,8 +141,8 @@ elasticsearch:
     imageTag: 1.27.2
 
   ssl:
+    # TLS is mandatory for the transport layer and can not be disabled
     transport:
-      enabled: false
       existingCertSecret:
     rest:
       enabled: false
