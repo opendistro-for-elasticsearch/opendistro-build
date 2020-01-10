@@ -42,6 +42,11 @@ ls -ltr $ROOT
 #export JAVA_HOME=../../openjdk12
 cd ./install4j*/bin/
 ./install4jc -d $TARGET_DIR/EXE -D sourcedir=$TARGET_DIR/$PACKAGE-$OD_VERSION,version=$OD_VERSION --license=L-M8-AMAZON_DEVELOPMENT_CENTER_INDIA_PVT_LTD#50047687020001-3rhvir3mkx479#484b6 ./ODFE.install4j
- 
+
+echo after exe build
+echo TAR_DIR is
+ls -ltr $TARGET_DIR
+echo EXE DIR is
+ls -ltr $TARGET_DIR/EXE
 #Copy to s3
 aws s3 cp $TARGET_DIR/EXE/*.exe s3://odfe-windows/
