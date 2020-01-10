@@ -57,7 +57,7 @@ spec:
     {{- end }}
     {{- with .Values.elasticsearch.master.affinity }}
       affinity:
-{{- toYaml . | nindent 8 }}
+{{- toYaml . | indent 8 }}
     {{- end }}
       initContainers:
       - name: init-sysctl
