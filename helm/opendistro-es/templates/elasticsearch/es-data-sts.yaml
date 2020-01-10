@@ -12,6 +12,7 @@
 # express or implied. See the License for the specific language governing
 # permissions and limitations under the License.
 
+# @formatter:off
 {{ if .Values.elasticsearch.data.enabled }}
 apiVersion: apps/v1
 kind: StatefulSet

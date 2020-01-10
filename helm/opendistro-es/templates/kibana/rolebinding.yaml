@@ -11,6 +11,7 @@
 # express or implied. See the License for the specific language governing
 # permissions and limitations under the License.
 
+# @formatter:off
 {{- if and .Values.global.rbac.enabled .Values.kibana.enabled }}
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
