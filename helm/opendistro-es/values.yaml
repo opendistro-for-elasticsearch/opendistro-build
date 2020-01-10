@@ -100,10 +100,10 @@ kibana:
   affinity: {}
 
   serviceAccount:
-    # Specifies whether a ServiceAccount should be created
+    ## Specifies whether a ServiceAccount should be created
     create: true
-    # The name of the ServiceAccount to use.
-    # If not set and create is true, a name is generated using the fullname template
+    ## The name of the ServiceAccount to use.
+    ## If not set and create is true, a name is generated using the fullname template
     name:
 
 
@@ -142,7 +142,7 @@ elasticsearch:
     imageTag: 1.27.2
 
   ssl:
-    # TLS is mandatory for the transport layer and can not be disabled
+    ## TLS is mandatory for the transport layer and can not be disabled
     transport:
       existingCertSecret:
     rest:
@@ -205,7 +205,7 @@ elasticsearch:
       periodSeconds: 10
     nodeSelector: {}
     tolerations: []
-    # Anti-affinity to disallow deploying client and master nodes on the same worker node
+    ## Anti-affinity to disallow deploying client and master nodes on the same worker node
     affinity: {}
     #  podAntiAffinity:
     #    requiredDuringSchedulingIgnoredDuringExecution:
@@ -268,7 +268,7 @@ elasticsearch:
       periodSeconds: 10
     nodeSelector: {}
     tolerations: []
-    # Anti-affinity to disallow deploying client and master nodes on the same worker node
+    ## Anti-affinity to disallow deploying client and master nodes on the same worker node
     affinity: {}
     #  podAntiAffinity:
     #    preferredDuringSchedulingIgnoredDuringExecution:
@@ -333,7 +333,7 @@ elasticsearch:
       periodSeconds: 10
     nodeSelector: {}
     tolerations: []
-    # Weighted anti-affinity to disallow deploying client node to the same worker node as master node
+    ## Weighted anti-affinity to disallow deploying client node to the same worker node as master node
     affinity: {}
     #  podAntiAffinity:
     #    preferredDuringSchedulingIgnoredDuringExecution:
@@ -400,13 +400,13 @@ elasticsearch:
 
   loggingConfig:
     ## Default config
-    # you can override this using by setting a system property, for example -Des.logger.level=DEBUG
+    ## you can override this using by setting a system property, for example -Des.logger.level=DEBUG
     es.logger.level: INFO
     rootLogger: ${es.logger.level}, console
     logger:
-      # log action execution errors for easier debugging
+      ## log action execution errors for easier debugging
       action: DEBUG
-      # reduce the logging for aws, too much is logged under the default INFO
+      ## reduce the logging for aws, too much is logged under the default INFO
       com.amazonaws: WARN
     appender:
       console:
@@ -431,10 +431,10 @@ elasticsearch:
   configDirectory: /usr/share/elasticsearch/config
 
   serviceAccount:
-    # Specifies whether a ServiceAccount should be created
+    ## Specifies whether a ServiceAccount should be created
     create: true
-    # The name of the ServiceAccount to use.
-    # If not set and create is true, a name is generated using the fullname template
+    ## The name of the ServiceAccount to use.
+    ## If not set and create is true, a name is generated using the fullname template
     name:
 
 
