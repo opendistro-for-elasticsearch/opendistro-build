@@ -8,8 +8,8 @@ jobs:
   build-es-artifacts:
     name: Build ES Artifacts
     runs-on: ubuntu-latest
-    container:
-      image: opendistroforelasticsearch/multijava08101112-git:v1
+    #container:
+    #  image: opendistroforelasticsearch/multijava08101112-git:v1
     steps:
     - uses: actions/checkout@v1
     - name: Configure AWS Credentials
@@ -25,6 +25,9 @@ jobs:
         export JAVA_HOME=/openjdk12
         export PATH=$JAVA_HOME:$PATH
          
-        cd elasticsearch/linux_distributions
-        ./opendistro-windows-build.sh
+        wget https://download-gcdn.ej-technologies.com/install4j/install4j_linux_4_2_8_with_jre.rpm
+        rpm -i  install4j/install4j_linux_4_2_8_with_jre.rpm
+        
+        #cd elasticsearch/linux_distributions
+        #./opendistro-windows-build.sh
         
