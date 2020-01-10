@@ -26,7 +26,7 @@ jobs:
         export PATH=$JAVA_HOME:$PATH
          
         wget https://download-gcdn.ej-technologies.com/install4j/install4j_linux_4_2_8_with_jre.rpm
-        apt-get install alien
+        sudo apt-get install alien
         alien -i install4j_linux_4_2_8_with_jre.rpm
         #rpm -i  install4j/install4j_linux_4_2_8_with_jre.rpm
         
