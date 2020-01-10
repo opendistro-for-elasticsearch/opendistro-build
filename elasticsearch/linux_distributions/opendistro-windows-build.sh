@@ -29,23 +29,11 @@ wget https://download-gcdn.ej-technologies.com/install4j/install4j_unix_8_0_4.ta
 tar -xzf $ROOT/install4j_unix_8_0_4.tar.gz --directory $ROOT 
 rm -rf $ROOT/*tar*
 
-
-
 #Download the .install4j file from s3
 aws s3 cp s3://odfe-windows/ODFE.install4j $ROOT/
 
-echo root after downloading default install4j file
-ls -ltr $ROOT
-#build the exe using install4jc
-#sudo apt install default-jre
-#INSTALL4J_JAVA_HOME="/usr/lib/jvm/open-jdk"
-#export JAVA_HOME=../../openjdk12
+#Build the exe
 ./install4j*/bin/install4jc -d $TARGET_DIR/EXE -D sourcedir=$TARGET_DIR/$PACKAGE-$OD_VERSION,version=$OD_VERSION --license=L-M8-AMAZON_DEVELOPMENT_CENTER_INDIA_PVT_LTD#50047687020001-3rhvir3mkx479#484b6 ./ODFE.install4j
 
-echo after exe build
-echo TAR_DIR is
-ls -ltr $TARGET_DIR
-echo EXE DIR is
-ls -ltr $TARGET_DIR/EXE
 #Copy to s3
 aws s3 cp $TARGET_DIR/EXE/*.exe s3://odfe-windows/
