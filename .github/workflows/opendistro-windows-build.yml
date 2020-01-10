@@ -22,15 +22,9 @@ jobs:
       run: |
         set -e
         set -u
-        #export JAVA_HOME=/openjdk12
-        #export PATH=$JAVA_HOME:$PATH
-        sudo apt-get install openjdk-7-jre
-        echo $JAVA_HOME 
-        #wget https://download-gcdn.ej-technologies.com/install4j/install4j_linux_4_2_8_with_jre.rpm
-        #sudo apt-get install alien
-        #sudo alien -i install4j_linux_4_2_8_with_jre.rpm
-        #rpm -i  install4j/install4j_linux_4_2_8_with_jre.rpm
-        
-        #cd elasticsearch/linux_distributions
-        #./opendistro-windows-build.sh
+        export JAVA_HOME=/openjdk12
+        export PATH=$JAVA_HOME:$PATH
+   
+        cd elasticsearch/linux_distributions
+        ./opendistro-windows-build.sh
         
