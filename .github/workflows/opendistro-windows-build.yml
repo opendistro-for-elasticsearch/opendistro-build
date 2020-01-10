@@ -27,7 +27,7 @@ jobs:
          
         wget https://download-gcdn.ej-technologies.com/install4j/install4j_linux_4_2_8_with_jre.rpm
         sudo apt-get install alien
-        alien -i install4j_linux_4_2_8_with_jre.rpm
+        sudo alien -i install4j_linux_4_2_8_with_jre.rpm
         #rpm -i  install4j/install4j_linux_4_2_8_with_jre.rpm
         
         #cd elasticsearch/linux_distributions
