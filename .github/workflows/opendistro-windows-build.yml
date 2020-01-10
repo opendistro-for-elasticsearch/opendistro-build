@@ -1,4 +1,4 @@
-name: Build Windows Exe using TAR artifacts
+name: Build Windows Exe using tar artifacts
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - rish1397-patch-1
 jobs:
   build-es-artifacts:
-    name: Build ES Artifacts
+    name: Build Windows ES Artifacts
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
