@@ -49,6 +49,7 @@ kibana:
   certsDirectory: "/usr/share/kibana/certs"
 
   ingress:
+    ## Set to true to enable ingress record generation
     enabled: false
     annotations: {}
     #  kubernetes.io/ingress.class: nginx
@@ -301,7 +302,8 @@ elasticsearch:
     replicas: 1
     javaOpts: "-Xms512m -Xmx512m"
     ingress:
-      enabled: true
+      ## Set to true to enable ingress record generation
+      enabled: false
       annotations: {}
       #  kubernetes.io/ingress.class: nginx
       #  kubernetes.io/tls-acme: "true"
