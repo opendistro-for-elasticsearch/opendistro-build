@@ -17,52 +17,39 @@ rm -rf $TARGET_DIR/*.tar.gz
 rm -rf $TARGET_DIR/$PACKAGE-$OD_VERSION/plugins/opendistro_performance_analyzer
 
 #install the certificates
-sudo sh $TARGET_DIR/$PACKAGE-$OD_VERSION/plugins/opendistro_security/tools/install_demo_configuration.sh -y -i -s
+echo installing certificates
+cd $TARGET_DIR/$PACKAGE-$OD_VERSION/plugins/opendistro_security/tools
+./install_demo_configuration.sh -y -i -s
+cd $ROOT/..
+echo pwd
 
 #Download windowss oss for copying batch files
-wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$ES_VERSION-windows-x86_64.zip -P $ROOT/
+#wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$ES_VERSION-windows-x86_64.zip -P $ROOT/
 #Unzip the oss
-unzip $ROOT/elasticsearch-oss-$ES_VERSION-windows-x86_64.zip -d $ROOT
-rm -rf $ROOT/elasticsearch-oss-$ES_VERSION-windows-x86_64.zip
+#unzip $ROOT/elasticsearch-oss-$ES_VERSION-windows-x86_64.zip -d $ROOT
+#rm -rf $ROOT/elasticsearch-oss-$ES_VERSION-windows-x86_64.zip
  
 #Copy all the bat files in the bin directory
-BAT_FILES=`ls $ROOT/elasticsearch-$ES_VERSION/bin/*.bat`
-cp $BAT_FILES $TARGET_DIR/$PACKAGE-$OD_VERSION/bin
-rm -rf $ROOT/elasticsearch-oss-$ES_VERSION-windows-x86_64
+#BAT_FILES=`ls $ROOT/elasticsearch-$ES_VERSION/bin/*.bat`
+#cp $BAT_FILES $TARGET_DIR/$PACKAGE-$OD_VERSION/bin
+#rm -rf $ROOT/elasticsearch-oss-$ES_VERSION-windows-x86_64
 
 
 #Download install4j software
-wget https://download-gcdn.ej-technologies.com/install4j/install4j_unix_8_0_4.tar.gz -P $ROOT
+#wget https://download-gcdn.ej-technologies.com/install4j/install4j_unix_8_0_4.tar.gz -P $ROOT
 #Untar
-tar -xzf $ROOT/install4j_unix_8_0_4.tar.gz --directory $ROOT 
-rm -rf $ROOT/*tar*
+#tar -xzf $ROOT/install4j_unix_8_0_4.tar.gz --directory $ROOT 
+#rm -rf $ROOT/*tar*
 
 #Download the .install4j file from s3
-aws s3 cp s3://odfe-windows/ODFE.install4j $ROOT/
+#aws s3 cp s3://odfe-windows/ODFE.install4j $ROOT/
 
-echo inside root
-ls -ltr $ROOT
-echo inside tar_dir
-ls -ltr $TARGET_DIR
-echo inside opendistrofores
-ls -ltr $TARGET_DIR/$PACKAGE-$OD_VERSION
-echo inside bin of es
-ls -ltr $TARGET_DIR/$PACKAGE-$OD_VERSION/bin
-
-echo current dir path
-pwd
-chmod 755 $TARGET_DIR/$PACKAGE-$OD_VERSION
+#chmod 755 $TARGET_DIR/$PACKAGE-$OD_VERSION
 #Build the exe
-$ROOT/install4j*/bin/install4jc -d $TARGET_DIR/EXE -D sourcedir=./Windowsfiles/$PACKAGE-$OD_VERSION,version=$OD_VERSION --license=L-M8-AMAZON_DEVELOPMENT_CENTER_INDIA_PVT_LTD#50047687020001-3rhvir3mkx479#484b6 $ROOT/ODFE.install4j
+#$ROOT/install4j*/bin/install4jc -d $TARGET_DIR/EXE -D sourcedir=./Windowsfiles/$PACKAGE-$OD_VERSION,version=$OD_VERSION --license=L-M8-AMAZON_DEVELOPMENT_CENTER_INDIA_PVT_LTD#50047687020001-3rhvir3mkx479#484b6 $ROOT/ODFE.install4j
 
-echo inside root
-ls -ltr $ROOT
-echo inside tar_dir
-ls -ltr $TARGET_DIR
-echo inside opendistrofores
-ls -ltr $TARGET_DIR/$PACKAGE-$OD_VERSION
 
 #Copy to s3
-aws s3 cp $TARGET_DIR/EXE/*.exe s3://odfe-windows/
+#aws s3 cp $TARGET_DIR/EXE/*.exe s3://odfe-windows/
 
 rm -rf ws
