@@ -1,9 +1,9 @@
 #!/bin/bash
-mkdir ./ws && cd ./ws
-ES_VERSION=$(../elasticsearch/bin/version-info --es)
-OD_VERSION=$(../elasticsearch/bin/version-info --od)
+mkdir ./ws 
+ES_VERSION=$(../version-info --es)
+OD_VERSION=$(../version-info --od)
 PACKAGE=opendistroforelasticsearch
-ROOT=$(dirname "$0")
+ROOT=$(dirname "$0")/ws
 TARGET_DIR="$ROOT/Windowsfiles"
 
 #Downloading tar from s3
@@ -44,4 +44,4 @@ aws s3 cp s3://odfe-windows/ODFE.install4j $ROOT/
 #Copy to s3
 aws s3 cp $TARGET_DIR/EXE/*.exe s3://odfe-windows/
 
-cd .. && rm -rf ws
+rm -rf ws
