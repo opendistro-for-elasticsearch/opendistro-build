@@ -21,7 +21,7 @@ sudo sh $TARGET_DIR/$PACKAGE-$OD_VERSION/plugins/opendistro_security/tools/insta
 #Download windowss oss for copying batch files
 wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$ES_VERSION-windows-x86_64.zip -P $ROOT/
 #Unzip the oss
-unzip $ROOT/elasticsearch-oss-$ES_VERSION-windows-x86_64.zip
+unzip $ROOT/elasticsearch-oss-$ES_VERSION-windows-x86_64.zip -d $ROOT
 rm -rf $ROOT/elasticsearch-oss-$ES_VERSION-windows-x86_64.zip
 echo after unzipping
 ls -ltr $ROOT/
