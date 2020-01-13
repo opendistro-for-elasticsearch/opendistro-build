@@ -41,7 +41,7 @@ rm -rf $ROOT/*tar*
 aws s3 cp s3://odfe-windows/ODFE.install4j $ROOT/
 
 #Build the exe
-./install4j*/bin/install4jc -d $TARGET_DIR/EXE -D sourcedir=$TARGET_DIR/$PACKAGE-$OD_VERSION,version=$OD_VERSION --license=L-M8-AMAZON_DEVELOPMENT_CENTER_INDIA_PVT_LTD#50047687020001-3rhvir3mkx479#484b6 ./ODFE.install4j
+$ROOT/install4j*/bin/install4jc -d $TARGET_DIR/EXE -D sourcedir=$TARGET_DIR/$PACKAGE-$OD_VERSION,version=$OD_VERSION --license=L-M8-AMAZON_DEVELOPMENT_CENTER_INDIA_PVT_LTD#50047687020001-3rhvir3mkx479#484b6 ./ODFE.install4j
 
 #Copy to s3
 aws s3 cp $TARGET_DIR/EXE/*.exe s3://odfe-windows/
