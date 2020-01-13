@@ -24,7 +24,8 @@ jobs:
         export PATH=$JAVA_HOME:$PATH
         echo Initial root dir
         ls -ltr 
-        elasticsearch/linux_distributions/opendistro-windows-build.sh
+        cd elasticsearch/linux_distributions
+        ./opendistro-windows-build.sh
         echo exit root dir
         ls -ltr 
         
