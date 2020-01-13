@@ -1,6 +1,5 @@
 #!/bin/bash
 mkdir ./ws && cd ./ws
-#cd elasticsearch/linux_distributions
 ES_VERSION=$(../elasticsearch/bin/version-info --es)
 OD_VERSION=$(../elasticsearch/bin/version-info --od)
 PACKAGE=opendistroforelasticsearch
