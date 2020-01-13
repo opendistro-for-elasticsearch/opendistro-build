@@ -10,7 +10,7 @@ TARGET_DIR="$ROOT/Windowsfiles"
 aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistro-elasticsearch/$PACKAGE-$OD_VERSION.tar.gz $TARGET_DIR/
 #Untar the tar artifact
 tar -xzf $TARGET_DIR/$PACKAGE-$OD_VERSION.tar.gz --directory $TARGET_DIR
-chmod 755 $TARGET_DIR/$PACKAGE-$OD_VERSION
+#chmod 755 $TARGET_DIR/$PACKAGE-$OD_VERSION
 rm -rf $TARGET_DIR/*.tar.gz
 
 #Remove PA plugin as it isn't provided for odfe-1.3.0 windows
@@ -18,10 +18,9 @@ rm -rf $TARGET_DIR/$PACKAGE-$OD_VERSION/plugins/opendistro_performance_analyzer
 
 #install the certificates
 echo installing certificates
-cd $TARGET_DIR/$PACKAGE-$OD_VERSION/plugins/opendistro_security/tools
-sudo sh ./install_demo_configuration.sh -y -i -s
-cd ../../../../../..
-pwd
+chmod 755 $TARGET_DIR/$PACKAGE-$OD_VERSION/plugins/opendistro_security/tools/install_demo_configuration.sh -y -i -s
+#cd ../../../../../..
+#pwd
 
 #Download windowss oss for copying batch files
 #wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$ES_VERSION-windows-x86_64.zip -P $ROOT/
