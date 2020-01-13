@@ -18,7 +18,7 @@ rm -rf $TARGET_DIR/$PACKAGE-$OD_VERSION/plugins/opendistro_performance_analyzer
 
 #install the certificates
 echo installing certificates
-chmod 755 $TARGET_DIR/$PACKAGE-$OD_VERSION/plugins/opendistro_security/tools/install_demo_configuration.sh -y -i -s
+bash $TARGET_DIR/$PACKAGE-$OD_VERSION/plugins/opendistro_security/tools/install_demo_configuration.sh -y -i -s
 #cd ../../../../../..
 #pwd
 
