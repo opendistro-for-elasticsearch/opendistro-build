@@ -1,7 +1,7 @@
 #!/bin/bash
 mkdir ./ws 
-ES_VERSION=$(../version-info --es)
-OD_VERSION=$(../version-info --od)
+ES_VERSION=$(../bin/version-info --es)
+OD_VERSION=$(../bin/version-info --od)
 PACKAGE=opendistroforelasticsearch
 ROOT=$(dirname "$0")/ws
 TARGET_DIR="$ROOT/Windowsfiles"
