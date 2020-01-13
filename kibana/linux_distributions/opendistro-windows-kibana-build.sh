@@ -1,5 +1,5 @@
 #!/bin/bash
-mkdir ./ws #A temporary workspace inside opendistro-build/elasticsearch/linux_distributions
+mkdir ./ws #A temporary workspace inside opendistro-build/kibana/linux_distributions
 ES_VERSION=$(../bin/version-info --es)
 OD_VERSION=$(../bin/version-info --od)
 PACKAGE=opendistroforelasticsearch-kibana
@@ -15,13 +15,13 @@ rm -rf $TARGET_DIR/*.tar.gz
 #Download windowss oss for copying batch files
 wget https://artifacts.elastic.co/downloads/kibana/kibana-oss-$ES_VERSION-windows-x86_64.zip -P $ROOT/
 #Unzip the oss
-unzip $ROOT/kibana-oss-$ES_VERSION-windows-x86_64.zip -d $ROOT
+unzip -q $ROOT/kibana-oss-$ES_VERSION-windows-x86_64.zip -d $ROOT
 rm -rf $ROOT/kibana-oss-$ES_VERSION-windows-x86_64.zip
  
 #Copy all the bat files in the bin directory and node.exe
 BAT_FILES=`ls $ROOT/kibana-$ES_VERSION-windows-x86_64/bin/*.bat`
-cp $BAT_FILES $TARGET_DIR/$PACKAGE-$OD_VERSION/bin
-cp $ROOT/kibana-$ES_VERSION-windows-x86_64/node/node.exe $TARGET_DIR/$PACKAGE-$OD_VERSION/node
+cp $BAT_FILES $TARGET_DIR/$PACKAGE/bin
+cp $ROOT/kibana-$ES_VERSION-windows-x86_64/node/node.exe $TARGET_DIR/$PACKAGE/node
 rm -rf $ROOT/kibana-oss-$ES_VERSION-windows-x86_64
 
 #Download install4j software
@@ -38,7 +38,7 @@ echo inside TARGET_DIR
 ls -ltr $TARGET_DIR
 
 #Build the exe
-$ROOT/install4j*/bin/install4jc -d $TARGET_DIR/EXE -D sourcedir=$TARGET_DIR/$PACKAGE-$OD_VERSION,version=$OD_VERSION --license=L-M8-AMAZON_DEVELOPMENT_CENTER_INDIA_PVT_LTD#50047687020001-3rhvir3mkx479#484b6 $ROOT/ODFE-Kibana.install4j
+$ROOT/install4j*/bin/install4jc -d $TARGET_DIR/EXE -D sourcedir=./Windowsfiles/$PACKAGE,version=$OD_VERSION --license=L-M8-AMAZON_DEVELOPMENT_CENTER_INDIA_PVT_LTD#50047687020001-3rhvir3mkx479#484b6 $ROOT/ODFE-Kibana.install4j
 
 #Copy to s3
 aws s3 cp $TARGET_DIR/EXE/*.exe s3://odfe-windows/
