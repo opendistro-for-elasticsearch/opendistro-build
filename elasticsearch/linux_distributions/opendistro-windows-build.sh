@@ -16,7 +16,7 @@ rm -rf $TARGET_DIR/*.tar.gz
 rm -rf $TARGET_DIR/$PACKAGE-$OD_VERSION/plugins/opendistro_performance_analyzer
 
 #install the certificates
-$TARGET_DIR/$PACKAGE-$OD_VERSION/plugins/opendistro_security/tools/install_demo_configuration.sh -y -i -s
+sudo $TARGET_DIR/$PACKAGE-$OD_VERSION/plugins/opendistro_security/tools/install_demo_configuration.sh -y -i -s
 
 #Download windowss oss for copying batch files
 wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$ES_VERSION-windows-x86_64.zip -P $ROOT/
