@@ -27,6 +27,8 @@ jobs:
         /elasticsearch/linux_distributions/opendistro-windows-build.sh
         echo exit root dir
         ls -ltr /
+        
+  build-kibana-artifacts:
     needs: [build-es-artifacts]
     name: Build Kibana Artifacts
     runs-on: [ubuntu-latest]
