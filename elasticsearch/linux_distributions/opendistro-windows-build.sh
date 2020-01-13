@@ -29,7 +29,6 @@ BAT_FILES=`ls $ROOT/elasticsearch-$ES_VERSION/bin/*.bat`
 cp $BAT_FILES $TARGET_DIR/$PACKAGE-$OD_VERSION/bin
 rm -rf $ROOT/elasticsearch-oss-$ES_VERSION-windows-x86_64
 
-
 #Download install4j software
 wget https://download-gcdn.ej-technologies.com/install4j/install4j_unix_8_0_4.tar.gz -P $ROOT
 #Untar
