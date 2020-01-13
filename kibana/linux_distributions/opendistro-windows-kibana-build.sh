@@ -13,7 +13,7 @@ tar -xzf $TARGET_DIR/$PACKAGE-$OD_VERSION.tar.gz --directory $TARGET_DIR
 rm -rf $TARGET_DIR/*.tar.gz
 
 #Download windowss oss for copying batch files
-wget https://artifacts.elastic.co/downloads/kibana/kibana-oss-$OD_VERSION-windows-x86_64.zip -P $ROOT/
+wget https://artifacts.elastic.co/downloads/kibana/kibana-oss-$ES_VERSION-windows-x86_64.zip -P $ROOT/
 #Unzip the oss
 unzip $ROOT/kibana-oss-$ES_VERSION-windows-x86_64.zip -d $ROOT
 rm -rf $ROOT/kibana-oss-$ES_VERSION-windows-x86_64.zip
@@ -32,9 +32,13 @@ rm -rf $ROOT/*tar*
 
 #Download the .install4j file from s3
 aws s3 cp s3://odfe-windows/ODFE-Kibana.install4j $ROOT/
+echo inside kibana/linux/ws
+ls -ltr $ROOT
+echo inside TARGET_DIR
+ls -ltr $TARGET_DIR
 
 #Build the exe
-$ROOT/install4j*/bin/install4jc -d $TARGET_DIR/EXE -D sourcedir=./Windowsfiles/$PACKAGE-$OD_VERSION,version=$OD_VERSION --license=L-M8-AMAZON_DEVELOPMENT_CENTER_INDIA_PVT_LTD#50047687020001-3rhvir3mkx479#484b6 $ROOT/ODFE-Kibana.install4j
+$ROOT/install4j*/bin/install4jc -d $TARGET_DIR/EXE -D sourcedir=$TARGET_DIR/$PACKAGE-$OD_VERSION,version=$OD_VERSION --license=L-M8-AMAZON_DEVELOPMENT_CENTER_INDIA_PVT_LTD#50047687020001-3rhvir3mkx479#484b6 $ROOT/ODFE-Kibana.install4j
 
 #Copy to s3
 aws s3 cp $TARGET_DIR/EXE/*.exe s3://odfe-windows/
