@@ -1,7 +1,8 @@
 #!/bin/bash
 mkdir ./ws && cd ./ws
-ES_VERSION=$(../bin/version-info --es)
-OD_VERSION=$(../bin/version-info --od)
+#cd elasticsearch/linux_distributions
+ES_VERSION=$(../elasticsearch/bin/version-info --es)
+OD_VERSION=$(../elasticsearch/bin/version-info --od)
 PACKAGE=opendistroforelasticsearch
 ROOT=$(dirname "$0")
 TARGET_DIR="$ROOT/Windowsfiles"
