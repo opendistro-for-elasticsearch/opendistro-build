@@ -23,6 +23,8 @@ wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$ES_
 #Unzip the oss
 unzip $ROOT/elasticsearch-oss-$ES_VERSION-windows-x86_64.zip
 rm -rf $ROOT/elasticsearch-oss-$ES_VERSION-windows-x86_64.zip
+echo after unzipping
+ls -ltr $ROOT/
 
 #Copy all the bat files in the bin directory
 BAT_FILES=`ls $ROOT/elasticsearch-$ES_VERSION/bin/*.bat`
