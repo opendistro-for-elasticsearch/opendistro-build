@@ -23,10 +23,10 @@ jobs:
         export JAVA_HOME=/openjdk12
         export PATH=$JAVA_HOME:$PATH
         echo Initial root dir
-        ls -ltr /
+        ls -ltr 
         elasticsearch/linux_distributions/opendistro-windows-build.sh
         echo exit root dir
-        ls -ltr /
+        ls -ltr 
         
   build-kibana-artifacts:
     needs: [build-es-artifacts]
