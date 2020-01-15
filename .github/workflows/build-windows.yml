@@ -42,7 +42,7 @@ jobs:
         #./opendistro-windows-kibana-build.sh  
   
   test-odfe-windows:
-    needs: [build-es-artifacts, build-kibana-artifacts]
+    #needs: [build-es-artifacts, build-kibana-artifacts]
     name: Testing exe
     runs-on: windows-latest
     steps:
@@ -74,7 +74,7 @@ jobs:
           #echo %odfe_version%
           cd ..\..
           set PACKAGE=Open_Distro_For_Elasticsearch_1.3.0.exe
-          aws s3 cp s3://odfe-windows/%PACKAGE% .
+          aws s3 cp s3://odfe-windows/Open_Distro_For_Elasticsearch_1.3.0.exe .\
           echo base after downloading exe
           dir
           echo running exe
