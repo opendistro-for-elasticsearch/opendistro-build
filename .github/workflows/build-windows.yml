@@ -63,13 +63,14 @@ jobs:
         run: |
           pip3 install pytest
           pip3 install requests
+          pip3 install awscli --upgrade --user
           echo inside base
           dir
           cd elasticsearch\linux_distributions
           echo inside es\linux
           dir
-          
-          set odfe_version=`..\bin\version-info --od`
+          echo running version info
+          set odfe_version=`..\bin\version-info.py --od`
           echo %odfe_version%
           cd ..\..
           set PACKAGE=Open_Distro_For_Elasticsearch_%odfe_version%.exe
