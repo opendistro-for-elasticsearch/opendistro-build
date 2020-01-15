@@ -78,7 +78,9 @@ jobs:
           echo base after downloading exe
           dir
           echo running exe
-          .\%PACKAGE% -q
+          .\Open_Distro_For_Elasticsearch_1.3.0.exe -q
+          echo after installing exe
+          dir
           echo running elasticsearch
           .\Open Distro For Elasticsearch\bin\elasticsearch.bat
           
