@@ -69,11 +69,11 @@ jobs:
           cd elasticsearch\linux_distributions
           echo inside es\linux
           dir
-          echo running version info
-          set odfe_version=`..\bin\version-info.py --od`
-          echo %odfe_version%
+          #echo running version info
+          #set odfe_version=`..\bin\version-info.py --od`
+          #echo %odfe_version%
           cd ..\..
-          set PACKAGE=Open_Distro_For_Elasticsearch_%odfe_version%.exe
+          set PACKAGE=Open_Distro_For_Elasticsearch_1.3.0.exe
           aws s3 cp s3://odfe-windows/%PACKAGE% .
           echo base after downloading exe
           dir
