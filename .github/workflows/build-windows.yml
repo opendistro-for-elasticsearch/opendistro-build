@@ -63,13 +63,18 @@ jobs:
         run: |
           pip3 install pytest
           pip3 install requests
-          
+          echo inside base
+          dir
           cd elasticsearch\linux_distributions
+          echo inside es\linux
+          dir
+          
           set odfe_version=`..\bin\version-info --od`
           echo %odfe_version%
-          cd %home%
+          cd ..\..
           set PACKAGE=Open_Distro_For_Elasticsearch_%odfe_version%.exe
           aws s3 cp s3://odfe-windows/%PACKAGE% .
+          echo base after downloading exe
           dir
           echo running exe
           .\%PACKAGE% -q
