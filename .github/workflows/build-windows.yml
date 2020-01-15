@@ -26,7 +26,6 @@ jobs:
        #./opendistro-windows-build.sh
         
   build-kibana-artifacts:
-    needs: [build-es-artifacts]
     name: Build Kibana Artifacts
     runs-on: [ubuntu-latest]
     steps:
@@ -41,5 +40,40 @@ jobs:
       run: |
         #cd kibana/linux_distributions 
         #./opendistro-windows-kibana-build.sh  
+  
+  test-odfe-windows:
+    needs: [build-es-artifacts, build-kibana-artifacts]
+    name: Testing exe
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/checkout@v1
+        with:
+          repository: rishabh6788/odfe-test
+          ref: master
+          token: ${{ secrets.GitHub_PAT }}    
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      
+      - name: Run exe 
+        run: |
+          pip3 install pytest
+          pip3 install requests
+          
+          cd elasticsearch\linux_distributions
+          set odfe_version=`..\bin\version-info --od`
+          echo %odfe_version%
+          cd %home%
+          set PACKAGE=Open_Distro_For_Elasticsearch_%odfe_version%.exe
+          aws s3 cp s3://odfe-windows/%PACKAGE% .
+          dir
+          echo running exe
+          .\%PACKAGE% -q
+          echo running elasticsearch
+          .\Open Distro For Elasticsearch\bin\elasticsearch.bat
           
         
