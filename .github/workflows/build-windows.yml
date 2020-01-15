@@ -78,11 +78,11 @@ jobs:
           echo base after downloading exe
           dir
           echo running exe
-          .\Open_Distro_For_Elasticsearch_1.3.0.exe -q -dir .\Open Distro For Elasticsearch
+          .\Open_Distro_For_Elasticsearch_1.3.0.exe -q -dir .\Open_Distro_For_Elasticsearch
           PING localhost -n 10 >NUL
           echo after installing exe
           dir
           echo running elasticsearch
-          .\Open Distro For Elasticsearch\bin\elasticsearch.bat
+          .\Open_Distro_For_Elasticsearch\bin\elasticsearch.bat
           
         
