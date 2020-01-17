@@ -44,7 +44,8 @@ jobs:
           nohup ./opendistro-tar-install.sh &
           sleep 30s
           curl -XGET https://localhost:9200 -u admin:admin --insecure
-          #cd ..
+          cd ../index-management
           echo "running gradle"
+          ./gradlew build
           #./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
           
