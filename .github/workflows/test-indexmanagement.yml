@@ -3,7 +3,7 @@ name: Test index management
 on:
   push:
     branches: 
-      - master
+      - rish1397-patch-1
       
 jobs:
   test:
@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
         with:
-          repository: opendistro-for-elasticsearch/index-management
+          repository: rish1397/index-management
           ref: master
           token: ${{ secrets.GitHub_PAT }}
       - name: Configure AWS Credentials
@@ -34,4 +34,5 @@ jobs:
           nohup ./opendistro-tar-install.sh &
           sleep 1m
           cd ..
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
           
