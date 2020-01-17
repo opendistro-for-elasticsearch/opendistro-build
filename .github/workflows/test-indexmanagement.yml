@@ -35,10 +35,10 @@ jobs:
           
           tar -zxf opendistroforelasticsearch-1.3.0.tar.gz
           rm opendistroforelasticsearch-1.3.0.tar.gz
-          
-          nohup ./opendistroforelasticsearch-1.3.0/opendistro-tar-install.sh &
+          cd opendistroforelasticsearch-1.3.0
+          nohup ./opendistro-tar-install.sh &
           sleep 1m
-        
+          cd ..
           echo running graddle
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
           
