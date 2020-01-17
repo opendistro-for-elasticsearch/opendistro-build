@@ -35,10 +35,11 @@ jobs:
           #cd ../index-management
           #ls -ltr
           
-          #aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistro-elasticsearch/opendistroforelasticsearch-1.3.0.tar.gz .
+          aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistro-elasticsearch/opendistroforelasticsearch-1.3.0.tar.gz .
           
-          #tar -zxf opendistroforelasticsearch-1.3.0.tar.gz
-          #rm opendistroforelasticsearch-1.3.0.tar.gz
+          tar -zxf opendistroforelasticsearch-1.3.0.tar.gz
+          rm opendistroforelasticsearch-1.3.0.tar.gz
+          ls -ltr
           #cd opendistroforelasticsearch-1.3.0
           #nohup ./opendistro-tar-install.sh &
           #sleep 1m
