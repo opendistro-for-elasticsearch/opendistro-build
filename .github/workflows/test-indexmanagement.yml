@@ -9,14 +9,17 @@ jobs:
   test:
     name: Run integration test for index-management
     runs-on: [ubuntu-16.04]
-    container:
-      image: opendistroforelasticsearch/multijava08101112-git:v1
     steps:
       - uses: actions/checkout@v1
         with:
           repository: rish1397/index-management
           ref: master
           token: ${{ secrets.GitHub_PAT }}
+      - uses: actions/setup-java@v1
+        with:
+          java-version: '11.0.x'
+          java-package: jdk
+          architecture: x64
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
