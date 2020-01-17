@@ -30,6 +30,8 @@ jobs:
         run: |
           echo `pwd`
           ls -ltr
+          cd ..
+          ls -ltr
           #cd ../index-management
           #ls -ltr
           
