@@ -40,10 +40,10 @@ jobs:
           tar -zxf opendistroforelasticsearch-1.3.0.tar.gz
           rm opendistroforelasticsearch-1.3.0.tar.gz
           ls -ltr
-          #cd opendistroforelasticsearch-1.3.0
-          #nohup ./opendistro-tar-install.sh &
-          #sleep 1m
-          #curl -XGET https://localhost:9200 -u admin:admin --insecure
+          cd opendistroforelasticsearch-1.3.0
+          nohup ./opendistro-tar-install.sh &
+          sleep 30s
+          curl -XGET https://localhost:9200 -u admin:admin --insecure
           #cd ..
           echo "running gradle"
           #./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
