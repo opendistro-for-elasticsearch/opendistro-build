@@ -37,9 +37,6 @@ jobs:
           nohup ./opendistro-tar-install.sh &
           sleep 1m
           cd ../..
-          ls -ltr
-          echo the path is
-          pwd
-          ls -ltr
-          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
+          echo running graddle
+          ./index-management/gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
           
