@@ -28,15 +28,17 @@ jobs:
           aws-region: us-east-1
       - name: Run Tar
         run: |
-          aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistro-elasticsearch/opendistroforelasticsearch-1.3.0.tar.gz .
-          ls -ltr
-          tar -zxf opendistroforelasticsearch-1.3.0.tar.gz
-          cd opendistroforelasticsearch-1.3.0
+          cd ../index-management
           ls -ltr
           
-          nohup ./opendistro-tar-install.sh &
+          aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistro-elasticsearch/opendistroforelasticsearch-1.3.0.tar.gz .
+          
+          tar -zxf opendistroforelasticsearch-1.3.0.tar.gz
+          rm opendistroforelasticsearch-1.3.0.tar.gz
+          
+          nohup ./opendistroforelasticsearch-1.3.0/opendistro-tar-install.sh &
           sleep 1m
-          cd ../..
+        
           echo running graddle
-          ./index-management/gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
           
