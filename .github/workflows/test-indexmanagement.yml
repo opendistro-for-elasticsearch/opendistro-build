@@ -36,7 +36,7 @@ jobs:
           
           nohup ./opendistro-tar-install.sh &
           sleep 1m
-          cd ..
+          cd ../..
           ls -ltr
           echo the path is
           pwd
