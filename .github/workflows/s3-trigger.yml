@@ -35,6 +35,7 @@ jobs:
             plugin_folder=`echo $item|awk -F/ '{print $1}'`
             plguin_item=`echo $item|awk -F/ '{print $2}'`
             echo $plugin_folder.$plguin_item
-            #aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/elasticsearch-plugins/opendistro-alerting/ . --recursive --exclude "*" --include "opendistro_alerting-$OD_VERSION*"
+            aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/elasticsearch-plugins/$plugin_folder/ . --recursive --exclude "*" --include "$plguin_item-$OD_VERSION*"
           done
+          ls -ltr
           
