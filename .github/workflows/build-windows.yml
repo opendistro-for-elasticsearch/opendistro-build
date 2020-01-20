@@ -77,9 +77,10 @@ jobs:
           #cd ..\..
           #set PACKAGE=Open_Distro_For_Elasticsearch_%odfe_version%.exe
           
-          #aws s3 cp s3://odfe-windows/windows-zip/odfe-1.2.1.0-win.zip .\
-          #unzip .\
-          
+          aws s3 cp s3://odfe-windows/windows-zip/opendistroforelasticsearch-1.3.0 .\
+          unzip .\opendistroforelasticsearch-1.3.0.zip 
+          dir
+          .\opendistroforelasticsearch-1.3.0\bin\elasticsearch.bat
           
           #aws s3 cp s3://odfe-windows/Open_Distro_For_Elasticsearch_1.3.0.exe .\
           #echo base after downloading exe
