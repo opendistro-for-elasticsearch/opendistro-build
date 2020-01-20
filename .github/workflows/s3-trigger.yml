@@ -19,5 +19,7 @@ jobs:
       - name: Build deb
         run: |
           #!/bin/bash -x
+          #ls -ltr
+          cd elasticsearch/bin
           ls -ltr
           
