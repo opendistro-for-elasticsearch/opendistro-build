@@ -41,11 +41,11 @@ jobs:
           tot_plugins=`ls|wc -l`
           echo $tot_plugins
           
-          if [ $tot_plugins == 6 ]
+          if [ $tot_plugins == 7 ]
           then
               echo "All plugins available"
           else
-              echo "Not Available"
+              exit 1
           fi
           
           
