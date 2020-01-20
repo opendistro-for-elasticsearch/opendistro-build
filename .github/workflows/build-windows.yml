@@ -22,8 +22,8 @@ jobs:
         set -u
         export JAVA_HOME=/openjdk12
         export PATH=$JAVA_HOME:$PATH
-        #cd elasticsearch/linux_distributions
-        #./opendistro-windows-build.sh
+        cd elasticsearch/linux_distributions
+        ./opendistro-windows-build.sh
         
   build-kibana-artifacts:
     name: Build Kibana Artifacts
@@ -42,7 +42,7 @@ jobs:
         #./opendistro-windows-kibana-build.sh  
   
   test-odfe-windows:
-    #needs: [build-es-artifacts, build-kibana-artifacts]
+    needs: [build-es-artifacts, build-kibana-artifacts]
     name: Testing exe
     runs-on: windows-latest
     steps:
