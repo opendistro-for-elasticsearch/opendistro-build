@@ -20,6 +20,7 @@ jobs:
         run: |
           #!/bin/bash -x
           #ls -ltr
+          echo `pwd`
           cd elasticsearch/bin
           ls -ltr
           OD_VERSION=`./version-info --od`
