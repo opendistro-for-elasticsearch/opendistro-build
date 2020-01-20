@@ -78,16 +78,17 @@ jobs:
           #echo %odfe_version%
           #cd ..\..
           #set PACKAGE=Open_Distro_For_Elasticsearch_1.3.0.exe
-          aws s3 cp s3://odfe-windows/Open_Distro_For_Elasticsearch_1.3.0.exe .\
+          curl
+          #aws s3 cp s3://odfe-windows/Open_Distro_For_Elasticsearch_1.3.0.exe .\
           echo base after downloading exe
           dir
           set JAVA_HOME=/openjdk12
           set PATH=%JAVA_HOME%:%PATH%
           echo running exe
-          .\Open_Distro_For_Elasticsearch_1.3.0.exe -q -dir "D:\a\opendistro-build\opendistro-build\"
+          #.\Open_Distro_For_Elasticsearch_1.3.0.exe -q -dir "D:\a\opendistro-build\opendistro-build\"
           dir
           #Running curl
-          curl -XGET https://localhost:9200 -u admin:admin --insecure
+          #curl -XGET https://localhost:9200 -u admin:admin --insecure
           #ping -n 100 127.0.0.1 >NUL
           #echo running elasticsearch
           #.\Open_Distro_For_Elasticsearch\bin\elasticsearch.bat
