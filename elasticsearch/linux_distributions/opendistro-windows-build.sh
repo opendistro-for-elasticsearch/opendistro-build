@@ -38,7 +38,7 @@ wget https://download-gcdn.ej-technologies.com/install4j/install4j_unix_8_0_4.ta
 tar -xzf $ROOT/install4j_unix_8_0_4.tar.gz --directory $ROOT 
 rm -rf $ROOT/*tar*
 #Download the .install4j file from s3
-aws s3 cp s3://odfe-windows/ODFE.install4j $TARGET_DIR/$PACKAGE-$OD_VERSION
+aws s3 cp s3://odfe-windows/ODFE.install4j $ROOT
 #Build the exe
 $ROOT/install4j*/bin/install4jc -d $TARGET_DIR/EXE -D sourcedir=./Windowsfiles/$PACKAGE-$OD_VERSION,version=$OD_VERSION --license=L-M8-AMAZON_DEVELOPMENT_CENTER_INDIA_PVT_LTD#50047687020001-3rhvir3mkx479#484b6 $ROOT/ODFE.install4j
 
