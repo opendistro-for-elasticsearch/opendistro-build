@@ -77,11 +77,17 @@ jobs:
           #cd ..\..
           #set PACKAGE=Open_Distro_For_Elasticsearch_%odfe_version%.exe
           
-          aws s3 cp s3://odfe-windows/Open_Distro_For_Elasticsearch_1.3.0.exe .\
+          #aws s3 cp s3://odfe-windows/Open_Distro_For_Elasticsearch_1.3.0.exe .\
+          aws s3 cp s3://odfe-windows/windows-zip/odfe-1.2.1.0-win.zip .\
           echo base after downloading exe
           dir
-          echo running exe
-          .\Open_Distro_For_Elasticsearch_1.3.0.exe -q -dir .\Open_Distro_For_Elasticsearch
+          unzip odfe-1.2.1.0-win.zip
+          dir
+          .\odfe-1.2.1.0\bin\elasticsearch.bat
+          #echo running exe
+          #.\Open_Distro_For_Elasticsearch_1.3.0.exe -q -dir .\Open_Distro_For_Elasticsearch
+          
+          
           #Waiting for 20s
           ping -n 20 127.0.0.1 >.\out.txt
           dir
