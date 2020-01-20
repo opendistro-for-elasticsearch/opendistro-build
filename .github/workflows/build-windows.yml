@@ -22,8 +22,8 @@ jobs:
         set -u
         export JAVA_HOME=/openjdk12
         export PATH=$JAVA_HOME:$PATH
-        cd elasticsearch/linux_distributions
-        ./opendistro-windows-build.sh
+        #cd elasticsearch/linux_distributions
+        #./opendistro-windows-build.sh
         
   build-kibana-artifacts:
     name: Build Kibana Artifacts
@@ -65,8 +65,8 @@ jobs:
           architecture: x64
       - name: Run exe 
         run: |
-          #pip3 install pytest
-          #pip3 install requests
+          pip3 install pytest
+          pip3 install requests
           pip3 install awscli --upgrade
           echo inside base
           dir
@@ -80,7 +80,12 @@ jobs:
           aws s3 cp s3://odfe-windows/opendistroforelasticsearch-1.3.0.zip .\
           unzip .\opendistroforelasticsearch-1.3.0.zip 
           dir
-          .\opendistroforelasticsearch-1.3.0\bin\elasticsearch.bat
+          nohup .\opendistroforelasticsearch-1.3.0\bin\elasticsearch.bat &
+          echo Waiting for 30s
+          ping -n 30 127.0.0.1 >.\out.txt
+          cd ../odfe-test
+          dir
+          pytest
           
           #aws s3 cp s3://odfe-windows/Open_Distro_For_Elasticsearch_1.3.0.exe .\
           #echo base after downloading exe
