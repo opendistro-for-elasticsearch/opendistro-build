@@ -24,4 +24,4 @@ jobs:
           ls -ltr
           OD_VERSION=`./version-info --od`
           echo "$OD_VERSION"
-          aws s3 ls s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/elasticsearch-plugins/opendistro-alerting/
+          aws s3 ls s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/elasticsearch-plugins/opendistro-alerting/opendistro_alerting-$OD_VERSION*
