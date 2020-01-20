@@ -71,28 +71,23 @@ jobs:
           echo inside base
           dir
           #cd elasticsearch\linux_distributions
-          #echo inside es\linux
-          #dir
           #echo running version info
           #set odfe_version=`..\bin\version-info.py --od`
           #echo %odfe_version%
           #cd ..\..
-          #set PACKAGE=Open_Distro_For_Elasticsearch_1.3.0.exe
-         
-          aws s3 cp s3://odfe-windows/Open_Distro_For_Elasticsearch_1.3.0.exe .\
+          #set PACKAGE=Open_Distro_For_Elasticsearch_%odfe_version%.exe
+          
+          aws s3 cp s3://odfe-windows/Open_Distro_For_Elasticsearch_1.3.0.exe .\Open_Distro_For_Elasticsearch
           echo base after downloading exe
           dir
-          set JAVA_HOME=/openjdk12
-          set PATH=%JAVA_HOME%:%PATH%
           echo running exe
-          .\Open_Distro_For_Elasticsearch_1.3.0.exe -q -dir .\NEW
-          #waitfor SomethingThatIsNeverHappening /t 100 2>out.txt
-        
-          #Running curl
-          #curl -XGET https://localhost:9200 -u admin:admin --insecure
+          .\Open_Distro_For_Elasticsearch_1.3.0.exe -q -dir .\O
+          #Waiting for 20s
           ping -n 20 127.0.0.1 >.\out.txt
           dir
           #echo running elasticsearch
           #.\Open_Distro_For_Elasticsearch\bin\elasticsearch.bat
+          #Running curl
+          #curl -XGET https://localhost:9200 -u admin:admin --insecure
           
         
