@@ -30,7 +30,7 @@ cp $BAT_FILES $TARGET_DIR/$PACKAGE-$OD_VERSION/bin
 rm -rf $ROOT/elasticsearch-oss-$ES_VERSION-windows-x86_64
 
 #Making zip
-zip -r $TARGET_DIR/ZIP/$PACKAGE-$OD_VERSION.zip $TARGET_DIR/$PACKAGE-$OD_VERSION
+zip -r $TARGET_DIR/$PACKAGE-$OD_VERSION.zip $TARGET_DIR/$PACKAGE-$OD_VERSION
 
 #Download install4j software
 #wget https://download-gcdn.ej-technologies.com/install4j/install4j_unix_8_0_4.tar.gz -P $ROOT
@@ -44,5 +44,5 @@ zip -r $TARGET_DIR/ZIP/$PACKAGE-$OD_VERSION.zip $TARGET_DIR/$PACKAGE-$OD_VERSION
 
 #Copy to s3
 #aws s3 cp $TARGET_DIR/EXE/*.exe s3://odfe-windows/
-aws s3 cp $TARGET_DIR/ZIP/$PACKAGE-$OD_VERSION.zip s3://odfe-windows/
+aws s3 cp $TARGET_DIR/$PACKAGE-$OD_VERSION.zip s3://odfe-windows/
 rm -rf ws
