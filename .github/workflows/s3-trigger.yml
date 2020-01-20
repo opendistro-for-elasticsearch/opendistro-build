@@ -38,4 +38,14 @@ jobs:
             aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/elasticsearch-plugins/$plugin_folder/ . --recursive --exclude "*" --include "$plguin_item-$OD_VERSION*"
           done
           ls -ltr
+          tot_plugins=`ls -ltr|wc-l`
+          echo $tot_plugins
+          
+          if [ $tot_plugins == 6 ]
+          then
+              echo "All plugins available"
+          else
+              echo "Not Available"
+          fi
+          
           
