@@ -31,7 +31,7 @@ rm -rf $ROOT/elasticsearch-oss-$ES_VERSION-windows-x86_64
 
 #Making zip
 cd $TARGET_DIR
-zip -r $TARGET_DIR/$PACKAGE-$OD_VERSION.zip ./$PACKAGE-$OD_VERSION
+zip -r ./$PACKAGE-$OD_VERSION.zip ./$PACKAGE-$OD_VERSION
 cd ..
 
 #Download install4j software
