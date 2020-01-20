@@ -65,8 +65,8 @@ jobs:
           architecture: x64
       - name: Run exe 
         run: |
-          pip3 install pytest
-          pip3 install requests
+          #pip3 install pytest
+          #pip3 install requests
           pip3 install awscli --upgrade
           echo inside base
           dir
@@ -85,7 +85,9 @@ jobs:
           set PATH=%JAVA_HOME%:%PATH%
           echo running exe
           .\Open_Distro_For_Elasticsearch_1.3.0.exe -q -dir .\NEW
-          ping -n 100 127.0.0.1 >NUL
+          cd ..
+          dir
+          #ping -n 100 127.0.0.1 >NUL
           echo after installing exe
           dir
           #echo running elasticsearch
