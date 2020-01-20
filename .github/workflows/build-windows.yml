@@ -80,11 +80,11 @@ jobs:
           set JAVA_HOME=/openjdk12
           set PATH=%JAVA_HOME%:%PATH%
           echo running exe
-          .\Open_Distro_For_Elasticsearch_1.3.0.exe -q -dir .\
+          .\Open_Distro_For_Elasticsearch_1.3.0.exe -q -dir .\NEW
           #ping -n 100 127.0.0.1 >NUL
           echo after installing exe
           dir
-          echo running elasticsearch
-          .\Open_Distro_For_Elasticsearch\bin\elasticsearch.bat
+          #echo running elasticsearch
+          #.\Open_Distro_For_Elasticsearch\bin\elasticsearch.bat
           
         
