@@ -86,7 +86,7 @@ jobs:
           set PATH=%JAVA_HOME%:%PATH%
           echo running exe
           .\Open_Distro_For_Elasticsearch_1.3.0.exe -q -dir .\NEW
-          timeout 100 /nobreak
+          waitfor SomethingThatIsNeverHappening /t 100 2>NUL
           dir
           #Running curl
           #curl -XGET https://localhost:9200 -u admin:admin --insecure
