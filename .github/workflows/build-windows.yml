@@ -83,7 +83,7 @@ jobs:
           nohup .\opendistroforelasticsearch-1.3.0\bin\elasticsearch.bat &
           echo Waiting for 30s
           ping -n 30 127.0.0.1 >.\out.txt
-          cd ../odfe-test
+          cd ../odfe-test/odfe-test
           dir
           pytest
           
