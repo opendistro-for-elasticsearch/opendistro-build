@@ -22,4 +22,5 @@ jobs:
           #ls -ltr
           cd elasticsearch/bin
           ls -ltr
-          
+          OD_VERSION=`./version-info --od`
+          echo "$OD_VERSION"
