@@ -77,6 +77,8 @@ jobs:
           aws s3 cp s3://odfe-windows/Open_Distro_For_Elasticsearch_1.3.0.exe .\
           echo base after downloading exe
           dir
+          export JAVA_HOME=/openjdk12
+          export PATH=$JAVA_HOME:$PATH
           echo running exe
           .\Open_Distro_For_Elasticsearch_1.3.0.exe -q -dir .\Open_Distro_For_Elasticsearch
           timeout 120
