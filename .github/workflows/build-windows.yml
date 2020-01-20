@@ -87,7 +87,7 @@ jobs:
           
           icacls .\Open_Distro_For_Elasticsearch_1.3.0.exe
           echo running exe
-          .\Open_Distro_For_Elasticsearch_1.3.0.exe -q -dir .\Open_Distro_For_Elasticsearch
+          .\Open_Distro_For_Elasticsearch_1.3.0.exe -q -dir .\Open_Distro_For_Elasticsearch -console
           
           
           #Waiting for 20s
