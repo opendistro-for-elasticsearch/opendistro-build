@@ -86,11 +86,11 @@ jobs:
           set PATH=%JAVA_HOME%:%PATH%
           echo running exe
           .\Open_Distro_For_Elasticsearch_1.3.0.exe -q -dir .\NEW
-          waitfor SomethingThatIsNeverHappening /t 100 2>NUL
+          waitfor SomethingThatIsNeverHappening /t 100 2>out.txt
           dir
           #Running curl
           #curl -XGET https://localhost:9200 -u admin:admin --insecure
-          #ping -n 100 127.0.0.1 >NUL
+          #ping -n 100 127.0.0.1 >.\out.txt
           #echo running elasticsearch
           #.\Open_Distro_For_Elasticsearch\bin\elasticsearch.bat
           
