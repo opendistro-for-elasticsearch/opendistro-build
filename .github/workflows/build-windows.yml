@@ -88,7 +88,10 @@ jobs:
           .\Open_Distro_For_Elasticsearch_1.3.0.exe -q -dir "D:\a\opendistro-build\opendistro-build\NEW"
           dir
           cd ..\..\..
-          cd C:\
+          cd C:\Program Files
+          dir
+          cd ..
+          cd C:\Program Files (x86)
           dir
           #Running curl
           #curl -XGET https://localhost:9200 -u admin:admin --insecure
