@@ -3,14 +3,11 @@ name: Process Debian Artifacts
 on:
   push:
     branches:
-      - master
+      - s3-trigger
 jobs:
   build-es-artifacts:
     name: Build ES Artifacts
     runs-on: ubuntu-latest
-    container:
-      image: opendistroforelasticsearch/multijava08101112-git:v1
-
     steps:
       - uses: actions/checkout@v1
       - name: Configure AWS Credentials
@@ -22,8 +19,5 @@ jobs:
       - name: Build deb
         run: |
           #!/bin/bash -x
-          set -e
-          set -u
-          export JAVA_HOME=/openjdk12
-          export PATH=$JAVA_HOME:$PATH
-          cd elasticsearch/linux_distributions
+          ls -ltr
+          
