@@ -30,19 +30,19 @@ cp $BAT_FILES $TARGET_DIR/$PACKAGE-$OD_VERSION/bin
 rm -rf $ROOT/elasticsearch-oss-$ES_VERSION-windows-x86_64
 
 #Making zip
-zip -r $TARGET_DIR/ZIP/$PACKAGE-$OD_VERSION.zip TARGET_DIR/$PACKAGE-$OD_VERSION
+zip -r $TARGET_DIR/ZIP/$PACKAGE-$OD_VERSION.zip $TARGET_DIR/$PACKAGE-$OD_VERSION
 
 #Download install4j software
-wget https://download-gcdn.ej-technologies.com/install4j/install4j_unix_8_0_4.tar.gz -P $ROOT
+#wget https://download-gcdn.ej-technologies.com/install4j/install4j_unix_8_0_4.tar.gz -P $ROOT
 #Untar
-tar -xzf $ROOT/install4j_unix_8_0_4.tar.gz --directory $ROOT 
-rm -rf $ROOT/*tar*
+#tar -xzf $ROOT/install4j_unix_8_0_4.tar.gz --directory $ROOT 
+#rm -rf $ROOT/*tar*
 #Download the .install4j file from s3
-aws s3 cp s3://odfe-windows/ODFE.install4j $ROOT
+#aws s3 cp s3://odfe-windows/ODFE.install4j $ROOT
 #Build the exe
-$ROOT/install4j*/bin/install4jc -d $TARGET_DIR/EXE -D sourcedir=./Windowsfiles/$PACKAGE-$OD_VERSION,version=$OD_VERSION --license=L-M8-AMAZON_DEVELOPMENT_CENTER_INDIA_PVT_LTD#50047687020001-3rhvir3mkx479#484b6 $ROOT/ODFE.install4j
+#$ROOT/install4j*/bin/install4jc -d $TARGET_DIR/EXE -D sourcedir=./Windowsfiles/$PACKAGE-$OD_VERSION,version=$OD_VERSION --license=L-M8-AMAZON_DEVELOPMENT_CENTER_INDIA_PVT_LTD#50047687020001-3rhvir3mkx479#484b6 $ROOT/ODFE.install4j
 
 #Copy to s3
-aws s3 cp $TARGET_DIR/EXE/*.exe s3://odfe-windows/
+#aws s3 cp $TARGET_DIR/EXE/*.exe s3://odfe-windows/
 aws s3 cp $TARGET_DIR/ZIP/$PACKAGE-$OD_VERSION.zip s3://odfe-windows/
 rm -rf ws
