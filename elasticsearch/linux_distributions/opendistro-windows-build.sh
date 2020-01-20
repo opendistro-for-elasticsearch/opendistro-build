@@ -35,7 +35,7 @@ zip -r ./$PACKAGE-$OD_VERSION.zip ./$PACKAGE-$OD_VERSION
 echo inside target
 ls -ltr
 pwd
-cd ..
+cd ../..
 echo inside root
 ls -ltr
 pwd
