@@ -81,7 +81,7 @@ jobs:
           set PATH=%JAVA_HOME%:%PATH%
           echo running exe
           .\Open_Distro_For_Elasticsearch_1.3.0.exe -q -dir .\Open_Distro_For_Elasticsearch
-          timeout 120
+          ping -n 100 127.0.0.1 >NUL
           echo after installing exe
           dir
           echo running elasticsearch
