@@ -19,6 +19,7 @@ jobs:
       - name: Checking Availability
         run: |
           #!/bin/bash
+          CURRENT_NO_PLUGINS=6
           PLUGINS="opendistro-sql/opendistro_sql opendistro-alerting/opendistro_alerting opendistro-job-scheduler/opendistro-job-scheduler opendistro-security/opendistro_security performance-analyzer/opendistro_performance_analyzer opendistro-index-management/opendistro_index_management"
           
           cd elasticsearch/bin
@@ -41,7 +42,7 @@ jobs:
           tot_plugins=`ls|wc -l`
           echo $tot_plugins
           
-          if [ $tot_plugins == 7 ]
+          if [ $tot_plugins == $CURRENT_NO_PLUGINS ]
           then
               echo "All plugins available"
           else
