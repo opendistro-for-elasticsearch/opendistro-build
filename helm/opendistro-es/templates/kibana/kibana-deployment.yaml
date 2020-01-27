@@ -12,20 +12,26 @@
 # express or implied. See the License for the specific language governing
 # permissions and limitations under the License.
 
+# @formatter:off
 {{- if .Values.kibana.enabled }}
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
 {{ include "opendistro-es.labels.standard" . | indent 4 }}
+    role: kibana
   name: {{ template "opendistro-es.fullname" . }}-kibana
 spec:
   replicas: {{ .Values.kibana.replicas }}
+  selector:
+    matchLabels:
+{{ include "opendistro-es.labels.standard" . | indent 6 }}
+      role: kibana
   template:
     metadata:
       labels:
 {{ include "opendistro-es.labels.standard" . | indent 8 }}
-        app: {{ template "opendistro-es.fullname" . }}-kibana
+        role: kibana
       annotations:
         {{/* This forces a restart if the secret config has changed */}}
         {{- if .Values.kibana.config }}
@@ -132,6 +138,10 @@ spec:
     {{- with .Values.kibana.nodeSelector }}
       nodeSelector:
 {{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.elasticsearch.client.affinity }}
+      affinity:
+{{- toYaml . | indent 8 }}
     {{- end }}
     {{- with .Values.kibana.tolerations }}
       tolerations:

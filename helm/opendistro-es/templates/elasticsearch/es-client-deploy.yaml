@@ -12,8 +12,9 @@
 # express or implied. See the License for the specific language governing
 # permissions and limitations under the License.
 
+# @formatter:off
 {{- if .Values.elasticsearch.client.enabled }}
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -23,6 +24,10 @@ metadata:
   namespace: {{ .Release.Namespace }}
 spec:
   replicas: {{ .Values.elasticsearch.client.replicas }}
+  selector:
+    matchLabels:
+{{ include "opendistro-es.labels.standard" . | indent 6 }}
+      role: client
   template:
     metadata:
       labels:
@@ -47,20 +52,10 @@ spec:
       nodeSelector:
 {{ toYaml . | indent 8 }}
     {{- end }}
-      # Weighted anti-affinity to disallow deploying client node to the same worker node as master node
+    {{- with .Values.elasticsearch.client.affinity }}
       affinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 1
-              podAffinityTerm:
-                topologyKey: "kubernetes.io/hostname"
-                labelSelector:
-                  matchLabels:
-                    role: client
-      {{- with .Values.elasticsearch.client.nodeAffinity }}
-        nodeAffinity:
-{{ toYaml . | indent 10 }}
-      {{- end }}
+{{- toYaml . | indent 8 }}
+    {{- end }}
       initContainers:
       - name: init-sysctl
         image: {{ .Values.elasticsearch.initContainer.image }}:{{ .Values.elasticsearch.initContainer.imageTag }}
@@ -136,7 +131,7 @@ spec:
         - mountPath: {{ .Values.elasticsearch.configDirectory }}/logging.yml
           name: config
           subPath: logging.yml
-        {{- if and .Values.elasticsearch.ssl.transport.enabled .Values.elasticsearch.ssl.transport.existingCertSecret }}
+        {{- if .Values.elasticsearch.ssl.transport.existingCertSecret }}
         - mountPath: {{ .Values.elasticsearch.configDirectory }}/elk-transport-crt.pem
           name: transport-certs
           subPath: elk-transport-crt.pem
@@ -173,7 +168,7 @@ spec:
       - name: config
         secret:
           secretName: {{ template "opendistro-es.fullname" . }}-es-config
-      {{- if and .Values.elasticsearch.ssl.transport.enabled .Values.elasticsearch.ssl.transport.existingCertSecret }}
+      {{- if .Values.elasticsearch.ssl.transport.existingCertSecret }}
       - name: transport-certs
         secret:
           secretName: {{ .Values.elasticsearch.ssl.transport.existingCertSecret }}
