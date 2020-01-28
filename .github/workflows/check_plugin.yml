@@ -1,9 +1,8 @@
 name: Process Debian Artifacts
 
 on:
-  push:
-    branches:
-      - actions-branch
+  schedule:
+    - cron: '0 10 * * *'
 jobs:
   plugin-avilability:
     name: Check Plugin Availability
@@ -65,7 +64,7 @@ jobs:
           cd /home/runner/work/opendistro-build/opendistro-build/
           if [ ${#unavailable_plugin[*]} > 0 ]
           then
-              echo "<h2>Below plugins are not yet available for ODFE-$OD_VERSION</h2>" >> message.md
+              echo "<h2>Below plugins are not available for ODFE-$OD_VERSION build</h2>" >> message.md
               echo "<ol>" >> message.md
               for item in ${unavailable_plugin[*]}
               do
