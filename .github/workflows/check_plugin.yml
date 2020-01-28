@@ -1,4 +1,4 @@
-name: Process Debian Artifacts
+name: Check Plugin Availability
 
 on:
   schedule:
