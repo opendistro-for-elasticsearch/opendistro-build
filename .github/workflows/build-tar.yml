@@ -107,55 +107,87 @@ jobs:
           aws s3 cp $tar_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistroforelasticsearch-kibana/
           aws s3 cp $tar_checksum_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistroforelasticsearch-kibana/
           
-  test-odfe-tarball:
+  Test-ISM-Plugin:
     needs: [build-es-artifacts]
-    name: Run Tar Test
-    runs-on: [ubuntu-16.04]
+    name: Run ISM Test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java: [12]
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/checkout@v1
-        with:
-          repository: rishabh6788/odfe-test
-          ref: master
-          token: ${{ secrets.GitHub_PAT }}
-      - uses: actions/setup-java@v1
-        with:
-          java-version: '11.0.x'
-          java-package: jdk
-          architecture: x64
-      - name: Configure AWS Credentials
+      - name: Set up AWS Cred
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
-      - name: Run Tar
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+      - uses: actions/checkout@v1
+      - name: Checkout ISM
+        uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/index-management
+          ref: opendistro-1.4
+      - name: Run Something
         run: |
-          sudo pip3 install pytest
-          sudo pip3 install requests
-          
-          cd elasticsearch/linux_distributions
+          cd ..
+          cd opendistro-build/elasticsearch/linux_distributions
           odfe_version=`../bin/version-info --od`
           echo $odfe_version
-          cd $home
-    
+          cd ../../..
           aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistro-elasticsearch/opendistroforelasticsearch-$odfe_version.tar.gz .
-          ls -ltr
           tar -zxf opendistroforelasticsearch-$odfe_version.tar.gz
           cd opendistroforelasticsearch-$odfe_version
-          ls -ltr
+          sed -i /install_demo_configuration/d opendistro-tar-install.sh
+          ./bin/elasticsearch-plugin remove opendistro_security
           
           nohup ./opendistro-tar-install.sh &
-          sleep 1m
-
-          cd /home/runner/work/opendistro-build/odfe-test/odfe-test
-          pytest
+          sleep 45
+          cd ../index-management
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
           
+  
+  Test-Alerting-Plugin:
+    needs: [build-es-artifacts]
+    name: Run Alerting Test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java: [12]
+    steps:
+      - name: Set up AWS Cred
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+      - uses: actions/checkout@v1
+      - name: Checkout ISM
+        uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/alerting
+          ref: master
+      - name: Run Something
+        run: |
+          cd ..
+          cd opendistro-build/elasticsearch/linux_distributions
+          odfe_version=`../bin/version-info --od`
+          echo $odfe_version
+          cd ../../..
+          aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistro-elasticsearch/opendistroforelasticsearch-$odfe_version.tar.gz .
+          tar -zxf opendistroforelasticsearch-$odfe_version.tar.gz
+          cd opendistroforelasticsearch-$odfe_version
+          sed -i /install_demo_configuration/d opendistro-tar-install.sh
+          ./bin/elasticsearch-plugin remove opendistro_security
           
-          
-          
-          
-          
-          
-          
-          
+          nohup ./opendistro-tar-install.sh &
+          sleep 45
+          cd ../alerting/alerting
+          ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
