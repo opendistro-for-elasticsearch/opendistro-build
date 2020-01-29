@@ -243,4 +243,4 @@ jobs:
           sleep 30
           
           cd alerting
-          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
+          ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
