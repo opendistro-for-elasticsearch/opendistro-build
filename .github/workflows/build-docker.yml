@@ -104,56 +104,64 @@ jobs:
           docker tag $kibana_image_id opendistroforelasticsearch/opendistroforelasticsearch-kibana:$ODFE_VER
           docker push opendistroforelasticsearch/opendistroforelasticsearch-kibana:$ODFE_VER
         
-  test-es-docker-image:
+  Test-ISM-Plugin:
     needs: [build-es-docker]
     name: Test ES Docker Container
     runs-on: [ubuntu-16.04]
+    strategy:
+      matrix:
+        java: [12]
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
         with:
-          repository: rishabh6788/odfe-test
-          ref: master
-          token: ${{ secrets.GitHub_PAT }}
+          repository: opendistro-for-elasticsearch/index-management
+          ref: opendistro-1.4
+      - name: Set Up JDK ${{ matrix.java }}
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
       - name: Run Docker Container
         run: |
           sleep 10
-          docker run -d -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" opendistroforelasticsearch/opendistroforelasticsearch:1.4.0
-      - name: Run ES Tests
-        run: |
-          sleep 1m
-
           cd ..
-          cd odfe-test
-          ls -ltr
-          cd odfe-test
-          sudo pip3 install pytest
-          sudo pip3 install requests
-          pytest
+          echo "FROM opendistroforelasticsearch/opendistroforelasticsearch:1.3.0" >> Dockerfile
+          echo "RUN /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro_security" >> Dockerfile
+          
+          docker build -t odfe-http:no-security .
+          docker run -d -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" odfe-http:no-security
+          
+          sleep 45
+          cd index-management
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
 
   test-alerting-plugin:
     needs: [build-es-docker]
     name: Test Alerting Plugin
     runs-on: [ubuntu-16.04]
+    strategy:
+      matrix:
+        java: [12]
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
         with:
-          repository: rishabh6788/odfe-test
+          repository: opendistro-for-elasticsearch/alerting
           ref: master
-          token: ${{ secrets.GitHub_PAT }}
+      - name: Set Up JDK ${{ matrix.java }}
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
       - name: Run Docker Container
         run: |
           sleep 10
-          docker run -d -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" opendistroforelasticsearch/opendistroforelasticsearch:1.4.0
-      - name: Run ES Tests
-        run: |
-          sleep 1m
-
           cd ..
-          cd odfe-test
-          ls -ltr
-          cd odfe-test
-          sudo pip3 install pytest
-          sudo pip3 install requests
-          pytest
+          echo "FROM opendistroforelasticsearch/opendistroforelasticsearch:1.3.0" >> Dockerfile
+          echo "RUN /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro_security" >> Dockerfile
+          
+          docker build -t odfe-http:no-security .
+          docker run -d -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" odfe-http:no-security
+          
+          sleep 45
+          cd alerting/alerting
+          ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
            
     
