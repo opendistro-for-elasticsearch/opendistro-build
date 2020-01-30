@@ -8,7 +8,7 @@ TARGET_DIR="$ROOT/Windowsfiles"
  
 #Downloading tar from s3
 
-aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistroforelasticsearch-kibana/opendistroforelasticsearch-kibana-1.4.0.tar.gz $TARGET_DIR/
+aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistroforelasticsearch-kibana/$PACKAGE-$OD_VERSION.tar.gz $TARGET_DIR/
 #Untar the tar artifact
 tar -xzf $TARGET_DIR/$PACKAGE-$OD_VERSION.tar.gz --directory $TARGET_DIR
 rm -rf $TARGET_DIR/*.tar.gz
