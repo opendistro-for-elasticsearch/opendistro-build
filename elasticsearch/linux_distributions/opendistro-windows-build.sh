@@ -31,7 +31,7 @@ rm -rf $ROOT/elasticsearch-oss-$ES_VERSION-windows-x86_64
 
 #Making zip
 cd $TARGET_DIR
-zip -r ./$PACKAGE-$OD_VERSION.zip ./$PACKAGE-$OD_VERSION
+zip -r ./odfe-$OD_VERSION.zip ./$PACKAGE-$OD_VERSION
 echo inside target
 ls -ltr
 pwd
