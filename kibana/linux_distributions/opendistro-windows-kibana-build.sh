@@ -20,7 +20,8 @@ rm -rf $ROOT/kibana-oss-$ES_VERSION-windows-x86_64.zip
 
 echo after unzipping
 ls $ROOT
-
+echo inside kibana
+ls $ROOT/kibana-$ES_VERSION-windows-x86_64/
 #Copy all the bat files in the bin directory and node.exe
 BAT_FILES=`ls $ROOT/kibana-$ES_VERSION-windows-x86_64/bin/*.bat`
 cp $BAT_FILES $TARGET_DIR/$PACKAGE/bin
