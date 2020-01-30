@@ -65,7 +65,10 @@ jobs:
           architecture: x64
       - name: Run exe 
         run: |
+          python -m pip install --upgrade pip
+          echo --------
           pip3 install pytest
+          echo --------
           pip3 install requests
           pip3 -version
           pip3 install awscli
