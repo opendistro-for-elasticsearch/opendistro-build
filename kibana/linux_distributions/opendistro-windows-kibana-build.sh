@@ -17,7 +17,10 @@ wget https://artifacts.elastic.co/downloads/kibana/kibana-oss-$ES_VERSION-window
 #Unzip the oss
 unzip -q $ROOT/kibana-oss-$ES_VERSION-windows-x86_64.zip -d $ROOT
 rm -rf $ROOT/kibana-oss-$ES_VERSION-windows-x86_64.zip
- 
+
+echo after unzipping
+ls $ROOT
+
 #Copy all the bat files in the bin directory and node.exe
 BAT_FILES=`ls $ROOT/kibana-$ES_VERSION-windows-x86_64/bin/*.bat`
 cp $BAT_FILES $TARGET_DIR/$PACKAGE/bin
