@@ -158,7 +158,7 @@ jobs:
           echo "RUN /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro_security" >> Dockerfile
           
           docker build -t odfe-http:no-security .
-          docker run -d -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" odfe-http:no-security
+          docker run -d -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" -e "http.port=9200" odfe-http:no-security
           
           sleep 45
           cd alerting/alerting
