@@ -130,7 +130,7 @@ jobs:
         uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/index-management
-          ref: opendistro-1.4
+          ref: master
       - name: Run Something
         run: |
           cd ..
@@ -172,7 +172,7 @@ jobs:
       - name: Checkout ISM
         uses: actions/checkout@v1
         with:
-          repository: opendistro-for-elasticsearch/alerting
+          repository: rish1397/alerting
           ref: master
       - name: Run Something
         run: |
