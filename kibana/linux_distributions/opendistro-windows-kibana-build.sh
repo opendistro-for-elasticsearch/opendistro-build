@@ -7,7 +7,8 @@ ROOT=$(dirname "$0")/ws
 TARGET_DIR="$ROOT/Windowsfiles"
  
 #Downloading tar from s3
-aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/tarball/opendistroforelasticsearch-kibana/$PACKAGE-$OD_VERSION.tar.gz $TARGET_DIR/
+
+aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistroforelasticsearch-kibana/opendistroforelasticsearch-kibana-1.4.0.tar.gz $TARGET_DIR/
 #Untar the tar artifact
 tar -xzf $TARGET_DIR/$PACKAGE-$OD_VERSION.tar.gz --directory $TARGET_DIR
 rm -rf $TARGET_DIR/*.tar.gz
@@ -18,10 +19,6 @@ wget https://artifacts.elastic.co/downloads/kibana/kibana-oss-$ES_VERSION-window
 unzip -q $ROOT/kibana-oss-$ES_VERSION-windows-x86_64.zip -d $ROOT
 rm -rf $ROOT/kibana-oss-$ES_VERSION-windows-x86_64.zip
 
-echo after unzipping
-ls $ROOT
-echo inside kibana
-ls $ROOT/kibana-$ES_VERSION-windows-x86_64/
 #Copy all the bat files in the bin directory and node.exe
 BAT_FILES=`ls $ROOT/kibana-$ES_VERSION-windows-x86_64/bin/*.bat`
 cp $BAT_FILES $TARGET_DIR/$PACKAGE/bin
