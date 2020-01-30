@@ -208,8 +208,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          repository: rish1397/alerting
-          ref: master
+          repository: opendistro-for-elasticsearch/alerting
+          ref: odfe-integTest-1.4
       - name: Setup Java
         uses: actions/setup-java@v1
         with:

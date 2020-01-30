@@ -172,8 +172,8 @@ jobs:
       - name: Checkout ISM
         uses: actions/checkout@v1
         with:
-          repository: rish1397/alerting
-          ref: master
+          repository: opendistro-for-elasticsearch/alerting
+          ref: odfe-integTest-1.4
       - name: Run Something
         run: |
           cd ..
