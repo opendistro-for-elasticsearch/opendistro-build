@@ -153,15 +153,21 @@ jobs:
 
           aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/staging/apt/*"
 
-  test-deb-artifacts:
+  Test-ISM-Plugin:
     needs: [sign-deb-artifacts]
     runs-on: [ubuntu-16.04]
+    strategy:
+      matrix:
+        java: [12]
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
         with:
-          repository: rishabh6788/odfe-test
+          repository: opendistro-for-elasticsearch/index-management
           ref: master
-          token: ${{ secrets.GitHub_PAT }}
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
       - name: Run Debian Staging Distrubution
         run: |
           sleep 20
@@ -180,33 +186,34 @@ jobs:
 
           sudo apt-get -y update
           sudo apt install -y opendistroforelasticsearch
+          
+          sudo chmod 777 /etc/elasticsearch/elasticsearch.yml
+          sudo /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro_security
+          sudo sed -i /^opendistro_security/d /etc/elasticsearch/elasticsearch.yml
+          sudo sed -i /CN=kirk/d /etc/elasticsearch/elasticsearch.yml
 
           sudo /etc/init.d/elasticsearch start
 
           sleep 30
-          sudo ls -ltr /var/log/elasticsearch/
-          sudo cat /var/log/elasticsearch/elasticsearch.log
-          sudo netstat -natp
+          
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
+          
 
-      - name: Run ES Tests
-        run: |
-          cd ..
-          cd odfe-test
-          ls -ltr
-          cd odfe-test
-          sudo pip3 install pytest
-          sudo pip3 install requests
-          pytest
-
-  test-alerting-artifacts:
+  Test-Alerting-Plugin:
     needs: [sign-deb-artifacts]
     runs-on: [ubuntu-16.04]
+    strategy:
+      matrix:
+        java: [12]
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
         with:
-          repository: rishabh6788/odfe-test
+          repository: rish1397/alerting
           ref: master
-          token: ${{ secrets.GitHub_PAT }}
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
       - name: Run Debian Staging Distrubution
         run: |
           sleep 20
@@ -225,20 +232,15 @@ jobs:
 
           sudo apt-get -y update
           sudo apt install -y opendistroforelasticsearch
+          
+          sudo chmod 777 /etc/elasticsearch/elasticsearch.yml
+          sudo /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro_security
+          sudo sed -i /^opendistro_security/d /etc/elasticsearch/elasticsearch.yml
+          sudo sed -i /CN=kirk/d /etc/elasticsearch/elasticsearch.yml
 
           sudo /etc/init.d/elasticsearch start
 
           sleep 30
-          sudo ls -ltr /var/log/elasticsearch/
-          sudo cat /var/log/elasticsearch/elasticsearch.log
-          sudo netstat -natp
-
-      - name: Run Alerting Tests
-        run: |
-          cd ..
-          cd odfe-test
-          ls -ltr
-          cd odfe-test
-          sudo pip3 install pytest
-          sudo pip3 install requests
-          pytest
+          
+          cd alerting
+          ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
