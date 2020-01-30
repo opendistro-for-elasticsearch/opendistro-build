@@ -27,7 +27,7 @@ rm -rf $ROOT/kibana-oss-$ES_VERSION-windows-x86_64
 
 #Making zip
 cd $TARGET_DIR
-zip -r ./odfe-$OD_VERSION-kibana.zip ./$PACKAGE-$OD_VERSION
+zip -r ./odfe-$OD_VERSION-kibana.zip ./$PACKAGE
 echo inside target
 ls -ltr
 pwd
