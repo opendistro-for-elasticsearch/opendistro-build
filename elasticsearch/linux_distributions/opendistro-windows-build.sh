@@ -52,5 +52,5 @@ $ROOT/install4j*/bin/install4jc -d $TARGET_DIR/EXE -D sourcedir=./Windowsfiles/$
 
 #Copy to s3
 aws s3 cp $TARGET_DIR/EXE/*.exe s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/odfe-executables/
-aws s3 cp $TARGET_DIR/$PACKAGE-$OD_VERSION.zip s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/ode-windows-zip/
+aws s3 cp $TARGET_DIR/odfe-$OD_VERSION.zip s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/ode-windows-zip/
 rm -rf ws
