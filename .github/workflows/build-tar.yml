@@ -185,6 +185,7 @@ jobs:
           tar -zxf opendistroforelasticsearch-$odfe_version.tar.gz
           cd opendistroforelasticsearch-$odfe_version
           sed -i /install_demo_configuration/d opendistro-tar-install.sh
+          sed -i '/http\.port/s/^# *//' config/elasticsearch.yml
           ./bin/elasticsearch-plugin remove opendistro_security
           
           nohup ./opendistro-tar-install.sh &
