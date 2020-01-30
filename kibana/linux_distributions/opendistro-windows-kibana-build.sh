@@ -25,6 +25,17 @@ cp $BAT_FILES $TARGET_DIR/$PACKAGE/bin
 cp $ROOT/kibana-$ES_VERSION-windows-x86_64/node/node.exe $TARGET_DIR/$PACKAGE/node
 rm -rf $ROOT/kibana-oss-$ES_VERSION-windows-x86_64
 
+#Making zip
+cd $TARGET_DIR
+zip -r ./$PACKAGE-$OD_VERSION.zip ./$PACKAGE-$OD_VERSION
+echo inside target
+ls -ltr
+pwd
+cd ../..
+echo inside root
+ls -ltr
+pwd
+
 #Download install4j software
 wget https://download-gcdn.ej-technologies.com/install4j/install4j_unix_8_0_4.tar.gz -P $ROOT
 #Untar
