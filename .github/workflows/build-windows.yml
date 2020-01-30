@@ -67,7 +67,8 @@ jobs:
         run: |
           pip3 install pytest
           pip3 install requests
-          pip install awscli --upgrade
+          pip3 -version
+          pip3 install awscli
           echo inside base
           dir
           #cd elasticsearch\linux_distributions
