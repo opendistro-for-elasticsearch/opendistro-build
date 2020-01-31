@@ -97,7 +97,7 @@ jobs:
           # unzip odfe-1.2.1.0-win.zip
           # dir
           #.\odfe-1.2.1.0\bin\elasticsearch.bat
-          
+          #
           #icacls .\Open_Distro_For_Elasticsearch_1.3.0.exe
           #echo running exe
           #.\Open_Distro_For_Elasticsearch_1.3.0.exe -q -dir .\Open_Distro_For_Elasticsearch -console
