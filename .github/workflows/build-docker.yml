@@ -124,7 +124,7 @@ jobs:
         run: |
           sleep 10
           cd ..
-          echo "FROM opendistroforelasticsearch/opendistroforelasticsearch:1.3.0" >> Dockerfile
+          echo "FROM opendistroforelasticsearch/opendistroforelasticsearch:1.4.0" >> Dockerfile
           echo "RUN /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro_security" >> Dockerfile
           
           docker build -t odfe-http:no-security .
@@ -154,11 +154,11 @@ jobs:
         run: |
           sleep 10
           cd ..
-          echo "FROM opendistroforelasticsearch/opendistroforelasticsearch:1.3.0" >> Dockerfile
+          echo "FROM opendistroforelasticsearch/opendistroforelasticsearch:1.4.0" >> Dockerfile
           echo "RUN /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro_security" >> Dockerfile
           
           docker build -t odfe-http:no-security .
-          docker run -d -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" odfe-http:no-security
+          docker run -d -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" -e "http.port=9200" odfe-http:no-security
           
           sleep 45
           cd alerting/alerting

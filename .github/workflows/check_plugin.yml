@@ -21,6 +21,7 @@ jobs:
           CURRENT_NO_PLUGINS=6
           plugin_arr=()
           unavailable_plugin=()
+          available_plugin=()
           PLUGINS="opendistro-sql/opendistro_sql opendistro-alerting/opendistro_alerting opendistro-job-scheduler/opendistro-job-scheduler opendistro-security/opendistro_security performance-analyzer/opendistro_performance_analyzer opendistro-index-management/opendistro_index_management"
           
           cd elasticsearch/bin
@@ -44,35 +45,43 @@ jobs:
           echo $tot_plugins
           echo "${#plugin_arr[*]}"
           
-          if [ $tot_plugins == $CURRENT_NO_PLUGINS ]
-          then
-              echo "All plugins available"
-          else
-              curr_plugins=`ls`
-              echo $curr_plugins
-              for plgin in ${plugin_arr[*]}
-              do
-                if echo $curr_plugins|grep -q $plgin
-                then
-                    echo "$plgin exists"
-                else
-                    unavailable_plugin+=( $plgin )
-                fi
-              done
-          fi
-          
+          curr_plugins=`ls`
+          echo $curr_plugins
+          for plgin in ${plugin_arr[*]}
+            do
+              if echo $curr_plugins|grep -q $plgin
+              then
+                  available_plugin+=( $plgin )
+                  echo "$plgin exists"
+              else
+                  unavailable_plugin+=( $plgin )
+              fi
+            done
+
           cd /home/runner/work/opendistro-build/opendistro-build/
-          if [ ${#unavailable_plugin[*]} > 0 ]
+          
+          echo "<h2>Below plugins are <b>not available</b> for ODFE-$OD_VERSION build</h2>" >> message.md
+          if [ ${#unavailable_plugin[*]} -gt 0 ]
           then
-              echo "<h2>Below plugins are not available for ODFE-$OD_VERSION build</h2>" >> message.md
               echo "<ol>" >> message.md
               for item in ${unavailable_plugin[*]}
               do
-                echo "<li>$item</li>" >> message.md
+                echo "<li><h3>$item</h3></li>" >> message.md
               done
               echo "</ol>" >> message.md
-          else
-              echo "<h2> All plugins are available </h2>" >> message.md
+              echo "<br><br>" >> message.md
+          fi
+          
+          echo "<h2>Below plugins are <b>available</b> for ODFE-$OD_VERSION build</h2>" >> message.md
+          if [ ${#available_plugin[*]} -gt 0 ]
+          then
+              echo "<ol>" >> message.md
+              for item in ${available_plugin[*]}
+              do
+                echo "<li><h3>$item</h3></li>" >> message.md
+              done
+              echo "</ol>" >> message.md
+              echo "<br><br>" >> message.md
           fi
       - name: Send mail
         uses: dawidd6/action-send-mail@master
