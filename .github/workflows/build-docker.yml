@@ -3,7 +3,7 @@ name: Build ODFE Docker Image and Upload
 on:
   push:
     branches:
-      - opendistro-1.4
+      - master
 jobs:
   plugin-avilability:
     name: Check Plugin Availability
