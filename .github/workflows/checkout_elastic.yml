@@ -1,0 +1,26 @@
+name: Checkout Elastic
+
+on:
+  push:
+    branches:
+      - s3-trigger
+jobs:
+  Test-ISM-Plugin:
+    name: Checkout Elastic Repo
+    runs-on: [ubuntu-16.04]
+    steps:
+      - name: Configure AWS
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Checkout Elastic Git Repo
+        run: |
+          git clone https://github.com/elastic/elasticsearch.git
+          
+          today=`date "+%Y-%m-%d"`
+          tar czf elasticsearch-$today.tar.gz elasticsearch
+          
+          aws s3 cp elasticsearch-$today.tar.gz s3://elasticsearch-daily-clone/elasticsearch/
+      
