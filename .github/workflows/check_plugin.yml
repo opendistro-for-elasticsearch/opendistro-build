@@ -2,7 +2,7 @@ name: Check Plugin Availability
 
 on:
   schedule:
-    - cron: '30 10 * * *'
+    - cron: '30 9 * * *'
 jobs:
   plugin-avilability:
     name: Check Plugin Availability
