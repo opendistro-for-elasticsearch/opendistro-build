@@ -1,9 +1,8 @@
 name: Check Plugin Availability
 
 on:
-  push:
-    branches: 
-      - actions-branch
+  schedule:
+    - cron: '30 9 * * *'
 jobs:
   plugin-avilability:
     name: Check Plugin Availability
