@@ -1,9 +1,8 @@
 name: Build ODFE Docker Image and Upload
 
 on:
-  push:
-    branches:
-      - master
+  schedule:
+    - cron: '0 10 * * *'
 jobs:
   plugin-avilability:
     name: Check Plugin Availability
