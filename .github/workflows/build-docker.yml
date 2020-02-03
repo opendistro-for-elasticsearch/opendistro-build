@@ -5,7 +5,52 @@ on:
     branches:
       - master
 jobs:
+  plugin-avilability:
+    name: Check Plugin Availability
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Checking Availability
+        run: |
+          #!/bin/bash
+          CURRENT_NO_PLUGINS=6
+          PLUGINS="opendistro-sql/opendistro_sql opendistro-alerting/opendistro_alerting opendistro-job-scheduler/opendistro-job-scheduler opendistro-security/opendistro_security performance-analyzer/opendistro_performance_analyzer opendistro-index-management/opendistro_index_management"
+          
+          cd elasticsearch/bin
+          ls -ltr
+          OD_VERSION=`./version-info --od`
+          echo "$OD_VERSION"
+          cd /home/runner/work/opendistro-build
+          mkdir plugins
+          ls -ltr
+          cd plugins
+          
+          for item in $PLUGINS
+          do
+            plugin_folder=`echo $item|awk -F/ '{print $1}'`
+            plguin_item=`echo $item|awk -F/ '{print $2}'`
+            echo $plugin_folder.$plguin_item
+            aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/elasticsearch-plugins/$plugin_folder/ . --recursive --exclude "*" --include "$plguin_item-$OD_VERSION*"
+          done
+          ls -ltr
+          tot_plugins=`ls|wc -l`
+          echo $tot_plugins
+          
+          if [ $tot_plugins == $CURRENT_NO_PLUGINS ]
+          then
+              echo "All plugins available"
+          else
+              exit 1
+          fi
+          
   build-es-docker:
+    needs: [plugin-avilability]
     name: Build ES Dcoker Image
     runs-on: ubuntu-18.04
     steps:
@@ -14,24 +59,24 @@ jobs:
       env:
         DOCKER_USER: ${{ secrets.DOCKER_USER }}
         DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
-        ODFE_VER: 1.3.0
+        ODFE_VER: 1.4.0
       run: |
-        #sudo apt-get install python-virtualenv
+        sudo apt-get install python-virtualenv
         work_dir=`pwd`
         echo $work_dir
         cd elasticsearch/docker
-        #make build
+        make build
         
         echo "******************************"
         echo "Login to Docker"
         echo "******************************"
-        #docker login --username $DOCKER_USER --password $DOCKER_PASS
-        #docker images|grep "amazon/opendistro-for-elasticsearch" > docker_id.out
-        #image_id=`awk -F' ' '{print $3}' docker_id.out`
-        #echo "Docker Id is $image_id"
-        #docker tag $image_id opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER
-        #docker images
-        #docker push opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER
+        docker login --username $DOCKER_USER --password $DOCKER_PASS
+        docker images|grep "amazon/opendistro-for-elasticsearch" > docker_id.out
+        image_id=`awk -F' ' '{print $3}' docker_id.out`
+        echo "Docker Id is $image_id"
+        docker tag $image_id opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER
+        docker images
+        docker push opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER
   
   build-kibana-docker:
     needs: [build-es-docker]
@@ -43,72 +88,80 @@ jobs:
         env:
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
           DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
-          ODFE_VER: 1.3.0
+          ODFE_VER: 1.4.0
         run: |
           sudo apt-get install python-virtualenv
           cd kibana/docker
-          #make build
+          make build
           
           echo "******************************"
           echo "Uploading Kibana Docker"
           echo "******************************"
-          #docker login --username $DOCKER_USER --password $DOCKER_PASS
-          #docker images|grep "amazon/opendistro-for-elasticsearch-kibana" > kibana_id.out
-          #kibana_image_id=`awk -F' ' '{print $3}' kibana_id.out`
-          #echo "Docker Id is $kibana_image_id"
-          #docker tag $kibana_image_id opendistroforelasticsearch/opendistroforelasticsearch-kibana:$ODFE_VER
-          #docker push opendistroforelasticsearch/opendistroforelasticsearch-kibana:$ODFE_VER
+          docker login --username $DOCKER_USER --password $DOCKER_PASS
+          docker images|grep "amazon/opendistro-for-elasticsearch-kibana" > kibana_id.out
+          kibana_image_id=`awk -F' ' '{print $3}' kibana_id.out`
+          echo "Docker Id is $kibana_image_id"
+          docker tag $kibana_image_id opendistroforelasticsearch/opendistroforelasticsearch-kibana:$ODFE_VER
+          docker push opendistroforelasticsearch/opendistroforelasticsearch-kibana:$ODFE_VER
         
-  test-es-docker-image:
+  Test-ISM-Plugin:
     needs: [build-es-docker]
     name: Test ES Docker Container
     runs-on: [ubuntu-16.04]
+    strategy:
+      matrix:
+        java: [12]
     steps:
       - uses: actions/checkout@v1
         with:
-          repository: rishabh6788/odfe-test
+          repository: opendistro-for-elasticsearch/index-management
           ref: master
-          token: ${{ secrets.GitHub_PAT }}
+      - name: Set Up JDK ${{ matrix.java }}
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
       - name: Run Docker Container
         run: |
           sleep 10
-          docker run -d -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" opendistroforelasticsearch/opendistroforelasticsearch:1.3.0
-      - name: Run ES Tests
-        run: |
-          sleep 1m
-
           cd ..
-          cd odfe-test
-          ls -ltr
-          cd odfe-test
-          sudo pip3 install pytest
-          sudo pip3 install requests
-          pytest
+          echo "FROM opendistroforelasticsearch/opendistroforelasticsearch:1.4.0" >> Dockerfile
+          echo "RUN /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro_security" >> Dockerfile
+          
+          docker build -t odfe-http:no-security .
+          docker run -d -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" odfe-http:no-security
+          
+          sleep 45
+          cd index-management
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
 
   test-alerting-plugin:
     needs: [build-es-docker]
     name: Test Alerting Plugin
     runs-on: [ubuntu-16.04]
+    strategy:
+      matrix:
+        java: [12]
     steps:
       - uses: actions/checkout@v1
         with:
-          repository: rishabh6788/odfe-test
-          ref: master
-          token: ${{ secrets.GitHub_PAT }}
+          repository: opendistro-for-elasticsearch/alerting
+          ref: odfe-integTest-1.4
+      - name: Set Up JDK ${{ matrix.java }}
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
       - name: Run Docker Container
         run: |
           sleep 10
-          docker run -d -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" opendistroforelasticsearch/opendistroforelasticsearch:1.3.0
-      - name: Run ES Tests
-        run: |
-          sleep 1m
-
           cd ..
-          cd odfe-test
-          ls -ltr
-          cd odfe-test
-          sudo pip3 install pytest
-          sudo pip3 install requests
-          pytest
+          echo "FROM opendistroforelasticsearch/opendistroforelasticsearch:1.4.0" >> Dockerfile
+          echo "RUN /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro_security" >> Dockerfile
+          
+          docker build -t odfe-http:no-security .
+          docker run -d -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" -e "http.port=9200" odfe-http:no-security
+          
+          sleep 45
+          cd alerting/alerting
+          ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
            
     

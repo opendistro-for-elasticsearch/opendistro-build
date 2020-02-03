@@ -41,7 +41,7 @@ BUST_CACHE ?= $(shell date +'%s')
 # endif
 
 ELASTIC_ARTIFACTS_URL ?= https://$(BUILD_TYPE).elastic.co/downloads/elasticsearch
-PLUGIN_URL_PATHS ?= opendistro-sql/opendistro_sql-$(OPENDISTRO_PLUGIN_VERSION).zip opendistro-alerting/opendistro_alerting-$(OPENDISTRO_VERSION).1.zip opendistro-job-scheduler/opendistro-job-scheduler-$(OPENDISTRO_PLUGIN_VERSION).zip opendistro-security/opendistro_security-$(OPENDISTRO_PLUGIN_VERSION).zip performance-analyzer/opendistro_performance_analyzer-$(OPENDISTRO_PLUGIN_VERSION).zip opendistro-index-management/opendistro_index_management-$(OPENDISTRO_VERSION).1.zip
+PLUGIN_URL_PATHS ?= opendistro-sql/opendistro_sql-$(OPENDISTRO_PLUGIN_VERSION).zip opendistro-alerting/opendistro_alerting-$(OPENDISTRO_PLUGIN_VERSION).zip opendistro-job-scheduler/opendistro-job-scheduler-$(OPENDISTRO_PLUGIN_VERSION).zip opendistro-security/opendistro_security-$(OPENDISTRO_PLUGIN_VERSION).zip performance-analyzer/opendistro_performance_analyzer-$(OPENDISTRO_PLUGIN_VERSION).zip opendistro-index-management/opendistro_index_management-$(OPENDISTRO_PLUGIN_VERSION).zip
 
 IMAGE_TAG ?= $(OPENDISTRO_REPOSITORY)
 # When invoking docker-compose, use an extra config fragment to map Elasticsearch's

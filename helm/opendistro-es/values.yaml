@@ -18,13 +18,13 @@ kibana:
   replicas: 1
   port: 5601
   externalPort: 443
-  resources:
-    limits:
-      cpu: 2500m
-      memory: 2Gi
-    requests:
-      cpu: 500m
-      memory: 512Mi
+  resources: {}
+  #  limits:
+  #    cpu: 2500m
+  #    memory: 2Gi
+  #  requests:
+  #    cpu: 500m
+  #    memory: 512Mi
   readinessProbe: []
   livenessProbe: []
 
@@ -49,10 +49,11 @@ kibana:
   certsDirectory: "/usr/share/kibana/certs"
 
   ingress:
+    ## Set to true to enable ingress record generation
     enabled: false
     annotations: {}
-      # kubernetes.io/ingress.class: nginx
-      # kubernetes.io/tls-acme: "true"
+    #  kubernetes.io/ingress.class: nginx
+    #  kubernetes.io/tls-acme: "true"
     labels: {}
     path: /
     hosts:
@@ -96,12 +97,13 @@ kibana:
   ##
   tolerations: []
 
+  affinity: {}
 
   serviceAccount:
-    # Specifies whether a ServiceAccount should be created
+    ## Specifies whether a ServiceAccount should be created
     create: true
-    # The name of the ServiceAccount to use.
-    # If not set and create is true, a name is generated using the fullname template
+    ## The name of the ServiceAccount to use.
+    ## If not set and create is true, a name is generated using the fullname template
     name:
 
 
@@ -140,8 +142,8 @@ elasticsearch:
     imageTag: 1.27.2
 
   ssl:
+    ## TLS is mandatory for the transport layer and can not be disabled
     transport:
-      enabled: false
       existingCertSecret:
     rest:
       enabled: false
@@ -152,23 +154,49 @@ elasticsearch:
 
   master:
     enabled: true
-    replicas: 3
+    replicas: 1
     updateStrategy: "RollingUpdate"
-    nodeAffinity: {}
-    storageClassName: gp2-encrypted
-    storage: 50Gi
-    resources:
-      limits:
-        cpu: 1
-        memory: 1024Mi
-      requests:
-        cpu: 200m
-        memory: 1024Mi
+
+    ## Enable persistence using Persistent Volume Claims
+    ## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
+    ##
+    persistence:
+      enabled: true
+      ## A manually managed Persistent Volume and Claim
+      ## Requires persistence.enabled: true
+      ## If defined, PVC must be created manually before volume will be bound
+      ##
+      # existingClaim:
+
+      ## The subdirectory of the volume to mount to, useful in dev environments
+      ## and one PV for multiple services.
+      ##
+      subPath: ""
+
+      ## Open Distro master Persistent Volume Storage Class
+      ## If defined, storageClassName: <storageClass>
+      ## If set to "-", storageClassName: "", which disables dynamic provisioning
+      ## If undefined (the default) or set to null, no storageClassName spec is
+      ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+      ##   GKE, AWS & OpenStack)
+      ##
+      # storageClass: "-"
+      accessModes:
+        - ReadWriteOnce
+      size: 8Gi
+      annotations: {}
+
+    resources: {}
+    #  limits:
+    #    cpu: 1
+    #    memory: 1024Mi
+    #  requests:
+    #    cpu: 200m
+    #    memory: 1024Mi
     javaOpts: "-Xms512m -Xmx512m"
     podDisruptionBudget:
       enabled: false
       minAvailable: 1
-    tolerations: []
     readinessProbe: []
     livenessProbe:
       tcpSocket:
@@ -176,27 +204,62 @@ elasticsearch:
       initialDelaySeconds: 60
       periodSeconds: 10
     nodeSelector: {}
+    tolerations: []
+    ## Anti-affinity to disallow deploying client and master nodes on the same worker node
+    affinity: {}
+    #  podAntiAffinity:
+    #    requiredDuringSchedulingIgnoredDuringExecution:
+    #      - topologyKey: "kubernetes.io/hostname"
+    #        labelSelector:
+    #          matchLabels:
+    #            role: master
     podAnnotations: {}
 
   data:
     enabled: true
-    replicas: 3
+    replicas: 1
     updateStrategy: "RollingUpdate"
-    nodeAffinity: {}
-    storageClassName: gp2-encrypted
-    storage: 100Gi
-    resources:
-      limits:
-        cpu: 1
-        memory: 1024Mi
-      requests:
-        cpu: 200m
-        memory: 1024Mi
+
+    ## Enable persistence using Persistent Volume Claims
+    ## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
+    ##
+    persistence:
+      enabled: true
+      ## A manually managed Persistent Volume and Claim
+      ## Requires persistence.enabled: true
+      ## If defined, PVC must be created manually before volume will be bound
+      ##
+      # existingClaim:
+
+      ## The subdirectory of the volume to mount to, useful in dev environments
+      ## and one PV for multiple services.
+      ##
+      subPath: ""
+
+      ## Open Distro master Persistent Volume Storage Class
+      ## If defined, storageClassName: <storageClass>
+      ## If set to "-", storageClassName: "", which disables dynamic provisioning
+      ## If undefined (the default) or set to null, no storageClassName spec is
+      ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+      ##   GKE, AWS & OpenStack)
+      ##
+      # storageClass: "-"
+      accessModes:
+        - ReadWriteOnce
+      size: 8Gi
+      annotations: {}
+
+    resources: {}
+    #  limits:
+    #    cpu: 1
+    #    memory: 1024Mi
+    #  requests:
+    #    cpu: 200m
+    #    memory: 1024Mi
     javaOpts: "-Xms512m -Xmx512m"
     podDisruptionBudget:
       enabled: false
       minAvailable: 1
-    tolerations: []
     readinessProbe: []
     livenessProbe:
       tcpSocket:
@@ -204,6 +267,17 @@ elasticsearch:
       initialDelaySeconds: 60
       periodSeconds: 10
     nodeSelector: {}
+    tolerations: []
+    ## Anti-affinity to disallow deploying client and master nodes on the same worker node
+    affinity: {}
+    #  podAntiAffinity:
+    #    preferredDuringSchedulingIgnoredDuringExecution:
+    #      - weight: 1
+    #        podAffinityTerm:
+    #          topologyKey: "kubernetes.io/hostname"
+    #          labelSelector:
+    #            matchLabels:
+    #              role: data
     podAnnotations: {}
 
   client:
@@ -225,14 +299,14 @@ elasticsearch:
 
         # # Annotation to create internal only ELB
         # service.beta.kubernetes.io/aws-load-balancer-internal: 0.0.0.0/0
-    replicas: 2
+    replicas: 1
     javaOpts: "-Xms512m -Xmx512m"
-    nodeAffinity: {}
     ingress:
-      enabled: true
+      ## Set to true to enable ingress record generation
+      enabled: false
       annotations: {}
-        # kubernetes.io/ingress.class: nginx
-        # kubernetes.io/tls-acme: "true"
+      #  kubernetes.io/ingress.class: nginx
+      #  kubernetes.io/tls-acme: "true"
       labels: {}
       path: /
       hosts:
@@ -241,17 +315,16 @@ elasticsearch:
       #  - secretName: chart-example-tls
       #    hosts:
       #      - chart-example.local
-    resources:
-      limits:
-        cpu: 1
-        memory: 1024Mi
-      requests:
-        cpu: 200m
-        memory: 1024Mi
+    resources: {}
+    #  limits:
+    #    cpu: 1
+    #    memory: 1024Mi
+    #  requests:
+    #    cpu: 200m
+    #    memory: 1024Mi
     podDisruptionBudget:
       enabled: false
       minAvailable: 1
-    tolerations: []
     readinessProbe: []
     livenessProbe:
       tcpSocket:
@@ -259,6 +332,17 @@ elasticsearch:
       initialDelaySeconds: 60
       periodSeconds: 10
     nodeSelector: {}
+    tolerations: []
+    ## Weighted anti-affinity to disallow deploying client node to the same worker node as master node
+    affinity: {}
+    #  podAntiAffinity:
+    #    preferredDuringSchedulingIgnoredDuringExecution:
+    #      - weight: 1
+    #        podAffinityTerm:
+    #          topologyKey: "kubernetes.io/hostname"
+    #          labelSelector:
+    #            matchLabels:
+    #              role: client
     podAnnotations: {}
     selectorOverride: ""
   
@@ -317,13 +401,13 @@ elasticsearch:
 
   loggingConfig:
     ## Default config
-    # you can override this using by setting a system property, for example -Des.logger.level=DEBUG
+    ## you can override this using by setting a system property, for example -Des.logger.level=DEBUG
     es.logger.level: INFO
     rootLogger: ${es.logger.level}, console
     logger:
-      # log action execution errors for easier debugging
+      ## log action execution errors for easier debugging
       action: DEBUG
-      # reduce the logging for aws, too much is logged under the default INFO
+      ## reduce the logging for aws, too much is logged under the default INFO
       com.amazonaws: WARN
     appender:
       console:
@@ -348,10 +432,10 @@ elasticsearch:
   configDirectory: /usr/share/elasticsearch/config
 
   serviceAccount:
-    # Specifies whether a ServiceAccount should be created
+    ## Specifies whether a ServiceAccount should be created
     create: true
-    # The name of the ServiceAccount to use.
-    # If not set and create is true, a name is generated using the fullname template
+    ## The name of the ServiceAccount to use.
+    ## If not set and create is true, a name is generated using the fullname template
     name:
 
 

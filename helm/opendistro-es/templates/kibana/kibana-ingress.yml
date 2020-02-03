@@ -11,6 +11,7 @@
 # express or implied. See the License for the specific language governing
 # permissions and limitations under the License.
 
+# @formatter:off
 {{- if and .Values.kibana.ingress.enabled .Values.kibana.enabled }}
 {{- $serviceName:= printf "%s-%s"  (include "opendistro-es.fullname" .) "kibana-svc" }}
 {{- $servicePort := .Values.kibana.externalPort }}
