@@ -70,6 +70,7 @@ jobs:
           PACKAGE: opendistroforelasticsearch
           OD_VERSION: 1.4.0
         run: |
+          echo %S3_PACKAGE% %PACKAGE% %OD_VERSION%
           python -m pip install --upgrade pip
           echo --------
           pip3 install pytest
