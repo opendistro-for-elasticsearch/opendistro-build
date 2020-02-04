@@ -1,7 +1,7 @@
 set S3_PACKAGE=odfe
 set PACKAGE=opendistroforelasticsearch
-set OD_VERSION=1.4.0
-
+set OD_VERSION=.\elasticsearch\bin\version-info.py --od
+echo %OD_VERSION%
 echo unzipping %S3_PACKAGE%-%OD_VERSION%.zip
 unzip .\%S3_PACKAGE%-%OD_VERSION%.zip
 dir
