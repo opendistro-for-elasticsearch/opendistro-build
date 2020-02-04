@@ -1,8 +1,5 @@
 set S3_PACKAGE=odfe
 set PACKAGE=opendistroforelasticsearch
-FOR /F "tokens=*" %%a in ('.\elasticsearch\bin\version-info --od') do SET OD_VERSION=%%a
-#set OD_VERSION=python .\elasticsearch\bin\version-info --od
-echo %OD_VERSION%
 FOR /F "tokens=*" %%a in ('python .\elasticsearch\bin\version-info --od') do SET OD_VERSION=%%a
 echo %OD_VERSION%
 #set OD_VERSION=<python .\elasticsearch\bin\version-info --od
