@@ -1,5 +1,6 @@
 set S3_PACKAGE=odfe
 set PACKAGE=opendistroforelasticsearch
+python .\elasticsearch\bin\version-info --od
 python .\elasticsearch\bin\version-info --od > out.txt
 set OD_VERSION=<out.txt
 del out.txt
