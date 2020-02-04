@@ -3,7 +3,7 @@ set PACKAGE=opendistroforelasticsearch
 set OD_VERSION=1.4.0
 
 echo unzipping %S3_PACKAGE%-%OD_VERSION%.zip
-unzip.\%S3_PACKAGE%-%OD_VERSION%.zip
+unzip .\%S3_PACKAGE%-%OD_VERSION%.zip
 
 echo running es
 nohup %S3_PACKAGE%-%OD_VERSION%\%PACKAGE%-%OD_VERSION%\bin\elasticsearch.bat &
