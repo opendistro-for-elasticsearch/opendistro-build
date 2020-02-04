@@ -95,7 +95,7 @@ jobs:
           PACKAGE: opendistroforelasticsearch
           OD_VERSION: 1.4.0
           a_PATH: .\%S3_PACKAGE%-%OD_VERSION%.zip
-        run:
+        run: |
           dir
           echo %S3_PACKAGE% %PACKAGE% %OD_VERSION% %a_PATH%
           unzip %a_PATH%
