@@ -172,7 +172,7 @@ jobs:
         uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/alerting
-          ref: odfe-integTest-1.4
+          ref: master
       - name: Run Something
         run: |
           cd ..
