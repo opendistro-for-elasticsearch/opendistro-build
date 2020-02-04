@@ -37,8 +37,8 @@
 FROM centos:7 AS prep_es_files
 
 ENV PATH /usr/share/elasticsearch/bin:$PATH
-RUN curl -s https://download.java.net/java/GA/jdk11/13/GPL/openjdk-11.0.1_linux-x64_bin.tar.gz | tar -C /opt -zxf -
-ENV JAVA_HOME /opt/jdk-11.0.1
+RUN curl -s https://download.java.net/java/GA/jdk12.0.2/e482c34c86bd4bf8b56c0b35558996b9/10/GPL/openjdk-12.0.2_linux-x64_bin.tar.gz | tar -C /opt -zxf -
+ENV JAVA_HOME /opt/jdk-12.0.2
 RUN yum install -y unzip
 
 RUN groupadd -g 1000 elasticsearch && \
@@ -109,13 +109,19 @@ RUN \
 RUN yum update -y && \
     yum install -y nc unzip wget which && \
     yum clean all
+
+RUN yum -y update \
+    && yum -y groupinstall "Development Tools" \
+    && yum -y install glibc.x86_64 cmake \
+    && yum clean all
+
 COPY CENTOS_LICENSING.txt /root
-COPY --from=prep_es_files --chown=1000:0 /opt/jdk-11.0.1 /opt/jdk-11.0.1
-ENV JAVA_HOME /opt/jdk-11.0.1
+COPY --from=prep_es_files --chown=1000:0 /opt/jdk-12.0.2 /opt/jdk-12.0.2
+ENV JAVA_HOME /opt/jdk-12.0.2
 
 # Replace OpenJDK's built-in CA certificate keystore with the one from the OS
 # vendor. The latter is superior in several ways.
-RUN ln -sf /etc/pki/ca-trust/extracted/java/cacerts /opt/jdk-11.0.1/lib/security/cacerts
+RUN ln -sf /etc/pki/ca-trust/extracted/java/cacerts /opt/jdk-12.0.2/lib/security/cacerts
 
 ENV PATH $PATH:$JAVA_HOME/bin
 
@@ -130,6 +136,47 @@ RUN mkdir /usr/share/supervisor
 WORKDIR /usr/share/elasticsearch
 COPY --from=prep_es_files --chown=1000:0 /usr/share/elasticsearch /usr/share/elasticsearch
 ENV PATH /usr/share/elasticsearch/bin:$PATH
+
+###Compile KNN
+RUN set -ex; \
+    \
+    git clone https://github.com/nmslib/nmslib.git /usr/share/elasticsearch/nmslib; \
+    \
+    cd /usr/share/elasticsearch/nmslib \
+    \
+    && git checkout tags/v1.7.3.6 \
+    \
+    && cd similarity_search \
+    \
+    && cmake . \
+    \
+    && make \
+    \
+   && git clone https://github.com/opendistro-for-elasticsearch/k-NN.git /usr/share/elasticsearch/k-NN \
+    \
+    && cd /usr/share/elasticsearch/k-NN \
+    \
+    && git checkout v1.4.0.0 \
+    \
+    && mkdir /tmp/jni \
+    \
+    && cp jni/src/v1736/* /tmp/jni \
+    \
+    && cd /tmp/jni \
+    \
+    && g++ -fPIC -I/opt/jdk-12.0.2/include -I/opt/jdk-12.0.2/include/linux -I/usr/share/elasticsearch/nmslib/similarity_search/include -std=c++11 -shared -o libKNNIndexV1_7_3_6.so com_amazon_opendistroforelasticsearch_knn_index_v1736_KNNIndex.cpp -lNonMetricSpaceLib -L/usr/share/elasticsearch/nmslib/similarity_search/release \
+    \
+    && mv /tmp/jni/libKNNIndexV1_7_3_6.so /usr/share/elasticsearch/k-NN/buildSrc \
+    \
+    && cd /usr/share/elasticsearch/k-NN \
+    \
+    && ./gradlew build -x :integTestRunner -x :dumpCoverage -x :jacocoTestReport -x test \
+    \
+    && cp /usr/share/elasticsearch/k-NN/buildSrc/libKNNIndexV1_7_3_6.so /usr/lib \
+    \
+    && rm -rf /usr/share/elasticsearch/k-NN \
+    \
+    && rm -rf /usr/share/elasticsearch/nmslib
 
 ADD --chown=1000:0 bin/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 
