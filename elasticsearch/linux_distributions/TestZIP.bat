@@ -1,11 +1,11 @@
 set S3_PACKAGE=odfe
 set PACKAGE=opendistroforelasticsearch
 cd elasticsearch\bin
-echo `python version-info.py --od`
-python .\version-info.py --od
-set OD_VERSION=`python .\version-info.py --od`
+echo `python version-info --od`
+python .\version-info --od
+set OD_VERSION=`python .\version-info --od`
 echo FIRST ATTEMPT %OD_VERSION%
-FOR /F "tokens=*" %%G in ('python version-info.py --od') do SET OD_VERSION=%%G
+FOR /F "tokens=*" %%G in ('python version-info --od') do SET OD_VERSION=%%G
 echo SECOND ATTEMPT %OD_VERSION%
 echo unzipping %S3_PACKAGE%-%OD_VERSION%.zip
 unzip .\%S3_PACKAGE%-%OD_VERSION%.zip
