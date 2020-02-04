@@ -91,7 +91,9 @@ jobs:
           aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/ode-windows-zip/%S3_PACKAGE%-%OD_VERSION%.zip .\
           echo after downloading zip from s3
           dir
-          unzip %S3_PACKAGE_PATH%-%OD_VERSION%.zip
+          set S3_PACKAGE=odfe
+          set PACKAGE=opendistroforelasticsearch
+          unzip %S3_PACKAGE%-%OD_VERSION%.zip
           nohup %S3_PACKAGE_PATH%-%OD_VERSION%\%PACKAGE%-%OD_VERSION%\bin\elasticsearch.bat &
           echo Waiting for 30s
           ping -n 30 127.0.0.1 >.\out.txt
