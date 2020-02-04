@@ -65,6 +65,9 @@ jobs:
           architecture: x64
         
       - name: Run exe 
+        env:
+          PACKAGE: opendistroforelasticsearch
+          OD_VERSION: 1.4.0
         run: |
           python -m pip install --upgrade pip
           echo --------
@@ -112,6 +115,4 @@ jobs:
           #Running curl
           #curl -XGET https://localhost:9200 -u admin:admin --insecure
           
-        env:
-          PACKAGE: opendistroforelasticsearch
-          OD_VERSION: 1.4.0
+        
