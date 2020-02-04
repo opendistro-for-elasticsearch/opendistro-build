@@ -96,6 +96,8 @@ jobs:
           OD_VERSION: 1.4.0
           a_PATH: .\%S3_PACKAGE%-%OD_VERSION%.zip
         run:
+          dir
+          echo %S3_PACKAGE% %PACKAGE% %OD_VERSION% %a_PATH%
           unzip %a_PATH%
           nohup %S3_PACKAGE%-%OD_VERSION%\%PACKAGE%-%OD_VERSION%\bin\elasticsearch.bat &
           echo Waiting for 30s
