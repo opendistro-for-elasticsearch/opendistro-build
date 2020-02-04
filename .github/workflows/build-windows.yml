@@ -92,22 +92,23 @@ jobs:
           dir
           cd elasticsearch/linux_distributions
           .\TestZIP.bat
-      - name: Test the ZIP 
-        env:
-          S3_PACKAGE: odfe
-          PACKAGE: opendistroforelasticsearch
-          OD_VERSION: 1.4.0
-          a_PATH: .\%S3_PACKAGE%-%OD_VERSION%.zip
-        run: |
-          dir
-          echo %S3_PACKAGE% %PACKAGE% %OD_VERSION% %a_PATH%
-          unzip %a_PATH%
-          nohup %S3_PACKAGE%-%OD_VERSION%\%PACKAGE%-%OD_VERSION%\bin\elasticsearch.bat &
-          echo Waiting for 30s
-          ping -n 30 127.0.0.1 >.\out.txt
-          cd ../odfe-test/odfe-test
-          dir
-          pytest
+      #- name: Test the ZIP 
+        #env:
+         # S3_PACKAGE: odfe
+          #PACKAGE: opendistroforelasticsearch
+          #OD_VERSION: 1.4.0
+          #a_PATH: .\%S3_PACKAGE%-%OD_VERSION%.zip
+        #run: |
+          
+          #dir
+        #  echo %S3_PACKAGE% %PACKAGE% %OD_VERSION% %a_PATH%
+         # unzip %a_PATH%
+          #nohup %S3_PACKAGE%-%OD_VERSION%\%PACKAGE%-%OD_VERSION%\bin\elasticsearch.bat &
+          #echo Waiting for 30s
+          #ping -n 30 127.0.0.1 >.\out.txt
+          #cd ../odfe-test/odfe-test
+          #dir
+          #pytest
           
           #aws s3 cp s3://odfe-windows/Open_Distro_For_Elasticsearch_1.3.0.exe .\
           #echo base after downloading exe
