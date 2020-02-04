@@ -64,13 +64,8 @@ jobs:
           java-package: jdk
           architecture: x64
         
-      - name: Download ZIP 
-        env:
-          S3_PACKAGE: odfe
-          PACKAGE: opendistroforelasticsearch
-          OD_VERSION: 1.4.0
+      - name: Download ZIP
         run: |
-          echo %S3_PACKAGE%-%OD_VERSION%
           python -m pip install --upgrade pip
           echo --------
           pip3 install pytest
@@ -78,56 +73,6 @@ jobs:
           pip3 install requests
           echo pip3 -version
           pip3 install awscli
-          echo inside base
-          dir
-          #cd elasticsearch\linux_distributions
-          #echo running version info
-          #set odfe_version=`..\bin\version-info.py --od`
-          #echo %odfe_version%
-          #cd ..\..
-          #set PACKAGE=Open_Distro_For_Elasticsearch_%odfe_version%.exe
-          
-          aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/ode-windows-zip/%S3_PACKAGE%-%OD_VERSION%.zip .\
-          echo after downloading zip from s3
-          dir
           .\elasticsearch\linux_distributions\TestZIP.bat
           
-      #- name: Test the ZIP 
-        #env:
-         # S3_PACKAGE: odfe
-          #PACKAGE: opendistroforelasticsearch
-          #OD_VERSION: 1.4.0
-          #a_PATH: .\%S3_PACKAGE%-%OD_VERSION%.zip
-        #run: |
-          
-          #dir
-        #  echo %S3_PACKAGE% %PACKAGE% %OD_VERSION% %a_PATH%
-         # unzip %a_PATH%
-          #nohup %S3_PACKAGE%-%OD_VERSION%\%PACKAGE%-%OD_VERSION%\bin\elasticsearch.bat &
-          #echo Waiting for 30s
-          #ping -n 30 127.0.0.1 >.\out.txt
-          #cd ../odfe-test/odfe-test
-          #dir
-          #pytest
-          
-          #aws s3 cp s3://odfe-windows/Open_Distro_For_Elasticsearch_1.3.0.exe .\
-          #echo base after downloading exe
-          #dir
-          # unzip odfe-1.2.1.0-win.zip
-          # dir
-          #.\odfe-1.2.1.0\bin\elasticsearch.bat
-          #
-          #icacls .\Open_Distro_For_Elasticsearch_1.3.0.exe
-          #echo running exe
-          #.\Open_Distro_For_Elasticsearch_1.3.0.exe -q -dir .\Open_Distro_For_Elasticsearch -console
-          
-          
-          #Waiting for 20s
-          #ping -n 20 127.0.0.1 >.\out.txt
-          #dir
-          #echo running elasticsearch
-          #.\Open_Distro_For_Elasticsearch\bin\elasticsearch.bat
-          #Running curl
-          #curl -XGET https://localhost:9200 -u admin:admin --insecure
-          
-        
+       
