@@ -83,7 +83,7 @@ jobs:
           #FOR /F "tokens=*" %%g IN ('python version-info --od') do SET OD_VERSION=%%g
           #aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/ode-windows-zip/%S3_PACKAGE%-%OD_VERSION%.zip .\
 
-          .\elasticsearch\linux_distributions\TestZIP.bat
+          #.\elasticsearch\linux_distributions\TestZIP.bat
           .\kibana\linux_distributions\test-kibana-windows.bat
           
        
