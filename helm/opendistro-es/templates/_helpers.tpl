@@ -51,6 +51,16 @@ heritage: "{{ .Release.Service }}"
 {{- end -}}
 
 {{/*
+Define labels for deployment/statefulset selectors.
+We cannot have the chart label here as it will prevent upgrades.
+*/}}
+{{- define "opendistro-es.labels.selector" -}}
+app: {{ template "opendistro-es.fullname" . }}
+release: "{{ .Release.Name }}"
+heritage: "{{ .Release.Service }}"
+{{- end -}}
+
+{{/*
 Create the name of the service account to use
 */}}
 {{- define "opendistro-es.kibana.serviceAccountName" -}}
