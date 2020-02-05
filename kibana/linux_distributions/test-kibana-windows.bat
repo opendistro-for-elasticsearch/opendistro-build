@@ -1,6 +1,7 @@
 set PACKAGE=opendistroforelasticsearch-kibana
 cd .\kibana\bin\
-python version-info --od
+dir
+python .\version-info --od
 FOR /F "tokens=*" %%g IN ('python version-info --od') do SET OD_VERSION=%%g
 echo %OD_VERSION%
 set S3_PACKAGE=odfe-%OD_VERSION%-kibana
