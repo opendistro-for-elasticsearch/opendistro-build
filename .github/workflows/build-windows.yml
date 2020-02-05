@@ -22,8 +22,8 @@ jobs:
         set -u
         export JAVA_HOME=/openjdk12
         export PATH=$JAVA_HOME:$PATH
-        #cd elasticsearch/linux_distributions
-        #./opendistro-windows-build.sh
+        cd elasticsearch/linux_distributions
+        ./opendistro-windows-build.sh
         
   build-kibana-artifacts:
     name: Build Kibana Artifacts
@@ -38,12 +38,12 @@ jobs:
         aws-region: us-east-1
     - name: Build Kibana
       run: |
-        #cd kibana/linux_distributions 
-        #./opendistro-windows-kibana-build.sh  
+        cd kibana/linux_distributions 
+        ./opendistro-windows-kibana-build.sh  
   
   test-odfe-windows:
-    #needs: [build-es-artifacts, build-kibana-artifacts]
-    name: Testing exe
+    needs: [build-es-artifacts, build-kibana-artifacts]
+    name: Testing ES ZIP
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v1
@@ -51,7 +51,12 @@ jobs:
         with:
           repository: rishabh6788/odfe-test
           ref: master
-          token: ${{ secrets.GitHub_PAT }}    
+          token: ${{ secrets.GitHub_PAT }}  
+      - uses: actions/checkout@v1
+        with:
+          repository: rish1397/KibanaTest
+          ref: master
+          token: ${{ secrets.GitHub_PAT }}
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -79,5 +84,6 @@ jobs:
           #aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/ode-windows-zip/%S3_PACKAGE%-%OD_VERSION%.zip .\
 
           .\elasticsearch\linux_distributions\TestZIP.bat
+          .\kibana\linux_distributions\test-kibana-windows.bat
           
        
