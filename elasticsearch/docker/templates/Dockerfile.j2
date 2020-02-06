@@ -84,10 +84,6 @@ RUN set -ex; \
  \
     && mv /tmp/jni/libKNNIndexV1_7_3_6.so /usr/share/elasticsearch/k-NN/buildSrc \
  \
-    && cd /usr/share/elasticsearch/k-NN \
- \
-    && ./gradlew build -x :integTestRunner -x :dumpCoverage -x :jacocoTestReport -x test \
- \
     && rm -rf /usr/share/elasticsearch/nmslib
 
 # Bust cache for wgets
