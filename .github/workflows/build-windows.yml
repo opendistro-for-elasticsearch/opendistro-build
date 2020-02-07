@@ -112,7 +112,7 @@ jobs:
           echo running kibana
           nohup .\%PACKAGE%\bin\kibana.bat &
           echo Waiting for 30s
-          ping -n 30 127.0.0.1 >.\out.txt
+          ping -n 120 127.0.0.1 >.\out.txt
           echo running tests
           cd ..\KibanaTest
           dir
