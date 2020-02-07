@@ -80,12 +80,14 @@ jobs:
           echo pip3 -version
           pip3 install awscli
           cd .\elasticsearch\bin\
-          #FOR /F "tokens=*" %g IN ('python .\version-info --od') do SET OD_VERSION=%g
+          FOR /F "tokens=*" %g IN ('python .\version-info --od') do (SET OD_VERSION=%g)
           cd ..\..
-          echo downloading zip from S3 and S3_PACKAGE is %S3_PACKAGE%  and PACKAGE is %PACKAGE%
+          set S3_PACKAGE=odfe
+          set PACKAGE=opendistroforelasticsearch
+          echo downloading zip from S3 and S3_PACKAGE is %S3_PACKAGE%  and PACKAGE is %PACKAGE% and OD_VERSION is %OD_VERSION% 
           dir
-          #aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/ode-windows-zip/%S3_PACKAGE%-%OD_VERSION%.zip .\
-          #.\elasticsearch\linux_distributions\TestZIP.bat
+          aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/ode-windows-zip/%S3_PACKAGE%-%OD_VERSION%.zip .\
+          .\elasticsearch\linux_distributions\TestZIP.bat
       
       - name: test-kibana
         env:
@@ -93,7 +95,7 @@ jobs:
         run: |
           cd .\kibana\bin\
           dir
-          FOR /F "tokens=*" %g IN ('python .\version-info --od') do SET OD_VERSION=%g
+          FOR /F "tokens=*" %g IN ('python .\version-info --od') do (SET OD_VERSION=%g)
           set S3_PACKAGE=odfe-%OD_VERSION%-kibana
           cd ..\..
           echo downloading zip from S3 and S3_PACKAGE is %S3_PACKAGE%
