@@ -81,7 +81,6 @@ jobs:
           pip3 install awscli
           cd elasticsearch\bin\
           $OD_VERSION=$(python .\version-info --od)
-          #FOR /F "tokens=*" %g IN ('python .\version-info --od') do (SET OD_VERSION=%g)
           cd ..\..
           $S3_PACKAGE="odfe"
           $PACKAGE="opendistroforelasticsearch"
@@ -94,17 +93,16 @@ jobs:
           echo Waiting for 30s
           ping -n 30 127.0.0.1 >.\out.txt
           echo running tests
-          cd ../odfe-test/odfe-test
+          cd ..\odfe-test\odfe-test
           dir
-          pytest
+          #pytest
           cd ..\..\opendistro-build
       
       - name: test-kibana
         run: |
-          cd kibana\bin\
           dir
+          cd kibana\bin\
           $OD_VERSION=$(python .\version-info --od)
-          #FOR /F "tokens=*" %g IN ('python .\version-info --od') do (SET OD_VERSION=%g)
           $S3_PACKAGE="odfe-"+$OD_VERSION+"-kibana"
           cd ..\..
           echo downloading zip from S3 and S3_PACKAGE is %S3_PACKAGE%
