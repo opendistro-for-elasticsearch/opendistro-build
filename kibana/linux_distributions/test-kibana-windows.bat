@@ -11,5 +11,5 @@ cd ..\..
 ::echo complete
 ::dir
 echo unzipping %S3_PACKAGE%.zip
-unzip .\%S3_PACKAGE%.zip
+unzip -q .\%S3_PACKAGE%.zip
 dir
