@@ -13,11 +13,3 @@ cd ..\..
 echo unzipping %S3_PACKAGE%.zip
 unzip .\%S3_PACKAGE%.zip
 dir
-echo running kibana
-nohup .\%PACKAGE%\bin\kibana.bat &
-echo Waiting for 30s
-ping -n 30 127.0.0.1 >.\out.txt
-echo running tests
-cd ..\KibanaTest
-.\gradlew.bat build
-cd ..\opendistro-build
