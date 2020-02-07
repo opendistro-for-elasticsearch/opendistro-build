@@ -83,8 +83,8 @@ jobs:
           $OD_VERSION=$(python .\version-info --od)
           #FOR /F "tokens=*" %g IN ('python .\version-info --od') do (SET OD_VERSION=%g)
           cd ..\..
-          $S3_PACKAGE=odfe
-          $PACKAGE=opendistroforelasticsearch
+          $S3_PACKAGE="odfe"
+          $PACKAGE="opendistroforelasticsearch"
           echo downloading zip from S3 and S3_PACKAGE is $S3_PACKAGE and PACKAGE is $PACKAGE and OD_VERSION is $OD_VERSION 
           dir
           aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/ode-windows-zip/$S3_PACKAGE-$OD_VERSION.zip .\
@@ -96,7 +96,7 @@ jobs:
           dir
           $OD_VERSION=$(python .\version-info --od)
           #FOR /F "tokens=*" %g IN ('python .\version-info --od') do (SET OD_VERSION=%g)
-          $S3_PACKAGE=odfe-$OD_VERSION-kibana
+          $S3_PACKAGE="odfe-"+$OD_VERSION+"-kibana"
           cd ..\..
           echo downloading zip from S3 and S3_PACKAGE is %S3_PACKAGE%
           aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/ode-windows-zip/$S3_PACKAGE.zip .\
