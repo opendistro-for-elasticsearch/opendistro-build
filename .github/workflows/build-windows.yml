@@ -77,17 +77,18 @@ jobs:
           echo pip3 -version
           pip3 install awscli
           cd elasticsearch\bin\
-          $S3_PACKAGE="odfe"
           $PACKAGE="opendistroforelasticsearch"
           $OD_VERSION=$(python .\version-info --od)
+          $S3_PACKAGE="odfe-"+$OD_VERSION+".zip"
           cd ..\..
+          
           echo downloading zip from S3 
-          aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/ode-windows-zip/$S3_PACKAGE-$OD_VERSION.zip .\
+          aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/ode-windows-zip/$S3_PACKAGE .\
           #.\elasticsearch\linux_distributions\TestZIP.bat
-          echo unzipping %S3_PACKAGE%-%OD_VERSION%.zip
-          unzip .\%S3_PACKAGE%-%OD_VERSION%.zip
+          echo unzipping $S3_PACKAGE
+          unzip .\$S3_PACKAGE
           echo running es
-          nohup .\%PACKAGE%-%OD_VERSION%\bin\elasticsearch.bat &
+          nohup .\$PACKAGE-$OD_VERSION\bin\elasticsearch.bat &
           echo Waiting for 2min
           ping -n 120 127.0.0.1 >.\out.txt
           echo running tests
@@ -106,9 +107,9 @@ jobs:
           cd ..\..
           echo downloading zip from S3
           aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/ode-windows-zip/$S3_PACKAGE .\
-          echo unzipping %S3_PACKAGE%
+          echo unzipping $S3_PACKAGE
           unzip -q .\$S3_PACKAGE
-          .\kibana\linux_distributions\test-kibana-windows.bat
+          #.\kibana\linux_distributions\test-kibana-windows.bat
           echo running kibana
           nohup .\$PACKAGE\bin\kibana.bat &
           echo Waiting for 2min
