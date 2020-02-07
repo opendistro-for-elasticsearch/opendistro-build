@@ -52,6 +52,9 @@ USER 1000
 COPY --chown=1000:0 {{ '%s/' % artifacts_dir }} {{ artifacts_dir }}
 {% endif %}
 
+RUN mkdir /tmp/plugins
+ADD plugins /tmp/plugins/
+
 WORKDIR /usr/share/elasticsearch
 ##Compile the C-library for kNN
 RUN set -ex; \
@@ -98,8 +101,8 @@ RUN set -ex && for esdirs in config data logs; do \
     done
 
 # Install the required modules
-RUN for plugin_path in {{ plugin_url_paths }}; do \
-      elasticsearch-plugin install --batch "{{ artifact_repo_url }}/elasticsearch-plugins/$plugin_path"; \
+RUN for plugin_path in `ls /tmp/plugins/`; do \
+      elasticsearch-plugin install --batch file:/tmp/plugins/$plugin_path; \
     done
 
 # Make the certificate installer script executable. This script has to be executed before ES is started.
