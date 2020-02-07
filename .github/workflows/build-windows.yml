@@ -76,11 +76,11 @@ jobs:
           pip3 install requests
           echo pip3 -version
           pip3 install awscli
-          #cd elasticsearch\bin\
+          cd elasticsearch\bin\
           $PACKAGE="opendistroforelasticsearch"
-          $OD_VERSION=$(python .\elasticsearch\bin\version-info --od)
+          $OD_VERSION=$(python .\version-info --od)
           $S3_PACKAGE="odfe-"+$OD_VERSION+".zip"
-          #cd ..\..
+          cd ..\..
           
           echo downloading zip from S3 
           aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/ode-windows-zip/$S3_PACKAGE .\
@@ -99,11 +99,11 @@ jobs:
       - name: test-kibana
         run: |
           dir
-          #cd kibana\bin\
-          $OD_VERSION=$(python .\kibana\bin\version-info --od)
+          cd kibana\bin\
+          $OD_VERSION=$(python .\version-info --od)
           $S3_PACKAGE="odfe-"+$OD_VERSION+"-kibana.zip"
           $PACKAGE="opendistroforelasticsearch-kibana"
-          #cd ..\..
+          cd ..\..
           echo downloading zip from S3
           aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/ode-windows-zip/$S3_PACKAGE .\
           echo unzipping $S3_PACKAGE
