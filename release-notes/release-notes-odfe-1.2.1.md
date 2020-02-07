@@ -1,4 +1,4 @@
-## Open Distro for Elasticsearch V 1.2.1 Release Notes
+## Open Distro for Elasticsearch 1.2.1 Release Notes
 
 ### **ALERTING**
 

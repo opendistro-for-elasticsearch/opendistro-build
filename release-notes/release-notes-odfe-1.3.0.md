@@ -1,4 +1,4 @@
-## Open Distro for Elasticsearch V 1.3.0 Release Notes
+## Open Distro for Elasticsearch 1.3.0 Release Notes
 
 ### **ALERTING**
 
