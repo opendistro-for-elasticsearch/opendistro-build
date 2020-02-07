@@ -78,7 +78,7 @@ jobs:
           pip3 install awscli
           #cd elasticsearch\bin\
           $PACKAGE="opendistroforelasticsearch"
-          $OD_VERSION=$(python .elasticsearch\bin\version-info --od)
+          $OD_VERSION=$(python .\elasticsearch\bin\version-info --od)
           $S3_PACKAGE="odfe-"+$OD_VERSION+".zip"
           #cd ..\..
           
@@ -100,7 +100,7 @@ jobs:
         run: |
           dir
           #cd kibana\bin\
-          $OD_VERSION=$(python .\kibana\bin\\version-info --od)
+          $OD_VERSION=$(python .\kibana\bin\version-info --od)
           $S3_PACKAGE="odfe-"+$OD_VERSION+"-kibana.zip"
           $PACKAGE="opendistroforelasticsearch-kibana"
           #cd ..\..
