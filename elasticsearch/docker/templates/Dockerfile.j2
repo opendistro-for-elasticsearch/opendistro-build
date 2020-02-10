@@ -85,9 +85,9 @@ RUN set -ex; \
  \
     && g++ -fPIC -I/opt/jdk-12.0.2/include -I/opt/jdk-12.0.2/include/linux -I/usr/share/elasticsearch/nmslib/similarity_search/include -std=c++11 -shared -o libKNNIndexV1_7_3_6.so com_amazon_opendistroforelasticsearch_knn_index_v1736_KNNIndex.cpp -lNonMetricSpaceLib -L/usr/share/elasticsearch/nmslib/similarity_search/release \
  \
-    && mv /tmp/jni/libKNNIndexV1_7_3_6.so /usr/share/elasticsearch/k-NN/buildSrc \
+    && rm -rf /usr/share/elasticsearch/nmslib \
  \
-    && rm -rf /usr/share/elasticsearch/nmslib
+    && rm -rf /usr/share/elasticsearch/k-NN
 
 # Bust cache for wgets
 ENV BUST_CACHE {{ bust_cache }}
@@ -168,9 +168,8 @@ RUN mkdir /usr/share/supervisor
 
 WORKDIR /usr/share/elasticsearch
 COPY --from=prep_es_files --chown=1000:0 /usr/share/elasticsearch /usr/share/elasticsearch
-COPY --from=prep_es_files /usr/share/elasticsearch/k-NN/buildSrc/libKNNIndexV1_7_3_6.so /usr/lib
+COPY --from=prep_es_files /tmp/jni/libKNNIndexV1_7_3_6.so /usr/lib
 
-RUN rm -rf /usr/share/elasticsearch/k-NN
 ENV PATH /usr/share/elasticsearch/bin:$PATH
 
 ADD --chown=1000:0 bin/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
