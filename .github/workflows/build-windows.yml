@@ -117,6 +117,8 @@ jobs:
           cd ..\KibanaTest
           dir
           .\gradlew.bat build
+          Rename-Item .\build build-$(get-date -format "dd_MMM_yyyy HH_mm_ss")
+          aws s3 cp .\build-$(get-date -format "dd_MMM_yyyy HH_mm_ss") s3://artifacts.opendistroforelasticsearch.amazon.com/KibanaTest-reports/reports/ --recursive
           cd ..\opendistro-build
 
           
