@@ -119,6 +119,7 @@ jobs:
 #           ping -n 180 127.0.0.1 >.\out.txt
            
       - name: Copying reports to S3 
+        if: always()
         run: |
           dir
           Rename-Item .\build build-$(get-date -format "dd_MMM_yyyy HH_mm_ss")
