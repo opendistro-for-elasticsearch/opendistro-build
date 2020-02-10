@@ -98,21 +98,21 @@ jobs:
 #
       - name: test-kibana
         run: |
-          #dir
-          #cd kibana\bin\
-          #$OD_VERSION=$(python .\version-info --od)
-          #$S3_PACKAGE="odfe-"+$OD_VERSION+"-kibana.zip"
-          #$PACKAGE="opendistroforelasticsearch-kibana"
-          #cd ..\..
-          #echo downloading zip from S3
-          #aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/ode-windows-zip/$S3_PACKAGE .\
-          #echo unzipping $S3_PACKAGE
-          #unzip -q .\$S3_PACKAGE
-          #dir
-          #echo running kibana and package is $PACKAGE
-          #nohup .\$PACKAGE\bin\kibana.bat &
-          #echo Waiting for 3min
-          #ping -n 180 127.0.0.1 >.\out.txt
+          dir
+          cd kibana\bin\
+          $OD_VERSION=$(python .\version-info --od)
+          $S3_PACKAGE="odfe-"+$OD_VERSION+"-kibana.zip"
+          $PACKAGE="opendistroforelasticsearch-kibana"
+          cd ..\..
+          echo downloading zip from S3
+          aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/ode-windows-zip/$S3_PACKAGE .\
+          echo unzipping $S3_PACKAGE
+          unzip -q .\$S3_PACKAGE
+          dir
+          echo running kibana and package is $PACKAGE
+          nohup .\$PACKAGE\bin\kibana.bat &
+          echo Waiting for 3min
+          ping -n 180 127.0.0.1 >.\out.txt
           echo running tests
           cd ..\KibanaTest
           dir
