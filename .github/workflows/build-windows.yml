@@ -123,7 +123,7 @@ jobs:
         run: |
           cd ..\KibanaTest
           dir
-          compress-archive .\build 
+          compress-archive .\build -DestinationPath .\build.zip
           dir
           echo "copying to: s3://artifacts.opendistroforelasticsearch.amazon.com/KibanaTest-reports/reports/"
           aws s3 cp .\build.zip s3://artifacts.opendistroforelasticsearch.amazon.com/KibanaTest-reports/build/build-$(get-date -format "dd_MMM_yyyy HH_mm_ss") --recursive
