@@ -264,7 +264,7 @@ jobs:
         run: |
           cd kibana/Test
           ls -ltr
-          zip -r build.zip .\build
+          zip -r build.zip ./build
           ls -ltr
           echo "Copying to: s3://artifacts.opendistroforelasticsearch.amazon.com/KibanaTest-reports/reports/"
           aws s3 cp /build.zip s3://artifacts.opendistroforelasticsearch.amazon.com/KibanaTest-reports/build/build-$(get-date -format "dd_MMM_yyyy HH_mm_ss") 
