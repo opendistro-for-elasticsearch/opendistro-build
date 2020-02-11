@@ -13,7 +13,3 @@ for keys in urls:
     strTable = "<h2>" + keys + "</h2>"
     req = requests.get(url=urls[keys], auth=(userName, token))
     print(req.status_code)
-    payload = req.json()
-    latest_job_run = payload["workflow_runs"][0]
-    print(latest_job_run)
-    job_run_id = latest_job_run['id']
