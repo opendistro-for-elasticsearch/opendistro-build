@@ -20,6 +20,9 @@ jobs:
       - name: Install Requests
         run: pip3 install requests
       - name: Run Build Test Report
+        env:
+          user-name: ${{ secrets.REPORT_USER }}
+          token: ${{ secrets.REPORT_PAT }}
         run: |
           ls -ltr
           chmod 755 build-test-report.py
