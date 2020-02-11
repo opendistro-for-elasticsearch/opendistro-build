@@ -7,4 +7,6 @@ jobs:
   release-deb-artifacts:
     runs-on: [ubuntu-latest]
     steps:
+      - name: Install Requests
+        run: pip install requests
     
