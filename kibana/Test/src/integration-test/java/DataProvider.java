@@ -20,7 +20,8 @@ public class DataProvider {
         //index management kibana
         data[2][0] = "/html/body/div[1]/div/div[2]/div[2]/div[1]/div/ul[3]/li[4]/span/a";
         data[2][1] = "XPATH";
-        data[2][2] = "//*[@id=\"kibana-body\"]/div/div[3]/div/div[3]/div/div[2]/div/div/div[1]/div[1]/h3";
+        data[2][2] = "/html/body/div[1]/div/div[3]/div/div[3]/div/div[1]/nav/div/div/a";
+        //data[2][2] = "//*[@id=\"kibana-body\"]/div/div[3]/div/div[3]/div/div[2]/div/div/div[1]/div[1]/h3";
         data[2][3] = "XPATH";
         data[2][4] = "Index Management Option";
 
