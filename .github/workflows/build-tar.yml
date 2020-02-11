@@ -4,7 +4,7 @@ on:
   push:
     branches: 
      -rish1397-patch-1
-  #schedule:
+  ##schedule:
     #- cron: '0 10 * * *'
 jobs:
 #   plugin-avilability:
