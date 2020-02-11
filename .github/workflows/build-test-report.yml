@@ -6,11 +6,18 @@ on:
 jobs:
   release-deb-artifacts:
     runs-on: [ubuntu-latest]
+    strategy:
+      matrix:
+        python-version: [3.6]
     steps:
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
       - name: Install Requests
         run: pip install requests
       - name: Run Build Test Report
         run: |
-          #!/usr/bin/env python
+          #!/usr/bin/env python3
           
-          print 'I am Python'
+          print('I am Python')
