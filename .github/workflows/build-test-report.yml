@@ -1,0 +1,10 @@
+name: Release Debian Artifacts
+on: 
+  push:
+    branches: 
+      - odfe-prod-release
+jobs:
+  release-deb-artifacts:
+    runs-on: [ubuntu-latest]
+    steps:
+    
