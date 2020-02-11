@@ -257,7 +257,7 @@ jobs:
           echo "Running tests" 
           cd kibana/Test
           ls -ltr
-          ./gradlew build
+          ./gradlew clean build
             
       - name: Copying reports to S3 
         if: always()
