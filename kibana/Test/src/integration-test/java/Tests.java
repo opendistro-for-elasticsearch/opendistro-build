@@ -29,6 +29,7 @@ public class Tests {
             this.driver = initialiseBrowser(propertiesFile.getProperty("BROWSER"));
             System.out.println("Driver is:"+this.driver);
             this.driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+            this.driver.manage().window().setSize(new Dimension(2500, 1500));
             actions = new Actions(this.driver);
             assertPage = new AssertPage(this.driver);
         } catch (Exception e) {
