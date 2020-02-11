@@ -26,5 +26,18 @@ jobs:
         run: |
           chmod 755 build-test-report.py
           python3 build-test-report.py $username $token
-          ls -ltr
+      - name: Send Mail
+        uses: dawidd6/action-send-mail@master
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{secrets.MAIL_USERNAME}}
+          password: ${{secrets.MAIL_PASSWORD}}
+          subject: Opendistro for Elasticsearch Build - Daily Run (Plugin Status)
+          # Read file contents as body:
+          body: file://report.html
+          to: sngri@amazon.com
+          from: Opendistro Elasticsearch
+          # Optional content type:
+          content_type: text/html
           
