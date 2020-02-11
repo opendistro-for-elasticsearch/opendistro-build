@@ -233,8 +233,8 @@ jobs:
           unzip ./$S3_PACKAGE
           echo running es
           nohup ./$PACKAGE-$OD_VERSION/bin/elasticsearch &
-          echo Waiting for 2min
-          sleep 120
+          echo Waiting for 1min
+          sleep 45
           
       - name: Run and Test Kibana
         run: |
@@ -251,8 +251,8 @@ jobs:
           ls -ltr
           echo "Running Kibana"
           nohup ./$PACKAGE/bin/kibana &
-          echo "Waiting for 2min"
-          sleep 120
+          echo "Waiting for 1min"
+          sleep 60
           ls -ltr
           echo "Running tests" 
           cd kibana/Test
@@ -262,7 +262,7 @@ jobs:
       - name: Copying reports to S3 
         if: always()
         run: |
-          
+          cd kibana/Test
           ls -ltr
           zip -r build.zip .\build
           ls -ltr
