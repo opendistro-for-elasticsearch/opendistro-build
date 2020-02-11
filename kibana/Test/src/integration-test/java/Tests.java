@@ -2,6 +2,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
+
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
@@ -22,13 +24,14 @@ public class Tests {
         String propertyFilePath = System.getProperty("driverPropertiesFilePath");
         System.out.println("property path is:"+propertyFilePath);
         Properties propertiesFile = new Properties();
-        
+
         try {
             propertiesFile.load(new FileReader(propertyFilePath));
             System.out.println("BROWSER :"+propertiesFile.getProperty("BROWSER"));
             this.driver = initialiseBrowser(propertiesFile.getProperty("BROWSER"));
             System.out.println("Driver is:"+this.driver);
             this.driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+            this.driver.manage().window().setSize(new Dimension(2500, 1500));
             actions = new Actions(this.driver);
             assertPage = new AssertPage(this.driver);
         } catch (Exception e) {
@@ -49,13 +52,29 @@ public class Tests {
             case "FIREFOX":
                 FirefoxOptions options = new FirefoxOptions();
                 options.setHeadless(true);
-                System.setProperty("webdriver.gecko.driver",System.getProperty("integTestResourcesDir")+"/geckodriver");
+                setFirefoxDriverPath();
                 System.out.println("geckodriver path is:"+System.getProperty("webdriver.gecko.driver"));
                 System.out.println("switch returned FIREFOX DRIVER");
                 return new FirefoxDriver(options);
         }
         System.out.println("switch returned NULL");
         return null;
+    }
+
+    private void setFirefoxDriverPath(){
+        String osName = System.getProperty("os.name").toLowerCase();
+        try {
+            if (osName.matches(".*mac.*")) {
+                System.setProperty("webdriver.gecko.driver", System.getProperty("integTestResourcesDir") + "/geckodriver_mac");
+            } else if (osName.matches(".*win.*")) {
+                System.setProperty("webdriver.gecko.driver", System.getProperty("integTestResourcesDir") + "/geckodriver.exe");
+            } else {
+                System.setProperty("webdriver.gecko.driver", System.getProperty("integTestResourcesDir") + "/geckodriver");
+            }
+        }
+        catch(Exception e){
+            System.out.println("geckodriver path not set"+e);
+        }
     }
 
     @Test(enabled = true, priority = 0)
