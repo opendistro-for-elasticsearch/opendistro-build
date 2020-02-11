@@ -1,4 +1,4 @@
- # Open Distro for Elasticsearch build
+ # Building Open Distro for Elasticsearch
 
 This repo contains the scripts for building Open Distro for Elasticsearch & Kibana Docker images and packages for Linux distributions (RPM & DEB).
 

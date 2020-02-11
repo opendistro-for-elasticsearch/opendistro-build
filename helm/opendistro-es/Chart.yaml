@@ -11,7 +11,9 @@
 # express or implied. See the License for the specific language governing
 # permissions and limitations under the License.
 
-appVersion: 1.0.0
+apiVersion: v1
+# Open Distro for Elasticsearch version
+appVersion: 1.3.0
 description: 'Open Distro for Elasticsearch'
 engine: gotpl
 kubeVersion: ^1.10.0-0
@@ -23,4 +25,5 @@ maintainers:
 name: opendistro-es
 sources:
 - https://pages.git.viasat.com/ATG/charts
+# Chart version
 version: 1.3.0
