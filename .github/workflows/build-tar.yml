@@ -93,6 +93,7 @@ jobs:
       - name: Run Tar
         run: |
           sudo apt-get install python3-setuptools
+          sudo python -m pip install --upgrade pip
           sudo pip3 install pytest
           sudo pip3 install requests
           
