@@ -193,85 +193,75 @@ jobs:
 #           cd ../alerting/alerting
 #           ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
     
-#   Test-kibana:
-#     name: Test-Kibana
-#     runs-on: [ubuntu-latest]
-#     steps:
-#       - uses: actions/checkout@v1
-#       - uses: actions/checkout@v1
-#       - uses: actions/checkout@v1
-#         with:
-#           repository: rish1397/KibanaTest
-#           ref: master
-#           token: ${{ secrets.GitHub_PAT }}
-#       - name: Configure AWS Credentials
-#         uses: aws-actions/configure-aws-credentials@v1
-#         with:
-#           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#           aws-region: us-east-1
-#       - uses: actions/setup-java@v1
-#         with:
-#           java-version: '11.0.x'
-#           java-package: jdk
-#           architecture: x64
+  Test-kibana:
+    name: Test-Kibana
+    runs-on: [ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/checkout@v1
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - uses: actions/setup-java@v1
+        with:
+          java-version: '11.0.x'
+          java-package: jdk
+          architecture: x64
           
-#       - name: Run ES
-#         run: |
-#           python -m pip install --upgrade pip
-#           pip3 install pytest
-#           pip3 install requests
-#           echo pip3 -version
-#           pip3 install awscli
-#           cd elasticsearch\bin\
-#           $PACKAGE="opendistroforelasticsearch"
-#           $OD_VERSION=$(python .\version-info --od)
-#           $S3_PACKAGE="odfe-"+$OD_VERSION+".zip"
-#           cd ..\..
-#           echo downloading zip from S3 
-#           aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/ode-windows-zip/$S3_PACKAGE .\
-#           echo unzipping $S3_PACKAGE
-#           unzip .\$S3_PACKAGE
-#           echo running es
-#           nohup .\$PACKAGE-$OD_VERSION\bin\elasticsearch.bat &
-#           echo Waiting for 2min
-#           ping -n 120 127.0.0.1 >.\out.txt
-#           echo running tests
-#           cd ..\odfe-test\odfe-test
-#           dir
-#           pytest
-#           cd ..\..\opendistro-build
+      - name: Run ES
+        run: |
+          #python -m pip install --upgrade pip
+          #pip3 install pytest
+          #pip3 install requests
+          #echo pip3 -version
+          #pip3 install awscli
+          cd elasticsearch\bin\
+          $PACKAGE="opendistroforelasticsearch"
+          $OD_VERSION=$(python .\version-info --od)
+          $S3_PACKAGE="odfe-"+$OD_VERSION+".zip"
+          cd ..\..
+          echo downloading zip from S3 
+          aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/ode-windows-zip/$S3_PACKAGE .\
+          echo unzipping $S3_PACKAGE
+          unzip .\$S3_PACKAGE
+          echo running es
+          nohup .\$PACKAGE-$OD_VERSION\bin\elasticsearch.bat &
+          echo Waiting for 2min
+          sleep 120
           
-#      - name: Run and Test Kibana
-#        run: |
-#           cd kibana\bin\
-#           $OD_VERSION=$(python .\version-info --od)
-#           $S3_PACKAGE="odfe-"+$OD_VERSION+"-kibana.zip"
-#           $PACKAGE="opendistroforelasticsearch-kibana"
-#           cd ..\..
-#           echo "Downloading zip from S3"
-#           aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/ode-windows-zip/$S3_PACKAGE .\
-#           echo "Unzipping $S3_PACKAGE"
-#           unzip -q .\$S3_PACKAGE
-#           dir
-#           echo "Running Kibana"
-#           nohup .\$PACKAGE\bin\kibana.bat &
-#           echo "Waiting for 3min"
-#           ping -n 180 127.0.0.1 >.\out.txt
-#           dir
-#           echo "Running tests" 
-#           cd ..\KibanaTest
-#           dir
-#           .\gradlew.bat build
+      - name: Run and Test Kibana
+        run: |
+          cd kibana\bin\
+          $OD_VERSION=$(python .\version-info --od)
+          $S3_PACKAGE="odfe-"+$OD_VERSION+"-kibana.zip"
+          $PACKAGE="opendistroforelasticsearch-kibana"
+          cd ..\..
+          echo "Downloading zip from S3"
+          aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/ode-windows-zip/$S3_PACKAGE .\
+          echo "Unzipping $S3_PACKAGE"
+          unzip -q .\$S3_PACKAGE
+          ls -ltr
+          echo "Running Kibana"
+          nohup .\$PACKAGE\bin\kibana.bat &
+          echo "Waiting for 2min"
+          sleep 120
+          ls -ltr
+          echo "Running tests" 
+          cd ..\KibanaTest
+          ls -ltr
+          .\gradlew build
             
-#       - name: Copying reports to S3 
-#         if: always()
-#         run: |
-#           cd ..\KibanaTest
-#           dir
-#           compress-archive .\build -DestinationPath .\build.zip
-#           dir
-#           echo "Copying to: s3://artifacts.opendistroforelasticsearch.amazon.com/KibanaTest-reports/reports/"
-#           aws s3 cp .\build.zip s3://artifacts.opendistroforelasticsearch.amazon.com/KibanaTest-reports/build/build-$(get-date -format "dd_MMM_yyyy HH_mm_ss") 
-#           cd ..
+      - name: Copying reports to S3 
+        if: always()
+        run: |
+          cd ..\KibanaTest
+          ls -ltr
+          zip -r build.zip .\build
+          ls -ltr
+          echo "Copying to: s3://artifacts.opendistroforelasticsearch.amazon.com/KibanaTest-reports/reports/"
+          aws s3 cp .\build.zip s3://artifacts.opendistroforelasticsearch.amazon.com/KibanaTest-reports/build/build-$(get-date -format "dd_MMM_yyyy HH_mm_ss") 
+          cd ..
 
