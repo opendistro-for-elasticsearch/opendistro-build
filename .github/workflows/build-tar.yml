@@ -3,7 +3,7 @@ name: Process TAR Artifacts
 on:
   push:
     branches: 
-     -rish1397-patch-1
+     - rish1397-patch-1
   ##schedule:
     #- cron: '0 10 * * *'
 jobs:
