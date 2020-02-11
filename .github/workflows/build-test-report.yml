@@ -13,4 +13,4 @@ jobs:
         run: |
           #!/usr/bin/env python
           
-          print('I am Python!!!')
+          print 'I am Python'
