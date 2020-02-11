@@ -232,7 +232,7 @@ jobs:
           echo unzipping $S3_PACKAGE
           unzip ./$S3_PACKAGE
           echo running es
-          nohup ./$PACKAGE-$OD_VERSION/bin/elasticsearch.bat &
+          nohup ./$PACKAGE-$OD_VERSION/bin/elasticsearch &
           echo Waiting for 2min
           sleep 120
           
@@ -249,7 +249,7 @@ jobs:
           unzip -q ./$S3_PACKAGE
           ls -ltr
           echo "Running Kibana"
-          nohup ./$PACKAGE/bin/kibana.bat &
+          nohup ./$PACKAGE/bin/kibana &
           echo "Waiting for 2min"
           sleep 120
           ls -ltr
