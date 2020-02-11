@@ -4,6 +4,7 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -45,6 +46,8 @@ public class Tests {
     public WebDriver initialiseBrowser(String browser) {
         switch (browser) {
             case "FIREFOX":
+                FirefoxOptions options = new FirefoxOptions();
+                options.setHeadless(true);
                 System.setProperty("webdriver.gecko.driver",System.getProperty("integTestResourcesDir")+"/geckodriver");
                 System.out.println("geckodriver path is:"+System.getProperty("webdriver.gecko.driver"));
                 System.out.println("switch returned FIREFOX DRIVER");
