@@ -38,5 +38,9 @@ for keys in urls:
                """
     strTable = strTable+"</table></html>"
 
-    with open('/Users/sngri/workspace/report.html', 'a') as file:
+    with open('report.html', 'a') as file:
         file.write(strTable)
+
+with open('/Users/sngri/workspace/report.html', 'r') as f1:
+    for line in f1.readlines():
+        print(line)
