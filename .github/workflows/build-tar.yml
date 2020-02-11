@@ -9,8 +9,8 @@ jobs:
   build-es-artifacts:
     name: Build ES Artifacts
     runs-on: ubuntu-latest
-    container:
-      image: opendistroforelasticsearch/multijava08101112-git:v1
+#     container:
+#       image: opendistroforelasticsearch/multijava08101112-git:v1
 
     steps:
     - uses: actions/checkout@v1
@@ -64,7 +64,7 @@ jobs:
           #aws s3 cp $tar_checksum_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistroforelasticsearch-kibana/
           
   test-odfe-tarball:
-    needs: [build-es-artifacts]
+   # needs: [build-es-artifacts]
     name: Run Tar Test
     runs-on: [ubuntu-16.04]
     steps:
@@ -93,9 +93,8 @@ jobs:
       - name: Run Tar
         run: |
           sudo apt-get install python3-setuptools
-          python -m pip install --upgrade pip
-          pip3 install pytest
-          pip3 install requests
+          sudo pip3 install pytest
+          sudo pip3 install requests
           
           cd elasticsearch/linux_distributions
           odfe_version=`../bin/version-info --od`
