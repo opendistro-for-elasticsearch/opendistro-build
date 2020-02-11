@@ -22,6 +22,7 @@ public class Tests {
         String propertyFilePath = System.getProperty("driverPropertiesFilePath");
         System.out.println("property path is:"+propertyFilePath);
         Properties propertiesFile = new Properties();
+        
         try {
             propertiesFile.load(new FileReader(propertyFilePath));
             System.out.println("BROWSER :"+propertiesFile.getProperty("BROWSER"));
@@ -51,7 +52,7 @@ public class Tests {
                 System.setProperty("webdriver.gecko.driver",System.getProperty("integTestResourcesDir")+"/geckodriver");
                 System.out.println("geckodriver path is:"+System.getProperty("webdriver.gecko.driver"));
                 System.out.println("switch returned FIREFOX DRIVER");
-                return new FirefoxDriver();
+                return new FirefoxDriver(options);
         }
         System.out.println("switch returned NULL");
         return null;
