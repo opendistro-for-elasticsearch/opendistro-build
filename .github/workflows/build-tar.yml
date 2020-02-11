@@ -223,9 +223,9 @@ jobs:
           #echo pip3 -version
           #pip3 install awscli
           cd elasticsearch/bin/
-          $PACKAGE="opendistroforelasticsearch"
-          $OD_VERSION=$(python ./version-info --od)
-          $S3_PACKAGE="odfe-"+$OD_VERSION+".zip"
+          PACKAGE="opendistroforelasticsearch"
+          OD_VERSION=`./version-info --od`
+          S3_PACKAGE="odfe-"$OD_VERSION".zip"
           cd ../..
           echo downloading zip from S3 
           aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/ode-windows-zip/$S3_PACKAGE ./
@@ -238,34 +238,34 @@ jobs:
           
       - name: Run and Test Kibana
         run: |
-          cd kibana\bin\
-          $OD_VERSION=$(python .\version-info --od)
-          $S3_PACKAGE="odfe-"+$OD_VERSION+"-kibana.zip"
-          $PACKAGE="opendistroforelasticsearch-kibana"
-          cd ..\..
+          cd kibana/bin/
+          #OD_VERSION=`./version-info --od`
+          S3_PACKAGE="odfe-"$OD_VERSION"-kibana.zip"
+          PACKAGE="opendistroforelasticsearch-kibana"
+          cd ../..
           echo "Downloading zip from S3"
-          aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/ode-windows-zip/$S3_PACKAGE .\
+          aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/ode-windows-zip/$S3_PACKAGE ./
           echo "Unzipping $S3_PACKAGE"
-          unzip -q .\$S3_PACKAGE
+          unzip -q ./$S3_PACKAGE
           ls -ltr
           echo "Running Kibana"
-          nohup .\$PACKAGE\bin\kibana.bat &
+          nohup ./$PACKAGE/bin/kibana.bat &
           echo "Waiting for 2min"
           sleep 120
           ls -ltr
           echo "Running tests" 
-          cd ..\KibanaTest
+          cd ../KibanaTest
           ls -ltr
-          .\gradlew build
+          ./gradlew build
             
       - name: Copying reports to S3 
         if: always()
         run: |
-          cd ..\KibanaTest
+          cd ../KibanaTest
           ls -ltr
           zip -r build.zip .\build
           ls -ltr
           echo "Copying to: s3://artifacts.opendistroforelasticsearch.amazon.com/KibanaTest-reports/reports/"
-          aws s3 cp .\build.zip s3://artifacts.opendistroforelasticsearch.amazon.com/KibanaTest-reports/build/build-$(get-date -format "dd_MMM_yyyy HH_mm_ss") 
+          aws s3 cp /build.zip s3://artifacts.opendistroforelasticsearch.amazon.com/KibanaTest-reports/build/build-$(get-date -format "dd_MMM_yyyy HH_mm_ss") 
           cd ..
 
