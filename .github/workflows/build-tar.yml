@@ -93,8 +93,8 @@ jobs:
       - name: Run Tar
         run: |
           python -m pip install --upgrade pip
-          sudo pip3 install pytest
-          sudo pip3 install requests
+          pip3 install pytest
+          pip3 install requests
           
           cd elasticsearch/linux_distributions
           odfe_version=`../bin/version-info --od`
