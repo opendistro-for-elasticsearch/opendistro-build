@@ -19,21 +19,25 @@ public class Tests {
     public void initialize() {
     	System.out.println("initialize invoked");
         String propertyFilePath = System.getProperty("driverPropertiesFilePath");
+        System.out.println("property path is:"+propertyFilePath);
         Properties propertiesFile = new Properties();
         try {
             propertiesFile.load(new FileReader(propertyFilePath));
+            System.out.println("BROWSER :"+propertiesFile.getProperty("BROWSER"));
             this.driver = initialiseBrowser(propertiesFile.getProperty("BROWSER"));
+            System.out.println("Driver is:"+this.driver);
             this.driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
             actions = new Actions(this.driver);
             assertPage = new AssertPage(this.driver);
         } catch (Exception e) {
-            System.out.println("driver not initialised");
+            System.out.println("driver not initialised"+e);
         }
         try {
             this.baseURL = propertiesFile.getProperty("baseURL");
+            System.out.println("baseURL is"+this.baseURL);
 
         } catch (Exception e) {
-            System.out.println("baseURL not initialised");
+            System.out.println("baseURL not initialised:"+e);
         }
 
     }
@@ -41,8 +45,12 @@ public class Tests {
     public WebDriver initialiseBrowser(String browser) {
         switch (browser) {
             case "FIREFOX":
+                System.setProperty("webdriver.gecko.driver",System.getProperty("integTestResourcesDir")+"\\geckodriver.exe");
+                System.out.println("geckodriver path is:"+System.getProperty("webdriver.gecko.driver"));
+                System.out.println("switch returned FIREFOX DRIVER");
                 return new FirefoxDriver();
         }
+        System.out.println("switch returned NULL");
         return null;
     }
 
@@ -53,7 +61,12 @@ public class Tests {
     		else System.out.println("baseURL not found");
     		Assert.assertTrue(false);
     	}
-        this.driver.get(this.baseURL);
+        try{
+            this.driver.get(this.baseURL);
+        }
+        catch(Exception e){
+            System.out.println(e);
+        }
         assertPage.assertPageByTitle("Kibana");
     }
 
