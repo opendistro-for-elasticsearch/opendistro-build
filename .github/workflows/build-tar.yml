@@ -92,6 +92,7 @@ jobs:
           token: ${{ secrets.GitHub_PAT }}
       - name: Run Tar
         run: |
+          sudo apt-get install python3-setuptools
           python -m pip install --upgrade pip
           pip3 install pytest
           pip3 install requests
