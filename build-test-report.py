@@ -25,22 +25,4 @@ for keys in urls:
     strTable = strTable + """<html><table border="1" width=50% >
                     <tr><th>Job Name</th><th>Status</th><th>Logs</th></tr>"""
     for jobs in all_jobs['jobs']:
-        if jobs['conclusion'].upper() != 'SUCCESS':
-            strRW = "<tr><td>" + jobs['name'] + """</td><td bgcolor="red">""" + jobs['conclusion'].upper() + "</td><td>" + jobs['html_url'] + "</td></tr>"
-        else:
-            strRW = "<tr><td>" + jobs['name'] + """</td><td bgcolor="green">""" + jobs['conclusion'].upper() + "</td><td>" + jobs['html_url'] + "</td></tr>"
-        strTable = strTable + strRW
-    strTable = strTable + """<tr><td>Test SQL Plugin</td><td bgcolor="yellow">Test Not Available</td><td>Not Available</td></tr>
-                  <tr><td>Test Job Scheduler Plugin</td><td bgcolor="yellow">Test Not Available</td><td>Not Available</td></tr>
-                  <tr><td>Test Performance Analyzer Plugin</td><td bgcolor="yellow">Test Not Available</td><td>Not Available</td></tr>
-                  <tr><td>Test Security Plugin</td><td bgcolor="yellow">Test Not Available</td><td>Not Available</td></tr>
-                  <tr><td>Test kNN Plugin</td><td bgcolor="yellow">Test Not Available</td><td>Not Available</td></tr>
-               """
-    strTable = strTable+"</table></html>"
-
-    with open('report.html', 'a') as file:
-        file.write(strTable)
-
-with open('/Users/sngri/workspace/report.html', 'r') as f1:
-    for line in f1.readlines():
-        print(line)
+        print(jobs)
