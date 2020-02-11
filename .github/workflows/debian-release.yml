@@ -2,7 +2,7 @@ name: Release Debian Artifacts
 on: 
   push:
     branches: 
-      - odfe-prod-release
+      - actions-branch
 jobs:
   release-deb-artifacts:
     runs-on: [ubuntu-latest]
