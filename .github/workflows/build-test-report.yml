@@ -24,7 +24,6 @@ jobs:
           user-name: ${{ secrets.REPORT_USER }}
           token: ${{ secrets.REPORT_PAT }}
         run: |
-          ls -ltr
           chmod 755 build-test-report.py
-          python3 build-test-report.py user-name token
+          python3 build-test-report.py $user-name $token
           
