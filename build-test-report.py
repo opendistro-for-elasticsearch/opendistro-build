@@ -41,6 +41,3 @@ for keys in urls:
     with open('report.html', 'a') as file:
         file.write(strTable)
         
-with open('report.html', 'r') as f1:
-    for line in f1.readlines():
-        print(line)
