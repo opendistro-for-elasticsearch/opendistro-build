@@ -37,9 +37,12 @@
 FROM centos:7 AS prep_es_files
 
 ENV PATH /usr/share/elasticsearch/bin:$PATH
-RUN curl -s https://download.java.net/java/GA/jdk11/13/GPL/openjdk-11.0.1_linux-x64_bin.tar.gz | tar -C /opt -zxf -
-ENV JAVA_HOME /opt/jdk-11.0.1
-RUN yum install -y unzip
+RUN curl -s  https://download.java.net/java/GA/jdk12.0.2/e482c34c86bd4bf8b56c0b35558996b9/10/GPL/openjdk-12.0.2_linux-x64_bin.tar.gz | tar -C /opt -zxf -
+ENV JAVA_HOME /opt/jdk-12.0.2
+RUN yum -y update \
+    && yum -y groupinstall "Development Tools" \
+    && yum install -y unzip glibc.x86_64 cmake \
+    && yum clean all
 
 RUN groupadd -g 1000 elasticsearch && \
     adduser -u 1000 -g 1000 -d /usr/share/elasticsearch elasticsearch
@@ -49,7 +52,42 @@ USER 1000
 COPY --chown=1000:0 {{ '%s/' % artifacts_dir }} {{ artifacts_dir }}
 {% endif %}
 
+RUN mkdir /tmp/plugins
+ADD plugins /tmp/plugins/
+
 WORKDIR /usr/share/elasticsearch
+##Compile the C-library for kNN
+RUN set -ex; \
+ \
+    git clone https://github.com/nmslib/nmslib.git /usr/share/elasticsearch/nmslib; \
+ \
+    cd /usr/share/elasticsearch/nmslib \
+ \
+    && git checkout tags/v1.7.3.6 \
+ \
+    && cd similarity_search \
+ \
+    && cmake . \
+ \
+    && make \
+ \
+    && git clone https://github.com/opendistro-for-elasticsearch/k-NN.git /usr/share/elasticsearch/k-NN \
+ \
+    && cd /usr/share/elasticsearch/k-NN \
+ \
+    && git checkout v1.4.0.0 \
+ \
+    && mkdir /tmp/jni \
+ \
+    && cp jni/src/v1736/* /tmp/jni \
+ \
+    && cd /tmp/jni \
+ \
+    && g++ -fPIC -I/opt/jdk-12.0.2/include -I/opt/jdk-12.0.2/include/linux -I/usr/share/elasticsearch/nmslib/similarity_search/include -std=c++11 -shared -o libKNNIndexV1_7_3_6.so com_amazon_opendistroforelasticsearch_knn_index_v1736_KNNIndex.cpp -lNonMetricSpaceLib -L/usr/share/elasticsearch/nmslib/similarity_search/release \
+ \
+    && rm -rf /usr/share/elasticsearch/nmslib \
+ \
+    && rm -rf /usr/share/elasticsearch/k-NN
 
 # Bust cache for wgets
 ENV BUST_CACHE {{ bust_cache }}
@@ -63,8 +101,8 @@ RUN set -ex && for esdirs in config data logs; do \
     done
 
 # Install the required modules
-RUN for plugin_path in {{ plugin_url_paths }}; do \
-      elasticsearch-plugin install --batch "{{ artifact_repo_url }}/elasticsearch-plugins/$plugin_path"; \
+RUN for plugin_path in `ls /tmp/plugins/`; do \
+      elasticsearch-plugin install --batch file:/tmp/plugins/$plugin_path; \
     done
 
 # Make the certificate installer script executable. This script has to be executed before ES is started.
@@ -110,12 +148,13 @@ RUN yum update -y && \
     yum install -y nc unzip wget which && \
     yum clean all
 COPY CENTOS_LICENSING.txt /root
-COPY --from=prep_es_files --chown=1000:0 /opt/jdk-11.0.1 /opt/jdk-11.0.1
-ENV JAVA_HOME /opt/jdk-11.0.1
+COPY --from=prep_es_files --chown=1000:0 /opt/jdk-12.0.2 /opt/jdk-12.0.2
+
+ENV JAVA_HOME /opt/jdk-12.0.2
 
 # Replace OpenJDK's built-in CA certificate keystore with the one from the OS
 # vendor. The latter is superior in several ways.
-RUN ln -sf /etc/pki/ca-trust/extracted/java/cacerts /opt/jdk-11.0.1/lib/security/cacerts
+RUN ln -sf /etc/pki/ca-trust/extracted/java/cacerts /opt/jdk-12.0.2/lib/security/cacerts
 
 ENV PATH $PATH:$JAVA_HOME/bin
 
@@ -129,6 +168,8 @@ RUN mkdir /usr/share/supervisor
 
 WORKDIR /usr/share/elasticsearch
 COPY --from=prep_es_files --chown=1000:0 /usr/share/elasticsearch /usr/share/elasticsearch
+COPY --from=prep_es_files /tmp/jni/libKNNIndexV1_7_3_6.so /usr/lib
+
 ENV PATH /usr/share/elasticsearch/bin:$PATH
 
 ADD --chown=1000:0 bin/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
