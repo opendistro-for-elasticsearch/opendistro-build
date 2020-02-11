@@ -238,8 +238,9 @@ jobs:
           
       - name: Run and Test Kibana
         run: |
+          ls -ltr
           cd kibana/bin/
-          #OD_VERSION=`./version-info --od`
+          OD_VERSION=`./version-info --od`
           S3_PACKAGE="odfe-"$OD_VERSION"-kibana.zip"
           PACKAGE="opendistroforelasticsearch-kibana"
           cd ../..
@@ -254,14 +255,14 @@ jobs:
           sleep 120
           ls -ltr
           echo "Running tests" 
-          cd ../KibanaTest
+          cd kibana/Test
           ls -ltr
           ./gradlew build
             
       - name: Copying reports to S3 
         if: always()
         run: |
-          cd ../KibanaTest
+          
           ls -ltr
           zip -r build.zip .\build
           ls -ltr
