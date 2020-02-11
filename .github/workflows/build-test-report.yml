@@ -26,4 +26,5 @@ jobs:
         run: |
           chmod 755 build-test-report.py
           python3 build-test-report.py $username $token
+          ls -ltr
           
