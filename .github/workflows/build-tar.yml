@@ -257,6 +257,7 @@ jobs:
           echo "Running tests" 
           cd kibana/Test
           ls -ltr
+          ./gradlew clean 
           ./gradlew build
             
       - name: Copying reports to S3 
@@ -267,6 +268,6 @@ jobs:
           zip -r build.zip ./build
           ls -ltr
           echo "Copying to: s3://artifacts.opendistroforelasticsearch.amazon.com/KibanaTest-reports/reports/"
-          aws s3 cp ./build.zip s3://artifacts.opendistroforelasticsearch.amazon.com/KibanaTest-reports/build/build-$(get-date -format "dd_MMM_yyyy HH_mm_ss") 
+          aws s3 cp ./build.zip s3://artifacts.opendistroforelasticsearch.amazon.com/KibanaTest-reports/build/build-`date +%d_%m_%Y_%H_%M_%S` 
           cd ..
 

@@ -113,20 +113,20 @@ jobs:
           ping -n 180 127.0.0.1 >.\out.txt
           dir
           echo "Running tests" 
-          cd ..\KibanaTest
+          cd kibana\Test
           dir
           .\gradlew.bat build
             
-#       - name: Copying reports to S3 
-#         if: always()
-#         run: |
-#           cd ..\KibanaTest
-#           dir
-#           compress-archive .\build -DestinationPath .\build.zip
-#           dir
-#           echo "Copying to: s3://artifacts.opendistroforelasticsearch.amazon.com/KibanaTest-reports/reports/"
-#           aws s3 cp .\build.zip s3://artifacts.opendistroforelasticsearch.amazon.com/KibanaTest-reports/build/build-$(get-date -format "dd_MMM_yyyy HH_mm_ss") 
-#           cd ..
+      - name: Copying reports to S3 
+        if: always()
+        run: |
+          cd kibana\Test
+          dir
+          compress-archive .\build -DestinationPath .\build.zip
+          dir
+          echo "Copying to: s3://artifacts.opendistroforelasticsearch.amazon.com/KibanaTest-reports/reports/"
+          aws s3 cp .\build.zip s3://artifacts.opendistroforelasticsearch.amazon.com/KibanaTest-reports/build/build-$(get-date -format "dd_MMM_yyyy HH_mm_ss") 
+          cd ..
 
           
        
