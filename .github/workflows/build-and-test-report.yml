@@ -1,8 +1,7 @@
 name: Build Test Report
 on: 
-  push:
-    branches: 
-      - odfe-prod-release
+  schedule:
+    - cron: '0 11 * * *'
 jobs:
   release-deb-artifacts:
     runs-on: [ubuntu-latest]
