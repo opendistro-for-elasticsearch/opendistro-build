@@ -49,7 +49,6 @@ jobs:
           fi
           
   build-es-artifacts:
-    needs: [plugin-avilability]
     name: Build ES Artifacts
     runs-on: ubuntu-latest
     container:
@@ -81,7 +80,6 @@ jobs:
           echo "RPM creation for ES completed"
 
   build-kibana-artifacts:
-    needs: [build-es-artifacts]
     name: Build Kibana Artifacts
     runs-on: [ubuntu-latest]
     container:
