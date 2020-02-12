@@ -1,0 +1,42 @@
+name: Build Test Report
+on: 
+  push:
+    branches: 
+      - odfe-prod-release
+jobs:
+  release-deb-artifacts:
+    runs-on: [ubuntu-latest]
+    strategy:
+      matrix:
+        python-version: [3.6]
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: odfe-prod-release
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install Requests
+        run: pip3 install requests
+      - name: Run Build Test Report
+        env:
+          username: ${{ secrets.REPORT_USER }}
+          token: ${{ secrets.REPORT_PAT }}
+        run: |
+          chmod 755 build-test-report.py
+          python3 build-test-report.py $username $token
+      - name: Send Mail
+        uses: dawidd6/action-send-mail@master
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{secrets.MAIL_USERNAME}}
+          password: ${{secrets.MAIL_PASSWORD}}
+          subject: Opendistro for Elasticsearch Build and Test Status
+          # Read file contents as body:
+          body: file://report.html
+          to: sngri@amazon.com
+          from: Opendistro Elasticsearch
+          # Optional content type:
+          content_type: text/html
