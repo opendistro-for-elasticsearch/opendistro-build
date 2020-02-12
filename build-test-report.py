@@ -30,11 +30,11 @@ for keys in urls:
         else:
             strRW = "<tr><td>" + jobs['name'] + """</td><td bgcolor="green">""" + jobs['conclusion'].upper() + "</td><td>" + jobs['html_url'] + "</td></tr>"
         strTable = strTable + strRW
-    strTable = strTable + """<tr><td>Test SQL Plugin</td><td bgcolor="yellow">Test Not Available</td><td>Not Available</td></tr>
-                  <tr><td>Test Job Scheduler Plugin</td><td bgcolor="yellow">Test Not Available</td><td>Not Available</td></tr>
-                  <tr><td>Test Performance Analyzer Plugin</td><td bgcolor="yellow">Test Not Available</td><td>Not Available</td></tr>
-                  <tr><td>Test Security Plugin</td><td bgcolor="yellow">Test Not Available</td><td>Not Available</td></tr>
-                  <tr><td>Test kNN Plugin</td><td bgcolor="yellow">Test Not Available</td><td>Not Available</td></tr>
+    strTable = strTable + """<tr><td>Test SQL Plugin</td><td bgcolor="yellow" nowrap>Test Not Available</td><td>Not Available</td></tr>
+                  <tr><td>Test Job Scheduler Plugin</td><td bgcolor="yellow" nowrap>Test Not Available</td><td>Not Available</td></tr>
+                  <tr><td>Test Performance Analyzer Plugin</td><td bgcolor="yellow" nowrap>Test Not Available</td><td>Not Available</td></tr>
+                  <tr><td>Test Security Plugin</td><td bgcolor="yellow" nowrap>Test Not Available</td><td>Not Available</td></tr>
+                  <tr><td>Test kNN Plugin</td><td bgcolor="yellow" nowrap>Test Not Available</td><td>Not Available</td></tr>
                """
     strTable = strTable+"</table></html>"
 
