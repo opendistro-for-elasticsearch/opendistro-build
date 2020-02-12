@@ -68,6 +68,7 @@ jobs:
         ./download_plugins.sh
         cd elasticsearch/bin
         ODFE_VER=`./version-info --od`
+        echo "ODFE VERSION $ODFE_VER"
         cd ..
         cd docker
         make build
@@ -92,11 +93,11 @@ jobs:
         env:
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
           DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
-          ODFE_VER: 1.4.0
         run: |
           sudo apt-get install python-virtualenv
           cd kibana/bin
           ODFE_VER=`./version-info --od`
+          echo "ODFE VERSION $ODFE_VER"
           cd ..
           cd docker
           make build
