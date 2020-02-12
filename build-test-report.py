@@ -22,7 +22,7 @@ for keys in urls:
     job_req = requests.get(url=job_details_url, auth=(userName, token))
     all_jobs = job_req.json()
 
-    strTable = strTable + """<html><table border="1" width=50% >
+    strTable = strTable + """<html><table border="1" width=70% >
                     <tr><th>Job Name</th><th>Status</th><th>Logs</th></tr>"""
     for jobs in all_jobs['jobs']:
         if jobs['conclusion'].upper() != 'SUCCESS':
