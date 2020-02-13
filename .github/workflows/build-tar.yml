@@ -113,6 +113,7 @@ jobs:
     strategy:
       matrix:
         java: [12]
+
     steps:
       - name: Set up AWS Cred
         uses: aws-actions/configure-aws-credentials@v1
@@ -134,6 +135,7 @@ jobs:
         run: |
           cd ..
           cd opendistro-build/elasticsearch/linux_distributions
+
           odfe_version=`../bin/version-info --od`
           echo $odfe_version
           cd ../../..
@@ -147,7 +149,6 @@ jobs:
           sleep 45
           cd ../index-management
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
-          
   
   Test-Alerting-Plugin:
     needs: [build-es-artifacts]
@@ -191,3 +192,65 @@ jobs:
            sleep 45
           cd ../alerting/alerting
           ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
+    
+  Test-kibana:
+    name: Test-Kibana
+    runs-on: [ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/checkout@v1
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - uses: actions/setup-java@v1
+        with:
+          java-version: '11.0.x'
+          java-package: jdk
+          architecture: x64
+          
+      - name: Run ES
+        run: |
+          #!/bin/bash
+          cd elasticsearch/linux_distributions
+          odfe_version=`../bin/version-info --od`
+          echo Downloading tar
+          aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistro-elasticsearch/opendistroforelasticsearch-$odfe_version.tar.gz .
+          tar -zxf opendistroforelasticsearch-$odfe_version.tar.gz
+          cd opendistroforelasticsearch-$odfe_version
+          echo Running ES
+          nohup ./opendistro-tar-install.sh &
+          echo Waiting for 1min
+          sleep 45
+          
+      - name: Run and Test Kibana
+        run: |
+          cd kibana/bin/
+          OD_VERSION=`./version-info --od`
+          PACKAGE="opendistroforelasticsearch-kibana"
+          S3_PACKAGE="opendistroforelasticsearch-kibana-"$OD_VERSION".tar.gz"
+          cd ../..
+          echo Downloading tar Kibana
+          aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistroforelasticsearch-kibana/$S3_PACKAGE ./
+          tar -xzf $S3_PACKAGE
+          echo "Running Kibana"
+          nohup ./$PACKAGE/bin/kibana &
+          echo "Waiting for 1min"
+          sleep 60
+          ls -ltr
+          echo "Running tests" 
+          cd kibana/Test
+          ./gradlew clean 
+          ./gradlew build
+            
+      - name: Copying reports to S3 
+        if: always()
+        run: |
+          cd kibana/Test
+          zip -r build.zip ./build
+          echo "Copying to: s3://artifacts.opendistroforelasticsearch.amazon.com/KibanaTest-reports/reports/"
+          aws s3 cp ./build.zip s3://artifacts.opendistroforelasticsearch.amazon.com/KibanaTest-reports/build/build-`date +%d_%m_%Y_%H_%M_%S` 
+          cd ..
+
