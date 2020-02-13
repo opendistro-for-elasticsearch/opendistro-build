@@ -115,6 +115,7 @@ jobs:
           echo "Running tests" 
           cd kibana\Test
           dir
+          .\gradlew.bat clean 
           .\gradlew.bat build
             
       - name: Copying reports to S3 
