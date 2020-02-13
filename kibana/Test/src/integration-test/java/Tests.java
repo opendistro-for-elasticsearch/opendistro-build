@@ -64,6 +64,7 @@ public class Tests {
 
     private void setFirefoxDriverPath(){
         String osName = System.getProperty("os.name").toLowerCase();
+        System.out.println("OS NAME:"+osName);
         try {
             if (osName.matches(".*mac.*")) {
                 System.setProperty("webdriver.gecko.driver", System.getProperty("integTestResourcesDir") + "/geckodriver_mac");
