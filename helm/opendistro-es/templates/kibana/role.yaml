@@ -21,7 +21,7 @@ metadata:
   labels:
 {{ include "opendistro-es.labels.standard" . | indent 4 }}
 rules:
-- apiGroups: ['extensions']
+- apiGroups: ['policy']
   resources: ['podsecuritypolicies']
   verbs:     ['use']
   resourceNames:

@@ -15,7 +15,7 @@
 {{- if and .Values.kibana.ingress.enabled .Values.kibana.enabled }}
 {{- $serviceName:= printf "%s-%s"  (include "opendistro-es.fullname" .) "kibana-svc" }}
 {{- $servicePort := .Values.kibana.externalPort }}
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   labels:
