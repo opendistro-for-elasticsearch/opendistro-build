@@ -72,6 +72,16 @@ public class Actions {
         return false;
     }
 
+    public boolean click(By locator){
+        if(this.driver.findElements(locator).size()==0){
+            System.out.println("Button Not Found:"+locator);
+            return false;
+        }
+        WebElement button = this.driver.findElement(locator);
+        button.click();
+        return true;
+    }
+
     public boolean typeByID(String locatorValue, String value) {
         try {
             WebElement element = this.driver.findElement((By.id(locatorValue)));
@@ -159,12 +169,15 @@ public class Actions {
                     break;
             }
         } catch (Exception e) {
-            Assert.assertTrue(false, "Invalid location:" + location);
+            System.out.println("Invalid location:" + location);
         }
-        Assert.assertTrue(false, "Element not found:"+location+":"+locator);
+        System.out.println("Element not found:"+location+":"+locator);
         return false;
     }
-
+    public boolean checkElement(By locator){
+        if(this.driver.findElements(locator).size()>0)return true;
+        return false;
+    }
     public boolean verifyTitle(String expectedTitle) {
         try {
             String actualTitle = this.driver.getTitle();
