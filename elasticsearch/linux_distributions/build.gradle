@@ -74,7 +74,6 @@ ospackage {
 buildRpm() {
     arch = 'NOARCH'
     archiveName "${packageName}-${version}.rpm"
-    preInstall file('preinstall-deb.sh')
 }
 
 buildDeb() {
