@@ -22,7 +22,7 @@ buildscript {
 
 plugins {
     id "base"
-    id "nebula.ospackage" version "5.3.0"
+     id "nebula.ospackage" version "5.3.0"
 }
 
 ext {
@@ -49,6 +49,7 @@ ospackage {
     requires('opendistro-performance-analyzer', baseODPluginsVersion, GREATER | EQUAL)
     requires('opendistro-job-scheduler', baseODPluginsVersion, GREATER | EQUAL)
     requires('opendistro-index-management', baseODPluginsVersion, GREATER | EQUAL)
+    requires('opendistro-knn', baseODPluginsVersion, GREATER | EQUAL)
 
     requires('opendistro-alerting', nextODPluginsVersion, LESS)
     requires('opendistro-sql', nextODPluginsVersion, LESS)
@@ -56,7 +57,8 @@ ospackage {
     requires('opendistro-performance-analyzer', nextODPluginsVersion, LESS)
     requires('opendistro-job-scheduler', nextODPluginsVersion, LESS)
     requires('opendistro-index-management', nextODPluginsVersion, LESS)
-
+    requires('opendistro-knn', nextODPluginsVersion, LESS)
+ 
     packager = 'Amazon'
     vendor = 'Amazon'
     os = 'LINUX'
@@ -74,15 +76,15 @@ ospackage {
 buildRpm() {
     arch = 'NOARCH'
     archiveName "${packageName}-${version}.rpm"
+    preInstall file('scripts/preInstall-rpm.sh')
 }
 
 buildDeb() {
     arch = 'amd64'
     archiveName "${packageName}-${version}.deb"
+    preInstall file('scripts/preInstall.sh')
 }
 
 task buildPackages(type: GradleBuild) {
     tasks = ['buildRpm', 'buildDeb']
 }
-
-
