@@ -1,0 +1,36 @@
+name: Build ODFE AMI
+
+on:
+  push:
+    branches:
+      - build-AMI
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.8
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r elasticsearch/AMI/requirements.txt
+    - name: Build ODFE AMI
+      env:
+        AWS_key_id: ${{ secrets.ODFE_AMI_AWS_KEY_ID }}
+        AWS_secret_access_key: ${{ secrets.ODFE_AMI_AWS_SECRET_ACCESS_KEY }}
+      run: |
+        #!/bin/bash
+        cd elasticsearch/bin
+        export region_name="us-east-1"
+        export base_image_id=ami-0323c3dd2da7fb37d
+        export os="amazonLinux"
+        export security_group_id="sg-0ffdd3b008cfb0b63"
+        OD_version=`./version-info --od` 
+        export RPM_package_version=$OD_version
+        export APT_OSS_version=`./version-info --es`
+        export AMI_name="Open Distro for Elasticserach-$OD_version-`date +"%D-%H.%M.%S"`"
+        cd -
+        python elasticsearch/AMI/main.py
