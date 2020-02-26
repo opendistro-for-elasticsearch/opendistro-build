@@ -1,0 +1,19 @@
+name: Webhook Example
+on: repository_dispatch
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    
+    - name: On my_custom_webhook do ABC...
+      if: github.event.action == 'my_custom_webhook'
+      run: |
+        echo "Hello From my_custom_webhook...doing ABC"
+        ls -ltr
+        
+    - name: On my_custom_webhook do XYZ...
+      if: github.event.action == 'my_custom_webhook_2'
+      run: |
+        echo "Hello From my_custom_webhook_2...doing XYZ"
+        ls -ltr
