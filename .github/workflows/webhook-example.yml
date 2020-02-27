@@ -2,18 +2,41 @@ name: Webhook Example
 on: repository_dispatch
 jobs:
   build:
+    name: Build ES Docker
+    if: github.event.action == 'my_custom_webhook'
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
+    - name: Configure AWS
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+    - name: Starting ES Build
+      env:
+        DOCKER_USER: ${{ secrets.DOCKER_USER }}
+        DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
     
     - name: On my_custom_webhook do ABC...
-      if: github.event.action == 'my_custom_webhook'
       run: |
         echo "Hello From my_custom_webhook...doing ABC"
-        ls -ltr
+        sudo apt-get install python-virtualenv
+        ./download_plugins.sh
+        cd elasticsearch/bin
+        ODFE_VER=`./version-info --od`
+        echo "ODFE VERSION $ODFE_VER"
+        cd ..
+        cd docker
+        make build
         
-    - name: On my_custom_webhook do XYZ...
-      if: github.event.action == 'my_custom_webhook_2'
-      run: |
-        echo "Hello From my_custom_webhook_2...doing XYZ"
-        ls -ltr
+        echo "******************************"
+        echo "Login to Docker"
+        echo "******************************"
+        docker login --username $DOCKER_USER --password $DOCKER_PASS
+        docker images|grep "amazon/opendistro-for-elasticsearch" > docker_id.out
+        image_id=`awk -F' ' '{print $3}' docker_id.out`
+        echo "Docker Id is $image_id"
+        docker tag $image_id opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER
+        docker images
+        docker push opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER
