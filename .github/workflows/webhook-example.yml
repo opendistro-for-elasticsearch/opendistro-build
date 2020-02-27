@@ -13,12 +13,10 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
     - name: Starting ES Build
+      if: github.event.action == 'my_custom_webhook'
       env:
         DOCKER_USER: ${{ secrets.DOCKER_USER }}
         DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
-    
-    - name: On my_custom_webhook do ABC...
-      if: github.event.action == 'my_custom_webhook'
       run: |
         echo "Hello From my_custom_webhook...doing ABC"
         sudo apt-get install python-virtualenv
