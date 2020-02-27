@@ -3,7 +3,6 @@ on: repository_dispatch
 jobs:
   build:
     name: Build ES Docker
-    if: github.event.action == 'my_custom_webhook'
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
@@ -19,6 +18,7 @@ jobs:
         DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
     
     - name: On my_custom_webhook do ABC...
+      if: github.event.action == 'my_custom_webhook'
       run: |
         echo "Hello From my_custom_webhook...doing ABC"
         sudo apt-get install python-virtualenv
