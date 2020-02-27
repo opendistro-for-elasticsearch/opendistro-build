@@ -1,4 +1,4 @@
-name: Webhook Example
+name: Webhook Build ES Docker on Dispatch
 on: repository_dispatch
 jobs:
   build:
