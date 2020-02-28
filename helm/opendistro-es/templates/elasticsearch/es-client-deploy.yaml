@@ -134,35 +134,35 @@ spec:
         {{- if .Values.elasticsearch.ssl.transport.existingCertSecret }}
         - mountPath: {{ .Values.elasticsearch.configDirectory }}/elk-transport-crt.pem
           name: transport-certs
-          subPath: elk-transport-crt.pem
+          subPath: {{ .Values.elasticsearch.ssl.transport.existingCertSecretCertSubPath }}
         - mountPath: {{ .Values.elasticsearch.configDirectory }}/elk-transport-key.pem
           name: transport-certs
-          subPath: elk-transport-key.pem
+          subPath: {{ .Values.elasticsearch.ssl.transport.existingCertSecretKeySubPath }}
         - mountPath: {{ .Values.elasticsearch.configDirectory }}/elk-transport-root-ca.pem
           name: transport-certs
-          subPath: elk-transport-root-ca.pem
+          subPath: {{ .Values.elasticsearch.ssl.transport.existingCertSecretRootCASubPath }}
          {{- end }}
          {{- if and .Values.elasticsearch.ssl.rest.enabled .Values.elasticsearch.ssl.rest.existingCertSecret }}
         - mountPath: {{ .Values.elasticsearch.configDirectory }}/elk-rest-crt.pem
           name: rest-certs
-          subPath: elk-rest-crt.pem
+          subPath: {{ .Values.elasticsearch.ssl.rest.existingCertSecretCertSubPath }}
         - mountPath: {{ .Values.elasticsearch.configDirectory }}/elk-rest-key.pem
           name: rest-certs
-          subPath: elk-rest-key.pem
+          subPath: {{ .Values.elasticsearch.ssl.rest.existingCertSecretKeySubPath }}
         - mountPath: {{ .Values.elasticsearch.configDirectory }}/elk-rest-root-ca.pem
           name: rest-certs
-          subPath: elk-rest-root-ca.pem
+          subPath: {{ .Values.elasticsearch.ssl.rest.existingCertSecretRootCASubPath }}
         {{- end }}
         {{- if and .Values.elasticsearch.ssl.admin.enabled .Values.elasticsearch.ssl.admin.existingCertSecret }}
         - mountPath: {{ .Values.elasticsearch.configDirectory }}/admin-crt.pem
           name: admin-certs
-          subPath: admin-crt.pem
+          subPath: {{ .Values.elasticsearch.ssl.admin.existingCertSecretCertSubPath }}
         - mountPath: {{ .Values.elasticsearch.configDirectory }}/admin-key.pem
           name: admin-certs
-          subPath: admin-key.pem
+          subPath: {{ .Values.elasticsearch.ssl.admin.existingCertSecretKeySubPath }}
         - mountPath: {{ .Values.elasticsearch.configDirectory }}/admin-root-ca.pem
           name: admin-certs
-          subPath: admin-root-ca.pem
+          subPath: {{ .Values.elasticsearch.ssl.admin.existingCertSecretRootCASubPath }}
         {{- end }}
       volumes:
       - name: config

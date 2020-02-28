@@ -97,24 +97,24 @@ spec:
          {{- if and .Values.kibana.ssl.kibana.enabled .Values.kibana.ssl.kibana.existingCertSecret }}
           - mountPath: {{ .Values.kibana.certsDirectory }}/kibana-crt.pem
             name: kibana-certs
-            subPath: kibana-crt.pem
+            subPath: {{ .Values.kibana.ssl.kibana.existingCertSecretCertSubPath }}
           - mountPath: {{ .Values.kibana.certsDirectory }}/kibana-key.pem
             name: kibana-certs
-            subPath: kibana-key.pem
+            subPath: {{ .Values.kibana.ssl.kibana.existingCertSecretKeySubPath }}
           - mountPath: {{ .Values.kibana.certsDirectory }}/kibana-root-ca.pem
             name: kibana-certs
-            subPath: kibana-root-ca.pem
+            subPath: {{ .Values.kibana.ssl.kibana.existingCertSecretRootCASubPath }}
          {{- end }}
          {{- if and .Values.kibana.ssl.elasticsearch.enabled .Values.kibana.ssl.elasticsearch.existingCertSecret }}
           - mountPath: {{ .Values.kibana.certsDirectory }}/elk-rest-crt.pem
             name: elasticsearch-certs
-            subPath: elk-rest-crt.pem
+            subPath: {{ .Values.kibana.ssl.elasticsearch.existingCertSecretCertSubPath }}
           - mountPath: {{ .Values.kibana.certsDirectory }}/elk-rest-key.pem
             name: elasticsearch-certs
-            subPath: elk-rest-key.pem
+            subPath: {{ .Values.kibana.ssl.elasticsearch.existingCertSecretKeySubPath }}
           - mountPath: {{ .Values.kibana.certsDirectory }}/elk-rest-root-ca.pem
             name: elasticsearch-certs
-            subPath: elk-rest-root-ca.pem
+            subPath: {{ .Values.kibana.ssl.elasticsearch.existingCertSecretRootCASubPath }}
          {{- end }}
         ports:
         - containerPort: {{ .Values.kibana.port }}
