@@ -12,13 +12,13 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
-    - name: Starting ES Build
-      if: github.event.action == 'my_custom_webhook'
+    - name: Starting ES Docker Build
+      if: github.event.action == 'Build_ES_Docker'
       env:
         DOCKER_USER: ${{ secrets.DOCKER_USER }}
         DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
       run: |
-        echo "Hello From my_custom_webhook...doing ABC"
+        echo "Executing On-demand Build for ES Docker Image"
         sudo apt-get install python-virtualenv
         ./download_plugins.sh
         cd elasticsearch/bin
@@ -38,3 +38,16 @@ jobs:
         docker tag $image_id opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER
         docker images
         docker push opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER
+        
+    - name: Send Email
+      uses: dawidd6/action-send-mail@master
+      with:
+        server_address: smtp.gmail.com
+        server_port: 465
+        username: ${{secrets.MAIL_USERNAME}}
+        password: ${{secrets.MAIL_PASSWORD}}
+        subject: Docker Image Created for Triggered Build
+        body: "<b>The docker image opendistroforelasticsearch/opendistroforelasticsearch:1.4.0 for ODFE has been created and uploaded to docker-hub</b>"
+        to: sngri@amazon.com
+        from: Opendistro Elasticsearch
+        content_type: html
