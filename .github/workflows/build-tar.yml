@@ -49,12 +49,10 @@ jobs:
           fi
           
   build-es-artifacts:
-    needs: [plugin-avilability]
     name: Build ES Artifacts
     runs-on: ubuntu-latest
     container:
       image: opendistroforelasticsearch/multijava08101112-git:v1
-
     steps:
     - uses: actions/checkout@v1
     - name: Configure AWS Credentials
@@ -82,7 +80,6 @@ jobs:
         echo "TAR creation for ES completed"
         
   build-kibana-artifacts:
-    needs: [build-es-artifacts]
     name: Build Kibana Artifacts
     runs-on: [ubuntu-latest]
     container:

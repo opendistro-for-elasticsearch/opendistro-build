@@ -18,8 +18,8 @@ jobs:
       - name: Checking Availability
         run: |
           #!/bin/bash
-          CURRENT_NO_PLUGINS=6
-          PLUGINS="opendistro-sql/opendistro_sql opendistro-alerting/opendistro_alerting opendistro-job-scheduler/opendistro-job-scheduler opendistro-security/opendistro_security performance-analyzer/opendistro_performance_analyzer opendistro-index-management/opendistro_index_management"
+          CURRENT_NO_PLUGINS=7
+          PLUGINS="opendistro-sql/opendistro_sql opendistro-alerting/opendistro_alerting opendistro-job-scheduler/opendistro-job-scheduler opendistro-security/opendistro_security performance-analyzer/opendistro_performance_analyzer opendistro-index-management/opendistro_index_management opendistro-knn/opendistro-knn"
           
           cd elasticsearch/bin
           ls -ltr
@@ -49,21 +49,28 @@ jobs:
           fi
           
   build-es-docker:
-    needs: [plugin-avilability]
     name: Build ES Dcoker Image
     runs-on: ubuntu-18.04
     steps:
     - uses: actions/checkout@v1
+    - name: Configure AWS
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
     - name: Starting ES Build
       env:
         DOCKER_USER: ${{ secrets.DOCKER_USER }}
         DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
-        ODFE_VER: 1.4.0
       run: |
         sudo apt-get install python-virtualenv
-        work_dir=`pwd`
-        echo $work_dir
-        cd elasticsearch/docker
+        ./download_plugins.sh
+        cd elasticsearch/bin
+        ODFE_VER=`./version-info --od`
+        echo "ODFE VERSION $ODFE_VER"
+        cd ..
+        cd docker
         make build
         
         echo "******************************"
@@ -78,7 +85,6 @@ jobs:
         docker push opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER
   
   build-kibana-docker:
-    needs: [build-es-docker]
     name: Build Kibana Docker
     runs-on: [ubuntu-latest]
     steps:
@@ -87,10 +93,13 @@ jobs:
         env:
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
           DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
-          ODFE_VER: 1.4.0
         run: |
           sudo apt-get install python-virtualenv
-          cd kibana/docker
+          cd kibana/bin
+          ODFE_VER=`./version-info --od`
+          echo "ODFE VERSION $ODFE_VER"
+          cd ..
+          cd docker
           make build
           
           echo "******************************"
@@ -105,7 +114,7 @@ jobs:
         
   Test-ISM-Plugin:
     needs: [build-es-docker]
-    name: Test ES Docker Container
+    name: Test ISM Plugin
     runs-on: [ubuntu-16.04]
     strategy:
       matrix:
@@ -119,7 +128,7 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.java }}
-      - name: Run Docker Container
+      - name: Test ISM Plugin
         run: |
           sleep 10
           cd ..
@@ -133,7 +142,7 @@ jobs:
           cd index-management
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
 
-  test-alerting-plugin:
+  Test-Alerting-plugin:
     needs: [build-es-docker]
     name: Test Alerting Plugin
     runs-on: [ubuntu-16.04]
@@ -149,7 +158,7 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.java }}
-      - name: Run Docker Container
+      - name: Test Alerting Plugin
         run: |
           sleep 10
           cd ..
