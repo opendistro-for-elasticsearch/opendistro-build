@@ -39,7 +39,7 @@ jobs:
         #docker tag $image_id opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER
         #docker images
         #docker push opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER
-        echo "<b>The docker image opendistroforelasticsearch/opendistroforelasticsearch:1.4.0 for ODFE has been created and uploaded to docker-hub</b>" >> $workdir/Release.md
+        echo "<h2>The docker image opendistroforelasticsearch/opendistroforelasticsearch:1.4.0 for ODFE has been created and uploaded to docker-hub</h2>" >> $workdir/Release.md
         
     - name: Send Email
       uses: dawidd6/action-send-mail@master
