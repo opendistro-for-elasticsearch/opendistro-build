@@ -52,4 +52,4 @@ jobs:
         body: file://Release.md
         to: sngri@amazon.com
         from: Opendistro Elasticsearch
-        content_type: html
+        content_type: text/html
