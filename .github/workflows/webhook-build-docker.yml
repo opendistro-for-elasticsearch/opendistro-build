@@ -19,6 +19,7 @@ jobs:
         DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
       run: |
         echo "Executing On-demand Build for ES Docker Image"
+        workdir=`pwd`
         #sudo apt-get install python-virtualenv
         #./download_plugins.sh
         #cd elasticsearch/bin
@@ -38,6 +39,7 @@ jobs:
         #docker tag $image_id opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER
         #docker images
         #docker push opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER
+        echo "<b>The docker image opendistroforelasticsearch/opendistroforelasticsearch:1.4.0 for ODFE has been created and uploaded to docker-hub</b>" >> $workdir/Release.md
         
     - name: Send Email
       uses: dawidd6/action-send-mail@master
@@ -47,7 +49,7 @@ jobs:
         username: ${{secrets.MAIL_USERNAME}}
         password: ${{secrets.MAIL_PASSWORD}}
         subject: Docker Image Created for Triggered Build
-        body: "The docker image opendistroforelasticsearch/opendistroforelasticsearch:1.4.0 for ODFE has been created and uploaded to docker-hub"
+        body: file://Release.md
         to: sngri@amazon.com
         from: Opendistro Elasticsearch
         content_type: html
