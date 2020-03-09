@@ -3,6 +3,7 @@ name: Process RPM Artifacts
 on:
   schedule:
     - cron: '0 10 * * *'
+  
 jobs:
   plugin-avilability:
     name: Check Plugin Availability
@@ -100,3 +101,30 @@ jobs:
           rpm_artifact=`ls target/*.rpm`
           echo $rpm_artifact
           aws s3 cp $rpm_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/rpms/opendistroforelasticsearch-kibana/
+  signing-artefacts:
+    name: Sign Yum
+    runs-on: [ubuntu-16.04]
+    container: 
+      image: amazonlinux
+    needs: [build-es-artifacts, build-kibana-artifacts]
+    steps:
+      - uses: actions/checkout@v1
+        
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - run: |
+          yum update -y
+          yum install -y unzip
+          sleep 5
+          curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
+          unzip awscli-bundle.zip
+          ./awscli-bundle/install -b ~/bin/aws
+          sleep 5
+          /github/home/bin/aws --version
+          
+          export passphrase=${{ secrets.RPM_SIGN_PASSPHRASE }}
+          sh elasticsearch/linux_distributions/rpm-signing.sh

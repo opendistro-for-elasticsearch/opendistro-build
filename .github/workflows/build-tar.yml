@@ -184,7 +184,7 @@ jobs:
           sed -i '/http\.port/s/^# *//' config/elasticsearch.yml
           ./bin/elasticsearch-plugin remove opendistro_security
           
-          nohup ./opendistro-tar-install.sh &
-          sleep 45
+          nohup ./opendistro-tar-install.sh &          
+           sleep 45
           cd ../alerting/alerting
           ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
