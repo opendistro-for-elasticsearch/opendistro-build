@@ -50,6 +50,7 @@ jobs:
           fi
           
   build-es-artifacts:
+    needs: [plugin-avilability]
     name: Build ES Artifacts
     runs-on: ubuntu-latest
     container:
@@ -81,6 +82,7 @@ jobs:
           echo "RPM creation for ES completed"
 
   build-kibana-artifacts:
+    needs: [plugin-avilability]
     name: Build Kibana Artifacts
     runs-on: [ubuntu-latest]
     container:
@@ -101,7 +103,8 @@ jobs:
           rpm_artifact=`ls target/*.rpm`
           echo $rpm_artifact
           aws s3 cp $rpm_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/rpms/opendistroforelasticsearch-kibana/
-  signing-artefacts:
+
+  signing-artifacts:   
     name: Sign Yum
     runs-on: [ubuntu-16.04]
     container: 
