@@ -18,8 +18,8 @@ jobs:
       - name: Checking Availability
         run: |
           #!/bin/bash
-          CURRENT_NO_PLUGINS=6
-          PLUGINS="opendistro-sql/opendistro_sql opendistro-alerting/opendistro_alerting opendistro-job-scheduler/opendistro-job-scheduler opendistro-security/opendistro_security performance-analyzer/opendistro_performance_analyzer opendistro-index-management/opendistro_index_management"
+          CURRENT_NO_PLUGINS=7
+          PLUGINS="opendistro-sql/opendistro_sql opendistro-alerting/opendistro_alerting opendistro-job-scheduler/opendistro-job-scheduler opendistro-security/opendistro_security performance-analyzer/opendistro_performance_analyzer opendistro-index-management/opendistro_index_management opendistro-knn/opendistro-knn"
           
           cd elasticsearch/bin
           ls -ltr
@@ -49,6 +49,7 @@ jobs:
           fi
           
   build-es-artifacts:
+    needs: [plugin-avilability]
     name: Build ES Artifacts
     runs-on: ubuntu-latest
     container:
@@ -80,6 +81,7 @@ jobs:
         echo "TAR creation for ES completed"
         
   build-kibana-artifacts:
+    needs: [plugin-avilability]
     name: Build Kibana Artifacts
     runs-on: [ubuntu-latest]
     container:
