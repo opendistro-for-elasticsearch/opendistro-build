@@ -82,7 +82,7 @@ buildRpm() {
 buildDeb() {
     arch = 'amd64'
     archiveName "${packageName}-${version}.deb"
-    preInstall file('scripts/preInstall.sh')
+    preInstall file('scripts/preInstall-deb.sh')
 }
 
 task buildPackages(type: GradleBuild) {
