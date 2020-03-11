@@ -49,6 +49,7 @@ jobs:
           fi
           
   build-es-docker:
+    needs: [plugin-avilability]
     name: Build ES Dcoker Image
     runs-on: ubuntu-18.04
     steps:
@@ -85,6 +86,7 @@ jobs:
         docker push opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER
   
   build-kibana-docker:
+    needs: [plugin-avilability]
     name: Build Kibana Docker
     runs-on: [ubuntu-latest]
     steps:
@@ -132,7 +134,7 @@ jobs:
         run: |
           sleep 10
           cd ..
-          echo "FROM opendistroforelasticsearch/opendistroforelasticsearch:1.4.0" >> Dockerfile
+          echo "FROM opendistroforelasticsearch/opendistroforelasticsearch:1.6.0" >> Dockerfile
           echo "RUN /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro_security" >> Dockerfile
           
           docker build -t odfe-http:no-security .
@@ -162,7 +164,7 @@ jobs:
         run: |
           sleep 10
           cd ..
-          echo "FROM opendistroforelasticsearch/opendistroforelasticsearch:1.4.0" >> Dockerfile
+          echo "FROM opendistroforelasticsearch/opendistroforelasticsearch:1.6.0" >> Dockerfile
           echo "RUN /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro_security" >> Dockerfile
           
           docker build -t odfe-http:no-security .
