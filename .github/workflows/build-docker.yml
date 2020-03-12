@@ -49,6 +49,7 @@ jobs:
           fi
           
   build-es-docker:
+    needs: [plugin-avilability]
     name: Build ES Dcoker Image
     runs-on: ubuntu-18.04
     steps:
@@ -85,6 +86,7 @@ jobs:
         docker push opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER
   
   build-kibana-docker:
+    needs: [plugin-avilability]
     name: Build Kibana Docker
     runs-on: [ubuntu-latest]
     steps:
@@ -121,6 +123,7 @@ jobs:
         java: [12]
     steps:
       - uses: actions/checkout@v1
+      - uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/index-management
           ref: master
@@ -130,16 +133,19 @@ jobs:
           java-version: ${{ matrix.java }}
       - name: Test ISM Plugin
         run: |
+          cd elasticsearch/linux_distributions
+          es_version=`../bin/version-info --es`
+          echo $es_version
+          cd ../../..
+          cd index-management
           sleep 10
-          cd ..
-          echo "FROM opendistroforelasticsearch/opendistroforelasticsearch:1.4.0" >> Dockerfile
+          echo "FROM opendistroforelasticsearch/opendistroforelasticsearch:$es_version" >> Dockerfile
           echo "RUN /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro_security" >> Dockerfile
           
           docker build -t odfe-http:no-security .
           docker run -d -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" odfe-http:no-security
           
           sleep 45
-          cd index-management
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
 
   Test-Alerting-plugin:
@@ -151,6 +157,7 @@ jobs:
         java: [12]
     steps:
       - uses: actions/checkout@v1
+      - uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/alerting
           ref: master
@@ -160,16 +167,19 @@ jobs:
           java-version: ${{ matrix.java }}
       - name: Test Alerting Plugin
         run: |
+          cd elasticsearch/linux_distributions
+          es_version=`../bin/version-info --es`
+          echo $es_version
+          cd ../../..
+          cd alerting/alerting
           sleep 10
-          cd ..
-          echo "FROM opendistroforelasticsearch/opendistroforelasticsearch:1.4.0" >> Dockerfile
+          echo "FROM opendistroforelasticsearch/opendistroforelasticsearch:$es_version" >> Dockerfile
           echo "RUN /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro_security" >> Dockerfile
           
           docker build -t odfe-http:no-security .
           docker run -d -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" -e "http.port=9200" odfe-http:no-security
           
           sleep 45
-          cd alerting/alerting
           ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
            
     
