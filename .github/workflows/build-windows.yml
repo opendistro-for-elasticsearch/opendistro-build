@@ -26,7 +26,7 @@ jobs:
         export JAVA_HOME=/openjdk12
         export PATH=$JAVA_HOME:$PATH
         cd elasticsearch/linux_distributions
-        ./opendistro-windows-build.sh
+        sh ./opendistro-windows-build.sh
         
   build-kibana-artifacts:
     name: Build Kibana Artifacts
@@ -42,7 +42,7 @@ jobs:
     - name: Build Kibana
       run: |
         cd kibana/linux_distributions 
-        ./opendistro-windows-kibana-build.sh  
+        sh ./opendistro-windows-kibana-build.sh  
           
   Test-ISM-Plugin:
     needs: [build-es-artifacts, build-kibana-artifacts]
