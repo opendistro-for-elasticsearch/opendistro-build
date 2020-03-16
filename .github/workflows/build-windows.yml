@@ -5,7 +5,7 @@ on:
     - cron: '0 10 * * *'
   push:
      branches: 
-       - rish1397-patch-1
+       - rish1397-windows-automation
    
 jobs:
   build-es-artifacts:
