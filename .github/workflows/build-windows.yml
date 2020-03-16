@@ -2,11 +2,7 @@ name: Build Windows Exe using tar artifacts
 
 on:
   schedule:
-    - cron: '0 10 * * *'
-  push:
-     branches: 
-       - rish1397-windows-automation
-   
+    - cron: '0 10 * * *' 
 jobs:
   build-es-artifacts:
     name: Build Windows ES Artifacts
