@@ -8,6 +8,9 @@ TARGET_DIR="$ROOT/Windowsfiles"
  
 #Downloading tar from s3
 aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistro-elasticsearch/$PACKAGE-$OD_VERSION.tar.gz $TARGET_DIR/
+if [ "$?" -eq "1" ]
+  exit 1
+fi
 #Untar the tar artifact
 tar -xzf $TARGET_DIR/$PACKAGE-$OD_VERSION.tar.gz --directory $TARGET_DIR
 rm -rf $TARGET_DIR/*.tar.gz
