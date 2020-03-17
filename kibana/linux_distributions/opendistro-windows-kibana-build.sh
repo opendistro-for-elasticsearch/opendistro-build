@@ -7,14 +7,25 @@ ROOT=$(dirname "$0")/ws
 TARGET_DIR="$ROOT/Windowsfiles"
  
 #Downloading tar from s3
-
 aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistroforelasticsearch-kibana/$PACKAGE-$OD_VERSION.tar.gz $TARGET_DIR/
+if [ "$?" -eq "1" ]
+then
+  echo "TAR distribution not available"
+  exit 1
+fi
+
 #Untar the tar artifact
 tar -xzf $TARGET_DIR/$PACKAGE-$OD_VERSION.tar.gz --directory $TARGET_DIR
 rm -rf $TARGET_DIR/*.tar.gz
 
 #Download windowss oss for copying batch files
 wget https://artifacts.elastic.co/downloads/kibana/kibana-oss-$ES_VERSION-windows-x86_64.zip -P $ROOT/
+if [ "$?" -eq "1" ]
+then
+  echo "OSS not available"
+  exit 1
+fi
+
 #Unzip the oss
 unzip -q $ROOT/kibana-oss-$ES_VERSION-windows-x86_64.zip -d $ROOT
 rm -rf $ROOT/kibana-oss-$ES_VERSION-windows-x86_64.zip
@@ -38,6 +49,12 @@ pwd
 
 #Download install4j software
 wget https://download-gcdn.ej-technologies.com/install4j/install4j_unix_8_0_4.tar.gz -P $ROOT
+if [ "$?" -eq "1" ]
+then
+  echo "Install4j not available"
+  exit 1
+fi
+
 #Untar
 tar -xzf $ROOT/install4j_unix_8_0_4.tar.gz --directory $ROOT 
 rm -rf $ROOT/*tar*
@@ -55,5 +72,4 @@ $ROOT/install4j*/bin/install4jc -d $TARGET_DIR/EXE -D sourcedir=./Windowsfiles/$
 #Copy to s3
 aws s3 cp $TARGET_DIR/EXE/*.exe s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/odfe-executables/
 aws s3 cp $TARGET_DIR/odfe-$OD_VERSION-kibana.zip s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/ode-windows-zip/
-
 rm -rf ws
