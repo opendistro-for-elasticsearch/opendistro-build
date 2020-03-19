@@ -1,0 +1,6 @@
+name: Build Kibana Docker Image
+
+on:
+  schedule:
+    - cron: '0 10 * * *'
+jobs:
