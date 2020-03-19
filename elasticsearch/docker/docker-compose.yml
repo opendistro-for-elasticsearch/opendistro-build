@@ -18,49 +18,90 @@
 #
 # This file was generated from the template at templates/docker-compose.yml.j2
 
-version: '2.1'
+version: '3'
 services:
-  elasticsearch1:
-    container_name: elasticsearch1
-    image: amazon/opendistro-for-elasticsearch:1.2.1
-    mem_limit: 4g
-    networks:
-      esnet:
-        aliases:
-          - elasticsearch
-    # If unset, uses empty string which Docker ignores
-    # Defined in tests/conftest.py to test starting with a random uid
-    user: ${PROCESS_UID}
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    # DATA_VOLUME{1,2} are defined in tests/conftest.py
-    volumes:
-      - ${DATA_VOLUME1}:/usr/share/elasticsearch/data
-
-  elasticsearch2:
-    container_name: elasticsearch2
+  odfe-node1:
+    image: odfe-http:no-security
+    container_name: odfe-node1
     environment:
-      - node.master=false
-    image: amazon/opendistro-for-elasticsearch:1.2.1
-    mem_limit: 4g
-    networks:
-      - esnet
-    user: ${PROCESS_UID}
+      - cluster.name=odfe-cluster
+      - node.name=odfe-node1
+      - discovery.seed_hosts=odfe-node1,odfe-node2,odfe-node3
+      - cluster.initial_master_nodes=odfe-node1,odfe-node2,odfe-node3
+      - bootstrap.memory_lock=true # along with the memlock settings below, disables swapping
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m" # minimum and maximum Java heap size, recommend setting both to 50% of system RAM
     ulimits:
       memlock:
         soft: -1
         hard: -1
+      nofile:
+        soft: 65536 # maximum number of open files for the Elasticsearch user, set to at least 65536 on modern systems
+        hard: 65536
     volumes:
-      - ${DATA_VOLUME2}:/usr/share/elasticsearch/data
-
+      - odfe-data1:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+      - 9600:9600 # required for Performance Analyzer
+    networks:
+      - odfe-net
+  odfe-node2:
+    image: odfe-http:no-security
+    container_name: odfe-node2
+    environment:
+      - cluster.name=odfe-cluster
+      - node.name=odfe-node2
+      - discovery.seed_hosts=odfe-node1,odfe-node2,odfe-node3
+      - cluster.initial_master_nodes=odfe-node1,odfe-node2,odfe-node3
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - odfe-data2:/usr/share/elasticsearch/data
+    networks:
+      - odfe-net
+  odfe-node3:
+    image: odfe-http:no-security
+    container_name: odfe-node3
+    environment:
+      - cluster.name=odfe-cluster
+      - node.name=odfe-node3
+      - discovery.seed_hosts=odfe-node1,odfe-node2,odfe-node3
+      - cluster.initial_master_nodes=odfe-node1,odfe-node2,odfe-node3
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - odfe-data3:/usr/share/elasticsearch/data
+    networks:
+      - odfe-net
+  kibana:
+    image: amazon/opendistro-for-elasticsearch-kibana:1.4.0
+    container_name: odfe-kibana
+    ports:
+      - 5601:5601
+    expose:
+      - "5601"
+    environment:
+      ELASTICSEARCH_URL: http://odfe-node1:9200
+      ELASTICSEARCH_HOSTS: http://odfe-node1:9200
+    networks:
+      - odfe-net
 volumes:
-  esdata1:
-    driver: local
-  esdata2:
-    driver: local
+  odfe-data1:
+  odfe-data2:
+  odfe-data3:
 
 networks:
-  esnet:
-    driver: bridge
+  odfe-net:
