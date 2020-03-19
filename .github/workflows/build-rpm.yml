@@ -6,66 +6,12 @@ on:
       - master
   
 jobs:
-          
-  build-es-artifacts:
-    name: Build ES Artifacts
-    runs-on: ubuntu-latest
-    container:
-      image: opendistroforelasticsearch/multijava08101112-git:v1
-
-    steps:
-      - uses: actions/checkout@v1
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-      - name: Build rpm
-        run: |
-          #!/bin/bash -x
-          set -e
-          set -u
-          export JAVA_HOME=/openjdk12
-          export PATH=$JAVA_HOME:$PATH
-          cd elasticsearch/linux_distributions
-          ./gradlew buildRpm --console=plain -Dbuild.snapshot=false -b ./build.gradle
-          rpm_artifact=`ls build/distributions/*.rpm`
-          ls -ltr build/distributions/*.rpm
-
-          aws s3 cp $rpm_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/rpms/opendistro-elasticsearch/
-          aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/*"
-
-          echo "RPM creation for ES completed"
-
-  build-kibana-artifacts:
-    name: Build Kibana Artifacts
-    runs-on: [ubuntu-latest]
-    container:
-      image: opendistroforelasticsearch/jsenv:v1
-    steps:
-      - uses: actions/checkout@v1
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-      - name: Build Kibana rpm
-        run: |
-          #!/bin/bash -x
-          cd kibana/linux_distributions
-          sh generate-pkg.sh
-          rpm_artifact=`ls target/*.rpm`
-          echo $rpm_artifact
-          aws s3 cp $rpm_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/rpms/opendistroforelasticsearch-kibana/
 
   signing-artifacts:   
     name: Sign Yum
     runs-on: [ubuntu-16.04]
     container: 
       image: amazonlinux
-    needs: [build-es-artifacts, build-kibana-artifacts]
     steps:
       - uses: actions/checkout@v1
         
@@ -84,7 +30,7 @@ jobs:
           ./awscli-bundle/install -b ~/bin/aws
           sleep 5
           /github/home/bin/aws --version
-          
+          chmod 755 elasticsearch/linux_distributions/scripts/rpm-addsign.exp
           export passphrase=${{ secrets.RPM_SIGN_PASSPHRASE }}
           sh elasticsearch/linux_distributions/rpm-signing.sh
     
