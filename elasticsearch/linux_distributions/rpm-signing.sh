@@ -38,6 +38,6 @@ find downloads -name *.rpm | xargs -n1 rpm --checksig
 find downloads -name *.rpm | xargs -n1 -I{} cp {} yum/noarch
 yum install -y createrepo
 createrepo -v --update --deltas yum/noarch --max-delta-rpm-size=1000000000
-gpg --detach-sign --armor --batch --yes  --passphrase 25f0bb87fc4277c17833c1ea4c601609 yum/noarch/repodata/repomd.xml
+gpg --detach-sign --armor --batch --yes  --passphrase $passphrase yum/noarch/repodata/repomd.xml
 /github/home/bin/aws s3 sync yum/ s3://artifacts.opendistroforelasticsearch.amazon.com/yum/staging
 /github/home/bin/aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/yum/staging/*"
