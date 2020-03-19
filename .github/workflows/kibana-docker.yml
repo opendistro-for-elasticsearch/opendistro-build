@@ -1,6 +1,24 @@
 name: Build Kibana Docker Image
 
 on:
-  schedule:
-    - cron: '0 10 * * *'
+  push:
+    branches: 
+      - kibana-docker
 jobs:
+  build-kibana-docker:
+    runs-on: [ubuntu-16.04]
+    name: Build Kibana Docker
+    steps:
+      - uses: actions/checkout@v1
+      - name: Build Kibana Docker
+        run: |
+          git branch
+          sudo apt-get install python-virtualenv
+          ./download_kibana_plugins.sh
+          cd kibana/bin
+          ODFE_VER=`./version-info --od`
+          echo "ODFE VERSION $ODFE_VER"
+          cd ..
+          cd docker
+          make build
+    
