@@ -28,7 +28,6 @@ sudo git clone https://github.com/nmslib/nmslib.git /usr/share/elasticsearch/nms
 && sudo make \
 && sudo git clone https://github.com/opendistro-for-elasticsearch/k-NN.git /usr/share/elasticsearch/k-NN \
 && cd /usr/share/elasticsearch/k-NN \
-&& sudo git checkout v1.4.0.0 \
 && sudo mkdir /tmp/jni \
 && sudo cp jni/src/v1736/* /tmp/jni \
 && cd /tmp/jni \
