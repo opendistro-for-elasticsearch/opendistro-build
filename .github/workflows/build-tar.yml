@@ -4,196 +4,196 @@ on:
   push:
     branches: 
       - dummy
-      
+      - rish1397-patch-1
 jobs:
-  plugin-avilability:
-    name: Check Plugin Availability
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-      - name: Checking Availability
-        run: |
-          #!/bin/bash
-          CURRENT_NO_PLUGINS=6
-          PLUGINS="opendistro-sql/opendistro_sql opendistro-alerting/opendistro_alerting opendistro-job-scheduler/opendistro-job-scheduler opendistro-security/opendistro_security performance-analyzer/opendistro_performance_analyzer opendistro-index-management/opendistro_index_management"
+#   plugin-avilability:
+#     name: Check Plugin Availability
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v1
+#       - name: Configure AWS Credentials
+#         uses: aws-actions/configure-aws-credentials@v1
+#         with:
+#           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#           aws-region: us-east-1
+#       - name: Checking Availability
+#         run: |
+#           #!/bin/bash
+#           CURRENT_NO_PLUGINS=6
+#           PLUGINS="opendistro-sql/opendistro_sql opendistro-alerting/opendistro_alerting opendistro-job-scheduler/opendistro-job-scheduler opendistro-security/opendistro_security performance-analyzer/opendistro_performance_analyzer opendistro-index-management/opendistro_index_management"
           
-          cd elasticsearch/bin
-          ls -ltr
-          OD_VERSION=`./version-info --od`
-          echo "$OD_VERSION"
-          cd /home/runner/work/opendistro-build
-          mkdir plugins
-          ls -ltr
-          cd plugins
+#           cd elasticsearch/bin
+#           ls -ltr
+#           OD_VERSION=`./version-info --od`
+#           echo "$OD_VERSION"
+#           cd /home/runner/work/opendistro-build
+#           mkdir plugins
+#           ls -ltr
+#           cd plugins
           
-          for item in $PLUGINS
-          do
-            plugin_folder=`echo $item|awk -F/ '{print $1}'`
-            plguin_item=`echo $item|awk -F/ '{print $2}'`
-            echo $plugin_folder.$plguin_item
-            aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/elasticsearch-plugins/$plugin_folder/ . --recursive --exclude "*" --include "$plguin_item-$OD_VERSION*"
-          done
-          ls -ltr
-          tot_plugins=`ls|wc -l`
-          echo $tot_plugins
+#           for item in $PLUGINS
+#           do
+#             plugin_folder=`echo $item|awk -F/ '{print $1}'`
+#             plguin_item=`echo $item|awk -F/ '{print $2}'`
+#             echo $plugin_folder.$plguin_item
+#             aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/elasticsearch-plugins/$plugin_folder/ . --recursive --exclude "*" --include "$plguin_item-$OD_VERSION*"
+#           done
+#           ls -ltr
+#           tot_plugins=`ls|wc -l`
+#           echo $tot_plugins
           
-          if [ $tot_plugins == $CURRENT_NO_PLUGINS ]
-          then
-              echo "All plugins available"
-          else
-              exit 1
-          fi
+#           if [ $tot_plugins == $CURRENT_NO_PLUGINS ]
+#           then
+#               echo "All plugins available"
+#           else
+#               exit 1
+#           fi
           
-  build-es-artifacts:
-    needs: [plugin-avilability]
-    name: Build ES Artifacts
-    runs-on: ubuntu-latest
-    container:
-      image: opendistroforelasticsearch/multijava08101112-git:v1
+#   build-es-artifacts:
+#     needs: [plugin-avilability]
+#     name: Build ES Artifacts
+#     runs-on: ubuntu-latest
+#     container:
+#       image: opendistroforelasticsearch/multijava08101112-git:v1
 
-    steps:
-    - uses: actions/checkout@v1
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
-    - name: Build tar
-      run: |
-        #!/bin/bash -x
-        set -e
-        set -u
-        export JAVA_HOME=/openjdk12
-        export PATH=$JAVA_HOME:$PATH
-        cd elasticsearch/linux_distributions
-        ./opendistro-tar-build.sh
-        tar_artifact=`ls tarfiles/*.tar.gz`
-        ls -ltr tarfiles/
-        tar_checksum_artifact=`ls tarfiles/*.tar.gz.sha512`
+#     steps:
+#     - uses: actions/checkout@v1
+#     - name: Configure AWS Credentials
+#       uses: aws-actions/configure-aws-credentials@v1
+#       with:
+#         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#         aws-region: us-east-1
+#     - name: Build tar
+#       run: |
+#         #!/bin/bash -x
+#         set -e
+#         set -u
+#         export JAVA_HOME=/openjdk12
+#         export PATH=$JAVA_HOME:$PATH
+#         cd elasticsearch/linux_distributions
+#         ./opendistro-tar-build.sh
+#         tar_artifact=`ls tarfiles/*.tar.gz`
+#         ls -ltr tarfiles/
+#         tar_checksum_artifact=`ls tarfiles/*.tar.gz.sha512`
 
-        aws s3 cp $tar_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistro-elasticsearch/
-        aws s3 cp $tar_checksum_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistro-elasticsearch/
-        aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/*"
-        echo "TAR creation for ES completed"
+#         aws s3 cp $tar_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistro-elasticsearch/
+#         aws s3 cp $tar_checksum_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistro-elasticsearch/
+#         aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/*"
+#         echo "TAR creation for ES completed"
         
-  build-kibana-artifacts:
-    needs: [build-es-artifacts]
-    name: Build Kibana Artifacts
-    runs-on: [ubuntu-latest]
-    container:
-        image: opendistroforelasticsearch/jsenv:v1
-    steps:
-      - uses: actions/checkout@v1
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-      - name: Build Kibana
-        run: |
-          #!/bin/bash -x
-          cd kibana/linux_distributions 
-          sh generate-pkg.sh
-          rpm_artifact=`ls target/*.rpm`
-          tar_artifact=`ls target/*.tar.gz`
-          tar_checksum_artifact=`ls target/*.tar.gz.sha512`
-          aws s3 cp $tar_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistroforelasticsearch-kibana/
-          aws s3 cp $tar_checksum_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistroforelasticsearch-kibana/
+#   build-kibana-artifacts:
+#     needs: [build-es-artifacts]
+#     name: Build Kibana Artifacts
+#     runs-on: [ubuntu-latest]
+#     container:
+#         image: opendistroforelasticsearch/jsenv:v1
+#     steps:
+#       - uses: actions/checkout@v1
+#       - name: Configure AWS Credentials
+#         uses: aws-actions/configure-aws-credentials@v1
+#         with:
+#           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#           aws-region: us-east-1
+#       - name: Build Kibana
+#         run: |
+#           #!/bin/bash -x
+#           cd kibana/linux_distributions 
+#           sh generate-pkg.sh
+#           rpm_artifact=`ls target/*.rpm`
+#           tar_artifact=`ls target/*.tar.gz`
+#           tar_checksum_artifact=`ls target/*.tar.gz.sha512`
+#           aws s3 cp $tar_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistroforelasticsearch-kibana/
+#           aws s3 cp $tar_checksum_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistroforelasticsearch-kibana/
           
-  Test-ISM-Plugin:
-    needs: [build-es-artifacts]
-    name: Run ISM Test
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        java: [12]
+#   Test-ISM-Plugin:
+#     needs: [build-es-artifacts]
+#     name: Run ISM Test
+#     runs-on: ubuntu-latest
+#     strategy:
+#       matrix:
+#         java: [12]
 
-    steps:
-      - name: Set up AWS Cred
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.java }}
-      - uses: actions/checkout@v1
-      - name: Checkout ISM
-        uses: actions/checkout@v1
-        with:
-          repository: opendistro-for-elasticsearch/index-management
-          ref: master
-      - name: Run Something
-        run: |
-          cd ..
-          cd opendistro-build/elasticsearch/linux_distributions
+#     steps:
+#       - name: Set up AWS Cred
+#         uses: aws-actions/configure-aws-credentials@v1
+#         with:
+#           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#           aws-region: us-east-1
+#       - name: Setup Java
+#         uses: actions/setup-java@v1
+#         with:
+#           java-version: ${{ matrix.java }}
+#       - uses: actions/checkout@v1
+#       - name: Checkout ISM
+#         uses: actions/checkout@v1
+#         with:
+#           repository: opendistro-for-elasticsearch/index-management
+#           ref: master
+#       - name: Run Something
+#         run: |
+#           cd ..
+#           cd opendistro-build/elasticsearch/linux_distributions
 
-          odfe_version=`../bin/version-info --od`
-          echo $odfe_version
-          cd ../../..
-          aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistro-elasticsearch/opendistroforelasticsearch-$odfe_version.tar.gz .
-          tar -zxf opendistroforelasticsearch-$odfe_version.tar.gz
-          cd opendistroforelasticsearch-$odfe_version
-          sed -i /install_demo_configuration/d opendistro-tar-install.sh
-          ./bin/elasticsearch-plugin remove opendistro_security
+#           odfe_version=`../bin/version-info --od`
+#           echo $odfe_version
+#           cd ../../..
+#           aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistro-elasticsearch/opendistroforelasticsearch-$odfe_version.tar.gz .
+#           tar -zxf opendistroforelasticsearch-$odfe_version.tar.gz
+#           cd opendistroforelasticsearch-$odfe_version
+#           sed -i /install_demo_configuration/d opendistro-tar-install.sh
+#           ./bin/elasticsearch-plugin remove opendistro_security
           
-          nohup ./opendistro-tar-install.sh &
-          sleep 45
-          cd ../index-management
-          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
+#           nohup ./opendistro-tar-install.sh &
+#           sleep 45
+#           cd ../index-management
+#           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
   
-  Test-Alerting-Plugin:
-    needs: [build-es-artifacts]
-    name: Run Alerting Test
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        java: [12]
-    steps:
-      - name: Set up AWS Cred
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.java }}
-      - uses: actions/checkout@v1
-      - name: Checkout ISM
-        uses: actions/checkout@v1
-        with:
-          repository: opendistro-for-elasticsearch/alerting
-          ref: master
-      - name: Run Something
-        run: |
-          cd ..
-          cd opendistro-build/elasticsearch/linux_distributions
-          odfe_version=`../bin/version-info --od`
-          echo $odfe_version
-          cd ../../..
-          aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistro-elasticsearch/opendistroforelasticsearch-$odfe_version.tar.gz .
-          tar -zxf opendistroforelasticsearch-$odfe_version.tar.gz
-          cd opendistroforelasticsearch-$odfe_version
-          sed -i /install_demo_configuration/d opendistro-tar-install.sh
-          sed -i '/http\.port/s/^# *//' config/elasticsearch.yml
-          ./bin/elasticsearch-plugin remove opendistro_security
+#   Test-Alerting-Plugin:
+#     needs: [build-es-artifacts]
+#     name: Run Alerting Test
+#     runs-on: ubuntu-latest
+#     strategy:
+#       matrix:
+#         java: [12]
+#     steps:
+#       - name: Set up AWS Cred
+#         uses: aws-actions/configure-aws-credentials@v1
+#         with:
+#           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#           aws-region: us-east-1
+#       - name: Setup Java
+#         uses: actions/setup-java@v1
+#         with:
+#           java-version: ${{ matrix.java }}
+#       - uses: actions/checkout@v1
+#       - name: Checkout ISM
+#         uses: actions/checkout@v1
+#         with:
+#           repository: opendistro-for-elasticsearch/alerting
+#           ref: master
+#       - name: Run Something
+#         run: |
+#           cd ..
+#           cd opendistro-build/elasticsearch/linux_distributions
+#           odfe_version=`../bin/version-info --od`
+#           echo $odfe_version
+#           cd ../../..
+#           aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistro-elasticsearch/opendistroforelasticsearch-$odfe_version.tar.gz .
+#           tar -zxf opendistroforelasticsearch-$odfe_version.tar.gz
+#           cd opendistroforelasticsearch-$odfe_version
+#           sed -i /install_demo_configuration/d opendistro-tar-install.sh
+#           sed -i '/http\.port/s/^# *//' config/elasticsearch.yml
+#           ./bin/elasticsearch-plugin remove opendistro_security
           
-          nohup ./opendistro-tar-install.sh &          
-           sleep 45
-          cd ../alerting/alerting
-          ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
+#           nohup ./opendistro-tar-install.sh &          
+#            sleep 45
+#           cd ../alerting/alerting
+#           ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
     
   Test-kibana:
     name: Test-Kibana
@@ -255,4 +255,3 @@ jobs:
           echo "Copying to: s3://artifacts.opendistroforelasticsearch.amazon.com/KibanaTest-reports/reports/"
           aws s3 cp ./build.zip s3://artifacts.opendistroforelasticsearch.amazon.com/KibanaTest-reports/build/build-`date +%d_%m_%Y_%H_%M_%S` 
           cd ..
-
