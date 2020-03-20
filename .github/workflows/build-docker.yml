@@ -97,6 +97,7 @@ jobs:
           DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
         run: |
           sudo apt-get install python-virtualenv
+          ./download_kibana_plugins.sh
           cd kibana/bin
           ODFE_VER=`./version-info --od`
           echo "ODFE VERSION $ODFE_VER"
