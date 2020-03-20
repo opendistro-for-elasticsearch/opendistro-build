@@ -1,8 +1,10 @@
 name: Process TAR Artifacts
 
 on:
-  schedule:
-    - cron: '0 10 * * *'
+  push:
+    branches: 
+      - dummy
+      
 jobs:
   plugin-avilability:
     name: Check Plugin Availability
