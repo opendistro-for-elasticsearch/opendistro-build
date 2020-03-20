@@ -4,7 +4,6 @@ on:
   push:
     branches: 
       - dummy
-      - srivasri-patch-1
 jobs:
 #   plugin-avilability:
 #     name: Check Plugin Availability
