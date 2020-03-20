@@ -1,3 +1,6 @@
+#!/bin/bash
+
+passphrase=$1
 /github/home/bin/aws s3 cp s3://opendistro-docs/github-actions/pgp-private-key .
 /github/home/bin/aws s3 cp s3://opendistro-docs/github-actions/pgp-public-key .
           
@@ -27,8 +30,7 @@ rm -rf yum/staging
 #Add signatures to the new RPMs and copy them over to the Repo.
 yum install -y expect
 yum install -y rpm-sign
-chmod +x elasticsearch/linux_distributions/scripts/rpm-addsign.exp
-echo "Adding sign to the rpms with the passphrase $passphrase"
+echo "Adding sign to the rpms with the passphrase"
 for VARIABLE in downloads/rpms/*/*.rpm
 do
         ../elasticsearch/linux_distributions/scripts/rpm-addsign.exp $VARIABLE $passphrase
