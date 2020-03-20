@@ -29,10 +29,15 @@ WORKDIR /usr/share/kibana
 
 ENV PATH=/usr/share/kibana/bin:$PATH
 
+RUN mkdir /tmp/plugins
+
+ADD plugins /tmp/plugins/
+
 RUN curl -Ls {{ kibana_url }}/{{ tarball }} | tar --strip-components=1 -zxf - && \
-    for plugin in {{ plugins }}; do \
-        kibana-plugin install --allow-root "https://d3g5vo6xdbdb9a.cloudfront.net/downloads/kibana-plugins/$plugin"; \
+    for plugin in `ls /tmp/plugins/`; do \
+        kibana-plugin install --allow-root file:/tmp/plugins/$plugin ; \
     done && \
+    rm -rf /tmp/plugins/ && \
     ln -s /usr/share/kibana /opt/kibana && \
     chown -R 1000:0 . && \
     chmod -R g=u /usr/share/kibana && \
