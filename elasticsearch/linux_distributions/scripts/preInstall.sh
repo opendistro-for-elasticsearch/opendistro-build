@@ -1,5 +1,11 @@
-echo "Fetching kNN lib"
+echo "Fetching kNN library"
 FILE=/usr/lib/libKNNIndexV1_7_3_6.so
+if [ -f "$FILE" ]
+then
+    echo "$FILE exist: removing $FILE"
+    sudo rm $FILE
+fi
+FILE=/libKNNIndex1_7_3_6.zip
 if [ -f "$FILE" ]
 then
     echo "$FILE exist: removing $FILE"
