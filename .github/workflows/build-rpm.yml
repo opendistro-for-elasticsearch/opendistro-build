@@ -184,7 +184,7 @@ jobs:
           password: ${{secrets.MAIL_PASSWORD}}
           subject: Opendistro for Elasticsearch Build - Centos Images For Testing
           # Read file contents as body:
-          body: file://message.md
+          body: file://Message.md
           to: sngri@amazon.com,odfe-distribution-build@amazon.com
           from: Opendistro Elasticsearch
           # Optional content type:
