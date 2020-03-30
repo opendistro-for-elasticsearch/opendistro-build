@@ -129,7 +129,7 @@ jobs:
         with:
           repository: opendistro-for-elasticsearch/index-management
           ref: master
-      - name: Run Something
+      - name: Run Tests
         run: |
           cd ..
           cd opendistro-build/elasticsearch/linux_distributions
@@ -172,7 +172,7 @@ jobs:
         with:
           repository: opendistro-for-elasticsearch/alerting
           ref: master
-      - name: Run Something
+      - name: Run Tests
         run: |
           cd ..
           cd opendistro-build/elasticsearch/linux_distributions
@@ -190,3 +190,87 @@ jobs:
            sleep 45
           cd ../alerting/alerting
           ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
+          
+  Test-SQL-Plugin:
+    needs: [build-es-artifacts]
+    name: Run SQL Test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java: [12]
+    steps:
+      - name: Set up AWS Cred
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+      - uses: actions/checkout@v1
+      - name: Checkout SQL
+        uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/sql
+          ref: master
+      - name: Run Tests
+        run: |
+          cd ..
+          cd opendistro-build/elasticsearch/linux_distributions
+          odfe_version=`../bin/version-info --od`
+          echo $odfe_version
+          cd ../../..
+          aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistro-elasticsearch/opendistroforelasticsearch-$odfe_version.tar.gz .
+          tar -zxf opendistroforelasticsearch-$odfe_version.tar.gz
+          cd opendistroforelasticsearch-$odfe_version
+          sed -i /install_demo_configuration/d opendistro-tar-install.sh
+          ./bin/elasticsearch-plugin remove opendistro_security
+          
+          nohup ./opendistro-tar-install.sh &
+          sleep 45
+          cd ../sql
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
+          
+  Test-KNN-Plugin:
+    needs: [build-es-artifacts]
+    name: Run k-NN Test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java: [12]
+    steps:
+      - name: Set up AWS Cred
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+      - uses: actions/checkout@v1
+      - name: Checkout k-NN
+        uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/k-NN
+          ref: master
+      - name: Run Tests
+        run: |
+          cd ..
+          cd opendistro-build/elasticsearch/linux_distributions
+          odfe_version=`../bin/version-info --od`
+          echo $odfe_version
+          cd ../../..
+          aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistro-elasticsearch/opendistroforelasticsearch-$odfe_version.tar.gz .
+          tar -zxf opendistroforelasticsearch-$odfe_version.tar.gz
+          cd opendistroforelasticsearch-$odfe_version
+          sed -i /install_demo_configuration/d opendistro-tar-install.sh
+          ./bin/elasticsearch-plugin remove opendistro_security
+          
+          nohup ./opendistro-tar-install.sh &
+          sleep 45
+          cd ../k-NN
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200

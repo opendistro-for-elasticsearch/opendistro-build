@@ -1,7 +1,7 @@
 name: Webhook Build ES Docker on Dispatch
 on: repository_dispatch
 jobs:
-  build:
+  build-es-docker:
     strategy:
       matrix:
         java: [13]
@@ -100,8 +100,27 @@ jobs:
            echo "Running originially created docker image"
            docker run -p 9200:9200 -d -p 9600:9600 -e "discovery.type=single-node" opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER
         fi
-        
-        
+    
+    - name: Create Email Message
+      run: |
+        echo "<h2>On-Demand Opendsitro Docker Image is Ready</h2>" >> Message.md
+        echo "<h3>Docker Image: opendistroforelasticsearch/opendistroforelasticsearch:<VERSION-TAG></h3>" >> Message.md
+    
+    - name: Send Email
+      uses: dawidd6/action-send-mail@master
+      with:
+        server_address: smtp.gmail.com
+        server_port: 465
+        username: ${{secrets.MAIL_USERNAME}}
+        password: ${{secrets.MAIL_PASSWORD}}
+        subject: Opendistro for Elasticsearch Build - On-Demand ODFE Image is Ready
+        # Read file contents as body:
+        body: file://Message.md
+        to: sngri@amazon.com,odfe-distribution-build@amazon.com
+        from: Opendistro Elasticsearch
+        # Optional content type:
+        content_type: text/html
+          
     - name: Test ISM Plugin
       continue-on-error: true
       run: |
@@ -152,3 +171,61 @@ jobs:
         else
           echo "Skipping Test as Plugin not available"
         fi
+        
+  build-kibana-docker:
+    runs-on: [ubuntu-16.04]
+    name: Build Kibana Docker
+    steps:
+      - uses: actions/checkout@v2
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Build Kibana Docker
+        if: github.event.action == 'Build_ES_Docker'
+        env:
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}
+          DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
+        run: |
+          sudo apt-get install python-virtualenv
+          ./download_kibana_plugins.sh
+          cd kibana/bin
+          ODFE_VER=`./version-info --od`
+          echo "ODFE VERSION $ODFE_VER"
+          cd ..
+          cd docker
+          make build
+          
+          echo "******************************"
+          echo "Uploading Kibana Docker"
+          echo "******************************"
+          docker login --username $DOCKER_USER --password $DOCKER_PASS
+          docker images|grep "amazon/opendistro-for-elasticsearch-kibana" > kibana_id.out
+          kibana_image_id=`awk -F' ' '{print $3}' kibana_id.out`
+          echo "Docker Id is $kibana_image_id"
+          docker tag $kibana_image_id opendistroforelasticsearch/opendistroforelasticsearch-kibana:$ODFE_VER
+          docker push opendistroforelasticsearch/opendistroforelasticsearch-kibana:$ODFE_VER
+          
+      - name: Create Email Message
+        run: |
+          echo "<h2>On-Demand Opendsitro Kibana Docker Image is Ready</h2>" >> Message.md
+          echo "<h3>Docker Image: opendistroforelasticsearch/opendistroforelasticsearch-kibana:<VERSION-TAG></h3>" >> Message.md
+          
+      - name: Send Email
+        uses: dawidd6/action-send-mail@master
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{secrets.MAIL_USERNAME}}
+          password: ${{secrets.MAIL_PASSWORD}}
+          subject: Opendistro for Elasticsearch Build - On-Demand ODFE Kibana Image
+          # Read file contents as body:
+          body: file://Message.md
+          to: sngri@amazon.com,odfe-distribution-build@amazon.com
+          from: Opendistro Elasticsearch
+          # Optional content type:
+          content_type: text/html
+        
+         

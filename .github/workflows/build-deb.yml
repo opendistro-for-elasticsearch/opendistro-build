@@ -150,7 +150,64 @@ jobs:
           aws s3 sync ~/.aptly/public/ s3://artifacts.opendistroforelasticsearch.amazon.com/staging/apt
 
           aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/staging/apt/*"
-
+          
+  Build-ES-and-Kibana-Ubuntu-Docker:
+    needs: [sign-deb-artifacts]
+    runs-on: [ubuntu-latest]
+    name: Build ubuntu image for Sanity Testing
+    steps:
+      - uses: actions/checkout@v1
+      - name: Checkout Opendistro-Infra
+        uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/opendistro-infra
+          ref: jenkins-test
+          token: ${{ secrets.READ_TOKEN }}
+      - name: Build Ubuntu Docker Image
+        env:
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}
+          DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
+        run: |
+          cd elasticsearch/linux_distributions
+          ES_VER=`../bin/version-info --es`
+          ODFE_VER=`../bin/version-info --od`
+          cd ../../..
+          cd opendistro-infra/scripts/dockerfiles/tests/elasticsearch
+          docker build --build-arg VER=$ES_VER -t opendistroforelasticsearch/elasticsearch-test-ubuntu:$ODFE_VER -f opendistro.elasticsearch.test.ubuntu.Dockerfile .
+          
+          cd ../kibana
+          docker build -t opendistroforelasticsearch/kibana-test-ubuntu:$ODFE_VER -f opendistro.kibana.test.ubuntu.Dockerfile .
+          
+          echo "******************************"
+          echo "Login to Docker"
+          echo "******************************"
+          docker login --username $DOCKER_USER --password $DOCKER_PASS
+          
+          docker push opendistroforelasticsearch/elasticsearch-test-ubuntu:$ODFE_VER
+          sleep 5
+          docker push opendistroforelasticsearch/kibana-test-ubuntu:$ODFE_VER
+          
+      - name: Create Email Message
+        run: |
+          echo "<h2>Docker Images for Ubuntu Are Ready</h2>" >> Message.md
+          echo "<h3> ES Image for Ubuntu Testing: opendistroforelasticsearch/elasticsearch-test-ubuntu:<Version-Tag> </h3>" >> Message.md
+          echo "<h3> Kibana Image for Ubuntu Testing: opendistroforelasticsearch/kibana-test-ubuntu:<Version-Tag> </h3>" >> Message.md
+          
+      - name: Send Mail
+        uses: dawidd6/action-send-mail@master
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{secrets.MAIL_USERNAME}}
+          password: ${{secrets.MAIL_PASSWORD}}
+          subject: Opendistro for Elasticsearch Build - Debian Images For Testing
+          # Read file contents as body:
+          body: file://Message.md
+          to: sngri@amazon.com,odfe-distribution-build@amazon.com
+          from: Opendistro Elasticsearch
+          # Optional content type:
+          content_type: text/html
+          
   Test-ISM-Plugin:
     needs: [sign-deb-artifacts]
     runs-on: [ubuntu-16.04]
@@ -253,3 +310,103 @@ jobs:
           
           cd alerting/alerting
           ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
+          
+  Test-SQL-Plugin:
+    needs: [sign-deb-artifacts]
+    runs-on: [ubuntu-16.04]
+    strategy:
+      matrix:
+        java: [12]
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/sql
+          ref: master
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+      - name: Run Debian Staging Distrubution
+        run: |
+          cd elasticsearch/linux_distributions
+          es_version=`../bin/version-info --es`
+          echo $es_version
+          cd ../../..
+          sleep 20
+          sudo sysctl -w vm.max_map_count=262144
+
+          sudo add-apt-repository -y ppa:openjdk-r/ppa
+          sudo apt update -y
+          sudo apt install -y openjdk-11-jdk
+          sudo sudo apt install -y net-tools
+
+          wget -qO - https://d3g5vo6xdbdb9a.cloudfront.net/GPG-KEY-opendistroforelasticsearch | sudo apt-key add -
+          echo "deb https://d3g5vo6xdbdb9a.cloudfront.net/staging/apt stable main" | sudo tee -a /etc/apt/sources.list.d/opendistroforelasticsearch.list
+
+          wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$es_version-amd64.deb
+          sudo dpkg -i elasticsearch-oss-$es_version-amd64.deb
+
+          sudo apt-get -y update
+          sudo apt install -y opendistroforelasticsearch
+          
+          sudo chmod 777 /etc/elasticsearch/elasticsearch.yml
+          sudo /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro_security
+          sudo sed -i /^opendistro_security/d /etc/elasticsearch/elasticsearch.yml
+          sudo sed -i /CN=kirk/d /etc/elasticsearch/elasticsearch.yml
+
+          sudo /etc/init.d/elasticsearch start
+
+          sleep 30
+          cd sql
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
+          
+  Test-KNN-Plugin:
+    needs: [sign-deb-artifacts]
+    runs-on: [ubuntu-16.04]
+    strategy:
+      matrix:
+        java: [12]
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/k-NN
+          ref: master
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+      - name: Run Debian Staging Distrubution
+        run: |
+          cd elasticsearch/linux_distributions
+          es_version=`../bin/version-info --es`
+          echo $es_version
+          cd ../../..
+          sleep 20
+          sudo sysctl -w vm.max_map_count=262144
+
+          sudo add-apt-repository -y ppa:openjdk-r/ppa
+          sudo apt update -y
+          sudo apt install -y openjdk-11-jdk
+          sudo sudo apt install -y net-tools
+
+          wget -qO - https://d3g5vo6xdbdb9a.cloudfront.net/GPG-KEY-opendistroforelasticsearch | sudo apt-key add -
+          echo "deb https://d3g5vo6xdbdb9a.cloudfront.net/staging/apt stable main" | sudo tee -a /etc/apt/sources.list.d/opendistroforelasticsearch.list
+
+          wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$es_version-amd64.deb
+          sudo dpkg -i elasticsearch-oss-$es_version-amd64.deb
+
+          sudo apt-get -y update
+          sudo apt install -y opendistroforelasticsearch
+          
+          sudo chmod 777 /etc/elasticsearch/elasticsearch.yml
+          sudo /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro_security
+          sudo sed -i /^opendistro_security/d /etc/elasticsearch/elasticsearch.yml
+          sudo sed -i /CN=kirk/d /etc/elasticsearch/elasticsearch.yml
+
+          sudo /etc/init.d/elasticsearch start
+
+          sleep 30
+          cd k-NN
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
