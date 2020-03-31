@@ -1,7 +1,6 @@
 #!/usr/bin/expect
 set rpmfile [lindex $argv 0]
 set passphrase [lindex $argv 1]
-spawn echo $passphrase
 spawn echo $rpmfile
 spawn rpm --addsign $rpmfile
 expect -exact "Enter pass phrase: "
