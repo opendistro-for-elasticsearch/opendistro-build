@@ -172,8 +172,8 @@ jobs:
       - name: Create Email Message
         run: |
           echo "<h2>Docker Images for Centos Are Ready</h2>" >> Message.md
-          echo "<h3> ES Image for Centos Testing: opendistroforelasticsearch/elasticsearch-test-centos:<Version-Tag> </h3>" >> Message.md
-          echo "<h3> Kibana Image for Centos Testing: opendistroforelasticsearch/kibana-test-centos:<Version-Tag> </h3>" >> Message.md
+          echo "<h3> ES Image for Centos Testing: opendistroforelasticsearch/elasticsearch-test-centos:Version-Tag </h3>" >> Message.md
+          echo "<h3> Kibana Image for Centos Testing: opendistroforelasticsearch/kibana-test-centos:Version-Tag </h3>" >> Message.md
           
       - name: Send Mail
         uses: dawidd6/action-send-mail@master
