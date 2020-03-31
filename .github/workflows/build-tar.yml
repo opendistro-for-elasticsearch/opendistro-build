@@ -111,7 +111,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        java: [12]
+        java: [13]
     steps:
       - name: Set up AWS Cred
         uses: aws-actions/configure-aws-credentials@v1
@@ -154,7 +154,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        java: [12]
+        java: [13]
     steps:
       - name: Set up AWS Cred
         uses: aws-actions/configure-aws-credentials@v1
@@ -197,7 +197,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        java: [12]
+        java: [13]
     steps:
       - name: Set up AWS Cred
         uses: aws-actions/configure-aws-credentials@v1
@@ -239,7 +239,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        java: [12]
+        java: [13]
     steps:
       - name: Set up AWS Cred
         uses: aws-actions/configure-aws-credentials@v1
