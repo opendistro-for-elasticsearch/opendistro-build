@@ -190,8 +190,8 @@ jobs:
       - name: Create Email Message
         run: |
           echo "<h2>Docker Images for Ubuntu Are Ready</h2>" >> Message.md
-          echo "<h3> ES Image for Ubuntu Testing: opendistroforelasticsearch/elasticsearch-test-ubuntu:<Version-Tag> </h3>" >> Message.md
-          echo "<h3> Kibana Image for Ubuntu Testing: opendistroforelasticsearch/kibana-test-ubuntu:<Version-Tag> </h3>" >> Message.md
+          echo "<h3> ES Image for Ubuntu Testing: opendistroforelasticsearch/elasticsearch-test-ubuntu:Version-Tag </h3>" >> Message.md
+          echo "<h3> Kibana Image for Ubuntu Testing: opendistroforelasticsearch/kibana-test-ubuntu:Version-Tag </h3>" >> Message.md
           
       - name: Send Mail
         uses: dawidd6/action-send-mail@master
@@ -213,7 +213,7 @@ jobs:
     runs-on: [ubuntu-16.04]
     strategy:
       matrix:
-        java: [12]
+        java: [13]
     steps:
       - uses: actions/checkout@v1
       - uses: actions/checkout@v1
@@ -264,7 +264,7 @@ jobs:
     runs-on: [ubuntu-16.04]
     strategy:
       matrix:
-        java: [12]
+        java: [13]
     steps:
       - uses: actions/checkout@v1
       - uses: actions/checkout@v1
@@ -316,7 +316,7 @@ jobs:
     runs-on: [ubuntu-16.04]
     strategy:
       matrix:
-        java: [12]
+        java: [13]
     steps:
       - uses: actions/checkout@v1
       - uses: actions/checkout@v1
@@ -366,7 +366,7 @@ jobs:
     runs-on: [ubuntu-16.04]
     strategy:
       matrix:
-        java: [12]
+        java: [13]
     steps:
       - uses: actions/checkout@v1
       - uses: actions/checkout@v1
