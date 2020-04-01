@@ -141,7 +141,7 @@ spec:
     {{- end }}
     {{- with .Values.elasticsearch.client.affinity }}
       affinity:
-{{- toYaml . | indent 8 }}
+{{ toYaml . | indent 8 }}
     {{- end }}
     {{- with .Values.kibana.tolerations }}
       tolerations:
