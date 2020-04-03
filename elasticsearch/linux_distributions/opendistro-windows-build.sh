@@ -18,8 +18,9 @@ fi
 tar -xzf $TARGET_DIR/$PACKAGE-$OD_VERSION.tar.gz --directory $TARGET_DIR
 rm -rf $TARGET_DIR/*.tar.gz
 
-#Remove PA plugin as it isn't provided for odfe-1.3.0 windows
-rm -rf $TARGET_DIR/$PACKAGE-$OD_VERSION/plugins/opendistro_performance_analyzer
+#Remove PA and kNN plugins
+bash $TARGET_DIR/$PACKAGE-$OD_VERSION/bin/elasticsearch-plugin remove opendistro_performance_analyzer
+bash $TARGET_DIR/$PACKAGE-$OD_VERSION/bin/elasticsearch-plugin remove opendistro-knn
 
 #install the certificates
 bash $TARGET_DIR/$PACKAGE-$OD_VERSION/plugins/opendistro_security/tools/install_demo_configuration.sh -y -i -s
@@ -57,7 +58,6 @@ wget https://download-gcdn.ej-technologies.com/install4j/install4j_unix_8_0_4.ta
 #Untar
 tar -xzf $ROOT/install4j_unix_8_0_4.tar.gz --directory $ROOT 
 rm -rf $ROOT/*tar*
-
 #Download the .install4j file from s3
 aws s3 cp s3://odfe-windows/ODFE.install4j $ROOT
 if [ "$?" -eq "1" ]
@@ -65,7 +65,6 @@ then
   echo "Install4j not available"
   exit 1
 fi
-
 #Build the exe
 $ROOT/install4j*/bin/install4jc -d $TARGET_DIR/EXE -D sourcedir=./Windowsfiles/$PACKAGE-$OD_VERSION,version=$OD_VERSION --license=L-M8-AMAZON_DEVELOPMENT_CENTER_INDIA_PVT_LTD#50047687020001-3rhvir3mkx479#484b6 $ROOT/ODFE.install4j
 
