@@ -72,7 +72,7 @@ spec:
             subPath: {{ .Values.elasticsearch.data.persistence.subPath }}
     {{- with .Values.elasticsearch.data.affinity }}
       affinity:
-{{- toYaml . | indent 8 }}
+{{ toYaml . | indent 8 }}
     {{- end }}
       serviceAccountName: {{ template "opendistro-es.elasticsearch.serviceAccountName" . }}
       containers:
