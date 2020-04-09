@@ -22,12 +22,6 @@ The release includes the following features, enhancements, infra and config upda
 * Fix to use inner channel when channel is not direct or transport type ([#234](https://github.com/opendistro-for-elasticsearch/security/pull/234))
 * Fix for modifying user backend-roles without giving password ([#225](https://github.com/opendistro-for-elasticsearch/security/pull/225))
 
-**SECURITY KIBANA UI**
-
-* Support Kibana 7.6.1 ([#154](https://github.com/opendistro-for-elasticsearch/security-kibana-plugin/pull/154))
-* Specify headers to be stored in session ([#147](https://github.com/opendistro-for-elasticsearch/security-kibana-plugin/pull/147))
-
-
 ### **Enhancements**
 
 **k-NN**
