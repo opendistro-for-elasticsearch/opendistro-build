@@ -2,7 +2,7 @@ name: Build Windows Exe using tar artifacts
 
 on:
   schedule:
-    - cron: '0 10 * * *' 
+    #- cron: '0 10 * * *' Disabling for a bug-fix
 jobs:
   build-es-artifacts:
     name: Build Windows ES Artifacts
