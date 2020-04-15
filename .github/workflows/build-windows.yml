@@ -2,7 +2,7 @@ name: Build Windows Exe using tar artifacts
 
 on:
   schedule:
-    #- cron: '0 10 * * *' Disabling for a bug-fix
+    - cron: '0 10 * * *'
 jobs:
   build-es-artifacts:
     name: Build Windows ES Artifacts
@@ -22,6 +22,7 @@ jobs:
         export JAVA_HOME=/openjdk12
         export PATH=$JAVA_HOME:$PATH
         cd elasticsearch/linux_distributions
+        chmod 755 opendistro-windows-build.sh
         sh ./opendistro-windows-build.sh
         
   build-kibana-artifacts:
@@ -38,7 +39,8 @@ jobs:
     - name: Build Kibana
       run: |
         cd kibana/linux_distributions 
-        sh ./opendistro-windows-kibana-build.sh  
+        chmod 755 opendistro-windows-kibana-build.sh
+        sh ./opendistro-windows-kibana-build.sh
           
   Test-ISM-Plugin:
     needs: [build-es-artifacts, build-kibana-artifacts]
@@ -77,7 +79,7 @@ jobs:
           cd ..\..
           dir
           echo downloading zip from S3 
-          aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/ode-windows-zip/$S3_PACKAGE .\
+          aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/staging/odfe-window-zip/$S3_PACKAGE .\
           echo unzipping $S3_PACKAGE
           unzip .\$S3_PACKAGE
           dir
@@ -133,7 +135,7 @@ jobs:
           cd ..\..
           dir
           echo downloading zip from S3 
-          aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/ode-windows-zip/$S3_PACKAGE .\
+          aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/staging/odfe-window-zip/$S3_PACKAGE .\
           echo unzipping $S3_PACKAGE
           unzip .\$S3_PACKAGE
           echo "removing security plugin"
