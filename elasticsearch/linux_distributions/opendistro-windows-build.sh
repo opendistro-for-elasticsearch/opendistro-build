@@ -2,28 +2,10 @@
 mkdir ./ws #A temporary workspace inside opendistro-build/elasticsearch/linux_distributions
 ES_VERSION=$(../bin/version-info --es)
 OD_VERSION=$(../bin/version-info --od)
+OD_PLUGINVERSION=$OD_VERSION.0
 PACKAGE=opendistroforelasticsearch
 ROOT=$(dirname "$0")/ws
 TARGET_DIR="$ROOT/Windowsfiles"
- 
-#Downloading tar from s3
-aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistro-elasticsearch/$PACKAGE-$OD_VERSION.tar.gz $TARGET_DIR/
-if [ "$?" -eq "1" ]
-then
-  echo "TAR distribution not available"
-  exit 1
-fi
-
-#Untar the tar artifact
-tar -xzf $TARGET_DIR/$PACKAGE-$OD_VERSION.tar.gz --directory $TARGET_DIR
-rm -rf $TARGET_DIR/*.tar.gz
-
-#Remove PA and kNN plugins
-bash $TARGET_DIR/$PACKAGE-$OD_VERSION/bin/elasticsearch-plugin remove opendistro_performance_analyzer
-bash $TARGET_DIR/$PACKAGE-$OD_VERSION/bin/elasticsearch-plugin remove opendistro-knn
-
-#install the certificates
-bash $TARGET_DIR/$PACKAGE-$OD_VERSION/plugins/opendistro_security/tools/install_demo_configuration.sh -y -i -s
 
 #Download windowss oss for copying batch files
 wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$ES_VERSION-windows-x86_64.zip -P $ROOT/
@@ -36,39 +18,33 @@ fi
 #Unzip the oss
 unzip $ROOT/elasticsearch-oss-$ES_VERSION-windows-x86_64.zip -d $ROOT
 rm -rf $ROOT/elasticsearch-oss-$ES_VERSION-windows-x86_64.zip
- 
-#Copy all the bat files in the bin directory
-BAT_FILES=`ls $ROOT/elasticsearch-$ES_VERSION/bin/*.bat`
-cp $BAT_FILES $TARGET_DIR/$PACKAGE-$OD_VERSION/bin
-rm -rf $ROOT/elasticsearch-oss-$ES_VERSION-windows-x86_64
 
+#Install plugins
+for plugin_path in  opendistro-sql/opendistro_sql-$OD_PLUGINVERSION.zip opendistro-alerting/opendistro_alerting-$OD_PLUGINVERSION.zip opendistro-job-scheduler/opendistro-job-scheduler-$OD_PLUGINVERSION.zip opendistro-security/opendistro_security-$OD_PLUGINVERSION.zip opendistro-index-management/opendistro_index_management-$OD_PLUGINVERSION.zip
+do
+  $ROOT/elasticsearch-$ES_VERSION/bin/elasticsearch-plugin install --batch "https://d3g5vo6xdbdb9a.cloudfront.net/downloads/elasticsearch-plugins/$plugin_path"
+done
+
+mv $ROOT/elasticsearch-$ES_VERSION $ROOT/$PACKAGE-$OD_VERSION
+cd $ROOT
 #Making zip
-cd $TARGET_DIR
-zip -r ./odfe-$OD_VERSION.zip ./$PACKAGE-$OD_VERSION
-echo inside target
-ls -ltr
-pwd
-cd ../..
-echo inside root
-ls -ltr
-pwd
+zip -r odfe-$OD_VERSION.zip $PACKAGE-$OD_VERSION
 
-#Download install4j software
-wget https://download-gcdn.ej-technologies.com/install4j/install4j_unix_8_0_4.tar.gz -P $ROOT
-#Untar
-tar -xzf $ROOT/install4j_unix_8_0_4.tar.gz --directory $ROOT 
-rm -rf $ROOT/*tar*
-#Download the .install4j file from s3
-aws s3 cp s3://odfe-windows/ODFE.install4j $ROOT
+##Build Exe
+wget https://download-gcdn.ej-technologies.com/install4j/install4j_unix_8_0_4.tar.gz
+tar -xzf install4j_unix_8_0_4.tar.gz
+aws s3 cp s3://odfe-windows/ODFE.install4j .
 if [ "$?" -eq "1" ]
 then
   echo "Install4j not available"
   exit 1
 fi
-#Build the exe
-$ROOT/install4j*/bin/install4jc -d $TARGET_DIR/EXE -D sourcedir=./Windowsfiles/$PACKAGE-$OD_VERSION,version=$OD_VERSION --license=L-M8-AMAZON_DEVELOPMENT_CENTER_INDIA_PVT_LTD#50047687020001-3rhvir3mkx479#484b6 $ROOT/ODFE.install4j
+pwd
 
-#Copy to s3
-aws s3 cp $TARGET_DIR/EXE/*.exe s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/odfe-executables/
-aws s3 cp $TARGET_DIR/odfe-$OD_VERSION.zip s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/ode-windows-zip/
-rm -rf ws
+#Build the exe
+install4j8.0.4/bin/install4jc -d EXE -D sourcedir=./$PACKAGE-$OD_VERSION,version=$OD_VERSION --license="L-M8-AMAZON_DEVELOPMENT_CENTER_INDIA_PVT_LTD#50047687020001-3rhvir3mkx479#484b6" ./ODFE.install4j
+
+#upload top S3
+aws s3 cp EXE/*.exe s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/staging/odfe-executable/
+aws s3 cp odfe-$OD_VERSION.zip s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/staging/odfe-window-zip/
+aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/*"
