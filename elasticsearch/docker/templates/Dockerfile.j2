@@ -41,7 +41,7 @@ RUN curl -s  https://download.java.net/java/GA/jdk12.0.2/e482c34c86bd4bf8b56c0b3
 ENV JAVA_HOME /opt/jdk-12.0.2
 RUN yum -y update \
     && yum -y groupinstall "Development Tools" \
-    && yum install -y unzip glibc.x86_64 cmake \
+    && yum install -y unzip glibc.x86_64 nfs-utils cmake \
     && yum clean all
 
 RUN groupadd -g 1000 elasticsearch && \
