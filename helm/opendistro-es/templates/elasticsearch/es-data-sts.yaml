@@ -27,7 +27,7 @@ spec:
   replicas: {{ .Values.elasticsearch.data.replicas }}
   selector:
     matchLabels:
-{{ include "opendistro-es.labels.standard" . | indent 6 }}
+{{ include "opendistro-es.labels.selector" . | indent 6 }}
       role: data
   updateStrategy:
     type: {{ .Values.elasticsearch.data.updateStrategy }}

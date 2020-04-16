@@ -25,7 +25,7 @@ spec:
   replicas: {{ .Values.kibana.replicas }}
   selector:
     matchLabels:
-{{ include "opendistro-es.labels.standard" . | indent 6 }}
+{{ include "opendistro-es.labels.selector" . | indent 6 }}
       role: kibana
   template:
     metadata:
