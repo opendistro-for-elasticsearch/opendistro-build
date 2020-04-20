@@ -427,6 +427,9 @@ elasticsearch:
 
   image: amazon/opendistro-for-elasticsearch
   imageTag: 1.6.0
+  ## Specifies the image pull policy. Can be "Always" or "IfNotPresent" or "Never".
+  ## Default to "Always".
+  imagePullPolicy: ""
 
   configDirectory: /usr/share/elasticsearch/config
 
