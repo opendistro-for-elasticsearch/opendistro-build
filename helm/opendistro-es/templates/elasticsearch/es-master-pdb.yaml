@@ -22,7 +22,7 @@ metadata:
 {{ include "opendistro-es.labels.standard" . | indent 4 }}
 spec:
 {{- if .Values.elasticsearch.master.podDisruptionBudget.minAvailable }}
-  minAvailable: {{ .Values.master.podDisruptionBudget.minAvailable }}
+  minAvailable: {{ .Values.elasticsearch.master.podDisruptionBudget.minAvailable }}
 {{- end }}
 {{- if .Values.elasticsearch.master.podDisruptionBudget.maxUnavailable }}
   maxUnavailable: {{ .Values.elasticsearch.master.podDisruptionBudget.maxUnavailable }}
