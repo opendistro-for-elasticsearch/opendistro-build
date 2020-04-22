@@ -1,8 +1,9 @@
 name: Build Windows Exe using tar artifacts
 
 on:
-  schedule:
-    - cron: '0 10 * * *'
+  push:
+    branches: 
+      - windows-fix ##Disabling daily run due to an issue with the script
 jobs:
   build-es-artifacts:
     name: Build Windows ES Artifacts
