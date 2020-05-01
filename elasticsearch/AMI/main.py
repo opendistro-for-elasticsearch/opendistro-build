@@ -25,12 +25,12 @@ from lib.instance import Instance
 
 
 def copy_AMI_to_regions(
-    AWS_key_id, AWS_secret_access_key, AMI_id, AMI_source_region, AMI_copy_regions, AMI_name
+    AWS_access_key_id, AWS_secret_access_key, AMI_id, AMI_source_region, AMI_copy_regions, AMI_name
 ):
     """
     Copies the AMI to specified regions
     args: 
-        AWS_key_id: str, aws key id
+        AWS_access_key_id: str, aws key id
         AWS_secret_access_key: str, aws secret access key
         AMI_id: str, AMI_id of the ami to be copied
         AMI_source_region: str, region where the AMI is present
@@ -43,7 +43,7 @@ def copy_AMI_to_regions(
                 f"Copying ami {AMI_id} from {AMI_source_region} to {region}")
             ec2_client = boto3.client(
                 "ec2",
-                aws_access_key_id=AWS_key_id,
+                aws_access_key_id=AWS_access_key_id,
                 aws_secret_access_key=AWS_secret_access_key,
                 region_name=region,
             )
@@ -60,7 +60,7 @@ def copy_AMI_to_regions(
 
 
 def AMI_builder(
-    AWS_key_id,
+    AWS_access_key_id,
     AWS_secret_access_key,
     region_name,
     base_image_id,
@@ -73,7 +73,7 @@ def AMI_builder(
     """
     Builds the ODFE AMI
     args: 
-        AWS_key_id: str, aws key id
+        AWS_access_key_id: str, aws key id
         AWS_secret_access_key: str, aws secret access key
         region_name: str, region where the Instance will be created
         base_image_id: str, base os AMI id,  
@@ -85,10 +85,8 @@ def AMI_builder(
     returns: none
     """
     try:
-        # need to change the way we take input based on the environment we
-        # are running the script
         instance = Instance(
-            AWS_key_id=AWS_key_id,
+            AWS_access_key_id=AWS_access_key_id,
             AWS_secret_access_key=AWS_secret_access_key,
             region_name=region_name,
             base_image_id=base_image_id,
@@ -122,13 +120,14 @@ def AMI_builder(
             instance.cleanup_instance()
         except Exception as err:
             logging.error(
-                "Could not cleanup the instance. There could be an instance currently running delete it. " + str(err))
+                "Could not cleanup the instance. There could be an instance currently running, terminate it. " + str(err))
+            installation_failed = True
     if installation_failed:
         sys.exit(-1)
     # copy the AMI to the required regions
     ec2_client = boto3.client(
         "ec2",
-        aws_access_key_id=AWS_key_id,
+        aws_access_key_id=AWS_access_key_id,
         aws_secret_access_key=AWS_secret_access_key,
         region_name=region_name,
     )
@@ -136,7 +135,7 @@ def AMI_builder(
                         for region in ec2_client.describe_regions()["Regions"]]
     AMI_copy_regions.remove(region_name)  # since AMI is created here
     copy_AMI_to_regions(
-        AWS_key_id=AWS_key_id,
+        AWS_access_key_id=AWS_access_key_id,
         AWS_secret_access_key=AWS_secret_access_key,
         AMI_id=AMI_id,
         AMI_name=AMI_name,
@@ -156,15 +155,20 @@ def main():
     logging.getLogger("s3transfer").setLevel(logging.CRITICAL)
     logging.getLogger("urllib3").setLevel(logging.CRITICAL)
     logging.getLogger("paramiko").setLevel(logging.CRITICAL)
-    required_environment_variables = ["AWS_key_id", "AWS_secret_access_key",
+    required_environment_variables = ["AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY",
                                       "region_name", "base_image_id", "os", "security_group_id", "AMI_name"]
     for var in required_environment_variables:
         if environ.get(var) == None:
             logging.error("Need to specify environment variable " + var)
             sys.exit(-1)
+    
+    logging.info("Starting AMI creation with following config")
+    for var in required_environment_variables:
+        logging.info(f'${var} : ${environ[var]}')
+
     AMI_builder(
-        AWS_key_id=environ["AWS_key_id"],
-        AWS_secret_access_key=environ["AWS_secret_access_key"],
+        AWS_access_key_id=environ["AWS_ACCESS_KEY_ID"],
+        AWS_secret_access_key=environ["AWS_SECRET_ACCESS_KEY"],
         region_name=environ["region_name"],
         base_image_id=environ["base_image_id"],
         os=environ["os"],

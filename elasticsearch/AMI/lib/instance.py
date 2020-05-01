@@ -27,7 +27,7 @@ class Instance:
 
     def __init__(
         self,
-        AWS_key_id,
+        AWS_access_key_id,
         AWS_secret_access_key,
         region_name,
         base_image_id,
@@ -40,7 +40,7 @@ class Instance:
         """ 
         Initiating all the necessory variables and objects.
         Args:
-            AWS_key_id: str, awskeyid used for authentication
+            AWS_access_key_id: str, awskeyid used for authentication
             AWS_secret_access_key: str, aws secretacesskey used for authentication
             region_name: str, region name where instance will be braught up
             imageId: str, AMI image id of base os
@@ -54,13 +54,13 @@ class Instance:
 
         self.ec2_client = boto3.client(
             "ec2",
-            aws_access_key_id=AWS_key_id,
+            aws_access_key_id=AWS_access_key_id,
             aws_secret_access_key=AWS_secret_access_key,
             region_name=region_name,
         )
         ec2_resource = boto3.resource(
             "ec2",
-            aws_access_key_id=AWS_key_id,
+            aws_access_key_id=AWS_access_key_id,
             aws_secret_access_key=AWS_secret_access_key,
             region_name=region_name,
         )

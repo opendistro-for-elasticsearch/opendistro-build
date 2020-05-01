@@ -137,10 +137,11 @@ class ODFEInstaller:
                     "description": "Installing kibana",
                     "command": "sudo apt-get install opendistroforelasticsearch-kibana -y",
                 },
-                {
-                    "description" : "Add message of the day",
-                    "command": " sudo rm -f !(00-*|50-*) && echo  -e 'echo \t\t\tOpen Distro for Elastic Search AMI\necho \t\t\thttps://opendistro.github.io'  | sudo tee /etc/update-motd.d/00-header > /dev/null"
-                }
+                # couldnt figure this out | leaving this for now  as this is not that important
+                # {
+                #     "description" : "Add message of the day",
+                #     "command": " sudo rm -f !(00-*|50-*) && echo  -e 'echo \t\t\tOpen Distro for Elastic Search AMI\necho \t\t\thttps://opendistro.github.io'  | sudo tee /etc/update-motd.d/00-header > /dev/null"
+                # }
             ]
         elif self.os == "amazonLinux":
             commands =  [
