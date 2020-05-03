@@ -164,7 +164,7 @@ def main():
     
     logging.info("Starting AMI creation with following config")
     for var in required_environment_variables:
-        logging.info(f'${var} : ${environ[var]}')
+        logging.info(f'{var} : {environ[var]}')
 
     AMI_builder(
         AWS_access_key_id=environ["AWS_ACCESS_KEY_ID"],

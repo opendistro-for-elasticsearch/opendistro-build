@@ -64,6 +64,7 @@ class Instance:
             aws_secret_access_key=AWS_secret_access_key,
             region_name=region_name,
         )
+        self.key_pair_name = "ODFEAMIInstanceKey"
         self.key_path = self._create_key_pair()
         logging.info("Creating instance")
         self.instance = ec2_resource.create_instances(
@@ -71,10 +72,11 @@ class Instance:
             MinCount=1,
             MaxCount=1,
             InstanceType="t3a.2xlarge",
-            KeyName="ODFEAMIInstanceKey",
+            KeyName=self.key_pair_name,
             SecurityGroupIds=[security_group_id],
             AdditionalInfo="ODFE AMI",
         )[0]
+        logging.info(f"Instance created with instance id {self.instance.instance_id}")
         self.os = os
         self.AMI_name = AMI_name
         self.RPM_package_version = RPM_package_version
@@ -109,18 +111,19 @@ class Instance:
         """
         # check if keypair already exists
         try:
-            self.ec2_client.describe_key_pairs(KeyNames=["ODFEAMIInstanceKey"])
+            logging.debug("Checking if keypair already exists")
+            self.ec2_client.describe_key_pairs(KeyNames=[self.key_pair_name])
         except Exception as e:
-            logging.debug("Key already doesn't exists")
+            logging.debug("Keypair doesn't exists")
         else:
             # delete the existing key
-            logging.debug("Keypair exists. Deleting key")
-            self.ec2_client.delete_key_pair(KeyName="ODFEAMIInstanceKey")
+            logging.debug("Keypair exists. Deleting keypair")
+            self.ec2_client.delete_key_pair(KeyName=self.key_pair_name)
         logging.debug("Creating key pair")
-        key = self.ec2_client.create_key_pair(KeyName="ODFEAMIInstanceKey")
-        with open("./ODFEAMIInstanceKey.pem", "w") as f:
+        key = self.ec2_client.create_key_pair(KeyName=self.key_pair_name)
+        with open(f"./{self.key_pair_name}.pem", "w") as f:
             f.write(key["KeyMaterial"])
-        return "./ODFEAMIInstanceKey.pem"
+        return f"./{self.key_pair_name}.pem"
 
     def install_ODFE(self):
         """
@@ -175,7 +178,7 @@ class Instance:
         logging.info("Terminating instance")
         self.instance.terminate()
         self.instance.wait_until_terminated()
-        logging.info("Deleting key ODFEAMIInstanceKey")
+        logging.info(f"Deleting key {self.key_pair_name}")
         os.remove(self.key_path)
-        self.ec2_client.delete_key_pair(KeyName="ODFEAMIInstanceKey")
+        self.ec2_client.delete_key_pair(KeyName=self.key_pair_name)
         logging.info("Instance has been terminated")
