@@ -3,6 +3,9 @@ name: Check Plugin Availability
 on:
   schedule:
     - cron: '30 9 * * *'
+  repository_dispatch:
+    types: [check_plugin]
+    
 jobs:
   plugin-avilability:
     name: Check Plugin Availability
