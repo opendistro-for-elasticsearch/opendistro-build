@@ -3,7 +3,7 @@ CURRENT_NO_PLUGINS=4
 plugin_arr=()
 unavailable_plugin=()
 available_plugin=()
-PLUGINS="opendistro-security/opendistro_security_kibana_plugin opendistro-alerting/opendistro-alerting opendistro-index-management/opendistro_index_management_kibana opendistro-sql-kibana/sql-kibana"
+PLUGINS="opendistro-anomaly-detection/opendistro-anomaly-detection-kibana opendistro-security/opendistro_security_kibana_plugin opendistro-alerting/opendistro-alerting opendistro-index-management/opendistro_index_management_kibana opendistro-sql-kibana/sql-kibana"
 cd kibana/bin
 ls -ltr
 OD_VERSION=`./version-info --od`
