@@ -50,6 +50,7 @@ ospackage {
     requires('opendistro-job-scheduler', baseODPluginsVersion, GREATER | EQUAL)
     requires('opendistro-index-management', baseODPluginsVersion, GREATER | EQUAL)
     requires('opendistro-knn', baseODPluginsVersion, GREATER | EQUAL)
+    requires('opendistro-anomaly-detection', baseODPluginsVersion, GREATER | EQUAL)
 
     requires('opendistro-alerting', nextODPluginsVersion, LESS)
     requires('opendistro-sql', nextODPluginsVersion, LESS)
@@ -58,6 +59,7 @@ ospackage {
     requires('opendistro-job-scheduler', nextODPluginsVersion, LESS)
     requires('opendistro-index-management', nextODPluginsVersion, LESS)
     requires('opendistro-knn', nextODPluginsVersion, LESS)
+    requires('opendistro-anomaly-detection', nextODPluginsVersion, LESS)
  
     packager = 'Amazon'
     vendor = 'Amazon'
