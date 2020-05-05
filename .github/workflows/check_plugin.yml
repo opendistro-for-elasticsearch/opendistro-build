@@ -5,7 +5,7 @@ on:
     - cron: '30 9 * * *'
   repository_dispatch:
     types: [check_plugin]
-    
+
 jobs:
   plugin-avilability:
     name: Check Plugin Availability
@@ -21,7 +21,7 @@ jobs:
       - name: Checking Availability
         run: |
           #!/bin/bash
-          CURRENT_NO_PLUGINS=7
+          CURRENT_NO_PLUGINS=8
           plugin_arr=()
           unavailable_plugin=()
           available_plugin=()
