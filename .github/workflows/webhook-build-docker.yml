@@ -1,5 +1,6 @@
 name: Webhook Build ES Docker on Dispatch
 on: repository_dispatch
+  types: [Build_ES_Docker]
 jobs:
   build-es-docker:
     strategy:
