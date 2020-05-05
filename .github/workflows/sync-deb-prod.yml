@@ -1,0 +1,3 @@
+name: Sync Deb artifacts to Prod
+on: repository_dispatch
+jobs:
