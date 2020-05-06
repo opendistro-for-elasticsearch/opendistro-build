@@ -72,6 +72,9 @@ spec:
           - mountPath: /usr/share/elasticsearch/data
             name: data
             subPath: {{ .Values.elasticsearch.data.persistence.subPath }}
+{{- if .Values.elasticsearch.extraInitContainers }}
+{{ toYaml .Values.elasticsearch.extraInitContainers| indent 6 }}
+{{- end }}
     {{- with .Values.elasticsearch.data.affinity }}
       affinity:
 {{ toYaml . | indent 8 }}
@@ -179,6 +182,9 @@ spec:
           name: admin-certs
           subPath: admin-root-ca.pem
          {{- end }}
+{{- if .Values.elasticsearch.extraVolumeMounts }}
+{{ toYaml .Values.elasticsearch.extraVolumeMounts | indent 8 }}
+{{- end }}
       volumes:
       - name: config
         secret:
@@ -208,6 +214,9 @@ spec:
           claimName: {{ .Values.elasticsearch.data.persistence.existingClaim }}
       {{- end }}
       {{- end }}
+{{- if .Values.elasticsearch.extraVolumes }}
+{{ toYaml .Values.elasticsearch.extraVolumes | indent 6 }}
+{{- end }}
   {{- if and .Values.elasticsearch.data.persistence.enabled (not .Values.elasticsearch.data.persistence.existingClaim) }}
   volumeClaimTemplates:
   - metadata:

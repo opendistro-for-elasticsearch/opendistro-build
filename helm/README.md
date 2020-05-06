@@ -564,7 +564,9 @@ The following table lists the configurable parameters of the opendistro elastics
 | `elasticsearch.configDirectory`                           | Location of elasticsearch configuration                                                                                                                  | `"/usr/share/elasticsearch/config"`                                     |
 | `elasticsearch.maxMapCount`                               | elasticsearch max_map_count                                                                                                                              | `262144`                                                                |
 | `elasticsearch.extraEnvs`                                 | Extra environments variables to be passed to elasticsearch services                                                                                      | `[]`                                                                    |
-
+| `elasticsearch.extraVolumes`                              | Array of extra volumes to be added                                                                                                                       | `[]`                                                                    |
+| `elasticsearch.extraVolumeMounts`                         | Array of extra volume mounts to be added                                                                                                                 | `[]`                                                                    |
+| `elasticsearch.extraInitContainers`                       | Array of extra init containers                                                                                                                           | `[]`                                                                    |
 
 ## Acknowledgements
 * [Kalvin Chau](https://github.com/kalvinnchau) (Software Engineer - Viasat) for all his help with the Kubernetes internals, certs, and debugging
