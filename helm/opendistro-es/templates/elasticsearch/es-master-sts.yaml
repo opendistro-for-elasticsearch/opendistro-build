@@ -77,6 +77,9 @@ spec:
           - mountPath: /usr/share/elasticsearch/data
             name: data
             subPath: {{ .Values.elasticsearch.master.persistence.subPath }}
+{{- if .Values.elasticsearch.extraInitContainers }}
+{{ toYaml .Values.elasticsearch.extraInitContainers| indent 6 }}
+{{- end }}
       containers:
       - name: elasticsearch
         securityContext:
@@ -223,6 +226,9 @@ spec:
           name: tenants
           subPath: tenants.yml
         {{- end }}
+{{- if .Values.elasticsearch.extraVolumeMounts }}
+{{ toYaml .Values.elasticsearch.extraVolumeMounts | indent 8 }}
+{{- end }}
       {{- end }}
       volumes:
       - name: config
@@ -283,6 +289,9 @@ spec:
           claimName: {{ .Values.elasticsearch.master.persistence.existingClaim }}
       {{- end }}
       {{- end }}
+{{- if .Values.elasticsearch.extraVolumes }}
+{{ toYaml .Values.elasticsearch.extraVolumes | indent 6 }}
+{{- end }}
   {{- if and .Values.elasticsearch.master.persistence.enabled (not .Values.elasticsearch.master.persistence.existingClaim) }}
   volumeClaimTemplates:
   - metadata:
