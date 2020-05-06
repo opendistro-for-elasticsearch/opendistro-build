@@ -65,6 +65,9 @@ spec:
         - vm.max_map_count={{ .Values.elasticsearch.maxMapCount }}
         securityContext:
           privileged: true
+{{- if .Values.elasticsearch.extraInitContainers }}
+{{ toYaml .Values.elasticsearch.extraInitContainers| indent 6 }}
+{{- end }}
       containers:
       - name: elasticsearch
         env:
@@ -164,6 +167,9 @@ spec:
           name: admin-certs
           subPath: admin-root-ca.pem
         {{- end }}
+{{- if .Values.elasticsearch.extraVolumeMounts }}
+{{ toYaml .Values.elasticsearch.extraVolumeMounts | indent 8 }}
+{{- end }}
       volumes:
       - name: config
         secret:
@@ -183,4 +189,7 @@ spec:
         secret:
           secretName: {{ .Values.elasticsearch.ssl.admin.existingCertSecret }}
       {{- end }}
+{{- if .Values.elasticsearch.extraVolumes }}
+{{ toYaml .Values.elasticsearch.extraVolumes | indent 6 }}
+{{- end }}
 {{- end }}
