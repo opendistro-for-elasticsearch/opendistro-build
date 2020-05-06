@@ -1,6 +1,7 @@
 name: Webhook Build ES Docker on Dispatch
-on: repository_dispatch
-  types: [Build_ES_Docker]
+on: 
+  repository_dispatch:
+    types: [build-docker]
 jobs:
   build-es-docker:
     strategy:
@@ -48,7 +49,6 @@ jobs:
         java-version: ${{ matrix.java }}
 
     - name: Starting ES Docker Build
-      if: github.event.action == 'Build_ES_Docker'
       env:
         DOCKER_USER: ${{ secrets.DOCKER_USER }}
         DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
