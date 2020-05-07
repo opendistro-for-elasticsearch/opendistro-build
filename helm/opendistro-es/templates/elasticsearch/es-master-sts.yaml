@@ -188,35 +188,9 @@ spec:
           subPath: admin-root-ca.pem
         {{- end }}
         {{- if .Values.elasticsearch.securityConfig.enabled }}
-        {{- if .Values.elasticsearch.securityConfig.actionGroupsSecret }}
-        - mountPath: {{ .Values.elasticsearch.securityConfig.path }}/action_groups.yml
-          name: action-groups
-          subPath: action_groups.yml
-        {{- end }}
-        {{- if .Values.elasticsearch.securityConfig.configSecret }}
-        - mountPath: {{ .Values.elasticsearch.securityConfig.path }}/config.yml
+        {{- if .Values.elasticsearch.securityConfig.config }}
+        - mountPath: {{ .Values.elasticsearch.securityConfig.path }} 
           name: security-config
-          subPath: config.yml
-        {{- end }}
-        {{- if .Values.elasticsearch.securityConfig.internalUsersSecret }}
-        - mountPath: {{ .Values.elasticsearch.securityConfig.path }}/internal_users.yml
-          name: internal-users-config
-          subPath: internal_users.yml
-        {{- end }}
-        {{- if .Values.elasticsearch.securityConfig.rolesSecret }}
-        - mountPath: {{ .Values.elasticsearch.securityConfig.path }}/roles.yml
-          name: roles
-          subPath: roles.yml
-        {{- end }}
-        {{- if .Values.elasticsearch.securityConfig.rolesMappingSecret }}
-        - mountPath: {{ .Values.elasticsearch.securityConfig.path }}/roles_mapping.yml
-          name: role-mapping
-          subPath: roles_mapping.yml
-        {{- end }}
-        {{- if .Values.elasticsearch.securityConfig.tenantsSecret }}
-        - mountPath: {{ .Values.elasticsearch.securityConfig.path }}/tenants.yml
-          name: tenants
-          subPath: tenants.yml
         {{- end }}
       {{- end }}
       volumes:
@@ -238,35 +212,10 @@ spec:
         secret:
           secretName: {{ .Values.elasticsearch.ssl.admin.existingCertSecret }}
       {{- end }}
-      {{- if .Values.elasticsearch.securityConfig.actionGroupsSecret }}
-      - name: action-groups
-        secret:
-          secretName: {{ .Values.elasticsearch.securityConfig.actionGroupsSecret }}
-      {{- end }}
-      {{- if .Values.elasticsearch.securityConfig.configSecret }}
+      {{- if .Values.elasticsearch.securityConfig.config }}
       - name: security-config
         secret:
-          secretName: {{ .Values.elasticsearch.securityConfig.configSecret }}
-      {{- end }}
-      {{- if .Values.elasticsearch.securityConfig.internalUsersSecret }}
-      - name: internal-users-config
-        secret:
-          secretName: {{ .Values.elasticsearch.securityConfig.internalUsersSecret }}
-      {{- end }}
-      {{- if .Values.elasticsearch.securityConfig.rolesSecret }}
-      - name: roles
-        secret:
-          secretName: {{ .Values.elasticsearch.securityConfig.rolesSecret }}
-      {{- end }}
-      {{- if .Values.elasticsearch.securityConfig.rolesMappingSecret }}
-      - name: role-mapping
-        secret:
-          secretName: {{ .Values.elasticsearch.securityConfig.rolesMappingSecret }}
-      {{- end -}}
-      {{- if .Values.elasticsearch.securityConfig.tenantsSecret }}
-      - name: tenants
-        secret:
-          secretName: {{ .Values.elasticsearch.securityConfig.tenantsSecret }}
+          secretName: {{ template "opendistro-es.fullname" . }}-es-config-secrets
       {{- end }}
       {{- if not .Values.elasticsearch.master.persistence.enabled }}
       - name: "data"
