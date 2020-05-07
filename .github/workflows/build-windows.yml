@@ -17,12 +17,16 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
+
+    - name: Set up JDK
+      uses: actions/setup-java@v1
+      with:
+        java-version: 13
+
     - name: Build Windows
       run: |
         set -e
         set -u
-        export JAVA_HOME=/openjdk12
-        export PATH=$JAVA_HOME:$PATH
         cd elasticsearch/linux_distributions
         chmod 755 opendistro-windows-build.sh
         sh ./opendistro-windows-build.sh
@@ -38,6 +42,12 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
+
+    - name: Set up JDK
+      uses: actions/setup-java@v1
+      with:
+        java-version: 13
+
     - name: Build Kibana
       run: |
         cd kibana/linux_distributions 
@@ -51,8 +61,8 @@ jobs:
       matrix:
         java: [13]
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
         with:
            repository: opendistro-for-elasticsearch/index-management
            ref: master  
@@ -62,6 +72,7 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
+
       - name: Set Up JDK ${{ matrix.java }}
         uses: actions/setup-java@v1
         with:
@@ -108,8 +119,8 @@ jobs:
       matrix:
         java: [13]
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
         with:
            repository: opendistro-for-elasticsearch/alerting
            ref: master  
@@ -124,7 +135,7 @@ jobs:
         with:
           java-version: ${{ matrix.java }}
         
-      - name: RUN ES and ISM IntegTest
+      - name: RUN ES and Alerting IntegTest
         run: |
           dir
           python -m pip install --upgrade pip
