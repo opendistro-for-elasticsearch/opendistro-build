@@ -61,8 +61,8 @@ jobs:
       matrix:
         java: [13]
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v1
+      - uses: actions/checkout@v1
         with:
            repository: opendistro-for-elasticsearch/index-management
            ref: master  
@@ -119,8 +119,8 @@ jobs:
       matrix:
         java: [13]
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v1
+      - uses: actions/checkout@v1
         with:
            repository: opendistro-for-elasticsearch/alerting
            ref: master  
