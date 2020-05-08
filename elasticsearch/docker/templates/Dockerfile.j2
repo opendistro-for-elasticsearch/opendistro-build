@@ -99,7 +99,7 @@ RUN set -ex && for esdirs in config data logs; do \
     done
 
 # Install the required modules
-RUN for plugin_path in `ls /tmp/plugins/`; do \
+RUN for plugin_path in {{ plugin_url_paths }}; do \
       elasticsearch-plugin install --batch file:/tmp/plugins/$plugin_path; \
     done
 
