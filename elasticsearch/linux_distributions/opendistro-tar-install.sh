@@ -27,7 +27,7 @@ PA_AGENT_JAVA_OPTS="-Dlog4j.configurationFile=$ES_HOME/plugins/opendistro_perfor
 
 ES_MAIN_CLASS="com.amazon.opendistro.elasticsearch.performanceanalyzer.PerformanceAnalyzerApp" \
 ES_ADDITIONAL_CLASSPATH_DIRECTORIES=plugins/opendistro_performance_analyzer \
-ES_JAVA_OPTS=$PA_AGENT_JAVA_OPTS 
+ES_JAVA_OPTS=$PA_AGENT_JAVA_OPTS
 
 if ! grep -q '## OpenDistro Performance Analyzer' $ES_HOME/config/jvm.options; then
    CLK_TCK=`/usr/bin/getconf CLK_TCK`
@@ -38,6 +38,18 @@ if ! grep -q '## OpenDistro Performance Analyzer' $ES_HOME/config/jvm.options; t
    echo "-Djava.security.policy=$ES_HOME/plugins/opendistro_performance_analyzer/pa_config/es_security.policy" >> $ES_HOME/config/jvm.options
 fi
 echo "done plugins"
+
+#Move k-NN library in the /usr/lib
+echo "Fetching kNN library"
+FILE=/usr/lib/libKNNIndexV1_7_3_6.so
+if sudo test -f "$FILE"; then
+    echo "FILE EXISTS: removing $FILE"
+    sudo rm $FILE
+fi
+wget https://d3g5vo6xdbdb9a.cloudfront.net/downloads/k-NN-lib/libKNNIndexV1_7_3_6.zip \
+&& unzip libKNNIndexV1_7_3_6.zip \
+&& sudo mv libKNNIndexV1_7_3_6.so /usr/lib \
+&& rm libKNNIndexV1_7_3_6.zip
 
 ##Start Elastic Search
 bash $ES_HOME/bin/elasticsearch "$@"

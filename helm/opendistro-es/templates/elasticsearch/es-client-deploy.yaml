@@ -26,7 +26,7 @@ spec:
   replicas: {{ .Values.elasticsearch.client.replicas }}
   selector:
     matchLabels:
-{{ include "opendistro-es.labels.standard" . | indent 6 }}
+{{ include "opendistro-es.labels.selector" . | indent 6 }}
       role: client
   template:
     metadata:
@@ -101,7 +101,7 @@ spec:
 {{ toYaml .Values.elasticsearch.client.resources | indent 12 }}
         # Official Image from Open Distro Team
         image: {{ .Values.elasticsearch.image }}:{{ .Values.elasticsearch.imageTag }}
-        imagePullPolicy: Always
+        imagePullPolicy: {{ .Values.elasticsearch.imagePullPolicy | default "Always" | quote }}
         ports:
         - containerPort: 9200
           name: http

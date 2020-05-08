@@ -70,6 +70,7 @@ ls -ltr $TARGET_DIR
 $ROOT/install4j*/bin/install4jc -d $TARGET_DIR/EXE -D sourcedir=./Windowsfiles/$PACKAGE,version=$OD_VERSION --license=L-M8-AMAZON_DEVELOPMENT_CENTER_INDIA_PVT_LTD#50047687020001-3rhvir3mkx479#484b6 $ROOT/ODFE-Kibana.install4j
 
 #Copy to s3
-aws s3 cp $TARGET_DIR/EXE/*.exe s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/odfe-executables/
-aws s3 cp $TARGET_DIR/odfe-$OD_VERSION-kibana.zip s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/ode-windows-zip/
+aws s3 cp $TARGET_DIR/EXE/*.exe s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/staging/odfe-executable/
+aws s3 cp $TARGET_DIR/odfe-$OD_VERSION-kibana.zip s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/staging/odfe-window-zip/
+aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/*"
 rm -rf ws
