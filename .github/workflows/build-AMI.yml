@@ -1,9 +1,9 @@
 name: Build ODFE AMI
 
 on:
-  push:
-    branches:
-      - build-AMI
+  repository_dispatch:
+    types: [build-ami]
+    
 jobs:
   build:
     runs-on: ubuntu-latest
