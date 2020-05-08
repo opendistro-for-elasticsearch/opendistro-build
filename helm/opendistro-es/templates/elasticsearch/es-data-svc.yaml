@@ -26,10 +26,6 @@ spec:
   ports:
   - port: 9300
     name: transport
-  - port: 9200
-    name: http
-  - port: 9600
-    name: metrics
   clusterIP: None
   selector:
     role: data
