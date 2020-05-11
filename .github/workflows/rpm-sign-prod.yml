@@ -1,8 +1,8 @@
-name: Sync Deb artifacts to Production
+name: Sync RPM artifacts to Production
 
 on:
   repository_dispatch:
-    types: [sync-deb-prod]
+    types: [sync-rpm-prod]
   
 jobs:
   signing-artifacts:   
