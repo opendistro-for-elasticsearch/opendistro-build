@@ -1,6 +1,6 @@
 name: Sync Deb artifacts to Prod
 on: 
-  repository_dispatch
+  repository_dispatch:
     types: [sync-deb-prod]
 jobs:
   Sync-Deb-Prod:
