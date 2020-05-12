@@ -1,7 +1,7 @@
 name: Webhook Build ES Docker on Dispatch
 on: 
-  schedule:
-    - cron: '30 10 * * *'
+#   schedule:
+#     - cron: '30 10 * * *'
   repository_dispatch:
     types: [build-docker]
 jobs:
