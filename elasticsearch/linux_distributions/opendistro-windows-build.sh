@@ -32,6 +32,8 @@ do
   $ROOT/elasticsearch-$ES_VERSION/bin/elasticsearch-plugin install --batch "https://d3g5vo6xdbdb9a.cloudfront.net/downloads/elasticsearch-plugins/$plugin_path"
 done
 
+bash $ROOT/elasticsearch-$ES_VERSION/plugins/opendistro_security/tools/install_demo_configuration.sh -y -i -s
+cat $ROOT/elasticsearch-$ES_VERSION/config/elasticsearch.yml
 cp -r elasticsearch-$ES_VERSION/* $PACKAGE-$OD_VERSION/
 #Making zip
 zip -r odfe-$OD_VERSION.zip $PACKAGE-$OD_VERSION
