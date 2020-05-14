@@ -21,9 +21,9 @@ The release includes the following features, enhancements, infrastructure and do
 
 * Change [#414](https://github.com/opendistro-for-elasticsearch/sql/pull/414): Invalidate HTTP GET method.
 
-## **Features**
+## Features
 
-### **New!🔥 ANOMALY DETECTION**
+### New!🔥 ANOMALY DETECTION
 
 * Add state and error to profile API [(#84)](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/84)
 * Preview detector on the fly [(#72)](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/72)
@@ -35,7 +35,7 @@ The release includes the following features, enhancements, infrastructure and do
 * Circuit breaker [(#10](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/10) [, #7)](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/7)
 * Stats collection [(#8)](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/8)
 
-### **New!🔥 ANOMALY DETECTION KIBANA UI**
+### New!🔥 ANOMALY DETECTION KIBANA UI
 
 * Add functionality to start & stop detector [PR #12](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/12)
 * Add side navigation bar [PR #19](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/12)
@@ -56,15 +56,14 @@ The release includes the following features, enhancements, infrastructure and do
 * Security Update: Fix CSV injection issue. ([#447](https://github.com/opendistro-for-elasticsearch/sql/pull/447))
 * Security Update: Anonymize sensitive data in queries exposed to RestSqlAction logs. ([#419](https://github.com/opendistro-for-elasticsearch/sql/pull/419))
 
-### **New!🔥 SQL CLI
-**
+### New!🔥 SQL CLI
 
 * Feature [#12](https://github.com/opendistro-for-elasticsearch/sql-cli/pull/12): Initial development for SQL CLI
     * prototype launch: app -> check connection -> take input -> query ES -> serve raw results(format=jdbc)
     * enrich auto-completion corpus
     * Convert to vertical output format if fields length is larger than terminal window
     * Add style to output fields name. Add logic to confirm choice from user for vertical output
-    * Add single query without getting into console. Integrate "_explain" api
+    * Add single query without getting into console. Integrate "explain" api
     * Add config base logic. Add pagination for long output
     * Add nice little welcome banner.
     * Add params -f for format_output (jdbc/raw/csv), -v for vertical display
@@ -85,8 +84,7 @@ The release includes the following features, enhancements, infrastructure and do
 
 * Cursor integration. ([#76](https://github.com/opendistro-for-elasticsearch/sql-jdbc/pull/76))
 
-### **New!🔥 SQL KIBANA UI
-**
+### New!🔥 SQL KIBANA UI
 
 * Initialize SQL Kibana plugin ([#1](https://github.com/opendistro-for-elasticsearch/sql-kibana-plugin/pull/1))
 * SQL Kibana plugin functionality implementation ([#2](https://github.com/opendistro-for-elasticsearch/sql-kibana-plugin/pull/2))
@@ -120,16 +118,14 @@ The release includes the following features, enhancements, infrastructure and do
 * Updated lastest yarn.lock for accurate dependency alert ([#62](https://github.com/opendistro-for-elasticsearch/sql-kibana-plugin/pull/62))
 * Updated snapshot ([#63](https://github.com/opendistro-for-elasticsearch/sql-kibana-plugin/pull/63))
 
-### **New!🔥 SQL ODBC Driver
-**
+### New!🔥 SQL ODBC Driver
 
 * Add support for connection string abbreviations ([#7)](https://github.com/opendistro-for-elasticsearch/sql-odbc/pull/7)
 * Connection string refactoring and registry updates ([#2](https://github.com/opendistro-for-elasticsearch/sql-odbc/pull/2))
 * Simple Windows Installer ([#27)](https://github.com/opendistro-for-elasticsearch/sql-odbc/pull/27)
 * Add fetch_size for pagination support ([#78)](https://github.com/opendistro-for-elasticsearch/sql-odbc/pull/78)
 
-### **INDEX STATE MANAGEMENT
-**
+### INDEX STATE MANAGEMENT
 
 * Adds rollover conditions into info object [(#208)](https://github.com/opendistro-for-elasticsearch/index-management/pull/208)
 
@@ -137,13 +133,13 @@ The release includes the following features, enhancements, infrastructure and do
 
 * Support cosine similarity ([#90](https://github.com/opendistro-for-elasticsearch/k-NN/pull/90)). Note: This is an experimental feature.
 
-## **Enhancements**
+## Enhancements
 
-### **ALERTING KIBANA UI**
+### ALERTING KIBANA UI
 
 * Creates monitor with anomaly detector. - [(#123)](https://github.com/opendistro-for-elasticsearch/alerting-kibana-plugin/pull/123)
 
-### **New!🔥 ANOMALY DETECTION**
+### New!🔥 ANOMALY DETECTION
 
 * Stats API: moved detector count call outside transport layer and make asynchronous [PR #108](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/108)
 * Change AD result index rollover setting [PR #100](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/100)
@@ -175,7 +171,7 @@ The release includes the following features, enhancements, infrastructure and do
 * Add async implementation of getFeaturesForPeriod. [PR #15](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/15)
 * Add test evaluating anomaly results [PR #13](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/13)
 
-### **New!🔥 ANOMALY DETECTION KIBANA UI**
+### New!🔥 ANOMALY DETECTION KIBANA UI
 
 * Add window delay [PR #4](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/4)
 * Add empty dashboard page [PR #9](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/9)
@@ -204,8 +200,7 @@ The release includes the following features, enhancements, infrastructure and do
 * Use scientific notation when number less than 0.01 on live chart [PR #124](https://github.com/opendistro-for-elasticsearchanomaly-detection-kibana-plugin/pull/124)
 * Use bucket aggregation for anomaly distribution [PR #126](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/126)
 
-### **INDEX STATE MANAGEMENT
-**
+### INDEX STATE MANAGEMENT
 
 * Adds isIdempotent method to each step and updates ManagedIndexRunner to use it [(#165)](https://github.com/opendistro-for-elasticsearch/index-management/pull/165)
 * Adds logs, fix for index creation date -1L, nullable checks [(#170)](https://github.com/opendistro-for-elasticsearch/index-management/pull/170)
@@ -217,14 +212,14 @@ The release includes the following features, enhancements, infrastructure and do
 * Add stats to track the number of requests and errors for KNN query and index operations. ([#89](https://github.com/opendistro-for-elasticsearch/k-NN/pull/89))
 * Switched the default value of the circuit breaker from 60% to 50%. ([#92](https://github.com/opendistro-for-elasticsearch/k-NN/pull/92))
 
-### **New!🔥 **SQL CLI
+### New!🔥SQL CLI
 
 * Added github action workflow for CI/CD ([#31](https://github.com/opendistro-for-elasticsearch/sql-cli/pull/31))
 * Update github action test and build workflow to spin up ES instance ([#35)](https://github.com/opendistro-for-elasticsearch/sql-cli/pull/35)
 
-## **Bug fixes**
+## Bug fixes
 
-### **New!🔥 ANOMALY DETECTION**
+### New!🔥ANOMALY DETECTION
 
 * Change setting name so that rpm/deb has the same name as zip [PR #109](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/109)
 * Can't start AD job if detector has no feature [PR #76](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/76)
@@ -234,7 +229,7 @@ The release includes the following features, enhancements, infrastructure and do
 * Revert "merge changes from alpha branch: change setting name and fix … [PR #38](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/38)
 * Fix stop detector api to use correct request [PR #25](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/25)
 
-### **New!🔥 ANOMALY DETECTION KIBANA UI**
+### New!🔥ANOMALY DETECTION KIBANA UI
 
 * Fix dashboard width [PR #29](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/29)
 * Fix dashboard bugs [PR #35](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/35)
@@ -274,8 +269,7 @@ The release includes the following features, enhancements, infrastructure and do
 * Fix more live chart bugs [PR #125](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/125)
 * Fix loading bug on live chart [PR #129](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/129)
 
-### **INDEX STATE MANAGEMENT
-**
+### INDEX STATE MANAGEMENT
 
 * Delete and close failing during snapshot in progress [(#172)](https://github.com/opendistro-for-elasticsearch/index-management/pull/172)
 
@@ -284,7 +278,7 @@ The release includes the following features, enhancements, infrastructure and do
 * Added validation in VectorFieldMapper to check for vector values of NaN and throwing an Exception if so. ([#100)](https://github.com/opendistro-for-elasticsearch/k-NN/pull/100)
 * Fix debugging integration tests ([#78)](https://github.com/opendistro-for-elasticsearch/k-NN/pull/78)
 
-### **SECURITY**
+### SECURITY
 
 * Implemented APIs and datamodel to configure nodes_dn dynamically #[445](https://github.com/opendistro-for-elasticsearch/security/pull/445) (backported from master #[362](https://github.com/opendistro-for-elasticsearch/security/pull/362))
 * Performance improvement by memorizing results of resolveIndexPatterns for Bulk requests (backported from master #[309](https://github.com/opendistro-for-elasticsearch/security/pull/309))
@@ -306,7 +300,7 @@ The release includes the following features, enhancements, infrastructure and do
 * Add support for strict_date_optional_time. ([#412](https://github.com/opendistro-for-elasticsearch/sql/pull/412))
 * Field function name letter case preserved in select with group by. ([#381](https://github.com/opendistro-for-elasticsearch/sql/pull/381))
 
-### **New!🔥 **SQL CLI
+### New!🔥SQL CLI
 
 * Initial development for SQL CLI ([#12)](https://github.com/opendistro-for-elasticsearch/sql-cli/pull/12)
     * Fix the logic of passing self-constructed settings
@@ -318,7 +312,7 @@ The release includes the following features, enhancements, infrastructure and do
 * Fix test failures ([#19](https://github.com/opendistro-for-elasticsearch/sql-cli/pull/19))
 * Update usage gif, fix http/https issue when connect to AWS Elasticsearch ([#26](https://github.com/opendistro-for-elasticsearch/sql-cli/pull/26))
 
-### **New!🔥 **SQL KIBANA UI
+### New!🔥SQL KIBANA UI
 
 * Fixed the issue that response failed to be delivered in the console ([#10](https://github.com/opendistro-for-elasticsearch/sql-kibana-plugin/pull/10))
 * Fixed the issue that aggregation result not delivered in the table ([#26](https://github.com/opendistro-for-elasticsearch/sql-kibana-plugin/pull/26))
@@ -327,15 +321,15 @@ The release includes the following features, enhancements, infrastructure and do
 * Fixed: fatal errors occur when import @elastic/eui modules in docker images ([#43](https://github.com/opendistro-for-elasticsearch/sql-kibana-plugin/pull/43))
 * BugFix: Corrected the downloaded .csv/.txt files to proper format ([#50](https://github.com/opendistro-for-elasticsearch/sql-kibana-plugin/pull/50))
 
-### **New!🔥 **SQL ODBC Driver
+### New!🔥SQL ODBC Driver
 
 * [Fix AWS authentication for Tableau on Mac](https://github.com/opendistro-for-elasticsearch/sql-odbc/pull/9)
 * [Mac installer fixes](https://github.com/opendistro-for-elasticsearch/sql-odbc/pull/73)
 * [Fix General installer components](https://github.com/opendistro-for-elasticsearch/sql-odbc/pull/69)
 
-## **Infra Updates**
+## Infra Updates
 
-### **New!🔥 **ANOMALY DETECTION
+### New!🔥ANOMALY DETECTION
 
 * Add release notes for ODFE 1.7.0 [(#120](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/120) [, #119)](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/119)
 * Open Distro Release 1.7.0 [(#106)](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/106)
@@ -352,7 +346,7 @@ The release includes the following features, enhancements, infrastructure and do
 * Build artifacts for rpm, deb, zip [(#5)](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/5)
 * Update test-workflow.yml [(#2)](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/2)
 
-### **New!🔥 **ANOMALY DETECTION KIBANA UI
+### New!🔥ANOMALY DETECTION KIBANA UI
 
 * Initial commit [here](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/commit/0e5ace28588d311ee9a632c4783ca3e06ad6b187)
 * Fix unit test issue [PR #14](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/14)
@@ -366,13 +360,13 @@ The release includes the following features, enhancements, infrastructure and do
 
 * Create Github action that automatically runs integration tests against docker image whenever code is checked into master or opendistro branch. ([#73](https://github.com/opendistro-for-elasticsearch/k-NN/pull/73))
 
-### **New!🔥 **SQL CLI
+### New!🔥SQL CLI
 
 * Feature [#28](https://github.com/opendistro-for-elasticsearch/sql-cli/pull/28) :Added tox scripts for testing automation
 
 ## Documentation Updates
 
-### **New!🔥 **ANOMALY DETECTION KIBANA UI
+### New!🔥ANOMALY DETECTION KIBANA UI
 
 * Create CONTRIBUTORS [here](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/commit/603b9e7a8bff522bbfc7f841d8e61143aaff7a6d)
 * Update README [here](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/commit/c1da0e52eb0bcb3beee23f642686661da634f7f4)
@@ -387,7 +381,7 @@ The release includes the following features, enhancements, infrastructure and do
 
 * More docs in reference manual and add architecture doc. ([#417](https://github.com/opendistro-for-elasticsearch/sql/pull/417))
 
-### **New!🔥 **SQL CLI
+### New!🔥SQL CLI
 
 * Update documentation and CLI naming ([#22](https://github.com/opendistro-for-elasticsearch/sql-cli/pull/22))
 * Update copyright to 2020 ([#32)](https://github.com/opendistro-for-elasticsearch/sql-cli/pull/32)
@@ -395,14 +389,13 @@ The release includes the following features, enhancements, infrastructure and do
 * Added CONTRIBUTORS.md ([#34](https://github.com/opendistro-for-elasticsearch/sql-cli/pull/34))
 * Polish README.md and test_plan.md ([#36](https://github.com/opendistro-for-elasticsearch/sql-cli/pull/36))
 
-### **New!🔥 SQL ODBC Driver
-**
+### New!🔥SQL ODBC Driver
 
 * [Pagination support design document](https://github.com/opendistro-for-elasticsearch/sql-odbc/pull/40)
 * [Update README for authentication & encryption configuration options](https://github.com/opendistro-for-elasticsearch/sql-odbc/pull/33)
 * [Instructions for signing installers](https://github.com/opendistro-for-elasticsearch/sql-odbc/pull/84)
 
-## **In development**
+## In development
 
 1. [Performance Analyzer RCA Engine](https://github.com/opendistro-for-elasticsearch/performance-analyzer-rca)
 
