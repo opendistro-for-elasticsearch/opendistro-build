@@ -14,7 +14,7 @@
 kibana:
   enabled: true
   image: amazon/opendistro-for-elasticsearch-kibana
-  imageTag: 1.6.0
+  imageTag: 1.7.0
   replicas: 1
   port: 5601
   externalPort: 443
@@ -426,7 +426,7 @@ elasticsearch:
   maxMapCount: 262144
 
   image: amazon/opendistro-for-elasticsearch
-  imageTag: 1.6.0
+  imageTag: 1.7.0
   ## Specifies the image pull policy. Can be "Always" or "IfNotPresent" or "Never".
   ## Default to "Always".
   imagePullPolicy: ""
