@@ -27,7 +27,7 @@ spec:
   replicas: {{ .Values.elasticsearch.data.replicas }}
   selector:
     matchLabels:
-{{ include "opendistro-es.labels.standard" . | indent 6 }}
+{{ include "opendistro-es.labels.selector" . | indent 6 }}
       role: data
   updateStrategy:
     type: {{ .Values.elasticsearch.data.updateStrategy }}
@@ -72,7 +72,7 @@ spec:
             subPath: {{ .Values.elasticsearch.data.persistence.subPath }}
     {{- with .Values.elasticsearch.data.affinity }}
       affinity:
-{{- toYaml . | indent 8 }}
+{{ toYaml . | indent 8 }}
     {{- end }}
       serviceAccountName: {{ template "opendistro-es.elasticsearch.serviceAccountName" . }}
       containers:
@@ -109,7 +109,7 @@ spec:
 {{- end }}
         # Official Image from Open Distro Team
         image: {{ .Values.elasticsearch.image }}:{{ .Values.elasticsearch.imageTag }}
-        imagePullPolicy: Always
+        imagePullPolicy: {{ .Values.elasticsearch.imagePullPolicy | default "Always" | quote }}
         # only publish the transport port
         ports:
         - containerPort: 9300

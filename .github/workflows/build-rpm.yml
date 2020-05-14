@@ -1,8 +1,10 @@
 name: Process RPM Artifacts
 
 on:
-  schedule:
-    - cron: '0 10 * * *'
+#   schedule:
+#     - cron: '0 10 * * *'
+  repository_dispatch:
+    types: [build-rpm]
   
 jobs:
   plugin-avilability:
@@ -19,8 +21,8 @@ jobs:
       - name: Checking Availability
         run: |
           #!/bin/bash
-          CURRENT_NO_PLUGINS=7
-          PLUGINS="opendistro-sql/opendistro_sql opendistro-alerting/opendistro_alerting opendistro-job-scheduler/opendistro-job-scheduler opendistro-security/opendistro_security performance-analyzer/opendistro_performance_analyzer opendistro-index-management/opendistro_index_management opendistro-knn/opendistro-knn"
+          CURRENT_NO_PLUGINS=8
+          PLUGINS="opendistro-anomaly-detection/opendistro-anomaly-detection opendistro-sql/opendistro_sql opendistro-alerting/opendistro_alerting opendistro-job-scheduler/opendistro-job-scheduler opendistro-security/opendistro_security performance-analyzer/opendistro_performance_analyzer opendistro-index-management/opendistro_index_management opendistro-knn/opendistro-knn"
           
           cd elasticsearch/bin
           ls -ltr

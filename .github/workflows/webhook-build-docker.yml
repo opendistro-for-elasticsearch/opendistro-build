@@ -1,5 +1,9 @@
 name: Webhook Build ES Docker on Dispatch
-on: repository_dispatch
+on: 
+#   schedule:
+#     - cron: '30 10 * * *'
+  repository_dispatch:
+    types: [build-docker]
 jobs:
   build-es-docker:
     strategy:
@@ -47,7 +51,6 @@ jobs:
         java-version: ${{ matrix.java }}
 
     - name: Starting ES Docker Build
-      if: github.event.action == 'Build_ES_Docker'
       env:
         DOCKER_USER: ${{ secrets.DOCKER_USER }}
         DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
@@ -184,7 +187,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
       - name: Build Kibana Docker
-        if: github.event.action == 'Build_ES_Docker'
         env:
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
           DOCKER_PASS: ${{ secrets.DOCKER_PASS }}

@@ -1,0 +1,55 @@
+name: Build ODFE AMI
+
+on:
+  repository_dispatch:
+    types: [build-ami]
+    
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.8
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r elasticsearch/AMI/requirements.txt
+    - name: Build ODFE AMI
+      env:
+        AWS_DEFAULT_REGION: "us-east-1"
+        AWS_ACCESS_KEY_ID: ${{ secrets.ODFE_AMI_AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.ODFE_AMI_AWS_SECRET_ACCESS_KEY }}
+      run: |
+        #!/bin/bash
+        cd elasticsearch/bin
+        export region_name="us-east-1"
+        export os="amazonLinux"
+        export security_group_id="sg-0ffdd3b008cfb0b63"
+    
+        
+        # please check this during the new release, are we getting the latest ami id
+        if [ "$os" == "amazonLinux" ];
+        then
+          latest_base_image_id=`aws ec2 describe-images --owners amazon\
+          --filters "Name=architecture,Values=x86_64"  "Name=name,Values=amzn2-ami-hvm-*-x86_64-gp2"\
+          --query 'sort_by(Images, &CreationDate)[-1].[ImageId]' --output 'text'`
+        elif [ "$os" == "ubuntu" ];
+        then
+          latest_base_image_id=`aws ec2 describe-images --owners 099720109477\
+          --filters "Name=architecture,Values=x86_64"  "Name=name,Values=ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*"\
+          --query 'sort_by(Images, &CreationDate)[-1].[ImageId]' --output 'text'`
+        else
+          echo "$os os is not yet supported"
+          exit 128
+        fi
+
+        export base_image_id=$latest_base_image_id 
+        export APT_OSS_version=`./version-info --es`
+        OD_version=`./version-info --od`
+        export RPM_package_version=$OD_version
+        export AMI_name="Open Distro for Elasticsearch-$OD_version-`date +"%D-%H.%M.%S"`"
+        cd -
+        python elasticsearch/AMI/main.py

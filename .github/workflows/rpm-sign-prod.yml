@@ -1,0 +1,78 @@
+name: Sync RPM artifacts to Production
+
+on:
+  repository_dispatch:
+    types: [sync-rpm-prod]
+  
+jobs:
+  signing-artifacts:   
+    name: Sign Yum
+    runs-on: [ubuntu-16.04]
+    container: 
+      image: amazonlinux
+    steps:
+      - uses: actions/checkout@v1
+        
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Sign And Upload Artifacts
+        run: |
+          yum update -y
+          yum install -y unzip
+          sleep 5
+          curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
+          unzip awscli-bundle.zip
+          ./awscli-bundle/install -b ~/bin/aws
+          sleep 5
+          chmod 755 elasticsearch/linux_distributions/scripts/rpm-addsign.exp
+          passphrase=${{ secrets.RPM_SIGN_PASSPHRASE }}
+          /github/home/bin/aws s3 cp s3://opendistro-docs/github-actions/pgp-private-key .
+          /github/home/bin/aws s3 cp s3://opendistro-docs/github-actions/pgp-public-key .
+                    
+          gpg --import pgp-public-key
+          gpg --allow-secret-key-import --import pgp-private-key
+                    
+          ls -ltr /github/home/.gnupg/
+                    
+          rpm --import pgp-public-key
+                    
+          rpm -q gpg-pubkey --qf '%{name}-%{version}-%{release} --> %{summary}\n'
+                    
+          echo "%_signature gpg" >> /github/home/.rpmmacros
+          echo "%_gpg_path /github/home/.gnupg" >> /github/home/.rpmmacros
+          echo "%_gpg_name OpenDistroForElasticsearch" >> /github/home/.rpmmacros
+          echo "%_gpg /usr/bin/gpg" >> /github/home/.rpmmacros
+
+          echo "Setup a directory structure on your local machine that mimics the one in S3"
+          mkdir artifacts-repo
+          cd artifacts-repo
+          mkdir yum
+          mkdir -p downloads/rpms
+
+          echo "Sync the remote yum repo to your local directory. *Before you do this, ensure you export the correct set of AWS credentials.*"
+          /github/home/bin/aws s3 sync s3://artifacts.opendistroforelasticsearch.amazon.com/yum/ yum/
+          rm -rf yum/staging
+          /github/home/bin/aws s3 sync s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/rpms/ downloads/rpms/
+          
+          echo "Add signatures to the new RPMs and copy them over to the Repo."
+          yum install -y expect
+          yum install -y rpm-sign
+          
+          echo "Adding sign to the rpms with the passphrase"
+          for VARIABLE in downloads/rpms/*/*.rpm
+          do
+                ../elasticsearch/linux_distributions/scripts/rpm-addsign.exp $VARIABLE $passphrase
+          done
+          echo "Verifying the signing"
+          find downloads -name *.rpm | xargs -n1 rpm --checksig
+          find downloads -name *.rpm | xargs -n1 -I{} cp {} yum/noarch
+          yum install -y createrepo
+          createrepo -v --update --deltas yum/noarch --max-delta-rpm-size=1000000000
+          gpg --detach-sign --armor --batch --yes  --passphrase $passphrase yum/noarch/repodata/repomd.xml
+          /github/home/bin/aws s3 sync yum/ s3://artifacts.opendistroforelasticsearch.amazon.com/yum
+          /github/home/bin/aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/yum/*"

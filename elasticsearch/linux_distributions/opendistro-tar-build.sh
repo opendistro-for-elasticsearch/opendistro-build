@@ -23,7 +23,7 @@ wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$ES_
 tar -xzf elasticsearch-oss-$ES_VERSION-linux-x86_64.tar.gz 
 rm -rf elasticsearch-oss-$ES_VERSION-linux-x86_64.tar.gz
 #Install Plugin
-for plugin_path in  opendistro-sql/opendistro_sql-$OD_PLUGINVERSION.zip opendistro-alerting/opendistro_alerting-$OD_PLUGINVERSION.zip opendistro-job-scheduler/opendistro-job-scheduler-$OD_PLUGINVERSION.zip opendistro-security/opendistro_security-$OD_PLUGINVERSION.zip performance-analyzer/opendistro_performance_analyzer-$OD_PLUGINVERSION.zip opendistro-index-management/opendistro_index_management-$OD_PLUGINVERSION.zip opendistro-knn/opendistro-knn-$OD_PLUGINVERSION.zip;
+for plugin_path in opendistro-sql/opendistro_sql-$OD_PLUGINVERSION.zip opendistro-alerting/opendistro_alerting-$OD_PLUGINVERSION.zip opendistro-job-scheduler/opendistro-job-scheduler-$OD_PLUGINVERSION.zip opendistro-security/opendistro_security-$OD_PLUGINVERSION.zip performance-analyzer/opendistro_performance_analyzer-$OD_PLUGINVERSION.zip opendistro-index-management/opendistro_index_management-$OD_PLUGINVERSION.zip opendistro-knn/opendistro-knn-$OD_PLUGINVERSION.zip opendistro-anomaly-detection/opendistro-anomaly-detection-$OD_PLUGINVERSION.zip;
 do
     elasticsearch-$ES_VERSION/bin/elasticsearch-plugin install --batch "https://d3g5vo6xdbdb9a.cloudfront.net/downloads/elasticsearch-plugins/$plugin_path"; \
 done
@@ -33,7 +33,7 @@ mv elasticsearch-$ES_VERSION $PACKAGE-$OD_VERSION
 
 echo "validating that plugins has been installed"
 basedir=$PWD/$PACKAGE-$OD_VERSION/plugins
-arr=("$basedir/opendistro-job-scheduler" "$basedir/opendistro_alerting" "$basedir/opendistro_performance_analyzer" "$basedir/opendistro_security" "$basedir/opendistro_sql" "$basedir/opendistro_index_management" "$basedir/opendistro-knn")
+arr=("$basedir/opendistro-job-scheduler" "$basedir/opendistro_alerting" "$basedir/opendistro_performance_analyzer" "$basedir/opendistro_security" "$basedir/opendistro_sql" "$basedir/opendistro_index_management" "$basedir/opendistro-knn" "$basedir/opendistro-anomaly-detection")
 for d in "${arr[@]}"; do
     echo "$d" 
     if [ -d "$d" ]; then

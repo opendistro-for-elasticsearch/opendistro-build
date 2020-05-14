@@ -3,7 +3,7 @@ CURRENT_NO_PLUGINS=6
 plugin_arr=()
 unavailable_plugin=()
 available_plugin=()
-PLUGINS="opendistro-sql/opendistro_sql opendistro-alerting/opendistro_alerting opendistro-job-scheduler/opendistro-job-scheduler opendistro-security/opendistro_security performance-analyzer/opendistro_performance_analyzer opendistro-index-management/opendistro_index_management opendistro-knn/opendistro-knn"
+PLUGINS="opendistro-anomaly-detection/opendistro-anomaly-detection opendistro-sql/opendistro_sql opendistro-alerting/opendistro_alerting opendistro-job-scheduler/opendistro-job-scheduler opendistro-security/opendistro_security performance-analyzer/opendistro_performance_analyzer opendistro-index-management/opendistro_index_management opendistro-knn/opendistro-knn"
 
 cd elasticsearch/bin
 ls -ltr
