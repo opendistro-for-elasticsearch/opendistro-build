@@ -1,8 +1,9 @@
 name: Check Plugin All Availability
 
 on:
-#  schedule:
-#    - cron: '30 9 * * *'
+  # schedule:
+  #   - cron: '30 9 * * *'
+
   repository_dispatch:
     types: [check_plugin]
 
