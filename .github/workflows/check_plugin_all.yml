@@ -160,8 +160,7 @@ jobs:
           subject: Opendistro for Elasticsearch Build - Daily Run (Plugin Status)
           # Read file contents as body:
           body: file://message.md
-#          to: sngri@amazon.com,odfe-distribution-build@amazon.com
-          to: zhujiaxi@amazon.com
+          to: sngri@amazon.com,odfe-distribution-build@amazon.com
           from: Opendistro Elasticsearch
           # Optional content type:
           content_type: text/html
