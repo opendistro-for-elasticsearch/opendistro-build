@@ -1,14 +1,14 @@
-name: Check Plugin Availability
+name: Check Plugin All Availability
 
 on:
-  schedule:
-    - cron: '30 9 * * *'
+#  schedule:
+#    - cron: '30 9 * * *'
   repository_dispatch:
     types: [check_plugin]
 
 jobs:
   plugin-avilability:
-    name: Check Plugin Availability
+    name: Check Plugin All Availability
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -21,71 +21,135 @@ jobs:
       - name: Checking Availability
         run: |
           #!/bin/bash
-          CURRENT_NO_PLUGINS=8
-          plugin_arr=()
-          unavailable_plugin=()
-          available_plugin=()
-          PLUGINS="opendistro-anomaly-detection/opendistro-anomaly-detection opendistro-sql/opendistro_sql opendistro-alerting/opendistro_alerting opendistro-job-scheduler/opendistro-job-scheduler opendistro-security/opendistro_security performance-analyzer/opendistro_performance_analyzer opendistro-index-management/opendistro_index_management opendistro-knn/opendistro-knn"
-          
-          cd elasticsearch/bin
-          ls -ltr
-          OD_VERSION=`./version-info --od`
-          echo "$OD_VERSION"
-          cd /home/runner/work/opendistro-build
-          mkdir plugins
-          ls -ltr
-          cd plugins
-          
-          for item in $PLUGINS
-          do
-            plugin_folder=`echo $item|awk -F/ '{print $1}'`
-            plguin_item=`echo $item|awk -F/ '{print $2}'`
-            plugin_arr+=( $plguin_item )
-            aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/elasticsearch-plugins/$plugin_folder/ . --recursive --exclude "*" --include "$plguin_item-$OD_VERSION*"
-          done
-          ls -ltr
-          tot_plugins=`ls|wc -l`
-          echo $tot_plugins
-          echo "${#plugin_arr[*]}"
-          
-          curr_plugins=`ls`
-          echo $curr_plugins
-          for plgin in ${plugin_arr[*]}
-            do
-              if echo $curr_plugins|grep -q $plgin
-              then
-                  available_plugin+=( $plgin )
-                  echo "$plgin exists"
-              else
-                  unavailable_plugin+=( $plgin )
-              fi
-            done
+          CURRENT_NO_PLUGINS="8 10 10"
+          CURRENT_DIR=`pwd`
+          S3_URL_base="s3://artifacts.opendistroforelasticsearch.amazon.com/downloads"
+          S3_URL_zip="${S3_URL_base}/elasticsearch-plugins"
+          S3_URL_rpm="${S3_URL_base}/rpms"
+          S3_URL_deb="${S3_URL_base}/debs"
+          PLUGIN_TYPES="zip rpm deb"
+          PLUGIN_TYPES=`echo $PLUGIN_TYPES | tr '[:upper:]' '[:lower:]'`
 
-          cd /home/runner/work/opendistro-build/opendistro-build/
-          
-          echo "<h2>Below plugins are <b>not available</b> for ODFE-$OD_VERSION build</h2>" >> message.md
-          if [ ${#unavailable_plugin[*]} -gt 0 ]
-          then
-              echo "<ol>" >> message.md
-              for item in ${unavailable_plugin[*]}
+          PLUGINS_zip="opendistro-alerting/opendistro_alerting \
+                       opendistro-anomaly-detection/opendistro-anomaly-detection \
+                       opendistro-index-management/opendistro_index_management \
+                       opendistro-job-scheduler/opendistro-job-scheduler \
+                       opendistro-knn/opendistro-knn \
+                       performance-analyzer/opendistro_performance_analyzer \
+                       opendistro-security/opendistro_security \
+                       opendistro-sql/opendistro_sql"
+
+          PLUGINS_rpm="opendistro-alerting/opendistro-alerting \
+                       opendistro-anomaly-detection/opendistro-anomaly-detector \
+                       opendistro-elasticsearch/opendistroforelasticsearch \
+                       opendistro-index-management/opendistro-index-management \
+                       opendistro-job-scheduler/opendistro-job-scheduler \
+                       opendistro-knn/opendistro-knn \
+                       opendistro-performance-analyzer/opendistro-performance-analyzer \
+                       opendistro-security/opendistro-security \
+                       opendistro-sql/opendistro-sql \
+                       opendistroforelasticsearch-kibana/opendistroforelasticsearch-kibana"
+
+          PLUGINS_deb="opendistro-alerting/opendistro-alerting \
+                       opendistro-anomaly-detection/opendistro-anomaly-detector \
+                       opendistro-elasticsearch/opendistroforelasticsearch \
+                       opendistro-index-management/opendistro-index-management \
+                       opendistro-job-scheduler/opendistro-job-scheduler \
+                       opendistro-knn/opendistro-knn \
+                       opendistro-performance-analyzer/opendistro-performance-analyzer \
+                       opendistro-security/opendistro-security \
+                       opendistro-sql/opendistro-sql \
+                       opendistroforelasticsearch-kibana/opendistroforelasticsearch-kibana"
+
+          # plugin_type
+          for plugin_type in $PLUGIN_TYPES
+          do
+            # Try to dynamically assign the variables based on PLUGIN_TYPES
+            eval PLUGINS='$'PLUGINS_${plugin_type}
+            eval S3_URL='$'S3_URL_${plugin_type}
+            plugin_arr=()
+            unavailable_plugin=()
+            available_plugin=()
+            echo ""
+  
+            echo "Proceed to check these ES Plugins ($plugin_type):"
+            echo "#######################################"
+            echo $S3_URL
+            echo $PLUGINS | tr " " "\n"
+            echo "#######################################"
+  
+            cd $CURRENT_DIR/elasticsearch/bin
+            ls -ltr
+            echo "#######################################"
+            OD_VERSION=`./version-info --od`
+            echo "OD version: $OD_VERSION"
+            echo "#######################################"
+            cd /home/runner/work/opendistro-build
+            rm -rf plugins
+            mkdir -p plugins
+            echo "#######################################"
+            ls -ltr
+            cd plugins
+
+            for item in $PLUGINS
+            do
+              plugin_folder=`echo $item|awk -F/ '{print $1}'`
+              plugin_item=`echo $item|awk -F/ '{print $2}'`
+              plugin_arr+=( $plugin_item )
+              plugin_artifact="${plugin_item}[_-]${OD_VERSION}.*${plugin_type}"
+              aws s3 cp "${S3_URL}/${plugin_folder}/" . --recursive --exclude "*" --include "${plugin_artifact}" --quiet
+            done
+            echo "#######################################"
+            ls -ltr
+            echo "#######################################"
+            tot_plugins=`ls|wc -l`
+            echo $tot_plugins
+            echo "${#plugin_arr[*]}"
+            
+            curr_plugins=`ls`
+            echo $curr_plugins
+            for plgin in ${plugin_arr[*]}
               do
-                echo "<li><h3>$item</h3></li>" >> message.md
+                if echo $curr_plugins|grep -q $plgin
+                then
+                    available_plugin+=( $plgin )
+                    echo "$plgin exists"
+                else
+                    unavailable_plugin+=( $plgin )
+                fi
               done
-              echo "</ol>" >> message.md
-              echo "<br><br>" >> message.md
-          fi
-          
-          echo "<h2>Below plugins are <b>available</b> for ODFE-$OD_VERSION build</h2>" >> message.md
-          if [ ${#available_plugin[*]} -gt 0 ]
-          then
-              echo "<ol>" >> message.md
-              for item in ${available_plugin[*]}
-              do
-                echo "<li><h3>$item</h3></li>" >> message.md
-              done
-              echo "</ol>" >> message.md
-              echo "<br><br>" >> message.md
-          fi
+  
+            cd /home/runner/work/opendistro-build/opendistro-build/
+  
+            echo "<h1><u>ES Plugins ($OD_VERSION) Availability Checks for ($plugin_type)</u></h1>" >> message.md
+            
+            echo "<h2>Below plugins are <b>not available</b> for ODFE-$OD_VERSION build</h2>" >> message.md
+            if [ ${#unavailable_plugin[*]} -gt 0 ]
+            then
+                echo "<ol>" >> message.md
+                for item in ${unavailable_plugin[*]}
+                do
+                  echo "<li><h3>$item</h3></li>" >> message.md
+                done
+                echo "</ol>" >> message.md
+                echo "<br><br>" >> message.md
+            fi
+            
+            echo "<h2>Below plugins are <b>available</b> for ODFE-$OD_VERSION build</h2>" >> message.md
+            if [ ${#available_plugin[*]} -gt 0 ]
+            then
+                echo "<ol>" >> message.md
+                for item in ${available_plugin[*]}
+                do
+                  echo "<li><h3>$item</h3></li>" >> message.md
+                done
+                echo "</ol>" >> message.md
+                echo "<br><br>" >> message.md
+            fi
+
+          # plugin_type
+          done
+
       - name: Send mail
         uses: dawidd6/action-send-mail@master
         with:
