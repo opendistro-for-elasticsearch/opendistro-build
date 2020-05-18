@@ -25,7 +25,7 @@ jobs:
       - name: Checking Availability
         env:
           PLUGIN_TYPES: undefined
-          ODFE_VERSION: 1.7.0
+          ODFE_VERSION: undefined
         run: |
           #!/bin/bash
           CURRENT_NO_PLUGINS="8 10 10"
@@ -196,8 +196,7 @@ jobs:
           subject: Opendistro for Elasticsearch Build - Daily Run (Plugin Status)
           # Read file contents as body:
           body: file://message.md
-          #to: sngri@amazon.com,odfe-distribution-build@amazon.com
-          to: zhujiaxi@amazon.com
+          to: sngri@amazon.com,odfe-distribution-build@amazon.com
           from: Opendistro Elasticsearch
           # Optional content type:
           content_type: text/html
