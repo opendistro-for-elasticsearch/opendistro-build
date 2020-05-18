@@ -25,7 +25,7 @@ jobs:
       - name: Checking Availability
         env:
           PLUGIN_TYPES: undefined
-          ODFE_VERSION: undefined
+          ODFE_VERSION: 1.7.0
         run: |
           #!/bin/bash
           CURRENT_NO_PLUGINS="8 10 10"
