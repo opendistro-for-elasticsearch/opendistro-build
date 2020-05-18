@@ -7,9 +7,6 @@ on:
   repository_dispatch:
     types: [check_plugin]
 
-  push:
-    branches: [opendistro-infra-issue-88-2]
-
 jobs:
   plugin-avilability:
     name: Check Plugin Availability
