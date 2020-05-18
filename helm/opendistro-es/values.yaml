@@ -29,6 +29,10 @@ kibana:
   livenessProbe: []
 
   elasticsearchAccount:
+    useExistingSecret: true
+    username:
+    password:
+    cookie:
     secret: ""
     keyPassphrase:
       enabled: false
