@@ -182,9 +182,7 @@ jobs:
           # plugin_type
           done
 
-          echo $CHIME_MESSAGE
-          CHIME_MESSAGE=`cat chime_message.md`
-          echo $CHIME_MESSAGE
+          echo ::set-env name=CHIME_MESSAGE::$(cat chime_message.md)
 
           # Use status to decide a success or failure run
           if [ $RUN_STATUS == 1 ]
@@ -197,7 +195,7 @@ jobs:
         if: ${{ always() }}
         uses: ros-tooling/action-amazon-chime@master
         with:
-          message: ${{ CHIME_MESSAGE }}
+          message: ${{ env.CHIME_MESSAGE }}
           webhook: ${{ secrets.CHIME_TEST_MESSAGE }}
 
       #- name: Send mail
