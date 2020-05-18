@@ -194,10 +194,13 @@ jobs:
 
       - name: Send Chime Message
         if: ${{ always() }}
-        uses: ros-tooling/action-amazon-chime@master
-        with:
-          message: ${{ env.CHIME_MESSAGE }}
-          webhook: ${{ secrets.CHIME_TEST_MESSAGE }}
+        run: |
+          #!/bin/bash
+          curl -X POST ${{secrets.CHIME_TEST_MESSAGE}} -H "Content-Type:application/json" --data-binary "@chime_message.md"
+        #uses: ros-tooling/action-amazon-chime@master
+        #with:
+          #message: ${{ env.CHIME_MESSAGE }}
+          #webhook: ${{ secrets.CHIME_TEST_MESSAGE }}
 
       #- name: Send mail
         #if: ${{ always() }}
