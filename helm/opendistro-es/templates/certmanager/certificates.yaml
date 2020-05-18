@@ -1,0 +1,57 @@
+{{- if .Values.certmanager.enabled }}
+{{- if .Values.certmanager.elasticsearch.transport.enabled }}
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  name: {{ template "opendistro-es.fullname" . }}-transport
+  labels:
+{{ include "opendistro-es.labels.standard" . | indent 4 }}
+spec:
+  secretName: {{ .Values.elasticsearch.ssl.transport.existingCertSecret }}
+  duration: {{ .Values.certmanager.elasticsearch.transport.duration }}
+  keySize: {{ .Values.certmanager.elasticsearch.transport.keySize }}
+  keyAlgorithm: rsa
+  keyEncoding: pkcs8
+  renewBefore: {{ .Values.certmanager.elasticsearch.transport.renewBefore }}
+  usages:
+{{- if .Values.certmanager.elasticsearch.transport.usages }}
+{{ toYaml .Values.certmanager.elasticsearch.transport.usages| indent 2 }}
+{{- end }}
+  commonName: {{ .Values.certmanager.elasticsearch.transport.commonName }}
+  organization:
+{{- if .Values.certmanager.elasticsearch.transport.organization }}
+{{ toYaml .Values.certmanager.elasticsearch.transport.organization| indent 2 }}
+{{- end }}
+  issuerRef:
+    name: {{ template "opendistro-es.fullname" . }}-ca
+    kind: Issuer
+{{-  end }}
+{{- if .Values.certmanager.elasticsearch.admin.enabled }}
+---
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  name: {{ template "opendistro-es.fullname" . }}-admin
+  labels:
+{{ include "opendistro-es.labels.standard" . | indent 4 }}
+spec:
+  secretName: {{ .Values.elasticsearch.ssl.admin.existingCertSecret }}
+  duration: {{ .Values.certmanager.elasticsearch.admin.duration }}
+  keySize: {{ .Values.certmanager.elasticsearch.admin.keySize }}
+  keyAlgorithm: rsa
+  keyEncoding: pkcs8
+  renewBefore: {{ .Values.certmanager.elasticsearch.admin.renewBefore }}
+  usages:
+{{- if .Values.certmanager.elasticsearch.admin.usages }}
+{{ toYaml .Values.certmanager.elasticsearch.admin.usages| indent 2 }}
+{{- end }}
+  commonName: {{ .Values.certmanager.elasticsearch.admin.commonName }}
+  organization:
+{{- if .Values.certmanager.elasticsearch.admin.organization }}
+{{ toYaml .Values.certmanager.elasticsearch.admin.organization| indent 2 }}
+{{- end }}
+  issuerRef:
+    name: {{ template "opendistro-es.fullname" . }}-ca
+    kind: Issuer
+{{-  end }}
+{{-  end }}
