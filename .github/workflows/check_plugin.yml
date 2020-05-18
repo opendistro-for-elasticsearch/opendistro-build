@@ -10,6 +10,9 @@ on:
   push:
     branches: [opendistro-infra-issue-88-2]
 
+env:
+  CHIME_MESSAGE: test_message 
+
 jobs:
   plugin-avilability:
     name: Check Plugin Availability
@@ -178,6 +181,9 @@ jobs:
 
           # plugin_type
           done
+
+          echo $CHIME_MESSAGE
+          CHIME_MESSAGE=`cat chime_message.md`
 
           # Use status to decide a success or failure run
           if [ $RUN_STATUS == 1 ]
