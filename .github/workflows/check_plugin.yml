@@ -184,6 +184,7 @@ jobs:
 
           echo $CHIME_MESSAGE
           CHIME_MESSAGE=`cat chime_message.md`
+          echo $CHIME_MESSAGE
 
           # Use status to decide a success or failure run
           if [ $RUN_STATUS == 1 ]
