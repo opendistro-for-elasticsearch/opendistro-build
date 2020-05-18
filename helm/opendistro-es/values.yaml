@@ -11,6 +11,35 @@
 # express or implied. See the License for the specific language governing
 # permissions and limitations under the License.
 
+certmanager:
+  enabled: false
+
+  ca:
+    commonName: example.com
+    duration: 21600h
+    renewBefore: 360h
+    keySize: 2048
+
+  elasticsearch:
+    transport:
+      enabled: true
+      commonName: example.com
+      duration: 21600h
+      renewBefore: 360h
+      keySize: 2048
+      usages:
+      - server auth
+      - client auth
+    admin:
+      enabled: true
+      commonName: example.com
+      duration: 21600h
+      renewBefore: 360h
+      keySize: 2048
+      usages:
+      - server auth
+      - client auth
+
 kibana:
   enabled: true
   image: amazon/opendistro-for-elasticsearch-kibana
