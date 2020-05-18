@@ -1,0 +1,17 @@
+{{- if .Values.certmanager.enabled }}
+apiVersion: cert-manager.io/v1alpha2
+kind: Issuer
+metadata:
+  name: {{ template "opendistro-es.fullname" . }}-ca
+spec:
+  ca:
+    secretName: {{ template "opendistro-es.fullname" . }}-ca
+---
+
+apiVersion: cert-manager.io/v1alpha2
+kind: Issuer
+metadata:
+  name: {{ template "opendistro-es.fullname" . }}-selfsigned
+spec:
+  selfSigned: {}
+{{- end }}
