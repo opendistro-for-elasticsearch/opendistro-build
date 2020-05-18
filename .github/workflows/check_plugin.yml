@@ -58,7 +58,6 @@ jobs:
             ./version-info --od
             echo "Use default ODFE_VERSION: $ODFE_VERSION"
           fi
-
           echo "#######################################"
 
 
@@ -172,7 +171,6 @@ jobs:
                 echo "</ol>" >> message.md
                 echo "<br><br>" >> message.md
             fi
-
             echo "<br><br>" >> message.md
 
           # plugin_type
