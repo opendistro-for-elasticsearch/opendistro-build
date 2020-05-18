@@ -187,6 +187,7 @@ jobs:
           fi
 
       - name: Send Chime Message
+        if: ${{ always() }}
         uses: ros-tooling/action-amazon-chime@master
         with:
           message: file://chime_message.md
