@@ -11,7 +11,7 @@ on:
     branches: [opendistro-infra-issue-88-2]
 
 env:
-  CHIME_MESSAGE: test_message 
+  CHIME_MESSAGE: check_availability pipeline errors
 
 jobs:
   plugin-avilability:
@@ -149,7 +149,7 @@ jobs:
             cd /home/runner/work/opendistro-build/opendistro-build/
   
             echo "<h1><u>ES Plugins ($ODFE_VERSION) Availability Checks for ($plugin_type)</u></h1>" >> message.md
-            echo "ES Plugins ($ODFE_VERSION) Availability Checks for ($plugin_type)" >> chime_message.md
+            echo "ES Plugins ($ODFE_VERSION) Availability Checks for ($plugin_type)\n" >> chime_message.md
             
             echo "<h2><p style='color:red;'>Below plugins are <b>NOT available</b> for ODFE-$ODFE_VERSION build:</p></h2>" >> message.md
             if [ ${#unavailable_plugin[*]} -gt 0 ]
@@ -159,7 +159,7 @@ jobs:
                 for item in ${unavailable_plugin[*]}
                 do
                   echo "<li><h3>$item</h3></li>" >> message.md
-                  echo ":white_check_mark: $item" >> chime_message.md
+                  echo ":x: $item\n" >> chime_message.md
                 done
                 echo "</ol>" >> message.md
                 echo "<br><br>" >> message.md
@@ -172,12 +172,13 @@ jobs:
                 for item in ${available_plugin[*]}
                 do
                   echo "<li><h3>$item</h3></li>" >> message.md
-                  echo ":x: $item" >> chime_message.md
+                  echo ":white_check_mark: $item\n" >> chime_message.md
                 done
                 echo "</ol>" >> message.md
                 echo "<br><br>" >> message.md
             fi
             echo "<br><br>" >> message.md
+            echo "\n" >> chime_message.md
 
           # plugin_type
           done
