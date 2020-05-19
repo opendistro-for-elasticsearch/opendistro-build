@@ -7,11 +7,8 @@ on:
   repository_dispatch:
     types: [check_plugin]
 
-  push:
-    branches: [opendistro-infra-issue-88-3]
-
 env:
-  CHIME_MESSAGE: check_availability pipeline errors
+  CHIME_MESSAGE: check_plugin pipeline errors
 
 jobs:
   plugin-avilability:
@@ -96,10 +93,10 @@ jobs:
                        opendistro-sql/opendistro-sql"
 
           PLUGINS_kibana="opendistro-alerting/opendistro-alerting \
-                       opendistro-anomaly-detection/opendistro-anomaly-detector \
-                       opendistro-index-management/opendistro-index-management \
-                       opendistro-security/opendistro-security \
-                       opendistro-sql-kibana/opendistro-sql-kibana"
+                       opendistro-anomaly-detection/opendistro-anomaly-detection-kibana \
+                       opendistro-index-management/opendistro_index_management_kibana \
+                       opendistro-security/opendistro_security_kibana_plugin \
+                       opendistro-sql-kibana/sql-kibana"
 
           # plugin_type
           for plugin_type in $PLUGIN_TYPES
@@ -131,7 +128,7 @@ jobs:
               plugin_arr+=( $plugin_item )
               if [[ $plugin_type == "kibana" ]]
               then
-                plugin_artifact="${plugin_item}[_-]${ODFE_VERSION}.zip"
+                plugin_artifact="${plugin_item}[_-]${ODFE_VERSION}.*zip"
               else
                 plugin_artifact="${plugin_item}[_-]${ODFE_VERSION}.*${plugin_type}"
               fi
@@ -159,8 +156,14 @@ jobs:
   
             cd /home/runner/work/opendistro-build/opendistro-build/
   
-            echo "<h1><u>ES Plugins ($ODFE_VERSION) Availability Checks for ($plugin_type)</u></h1>" >> message.md
-            echo "ES Plugins ($ODFE_VERSION) Availability Checks for ($plugin_type): $TSCRIPT_NEWLINE" >> chime_message.md
+              if [[ $plugin_type == "kibana" ]]
+              then
+                echo "<h1><u>[KIBANA] Plugins ($ODFE_VERSION) Availability Checks for ( $plugin_type $tot_plugins/${#plugin_arr[*]} )</u></h1>" >> message.md
+                echo "[KIBANA] :bar_chart: Plugins ($ODFE_VERSION) for ( $plugin_type $tot_plugins/${#plugin_arr[*]} ): $TSCRIPT_NEWLINE" >> chime_message.md
+              else
+                echo "<h1><u>[ES] Plugins ($ODFE_VERSION) Availability Checks for ( $plugin_type $tot_plugins/${#plugin_arr[*]} )</u></h1>" >> message.md
+                echo "[ES] :mag_right: Plugins ($ODFE_VERSION) for ( $plugin_type $tot_plugins/${#plugin_arr[*]} ): $TSCRIPT_NEWLINE" >> chime_message.md
+              fi
             
             echo "<h2><p style='color:red;'>Below plugins are <b>NOT available</b> for ODFE-$ODFE_VERSION build:</p></h2>" >> message.md
             if [ ${#unavailable_plugin[*]} -gt 0 ]
@@ -209,8 +212,7 @@ jobs:
         uses: ros-tooling/action-amazon-chime@master
         with:
           message: ${{ env.CHIME_MESSAGE }} 
-          #webhook: ${{ secrets.CHIME_ODFE_RELEASE }}
-          webhook: ${{ secrets.CHIME_TEST_MESSAGE }}
+          webhook: ${{ secrets.CHIME_ODFE_RELEASE }}
 
       - name: Send mail
         if: ${{ always() }}
@@ -223,8 +225,7 @@ jobs:
           subject: Opendistro for Elasticsearch Build - Daily Run (Plugin Status)
           # Read file contents as body:
           body: file://message.md
-          #to: sngri@amazon.com,odfe-distribution-build@amazon.com
-          to: zhujiaxi@amazon.com
+          to: sngri@amazon.com,odfe-distribution-build@amazon.com
           from: Opendistro Elasticsearch
           # Optional content type:
           content_type: text/html
