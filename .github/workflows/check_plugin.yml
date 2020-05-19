@@ -198,6 +198,7 @@ jobs:
           CHIME_MESSAGE_TEMP: ${{ env.CHIME_MESSAGE }} 
         run: |
           #!/bin/bash
+          echo $CHIME_MESSAGE_TEMP
           curl -X POST ${{ secrets.CHIME_TEST_MESSAGE }} -H "Content-Type:application/json" --data '{"content": "$CHIME_MESSAGE_TEMP"}'
         #uses: ros-tooling/action-amazon-chime@master
         #with:
