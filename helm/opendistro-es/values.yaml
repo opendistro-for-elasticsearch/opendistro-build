@@ -145,6 +145,12 @@ elasticsearch:
       # rolesMapping.yml: |-
       # tenants.yml: |-
 
+  s3:
+    enabled: false
+    useExistingSecret: true
+    accessKey:
+    secretKey:
+
   extraEnvs: []
 
   extraInitContainers: []
