@@ -42,7 +42,7 @@ jobs:
           # Allow user assignment
           echo "#######################################"
           echo "PLUGIN_TYPES is: $PLUGIN_TYPES"
-          if [[ $PLUGIN_TYPES == "undefined" ]]
+          if [ $PLUGIN_TYPES = "undefined" ]
           then
             # Kibana currently have the same plugins for all distros
             PLUGIN_TYPES="zip rpm deb kibana"
@@ -54,7 +54,7 @@ jobs:
           # Allow user assignment
           echo "ODFE_VERSION is: $ODFE_VERSION"
 
-          if [[ $ODFE_VERSION == "undefined" ]]
+          if [ $ODFE_VERSION = "undefined" ]
           then
             cd $CURRENT_DIR/elasticsearch/bin
             ls -lrt
@@ -126,7 +126,7 @@ jobs:
               plugin_folder=`echo $item|awk -F/ '{print $1}'`
               plugin_item=`echo $item|awk -F/ '{print $2}'`
               plugin_arr+=( $plugin_item )
-              if [ $plugin_type == "kibana" ]
+              if [ $plugin_type = "kibana" ]
               then
                 plugin_artifact="${plugin_item}[_-]${ODFE_VERSION}.*zip"
               else
@@ -156,7 +156,7 @@ jobs:
   
             cd /home/runner/work/opendistro-build/opendistro-build/
   
-              if [ $plugin_type == "kibana" ]
+              if [ $plugin_type = "kibana" ]
               then
                 echo "<h1><u>[KIBANA] Plugins ($ODFE_VERSION) Availability Checks for ( $plugin_type $tot_plugins/${#plugin_arr[*]} )</u></h1>" >> message.md
                 echo ":bar_chart: [KIBANA] Plugins ($ODFE_VERSION) for ( $plugin_type $tot_plugins/${#plugin_arr[*]} ): $TSCRIPT_NEWLINE" >> chime_message.md
@@ -201,7 +201,7 @@ jobs:
           echo ::set-env name=CHIME_MESSAGE::$(cat chime_message.md)
 
           # Use status to decide a success or failure run
-          if [ $RUN_STATUS == 1 ]
+          if [ $RUN_STATUS -eq 1 ]
           then
             echo "You have one or more plugins not available. Exit 1"
             exit 1
