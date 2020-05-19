@@ -196,7 +196,8 @@ jobs:
         if: ${{ always() }}
         run: |
           #!/bin/bash
-          curl -X POST ${{ secrets.CHIME_TEST_MESSAGE }} -H "Content-Type:application/json" --data '{"content": "$CHIME_MESSAGE"}'
+          CHIME_MESSAGE_TEMP=${{ env.CHIME_MESSAGE }}
+          curl -X POST ${{ secrets.CHIME_TEST_MESSAGE }} -H "Content-Type:application/json" --data '{"content": "$CHIME_MESSAGE_TEMP"}'
         #uses: ros-tooling/action-amazon-chime@master
         #with:
           #message: ${{ env.CHIME_MESSAGE }}
