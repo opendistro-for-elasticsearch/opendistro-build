@@ -126,7 +126,7 @@ jobs:
               plugin_folder=`echo $item|awk -F/ '{print $1}'`
               plugin_item=`echo $item|awk -F/ '{print $2}'`
               plugin_arr+=( $plugin_item )
-              if [[ $plugin_type == "kibana" ]]
+              if [ $plugin_type == "kibana" ]
               then
                 plugin_artifact="${plugin_item}[_-]${ODFE_VERSION}.*zip"
               else
@@ -156,13 +156,13 @@ jobs:
   
             cd /home/runner/work/opendistro-build/opendistro-build/
   
-              if [[ $plugin_type == "kibana" ]]
+              if [ $plugin_type == "kibana" ]
               then
                 echo "<h1><u>[KIBANA] Plugins ($ODFE_VERSION) Availability Checks for ( $plugin_type $tot_plugins/${#plugin_arr[*]} )</u></h1>" >> message.md
-                echo "[KIBANA] :bar_chart: Plugins ($ODFE_VERSION) for ( $plugin_type $tot_plugins/${#plugin_arr[*]} ): $TSCRIPT_NEWLINE" >> chime_message.md
+                echo ":bar_chart: [KIBANA] Plugins ($ODFE_VERSION) for ( $plugin_type $tot_plugins/${#plugin_arr[*]} ): $TSCRIPT_NEWLINE" >> chime_message.md
               else
                 echo "<h1><u>[ES] Plugins ($ODFE_VERSION) Availability Checks for ( $plugin_type $tot_plugins/${#plugin_arr[*]} )</u></h1>" >> message.md
-                echo "[ES] :mag_right: Plugins ($ODFE_VERSION) for ( $plugin_type $tot_plugins/${#plugin_arr[*]} ): $TSCRIPT_NEWLINE" >> chime_message.md
+                echo ":mag_right: [ES] Plugins ($ODFE_VERSION) for ( $plugin_type $tot_plugins/${#plugin_arr[*]} ): $TSCRIPT_NEWLINE" >> chime_message.md
               fi
             
             echo "<h2><p style='color:red;'>Below plugins are <b>NOT available</b> for ODFE-$ODFE_VERSION build:</p></h2>" >> message.md
