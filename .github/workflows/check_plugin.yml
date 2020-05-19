@@ -149,7 +149,7 @@ jobs:
             cd /home/runner/work/opendistro-build/opendistro-build/
   
             echo "<h1><u>ES Plugins ($ODFE_VERSION) Availability Checks for ($plugin_type)</u></h1>" >> message.md
-            echo "ES Plugins ($ODFE_VERSION) Availability Checks for ($plugin_type)<br/> " >> chime_message.md
+            echo "ES Plugins ($ODFE_VERSION) Availability Checks for ($plugin_type)%0D%0A " >> chime_message.md
             
             echo "<h2><p style='color:red;'>Below plugins are <b>NOT available</b> for ODFE-$ODFE_VERSION build:</p></h2>" >> message.md
             if [ ${#unavailable_plugin[*]} -gt 0 ]
