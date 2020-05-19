@@ -197,8 +197,8 @@ jobs:
         if: ${{ always() }}
         uses: ros-tooling/action-amazon-chime@master
         with:
-          message: ${{ env.CHIME_ODFE_RELEASE }}
-          webhook: ${{ secrets.CHIME_TEST_MESSAGE }}
+          message: ${{ env.CHIME_MESSAGE }}
+          webhook: ${{ secrets.CHIME_ODFE_RELEASE }}
 
       #- name: Send mail
         #if: ${{ always() }}
