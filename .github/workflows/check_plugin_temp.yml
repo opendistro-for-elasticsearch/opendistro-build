@@ -9,10 +9,10 @@ on:
 
 env:
   CHIME_MESSAGE: "check_plugin pipeline errors"
-  PLUGIN_TYPES: "undefined"
-  ODFE_VERSION: "undefined"
-  CHIME_ALERT: false
-  EMAIL_ALERT: false
+  PLUGIN_TYPES: ${{ github.event.client_payload.PLUGIN_TYPES_PL }}
+  ODFE_VERSION: ${{ github.event.client_payload.ODFE_VERSION_PL }}
+  CHIME_ALERT: ${{ github.event.client_payload.CHIME_ALERT_PL }}
+  EMAIL_ALERT: ${{ github.event.client_payload.EMAIL_ALERT_PL }}
 
 jobs:
   plugin-avilability:
@@ -43,7 +43,7 @@ jobs:
           # Allow user assignment
           echo "#######################################"
           echo "PLUGIN_TYPES is: $PLUGIN_TYPES"
-          if [ $PLUGIN_TYPES = "undefined" ]
+          if [ -z "$PLUGIN_TYPES" ]
           then
             # Kibana currently have the same plugins for all distros
             PLUGIN_TYPES="zip rpm deb kibana"
@@ -52,10 +52,9 @@ jobs:
           PLUGIN_TYPES=`echo $PLUGIN_TYPES | tr '[:upper:]' '[:lower:]'`
           echo "#######################################"
 
-          # Allow user assignment
+          echo "#######################################"
           echo "ODFE_VERSION is: $ODFE_VERSION"
-
-          if [ $ODFE_VERSION = "undefined" ]
+          if [ -z "$ODFE_VERSION" ]
           then
             cd $CURRENT_DIR/elasticsearch/bin
             ls -lrt
@@ -65,6 +64,23 @@ jobs:
           fi
           echo "#######################################"
 
+          echo "#######################################"
+          echo "CHIME_ALERT is: $CHIME_ALERT"
+          if [ -z "$CHIME_ALERT" ]
+          then
+            CHIME_ALERT=false
+            echo "Use default CHIME_ALERT: $CHIME_ALERT"
+          fi
+          echo "#######################################"
+
+          echo "#######################################"
+          echo "EMAIL_ALERT is: $EMAIL_ALERT"
+          if [ -z "$EMAIL_ALERT" ]
+          then
+            EMAIL_ALERT=false
+            echo "Use default EMAIL_ALERT: $EMAIL_ALERT"
+          fi
+          echo "#######################################"
 
           PLUGINS_zip="opendistro-alerting/opendistro_alerting \
                        opendistro-anomaly-detection/opendistro-anomaly-detection \
@@ -127,7 +143,7 @@ jobs:
               plugin_folder=`echo $item|awk -F/ '{print $1}'`
               plugin_item=`echo $item|awk -F/ '{print $2}'`
               plugin_arr+=( $plugin_item )
-              if [ $plugin_type = "kibana" ]
+              if [ "$plugin_type" = "kibana" ]
               then
                 plugin_artifact="${plugin_item}[_-]${ODFE_VERSION}.*zip"
               else
@@ -157,7 +173,7 @@ jobs:
   
             cd /home/runner/work/opendistro-build/opendistro-build/
   
-              if [ $plugin_type = "kibana" ]
+              if [ "$plugin_type" = "kibana" ]
               then
                 echo "<h1><u>[KIBANA] Plugins ($ODFE_VERSION) Availability Checks for ( $plugin_type $tot_plugins/${#plugin_arr[*]} )</u></h1>" >> message.md
                 echo ":bar_chart: [KIBANA] Plugins ($ODFE_VERSION) for ( $plugin_type $tot_plugins/${#plugin_arr[*]} ): $TSCRIPT_NEWLINE" >> chime_message.md
@@ -167,7 +183,7 @@ jobs:
               fi
             
             echo "<h2><p style='color:red;'>Below plugins are <b>NOT available</b> for ODFE-$ODFE_VERSION build:</p></h2>" >> message.md
-            if [ ${#unavailable_plugin[*]} -gt 0 ]
+            if [ "${#unavailable_plugin[*]}" -gt 0 ]
             then
                 RUN_STATUS=1
                 echo "<ol>" >> message.md
@@ -181,7 +197,7 @@ jobs:
             fi
             
             echo "<h2><p style='color:green;'>Below plugins are <b>available</b> for ODFE-$ODFE_VERSION build:</p></h2>" >> message.md
-            if [ ${#available_plugin[*]} -gt 0 ]
+            if [ "${#available_plugin[*]}" -gt 0 ]
             then
                 echo "<ol>" >> message.md
                 for item in ${available_plugin[*]}
@@ -202,8 +218,9 @@ jobs:
           echo ::set-env name=CHIME_MESSAGE::$(cat chime_message.md)
 
           # Use status to decide a success or failure run
-          if [ $RUN_STATUS -eq 1 ]
+          if [ "$RUN_STATUS" -eq 1 ]
           then
+            echo "#######################################"
             echo "You have one or more plugins not available. Exit 1"
             exit 1
           fi
@@ -213,7 +230,8 @@ jobs:
         uses: ros-tooling/action-amazon-chime@master
         with:
           message: ${{ env.CHIME_MESSAGE }} 
-          webhook: ${{ secrets.CHIME_ODFE_RELEASE }}
+          #webhook: ${{ secrets.CHIME_ODFE_RELEASE }}
+          webhook: ${{ secrets.CHIME_TEST_MESSAGE }}
 
       - name: Send mail
         if: ${{ env.EMAIL_ALERT }}
@@ -226,7 +244,8 @@ jobs:
           subject: Opendistro for Elasticsearch Build - Daily Run (Plugin Status)
           # Read file contents as body:
           body: file://message.md
-          to: sngri@amazon.com,odfe-distribution-build@amazon.com
+          #to: sngri@amazon.com,odfe-distribution-build@amazon.com
+          to: zhujiaxi@amazon.com
           from: Opendistro Elasticsearch
           # Optional content type:
           content_type: text/html
