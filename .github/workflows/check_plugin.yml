@@ -75,7 +75,7 @@ jobs:
                        opendistro-sql/opendistro_sql"
 
           PLUGINS_rpm="opendistro-alerting/opendistro-alerting \
-                       opendistro-anomaly-detection/opendistro-anomaly-detector \
+                       opendistro-anomaly-detection/opendistro-anomaly-detection \
                        opendistro-index-management/opendistro-index-management \
                        opendistro-job-scheduler/opendistro-job-scheduler \
                        opendistro-knn/opendistro-knn \
@@ -84,7 +84,7 @@ jobs:
                        opendistro-sql/opendistro-sql"
 
           PLUGINS_deb="opendistro-alerting/opendistro-alerting \
-                       opendistro-anomaly-detection/opendistro-anomaly-detector \
+                       opendistro-anomaly-detection/opendistro-anomaly-detection \
                        opendistro-index-management/opendistro-index-management \
                        opendistro-job-scheduler/opendistro-job-scheduler \
                        opendistro-knn/opendistro-knn \
