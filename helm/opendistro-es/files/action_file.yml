@@ -1,0 +1,110 @@
+---
+# https://www.elastic.co/guide/en/elasticsearch/client/curator/current/actionfile.html
+# Note that env vars can be used in this file.
+# See: https://www.elastic.co/guide/en/elasticsearch/client/curator/current/envvars.html
+actions:
+  1:
+    action: delete_indices
+    description: "Clean up the oldest other-* indices that exceeds total disk space {{ .Values.curator.retention.other_gb }} GB "
+    options:
+      continue_if_exception: False
+      ignore_empty_list: True
+      allow_ilm_indices: True
+    filters:
+    - filtertype: pattern
+      kind: regex
+      value: 'other-*'
+    - filtertype: space
+      disk_space: {{ .Values.curator.retention.other_gb }}
+      use_age: True
+      source: creation_date
+    - filtertype: kibana
+      exclude: True
+  2:
+    action: delete_indices
+    description: "Clean up the other-* indices that are older then {{ .Values.curator.retention.other_days }} days"
+    options:
+      continue_if_exception: False
+      ignore_empty_list: True
+      allow_ilm_indices: True
+    filters:
+    - filtertype: pattern
+      kind: regex
+      value: 'other-*'
+    - filtertype: age
+      source: creation_date
+      direction: older
+      unit: days
+      unit_count: {{ .Values.curator.retention.other_days }}
+    - filtertype: kibana
+      exclude: True
+  3:
+    action: delete_indices
+    description: "Clean up the oldest kubeaudit-* indices that exceeds total disk space {{ .Values.curator.retention.kubeaudit_gb }} GB"
+    options:
+      continue_if_exception: False
+      ignore_empty_list: True
+      allow_ilm_indices: True
+    filters:
+    - filtertype: pattern
+      kind: regex
+      value: 'kubeaudit-*'
+    - filtertype: space
+      disk_space: {{ .Values.curator.retention.kubeaudit_gb }}
+      use_age: True
+      source: creation_date
+    - filtertype: kibana
+      exclude: True
+  4:
+    action: delete_indices
+    description: "Clean up the kubeaudit-* indices that are older then {{ .Values.curator.retention.kubeaudit_days }} days"
+    options:
+      continue_if_exception: False
+      ignore_empty_list: True
+      allow_ilm_indices: True
+    filters:
+    - filtertype: pattern
+      kind: regex
+      value: 'kubeaudit-*'
+    - filtertype: age
+      source: creation_date
+      direction: older
+      unit: days
+      unit_count: {{ .Values.curator.retention.kubeaudit_days }}
+    - filtertype: kibana
+      exclude: True
+  5:
+    action: delete_indices
+    description: "Clean up the oldest kubernetes-* indices that exceeds total disk space {{ .Values.curator.retention.kubernetes_gb }} GB"
+    options:
+      continue_if_exception: False
+      ignore_empty_list: True
+      allow_ilm_indices: True
+    filters:
+    - filtertype: pattern
+      kind: regex
+      value: 'kubernetes-*'
+    - filtertype: space
+      disk_space: {{ .Values.curator.retention.kubernetes_gb }}
+      use_age: True
+      source: creation_date
+    - filtertype: kibana
+      exclude: True
+  6:
+    action: delete_indices
+    description: "Clean up the kubernetes-* indices that are older then {{ .Values.curator.retention.kubernetes_days }} days"
+    options:
+      continue_if_exception: False
+      ignore_empty_list: True
+      allow_ilm_indices: True
+    filters:
+    - filtertype: pattern
+      kind: regex
+      value: 'kubernetes-*'
+    - filtertype: age
+      source: creation_date
+      direction: older
+      unit: days
+      unit_count: {{ .Values.curator.retention.kubernetes_days }}
+    - filtertype: kibana
+      exclude: True

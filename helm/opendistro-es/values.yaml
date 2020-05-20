@@ -487,3 +487,49 @@ elasticsearch:
 
 nameOverride: ""
 fullnameOverride: ""
+
+curator:
+  enabled: false
+
+  schedule: "*/5 * * * *"
+  image: bobrik/curator:5.8.1
+  imagePullPolicy: IfNotPresent
+  restartPolicy: Never
+  resources:
+    limits: {}
+    requests: {}
+  affinity: {}
+  nodeSelector: {}
+  tolerations: []
+  startingDeadlineSeconds:
+  failedJobsHistoryLimit:
+  successfulJobsHistoryLimit:
+
+  postgresql: false
+
+  retention:
+    other_gb: 1
+    other_days: 10
+    kubecomponents_gb: 1
+    kubecomponents_days: 10
+    kubernetes_gb: 1
+    kubernetes_days: 10
+    kubeaudit_gb: 100
+    kubeaudit_days: 30
+    postgresql_gb:
+    postgresql_days:
+
+  config_yml: |-
+    ---
+    client:
+      hosts:
+      - {{ template "opendistro-es.fullname" . }}-client-service
+      port: 9200
+      use_ssl: false
+      http_auth: ${ES_AUTH}
+      timeout: 30
+      master_only: False
+    logging:
+      loglevel: INFO
+      logformat: default
+      blacklist: ['elasticsearch', 'urllib3']
