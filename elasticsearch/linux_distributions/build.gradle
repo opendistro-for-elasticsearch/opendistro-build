@@ -59,7 +59,7 @@ ospackage {
     requires('opendistro-job-scheduler', nextODPluginsVersion, LESS)
     requires('opendistro-index-management', nextODPluginsVersion, LESS)
     requires('opendistro-knn', nextODPluginsVersion, LESS)
-    requires('opendistro-anomaly-detector', nextODPluginsVersion, LESS)
+    requires('opendistro-anomaly-detection', nextODPluginsVersion, LESS)
  
     packager = 'Amazon'
     vendor = 'Amazon'
