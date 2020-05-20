@@ -28,9 +28,7 @@ To install the chart with the release name `my-release`:
 
 `❯ helm install --name my-release opendistro-es-1.1.0.tgz`
 
-The command deploys OpenDistro Kibana and Elasticsearch with its associated components (data statefuls
-
-    ets, masters, clients) on the Kubernetes cluster in the default configuration.
+The command deploys OpenDistro Kibana and Elasticsearch with its associated components (data statefulsets, masters, clients) on the Kubernetes cluster in the default configuration.
 
 ## Uninstalling the Chart
 To delete/uninstall the chart with the release name `my-release`:
@@ -533,7 +531,7 @@ The following table lists the configurable parameters of the opendistro elastics
 | `elasticsearch.data.nodeAffinity`                         | Elasticsearch data nodeAffinity                                                                                                                          | `{}`                                                                    |
 | `elasticsearch.data.resources`                            | Elasticsearch data resource requests & limits                                                                                                            | `{}`                                                                    |
 | `elasticsearch.data.javaOpts`                             | Elasticsearch data configurable java options to pass to startup script                                                                                   | `"-Xms512m -Xmx512m"`                                                   |
-| `elasticsearch.data.persistence.enabled`                  | Elasticsearch data enable persistent storage                                                                                                             | `true`                                    1                              |
+| `elasticsearch.data.persistence.enabled`                  | Elasticsearch data enable persistent storage                                                                                                             | `true`                                                                  |
 | `elasticsearch.data.persistence.existingClaim`            | Elasticsearch data persistent existingClaim                                                                                                              | disabled by default, see `values.yaml`                                  |
 | `elasticsearch.data.persistence.subPath`                  | Elasticsearch data persistence subPath                                                                                                                   | `""`                                                                    |
 | `elasticsearch.data.persistence.storageClass`             | Elasticsearch data storageClassName                                                                                                                      | see `values.yaml` for defaults                                          |
