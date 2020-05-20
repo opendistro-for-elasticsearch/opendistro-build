@@ -148,7 +148,7 @@ jobs:
           nohup ./opendistro-tar-install.sh &
           sleep 45
           cd ../index-management
-          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
           
   
   Test-Alerting-Plugin:
@@ -190,9 +190,9 @@ jobs:
           ./bin/elasticsearch-plugin remove opendistro_security
           
           nohup ./opendistro-tar-install.sh &          
-           sleep 45
+          sleep 45
           cd ../alerting/alerting
-          ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
+          ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
           
   Test-SQL-Plugin:
     needs: [build-es-artifacts]
@@ -234,7 +234,7 @@ jobs:
           nohup ./opendistro-tar-install.sh &
           sleep 45
           cd ../sql
-          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
           
   Test-KNN-Plugin:
     needs: [build-es-artifacts]
@@ -276,4 +276,4 @@ jobs:
           nohup ./opendistro-tar-install.sh &
           sleep 45
           cd ../k-NN
-          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
