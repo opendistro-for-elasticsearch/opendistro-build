@@ -50,7 +50,7 @@ ospackage {
     requires('opendistro-job-scheduler', baseODPluginsVersion, GREATER | EQUAL)
     requires('opendistro-index-management', baseODPluginsVersion, GREATER | EQUAL)
     requires('opendistro-knn', baseODPluginsVersion, GREATER | EQUAL)
-    requires('opendistro-anomaly-detector', baseODPluginsVersion, GREATER | EQUAL)
+    requires('opendistro-anomaly-detection', baseODPluginsVersion, GREATER | EQUAL)
 
     requires('opendistro-alerting', nextODPluginsVersion, LESS)
     requires('opendistro-sql', nextODPluginsVersion, LESS)
