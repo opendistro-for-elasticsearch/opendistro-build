@@ -8,7 +8,11 @@ on:
     types: [check_plugin]
 
 env:
-  CHIME_MESSAGE: check_plugin pipeline errors
+  CHIME_MESSAGE: "check_plugin pipeline errors"
+  PLUGIN_TYPES: "undefined"
+  ODFE_VERSION: "undefined"
+  CHIME_ALERT: false
+  EMAIL_ALERT: false
 
 jobs:
   plugin-avilability:
@@ -23,9 +27,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
       - name: Checking Availability
-        env:
-          PLUGIN_TYPES: undefined
-          ODFE_VERSION: undefined
         run: |
           #!/bin/bash
           ES_NO_PLUGINS="8"
@@ -208,14 +209,14 @@ jobs:
           fi
 
       - name: Send Chime Message
-        if: ${{ always() }}
+        if: ${{ env.CHIME_ALERT }}
         uses: ros-tooling/action-amazon-chime@master
         with:
           message: ${{ env.CHIME_MESSAGE }} 
           webhook: ${{ secrets.CHIME_ODFE_RELEASE }}
 
       - name: Send mail
-        if: ${{ always() }}
+        if: ${{ env.EMAIL_ALERT }}
         uses: dawidd6/action-send-mail@master
         with:
           server_address: smtp.gmail.com
