@@ -1,0 +1,35 @@
+7:
+  action: delete_indices
+  description: "Clean up the oldest postgresql-* indices that exceeds total disk space {{ .Values.curator.retention.postgresql_gb }} GB"
+  options:
+    continue_if_exception: False
+    ignore_empty_list: True
+    allow_ilm_indices: True
+  filters:
+  - filtertype: pattern
+    kind: regex
+    value: 'postgresql-*'
+  - filtertype: space
+    disk_space: {{ .Values.curator.retention.postgresql_gb }}
+    use_age: True
+    source: creation_date
+  - filtertype: kibana
+    exclude: True
+8:
+  action: delete_indices
+  description: "Clean up the postgresql-* indices that are older then {{ .Values.curator.retention.postgresql_days }} days"
+  options:
+    continue_if_exception: False
+    ignore_empty_list: True
+    allow_ilm_indices: True
+  filters:
+  - filtertype: pattern
+    kind: regex
+    value: 'postgresql-*'
+  - filtertype: age
+    source: creation_date
+    direction: older
+    unit: days
+    unit_count: {{ .Values.curator.retention.postgresql_days }}
+  - filtertype: kibana
+    exclude: True
