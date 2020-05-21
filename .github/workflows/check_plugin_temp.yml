@@ -15,7 +15,7 @@ env:
   EMAIL_ALERT: ${{ github.event.client_payload.EMAIL_ALERT_PL }}
 
 jobs:
-  plugin-avilability:
+  plugin-availability:
     name: Check Plugin Availability
     runs-on: ubuntu-latest
     steps:
@@ -92,7 +92,7 @@ jobs:
                        opendistro-sql/opendistro_sql"
 
           PLUGINS_rpm="opendistro-alerting/opendistro-alerting \
-                       opendistro-anomaly-detection/opendistro-anomaly-detector \
+                       opendistro-anomaly-detection/opendistro-anomaly-detection \
                        opendistro-index-management/opendistro-index-management \
                        opendistro-job-scheduler/opendistro-job-scheduler \
                        opendistro-knn/opendistro-knn \
@@ -101,7 +101,7 @@ jobs:
                        opendistro-sql/opendistro-sql"
 
           PLUGINS_deb="opendistro-alerting/opendistro-alerting \
-                       opendistro-anomaly-detection/opendistro-anomaly-detector \
+                       opendistro-anomaly-detection/opendistro-anomaly-detection \
                        opendistro-index-management/opendistro-index-management \
                        opendistro-job-scheduler/opendistro-job-scheduler \
                        opendistro-knn/opendistro-knn \
@@ -220,13 +220,11 @@ jobs:
           # Use status to decide a success or failure run
           if [ "$RUN_STATUS" -eq 1 ]
           then
-            echo "#######################################"
-            echo "You have one or more plugins not available. Exit 1"
-            exit 1
+            echo ::set-env name=PLUGIN_AVAILABLE::false
           fi
 
       - name: Send Chime Message
-        if: ${{ env.CHIME_ALERT }}
+        if: ${{ env.CHIME_ALERT }} == 'true'
         uses: ros-tooling/action-amazon-chime@master
         with:
           message: ${{ env.CHIME_MESSAGE }} 
@@ -234,7 +232,7 @@ jobs:
           webhook: ${{ secrets.CHIME_TEST_MESSAGE }}
 
       - name: Send mail
-        if: ${{ env.EMAIL_ALERT }}
+        if: ${{ env.EMAIL_ALERT }} == 'true'
         uses: dawidd6/action-send-mail@master
         with:
           server_address: smtp.gmail.com
@@ -249,3 +247,18 @@ jobs:
           from: Opendistro Elasticsearch
           # Optional content type:
           content_type: text/html
+
+      - name: Availability Status Checks
+        run: |
+          #!/bin/bash
+          echo "#######################################"
+          if [ "$PLUGIN_AVAILABLE" = "false" ]
+          then
+            echo "You have one or more plugins not available."
+            echo "Exit 1 in the status check step"
+            exit 1
+          else
+            echo "You have all the plugins available."
+          fi
+
+
