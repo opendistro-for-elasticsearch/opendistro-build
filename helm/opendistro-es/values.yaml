@@ -533,3 +533,37 @@ curator:
       loglevel: INFO
       logformat: default
       blacklist: ['elasticsearch', 'urllib3']
+
+configurer:
+  enabled: false
+
+  # If true, configurer will create an index for each template if there is
+  # none.
+  createIndices: true
+
+  # If true, configurer will update/override an index policy if it already
+  # exists.
+  updatePolicies: true
+
+  # If true, configurer will overwrite existing templates.
+  # A negation of the 'create' parameter, see:
+  # https://opendistro.github.io/for-elasticsearch-docs/docs/elasticsearch/rest-api-reference/#indicesput_template
+  overwriteTemplates: true
+
+  ism:
+    rolloverSize: 1
+    rolloverAge: 1
+
+  image: elastisys/curl-jq:latest
+  activeDeadlineSeconds: 600
+  backoffLimit: 10
+  resources:
+    limits: {}
+    requests: {}
+  affinity: {}
+  nodeSelector: {}
+  tolerations: []
+
+  helm:
+    hook: post-install,post-upgrade
+    deletePolicy: before-hook-creation,hook-failed

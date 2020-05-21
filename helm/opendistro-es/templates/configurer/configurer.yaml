@@ -1,0 +1,58 @@
+{{- if .Values.configurer.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ template "opendistro-es.fullname" . }}-configurer
+  labels:
+    app: configurer
+{{ include "opendistro-es.labels.standard" . | indent 4 }}
+  annotations:
+    "helm.sh/hook": {{ .Values.configurer.helm.hook }}
+    # Use higher value so that the configmap is created before this job
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": {{ .Values.configurer.helm.deletePolicy }}
+spec:
+  activeDeadlineSeconds: {{ .Values.configurer.activeDeadlineSeconds }}
+  backoffLimit: {{ .Values.configurer.backoffLimit }}
+  template:
+    metadata:
+      labels:
+        app: configurer
+{{ include "opendistro-es.labels.standard" . | indent 8 }}
+    spec:
+      restartPolicy: OnFailure
+      {{- if .Values.configurer.tolerations }}
+      tolerations: {{- toYaml .Values.configurer.tolerations | nindent 6 }}
+      {{- end }}
+      {{- if .Values.curator.nodeSelector }}
+      nodeSelector: {{- toYaml .Values.configurer.nodeSelector | nindent 8 }}
+      {{- end }}
+      {{- if .Values.curator.affinity }}
+      affinity: {{- toYaml .Values.configurer.affinity | nindent 8 }}
+      {{- end }}
+      containers:
+      - name: {{ template "opendistro-es.fullname" . }}-configurer
+        image: {{ .Values.configurer.image }}
+        command: ['/bin/sh', '/files/configurer.sh']
+        volumeMounts:
+        - name: files
+          mountPath: /files
+        env:
+        - name: ES_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.kibana.elasticsearchAccount.secret }}
+              key: username
+        - name: ES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.kibana.elasticsearchAccount.secret }}
+              key: password
+        {{- if .Values.curator.resources }}
+        resources: {{- toYaml .Values.curator.resources | nindent 10 }}
+        {{- end }}     
+      volumes:
+      - name: files
+        configMap:
+          name: {{ template "opendistro-es.fullname" . }}-configurer-config
+{{- end }}

@@ -1,0 +1,20 @@
+{
+  "policy": {
+    "policy_id": "kubernetes",
+    "description": "Kubernetes ISM policy",
+    "default_state": "hot",
+    "states": [
+      {
+        "name": "hot",
+        "actions": [
+          {
+            "rollover": {
+              "min_size": "{{ .Values.configurer.ism.rolloverSize }}GB",
+              "min_index_age": "{{ .Values.configurer.ism.rolloverAge }}d"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

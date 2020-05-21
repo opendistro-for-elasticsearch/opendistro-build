@@ -1,0 +1,11 @@
+{
+  "index_patterns": [
+    "other*"
+  ],
+  "settings": {
+    "index.refresh_interval": "10s",
+    "opendistro.index_state_management.policy_id": "other",
+    "opendistro.index_state_management.rollover_alias": "other",
+    "mapping.total_fields.limit": "1000"
+  }
+}

@@ -1,3 +1,4 @@
+{{- if .Values.curator.enabled }}
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
@@ -56,3 +57,4 @@ spec:
             - name: curator-config
               configMap:
                 name: {{ template "opendistro-es.fullname" . }}-curator-config
+{{- end  }}

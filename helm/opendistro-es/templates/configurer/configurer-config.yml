@@ -1,0 +1,21 @@
+{{- if .Values.configurer.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "opendistro-es.fullname" . }}-configurer-config
+  labels:
+{{ include "opendistro-es.labels.standard" . | indent 4 }}
+  annotations:
+    "helm.sh/hook": {{ .Values.configurer.helm.hook }}
+    "helm.sh/hook-weight": "-10"
+    "helm.sh/hook-delete-policy": {{ .Values.configurer.helm.deletePolicy }}
+data:
+  configurer.sh: |-
+{{ tpl (.Files.Get "files/configurer/configurer.sh") . | indent 4 }}
+
+  kibana-dashboards.ndjson: {{ .Files.Get "files/configurer/kibana-resources/kibana-resources.ndjson" | quote }}
+
+{{ (.Files.Glob "files/configurer/index-templates/*.json").AsConfig | indent 2 }}
+
+{{ tpl ((.Files.Glob "files/configurer/ism-policies/*.json").AsConfig) . | indent 2 }}
+{{- end }}

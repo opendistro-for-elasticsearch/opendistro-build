@@ -1,3 +1,4 @@
+{{- if .Values.curator.enabled }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -13,3 +14,4 @@ data:
   {{- end }}
   
   config.yml: {{ tpl (toYaml .Values.curator.config_yml | indent 2) $ }}
+{{- end }}
