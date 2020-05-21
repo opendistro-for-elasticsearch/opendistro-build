@@ -8,7 +8,7 @@ jobs:
   build-es-docker:
     strategy:
       matrix:
-        java: [13]
+        java: [14]
     name: Build ES Docker
     runs-on: ubuntu-latest
     steps:
@@ -134,7 +134,7 @@ jobs:
         if cat plugins.out|grep opendistro_index_management
         then
           cd index-management
-          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
         else
           echo "Skipping Test as Plugin not available"
         fi
@@ -146,7 +146,7 @@ jobs:
         if cat plugins.out|grep opendistro_alerting
         then
           cd alerting/alerting
-          ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
+          ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
         else
           echo "Skipping Test as Plugin not available"
         fi
@@ -158,7 +158,7 @@ jobs:
         if cat plugins.out|grep opendistro_sql
         then
           cd sql
-          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
         else
           echo "Skipping Test as Plugin not available"
         fi
@@ -170,7 +170,7 @@ jobs:
         if cat plugins.out|grep opendistro-knn
         then
           cd k-NN
-          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
         else
           echo "Skipping Test as Plugin not available"
         fi
