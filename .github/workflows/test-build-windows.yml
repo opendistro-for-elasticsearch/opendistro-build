@@ -5,6 +5,7 @@ on:
     - cron: '0 10 * * *'
   repository_dispatch:
     types: [build-windows]
+
 jobs:
   build-es-artifacts:
     name: Build Windows ES Artifacts
