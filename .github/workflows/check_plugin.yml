@@ -96,7 +96,7 @@ jobs:
                        opendistro-anomaly-detection/opendistro-anomaly-detection-kibana \
                        opendistro-index-management/opendistro_index_management_kibana \
                        opendistro-security/opendistro_security_kibana_plugin \
-                       opendistro-sql-kibana/sql-kibana"
+                       opendistro-sql-workbench/opendistro-sql-workbench"
 
           # plugin_type
           for plugin_type in $PLUGIN_TYPES
