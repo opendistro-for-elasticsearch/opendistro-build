@@ -1,8 +1,8 @@
 name: Check Plugin Availability Main
 
 on:
-#  schedule:
-#    - cron: '0 0,15 * * *'
+  #schedule:
+  #  - cron: '0 0,15 * * *'
 
   repository_dispatch:
     types: [check_plugin_temp]
@@ -224,7 +224,7 @@ jobs:
           fi
 
       - name: Send Chime Message
-        if: ${{ env.CHIME_ALERT }} == 'true'
+        if: contains(env.CHIME_ALERT, 'true')
         uses: ros-tooling/action-amazon-chime@master
         with:
           message: ${{ env.CHIME_MESSAGE }} 
@@ -232,7 +232,7 @@ jobs:
           webhook: ${{ secrets.CHIME_TEST_MESSAGE }}
 
       - name: Send mail
-        if: ${{ env.EMAIL_ALERT }} == 'true'
+        if: contains(env.EMAIL_ALERT, 'true')
         uses: dawidd6/action-send-mail@master
         with:
           server_address: smtp.gmail.com
