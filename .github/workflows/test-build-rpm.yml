@@ -191,3 +191,153 @@ jobs:
           from: Opendistro Elasticsearch
           # Optional content type:
           content_type: text/html
+
+
+  Start-ES-Service:
+    needs: [signing-artifacts]
+    name: Start elasticsearch service
+    runs-on: [self-hosted, Linux, X64, amazon]
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 14
+      
+      - name: Installing python
+        run: sudo yum install python37 -y
+      
+      - name: Getting OD version
+        run: |
+          cd elasticsearch/bin
+          OD_VERSION=`./version-info --od`
+          echo "::set-env name=od_version::$OD_VERSION"
+
+      - name: Starting ES service
+        run: |
+          echo $JAVA_HOME
+          sudo yum install git -y
+          sudo curl https://d3g5vo6xdbdb9a.cloudfront.net/yum/staging-opendistroforelasticsearch-artifacts.repo  -o /etc/yum.repos.d/staging-opendistroforelasticsearch-artifacts.repo
+          sudo yum install wget -y
+          export PATH=$PATH:$JAVA_HOME
+          sudo yum install unzip -y
+          sudo yum install opendistroforelasticsearch-${{env.od_version}} -y
+          sudo chmod 777 /etc/elasticsearch/elasticsearch.yml    
+          sudo /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro_security 
+          sudo sed -i /^opendistro_security/d /etc/elasticsearch/elasticsearch.yml
+          sudo sed -i /CN=kirk/d /etc/elasticsearch/elasticsearch.yml
+          sudo sed -i /^node.max_local_storage_nodes/d /etc/elasticsearch/elasticsearch.yml
+          sudo sed -i /^cluster.routing.allocation.disk.threshold_enabled/d /etc/elasticsearch/elasticsearch.yml
+          sudo systemctl start elasticsearch.service
+          sleep 30
+    
+  Test-All-Plugins:
+    needs: [Start-ES-Service]
+    runs-on: [self-hosted, Linux, X64, amazon]
+    steps:
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 14
+    
+      - name: Installing python
+        run: sudo yum install python37 -y
+
+      - name: Getting OD Version
+        run: |
+          cd elasticsearch/bin
+          OD_VERSION=`./version-info --od`
+          plugin_tag=v$OD_VERSION.0
+          echo "::set-env name=tag::$plugin_tag"
+
+      - name: Checking out ISM repo
+        if: always()
+        uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/index-management
+          ref: ${{env.tag}}
+
+      - name: IT for ISM
+        if: always()
+        run: |  
+          export PATH=$PATH:$JAVA_HOME
+          cd $GITHUB_WORKSPACE/../index-management
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
+
+      - name: Checking out Alerting repo
+        if: always()
+        uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/alerting
+          ref: ${{env.tag}}
+
+      - name: IT for alerting
+        if: always()
+        run: |
+          export PATH=$PATH:$JAVA_HOME
+          cd $GITHUB_WORKSPACE/../alerting
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
+
+      - name: Checking out SQL repo
+        if: always()
+        uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/sql
+          ref: ${{env.tag}}
+      
+      - name: IT for SQL
+        if: always()
+        run: |
+          export PATH=$PATH:$JAVA_HOME
+          cd $GITHUB_WORKSPACE/../sql
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
+
+      - name: Checking out k-NN repo
+        if: always()
+        uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/k-NN
+          ref: ${{env.tag}}
+          
+      - name: IT for KNN
+        if: always()
+        run: |
+          export PATH=$PATH:$JAVA_HOME
+          cd $GITHUB_WORKSPACE/../k-NN
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
+
+  Cleaning-Host:
+    needs: [Test-All-Plugins]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configuring AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_EC2_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_EC2_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
+
+      - name: Resetting the host runner
+        run: |
+          #!/bin/bash
+
+          instanceid=`aws ec2 describe-instances --filters "Name=tag:Name,Values=ODFERPM" | grep InstanceId | cut -d ':' -f 2 | sed 's/[",]//g'`
+          volumeid=`aws ec2 describe-instances --filters "Name=tag:Name,Values=ODFERPM" | grep VolumeId | cut -d ':' -f 2 | sed 's/[",]//g'`
+          az=`aws ec2 describe-instances --filters "Name=tag:Name,Values=ODFERPM" | grep AvailabilityZone | cut -d ':' -f 2 | sed 's/[",]//g'`
+          aws ec2 stop-instances --instance-ids $instanceid
+          sleep 60
+          aws ec2 detach-volume --volume-id $volumeid
+          if [[ `echo $?` -ne 0 ]]; then
+          sleep 60
+          aws ec2 detach-volume --volume-id $volumeid
+          fi
+          aws ec2 delete-volume --volume-id $volumeid
+          aws ec2 create-volume --snapshot snap-0ed5ac6ffd39b9d80 --availability-zone $az --tag-specifications 'ResourceType=volume,Tags=[{Key=Name,Value=odfe}]'
+          sleep 30
+          newVolumeId=`aws ec2 describe-volumes --filters "Name=tag:Name,Values=odfe" | grep VolumeId | cut -d ':' -f 2 | sed 's/[",]//g'`
+          aws ec2 attach-volume --device /dev/xvda --instance-id $instanceid --volume-id $newVolumeId
+          aws ec2 start-instances --instance-id $instanceid
+          sleep 30
+          echo "Your Self hosted runner is as new now!!!"
