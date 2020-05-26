@@ -127,7 +127,7 @@ jobs:
         content_type: text/html
           
     - name: Test ISM Plugin
-      continue-on-error: true
+      if: always()
       run: |
         cd ..
         sleep 15
@@ -142,7 +142,7 @@ jobs:
         fi
 
     - name: Test Alerting Plugin
-      continue-on-error: true
+      if: always()
       run: |
         cd ..
         if cat plugins.out|grep opendistro_alerting
@@ -154,7 +154,7 @@ jobs:
         fi
         
     - name: Test SQL Plugin
-      continue-on-error: true
+      if: always()
       run: |
         cd ..
         if cat plugins.out|grep opendistro_sql
@@ -166,7 +166,7 @@ jobs:
         fi
         
     - name: Test k-NN Plugin
-      continue-on-error: true
+      if: always()
       run: |
         cd ..
         if cat plugins.out|grep opendistro-knn
