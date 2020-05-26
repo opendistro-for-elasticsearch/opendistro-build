@@ -15,6 +15,17 @@ env:
   EMAIL_ALERT: ${{ github.event.client_payload.EMAIL_ALERT_PL }}
 
 jobs:
+  block-concurrent-runs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Block Concurrent Runs
+        uses: softprops/turnstyle@v1
+        with:
+          poll-interval-seconds: 20
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   plugin-availability-main:
     name: Check Plugin Availability Main
     runs-on: ubuntu-latest
