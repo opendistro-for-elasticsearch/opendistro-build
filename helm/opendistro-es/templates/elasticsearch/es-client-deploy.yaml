@@ -67,6 +67,9 @@ spec:
           privileged: true
       containers:
       - name: elasticsearch
+        securityContext:
+          capabilities:
+            add: ["SYS_CHROOT"]
         env:
         - name: cluster.name
           value: {{ .Values.global.clusterName }}
