@@ -49,7 +49,7 @@ jobs:
         run: echo "Plugin Checks Failure" && exit 1
           
   build-es-artifacts:
-    needs: [plugin-avilability]
+    needs: [plugin-availability]
     name: Build ES Artifacts
     runs-on: ubuntu-latest
     container:
@@ -81,7 +81,7 @@ jobs:
           echo "RPM creation for ES completed"
 
   build-kibana-artifacts:
-    needs: [plugin-avilability]
+    needs: [plugin-availability]
     name: Build Kibana Artifacts
     runs-on: [ubuntu-latest]
     container:
