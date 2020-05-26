@@ -25,7 +25,7 @@ jobs:
         with:
           token: ${{ secrets.GitHub_PAT }}
           event-type: check_plugin # Require Changes
-          client-payload: '{"PLUGIN_TYPES_PL": "deb kibana", "ODFE_VERSION_PL": "", "CHIME_ALERT_PL": "false", "EMAIL_ALERT_PL": "true"}'
+          client-payload: '{"PLUGIN_TYPES_PL": "deb kibana", "ODFE_VERSION_PL": "", "CHIME_ALERT_PL": "false", "EMAIL_ALERT_PL": "false"}'
 
       - name: Sleep and wait for check_plugin to trigger
         uses: juliangruber/sleep-action@v1
