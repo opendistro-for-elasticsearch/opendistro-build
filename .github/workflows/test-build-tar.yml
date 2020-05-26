@@ -7,7 +7,7 @@ on:
     types: [build-tar]
 
 jobs:
-  plugin-avilability:
+  plugin-availability:
     name: Check Plugin Availability
     runs-on: ubuntu-latest
     steps:
@@ -18,38 +18,35 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
-      - name: Checking Availability
-        run: |
-          #!/bin/bash
-          CURRENT_NO_PLUGINS=8
-          PLUGINS="opendistro-anomaly-detection/opendistro-anomaly-detection opendistro-sql/opendistro_sql opendistro-alerting/opendistro_alerting opendistro-job-scheduler/opendistro-job-scheduler opendistro-security/opendistro_security performance-analyzer/opendistro_performance_analyzer opendistro-index-management/opendistro_index_management opendistro-knn/opendistro-knn"
-          
-          cd elasticsearch/bin
-          ls -ltr
-          OD_VERSION=`./version-info --od`
-          echo "$OD_VERSION"
-          cd /home/runner/work/opendistro-build
-          mkdir plugins
-          ls -ltr
-          cd plugins
-          
-          for item in $PLUGINS
-          do
-            plugin_folder=`echo $item|awk -F/ '{print $1}'`
-            plguin_item=`echo $item|awk -F/ '{print $2}'`
-            echo $plugin_folder.$plguin_item
-            aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/elasticsearch-plugins/$plugin_folder/ . --recursive --exclude "*" --include "$plguin_item-$OD_VERSION*"
-          done
-          ls -ltr
-          tot_plugins=`ls|wc -l`
-          echo $tot_plugins
-          
-          if [ $tot_plugins == $CURRENT_NO_PLUGINS ]
-          then
-              echo "All plugins available"
-          else
-              exit 1
-          fi
+
+      - name: Send Dispatch Event for check_plugin Workflow
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{ secrets.GitHub_PAT }}
+          event-type: check_plugin # Require Changes
+          client-payload: '{"PLUGIN_TYPES_PL": "zip kibana", "ODFE_VERSION_PL": "", "CHIME_ALERT_PL": "false", "EMAIL_ALERT_PL": "false"}'
+
+      - name: Sleep and wait for check_plugin to trigger
+        uses: juliangruber/sleep-action@v1
+        with:
+          time: 20s
+
+      - name: Wait for check_plugin Workflow Status Return
+        uses: lewagon/wait-on-check-action@master
+        id: wait-for-check_plugin
+        with:
+          repo-token: ${{ secrets.GitHub_PAT }}
+          checki-name: Check Plugin Availability Main # Require Changes
+          wait-interval: 10
+          ref: master
+
+      - name: check_plugin Success
+        if: ${{ success() }}
+        run: echo "Plugin Checks Success"
+
+      - name: check_plugin Failure
+        if: ${{ failure() }}
+        run: echo "Plugin Checks Failure" && exit 1
           
   build-es-artifacts:
     needs: [plugin-avilability]
