@@ -215,7 +215,7 @@ jobs:
     runs-on: [ubuntu-16.04]
     strategy:
       matrix:
-        java: [13]
+        java: [14]
     steps:
       - uses: actions/checkout@v1
       - uses: actions/checkout@v1
@@ -260,7 +260,7 @@ jobs:
 
           sleep 30
           cd index-management   
-          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
           
 
   Test-Alerting-Plugin:
@@ -268,7 +268,7 @@ jobs:
     runs-on: [ubuntu-16.04]
     strategy:
       matrix:
-        java: [13]
+        java: [14]
     steps:
       - uses: actions/checkout@v1
       - uses: actions/checkout@v1
@@ -315,14 +315,14 @@ jobs:
           sleep 30
           
           cd alerting/alerting
-          ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
+          ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
           
   Test-SQL-Plugin:
     needs: [sign-deb-artifacts]
     runs-on: [ubuntu-16.04]
     strategy:
       matrix:
-        java: [13]
+        java: [14]
     steps:
       - uses: actions/checkout@v1
       - uses: actions/checkout@v1
@@ -367,14 +367,14 @@ jobs:
 
           sleep 30
           cd sql
-          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
           
   Test-KNN-Plugin:
     needs: [sign-deb-artifacts]
     runs-on: [ubuntu-16.04]
     strategy:
       matrix:
-        java: [13]
+        java: [14]
     steps:
       - uses: actions/checkout@v1
       - uses: actions/checkout@v1
@@ -419,4 +419,4 @@ jobs:
 
           sleep 30
           cd k-NN
-          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
