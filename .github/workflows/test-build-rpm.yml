@@ -196,7 +196,7 @@ jobs:
   Start-ES-Service:
     needs: [signing-artifacts]
     name: Start elasticsearch service
-    runs-on: [self-hosted, Linux, X64, amazon]
+    runs-on: [self-hosted, Linux, X64, odfe-rpm]
     steps:
       - uses: actions/checkout@v1
 
@@ -234,7 +234,7 @@ jobs:
     
   Test-All-Plugins:
     needs: [Start-ES-Service]
-    runs-on: [self-hosted, Linux, X64, amazon]
+    runs-on: [self-hosted, Linux, X64, odfe-rpm]
     steps:
       - name: Setup Java
         uses: actions/setup-java@v1
@@ -322,19 +322,18 @@ jobs:
       - name: Resetting the host runner
         run: |
           #!/bin/bash
-
-          instanceid=`aws ec2 describe-instances --filters "Name=tag:Name,Values=ODFERPM" | grep InstanceId | cut -d ':' -f 2 | sed 's/[",]//g'`
-          volumeid=`aws ec2 describe-instances --filters "Name=tag:Name,Values=ODFERPM" | grep VolumeId | cut -d ':' -f 2 | sed 's/[",]//g'`
-          az=`aws ec2 describe-instances --filters "Name=tag:Name,Values=ODFERPM" | grep AvailabilityZone | cut -d ':' -f 2 | sed 's/[",]//g'`
+          instanceid=`aws ec2 describe-instances --filters "Name=tag:Name,Values=ODFE-RPM" | grep InstanceId | cut -d ':' -f 2 | sed 's/[",]//g'`
+          volumeid=`aws ec2 describe-instances --filters "Name=tag:Name,Values=ODFE-RPM" | grep VolumeId | cut -d ':' -f 2 | sed 's/[",]//g'`
+          az=`aws ec2 describe-instances --filters "Name=tag:Name,Values=ODFE-RPM" | grep AvailabilityZone | cut -d ':' -f 2 | sed 's/[",]//g'`
           aws ec2 stop-instances --instance-ids $instanceid
-          sleep 60
+          sleep 4m
           aws ec2 detach-volume --volume-id $volumeid
           if [[ `echo $?` -ne 0 ]]; then
           sleep 60
           aws ec2 detach-volume --volume-id $volumeid
           fi
           aws ec2 delete-volume --volume-id $volumeid
-          aws ec2 create-volume --snapshot snap-0ed5ac6ffd39b9d80 --availability-zone $az --tag-specifications 'ResourceType=volume,Tags=[{Key=Name,Value=odfe}]'
+          aws ec2 create-volume --snapshot snap-0f8358ed344f3c2e6 --availability-zone $az --tag-specifications 'ResourceType=volume,Tags=[{Key=Name,Value=odfe}]'
           sleep 30
           newVolumeId=`aws ec2 describe-volumes --filters "Name=tag:Name,Values=odfe" | grep VolumeId | cut -d ':' -f 2 | sed 's/[",]//g'`
           aws ec2 attach-volume --device /dev/xvda --instance-id $instanceid --volume-id $newVolumeId
