@@ -15,22 +15,38 @@
 #Download opensourceversion
 ES_VERSION=$(../bin/version-info --es)
 OD_VERSION=$(../bin/version-info --od)
-OD_PLUGINVERSION=$OD_VERSION.0
-PACKAGE=opendistroforelasticsearch
+#OD_PLUGINVERSION=$OD_VERSION.0 # old methods
+PACKAGE="opendistroforelasticsearch"
 ROOT=$(dirname "$0")
-wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$ES_VERSION-linux-x86_64.tar.gz
-#Untar
+
+# Get Artifact
+wget -nv https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$ES_VERSION-linux-x86_64.tar.gz
+
+# Untar
 tar -xzf elasticsearch-oss-$ES_VERSION-linux-x86_64.tar.gz 
 rm -rf elasticsearch-oss-$ES_VERSION-linux-x86_64.tar.gz
-#Install Plugin
-for plugin_path in opendistro-sql/opendistro_sql-$OD_PLUGINVERSION.zip opendistro-alerting/opendistro_alerting-$OD_PLUGINVERSION.zip opendistro-job-scheduler/opendistro-job-scheduler-$OD_PLUGINVERSION.zip opendistro-security/opendistro_security-$OD_PLUGINVERSION.zip performance-analyzer/opendistro_performance_analyzer-$OD_PLUGINVERSION.zip opendistro-index-management/opendistro_index_management-$OD_PLUGINVERSION.zip opendistro-knn/opendistro-knn-$OD_PLUGINVERSION.zip opendistro-anomaly-detection/opendistro-anomaly-detection-$OD_PLUGINVERSION.zip;
+
+# Install Plugin
+PLUGINS="opendistro-sql/opendistro_sql-$OD_VERSION \
+         opendistro-alerting/opendistro_alerting-$OD_VERSION \
+         opendistro-job-scheduler/opendistro-job-scheduler-$OD_VERSION \
+         opendistro-security/opendistro_security-$OD_VERSION \
+         performance-analyzer/opendistro_performance_analyzer-$OD_VERSION \
+         opendistro-index-management/opendistro_index_management-$OD_VERSION \
+         opendistro-knn/opendistro-knn-$OD_VERSION \
+         opendistro-anomaly-detection/opendistro-anomaly-detection-$OD_VERSION"
+
+
+for plugin_path in $PLUGINS
 do
-    elasticsearch-$ES_VERSION/bin/elasticsearch-plugin install --batch "https://d3g5vo6xdbdb9a.cloudfront.net/downloads/elasticsearch-plugins/$plugin_path"; \
+    plugin_latest=`aws s3api list-objects --bucket artifacts.opendistroforelasticsearch.amazon.com --prefix "downloads/elasticsearch-plugins/${plugin_path}" --query 'Contents[].[Key]' --output text | sort | tail -n 1`
+    elasticsearch-$ES_VERSION/bin/elasticsearch-plugin install --batch "https://d3g5vo6xdbdb9a.cloudfront.net/${plugin_latest}"; \
 done
 
 cp opendistro-tar-install.sh elasticsearch-$ES_VERSION
 mv elasticsearch-$ES_VERSION $PACKAGE-$OD_VERSION
 
+# Validation
 echo "validating that plugins has been installed"
 basedir=$PWD/$PACKAGE-$OD_VERSION/plugins
 arr=("$basedir/opendistro-job-scheduler" "$basedir/opendistro_alerting" "$basedir/opendistro_performance_analyzer" "$basedir/opendistro_security" "$basedir/opendistro_sql" "$basedir/opendistro_index_management" "$basedir/opendistro-knn" "$basedir/opendistro-anomaly-detection")
@@ -43,7 +59,7 @@ for d in "${arr[@]}"; do
         exit 1;
     fi
 done
-echo "validated that plugins has been installed"
+echo "Results: validated that plugins has been installed"
 
 rm -rf tarfiles
 mkdir tarfiles
