@@ -108,7 +108,7 @@ jobs:
           echo running tests
           cd ..\index-management
           dir
-          ./gradlew.bat integTest -D tests.rest.cluster=localhost:9200 -D tests.cluster=localhost:9200 --stacktrace          
+          ./gradlew.bat integTest -D tests.rest.cluster=localhost:9200 -D tests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest --stacktrace          
 
   Test-Alerting-plugin:
     needs: [build-es-artifacts, build-kibana-artifacts]
@@ -160,4 +160,4 @@ jobs:
           echo running tests
           cd ..\alerting\alerting
           dir
-          ../gradlew.bat integTest -D tests.rest.cluster=localhost:9200 -D tests.cluster=localhost:9200 --stacktrace
+          ../gradlew.bat integTest -D tests.rest.cluster=localhost:9200 -D tests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest --stacktrace
