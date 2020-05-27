@@ -15,9 +15,10 @@
 #Download opensourceversion
 ES_VERSION=$(../bin/version-info --es)
 OD_VERSION=$(../bin/version-info --od)
-#OD_PLUGINVERSION=$OD_VERSION.0 # old methods
-PACKAGE="opendistroforelasticsearch"
-ROOT=$(dirname "$0")
+ARTIFACTS_URL=https://d3g5vo6xdbdb9a.cloudfront.net
+PACKAGE_NAME="opendistroforelasticsearch"
+ROOT=`pwd`
+echo $ROOT
 
 # Get Artifact
 wget -nv https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$ES_VERSION-linux-x86_64.tar.gz
@@ -39,34 +40,40 @@ PLUGINS="opendistro-sql/opendistro_sql-$OD_VERSION \
 
 for plugin_path in $PLUGINS
 do
-    plugin_latest=`aws s3api list-objects --bucket artifacts.opendistroforelasticsearch.amazon.com --prefix "downloads/elasticsearch-plugins/${plugin_path}" --query 'Contents[].[Key]' --output text | sort | tail -n 1`
-    elasticsearch-$ES_VERSION/bin/elasticsearch-plugin install --batch "https://d3g5vo6xdbdb9a.cloudfront.net/${plugin_latest}"; \
+  plugin_latest=`aws s3api list-objects --bucket artifacts.opendistroforelasticsearch.amazon.com --prefix "downloads/elasticsearch-plugins/${plugin_path}" --query 'Contents[].[Key]' --output text | sort | tail -n 1`
+  echo "installing $plugin_path"
+  elasticsearch-$ES_VERSION/bin/elasticsearch-plugin install --batch "${ARTIFACTS_URL}/${plugin_latest}"; \
 done
 
 cp opendistro-tar-install.sh elasticsearch-$ES_VERSION
-mv elasticsearch-$ES_VERSION $PACKAGE-$OD_VERSION
+mv elasticsearch-$ES_VERSION $PACKAGE_NAME-$OD_VERSION
 
 # Validation
 echo "validating that plugins has been installed"
-basedir=$PWD/$PACKAGE-$OD_VERSION/plugins
+basedir=$ROOT/$PACKAGE_NAME-$OD_VERSION/plugins
 arr=("$basedir/opendistro-job-scheduler" "$basedir/opendistro_alerting" "$basedir/opendistro_performance_analyzer" "$basedir/opendistro_security" "$basedir/opendistro_sql" "$basedir/opendistro_index_management" "$basedir/opendistro-knn" "$basedir/opendistro-anomaly-detection")
+
 for d in "${arr[@]}"; do
-    echo "$d" 
-    if [ -d "$d" ]; then
-        echo "directoy "$d" is present"
-    else
-        echo "ERROR: "$d" is not present"
-        exit 1;
-    fi
+  echo "$d" 
+  if [ -d "$d" ]; then
+    echo "directoy "$d" is present"
+  else
+    echo "ERROR: "$d" is not present"
+    exit 1;
+  fi
 done
+
 echo "Results: validated that plugins has been installed"
+
+echo "generating tar"
 
 rm -rf tarfiles
 mkdir tarfiles
 TARGET_DIR="$ROOT/tarfiles"
-tar -vczf $TARGET_DIR/$PACKAGE-$OD_VERSION.tar.gz $PACKAGE-$OD_VERSION
-sha512sum $TARGET_DIR/$PACKAGE-$OD_VERSION.tar.gz  > $TARGET_DIR/$PACKAGE-$OD_VERSION.tar.gz.sha512
-sha512sum -c $TARGET_DIR/$PACKAGE-$OD_VERSION.tar.gz.sha512
+tar -czf $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz $PACKAGE_NAME-$OD_VERSION
+tar -tavf $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz
+sha512sum $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz  > $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz.sha512
+sha512sum -c $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz.sha512
 echo " CHECKSUM FILE "
-echo "$(cat $TARGET_DIR/$PACKAGE-$OD_VERSION.tar.gz.sha512)"
-rm -rf $PACKAGE-$OD_VERSION
+echo "$(cat $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz.sha512)"
+rm -rf $PACKAGE_NAME-$OD_VERSION

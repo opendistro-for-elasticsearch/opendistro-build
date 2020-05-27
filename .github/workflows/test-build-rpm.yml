@@ -97,10 +97,12 @@ jobs:
       - name: Build Kibana rpm
         run: |
           #!/bin/bash -x
+          set -e
+          set -u
           cd kibana/linux_distributions
-          sh generate-pkg.sh
+          ./generate-pkg.sh rpm
           rpm_artifact=`ls target/*.rpm`
-          echo $rpm_artifact
+          ls -ltr target/
           aws s3 cp $rpm_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/rpms/opendistroforelasticsearch-kibana/
 
   signing-artifacts:   
