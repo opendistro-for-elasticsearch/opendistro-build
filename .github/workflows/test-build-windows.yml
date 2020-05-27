@@ -19,7 +19,6 @@ jobs:
       run: |
         cd elasticsearch/bin
         OD_VERSION=`./version-info --od`
-        echo "::set-env name=od_version::$OD_VERSION"
         plugin_tag=v$OD_VERSION.0
         echo "::set-output name=p_tag::$plugin_tag"
 
