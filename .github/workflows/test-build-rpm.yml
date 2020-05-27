@@ -23,7 +23,7 @@ jobs:
         uses: peter-evans/repository-dispatch@v1
         with:
           token: ${{ secrets.GitHub_PAT }}
-          event-type: check_plugin # Require Changes
+          event-type: check_plugin
           client-payload: '{"PLUGIN_TYPES_PL": "rpm kibana", "ODFE_VERSION_PL": "", "CHIME_ALERT_PL": "false", "EMAIL_ALERT_PL": "false"}'
 
       - name: Sleep and wait for check_plugin to trigger
@@ -36,7 +36,7 @@ jobs:
         id: wait-for-check_plugin
         with:
           repo-token: ${{ secrets.GitHub_PAT }}
-          checki-name: Check Plugin Availability Main # Require Changes
+          check-name: Check Plugin Availability Main
           wait-interval: 10
           ref: master
 
