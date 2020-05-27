@@ -16,29 +16,36 @@ jobs:
     steps:
     - uses: actions/checkout@v1
 
+    - name: Getting OD Version
+    run: |
+      cd elasticsearch/bin
+      OD_VERSION=`./version-info --od`
+      plugin_tag=v$OD_VERSION.0
+      echo "::set-env name=tag::$plugin_tag"
+
     - name: Checkout ISM
       uses: actions/checkout@v1
       with:
         repository: opendistro-for-elasticsearch/index-management
-        ref: master
+        ref: ${{env.tag}}
 
     - name: Checkout Alerting
       uses: actions/checkout@v1
       with:
         repository: opendistro-for-elasticsearch/alerting
-        ref: master
+        ref: ${{env.tag}}
 
     - name: Checkout SQL
       uses: actions/checkout@v1
       with:
         repository: opendistro-for-elasticsearch/sql
-        ref: master
+        ref: ${{env.tag}}
         
     - name: Checkout k-NN
       uses: actions/checkout@v1
       with:
         repository: opendistro-for-elasticsearch/k-NN
-        ref: master
+        ref: ${{env.tag}}
 
     - name: Configure AWS
       uses: aws-actions/configure-aws-credentials@v1
@@ -188,6 +195,7 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
+          
       - name: Build Kibana Docker
         env:
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
