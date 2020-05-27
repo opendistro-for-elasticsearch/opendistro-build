@@ -60,10 +60,19 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v1
+
+      - name: Getting OD Version
+        run: |
+          cd elasticsearch/bin
+          OD_VERSION=`./version-info --od`
+          plugin_tag=v$OD_VERSION.0
+          echo "::set-env name=tag::$plugin_tag"
+
       - uses: actions/checkout@v1
         with:
            repository: opendistro-for-elasticsearch/index-management
-           ref: master  
+           ref: ${{env.tag}}
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -115,10 +124,19 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v1
+
+      - name: Getting OD Version
+        run: |
+          cd elasticsearch/bin
+          OD_VERSION=`./version-info --od`
+          plugin_tag=v$OD_VERSION.0
+          echo "::set-env name=tag::$plugin_tag"
+
       - uses: actions/checkout@v1
         with:
            repository: opendistro-for-elasticsearch/alerting
-           ref: master  
+           ref: ${{env.tag}}  
+           
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:

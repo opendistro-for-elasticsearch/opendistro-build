@@ -218,14 +218,24 @@ jobs:
         java: [14]
     steps:
       - uses: actions/checkout@v1
+
+      - name: Getting OD Version
+        run: |
+          cd elasticsearch/bin
+          OD_VERSION=`./version-info --od`
+          plugin_tag=v$OD_VERSION.0
+          echo "::set-env name=tag::$plugin_tag"
+
       - uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/index-management
-          ref: master
+          ref: ${{env.tag}}
+
       - name: Setup Java
         uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.java }}
+          
       - name: Run Debian Staging Distrubution
         run: |
           cd elasticsearch/linux_distributions
@@ -271,14 +281,24 @@ jobs:
         java: [14]
     steps:
       - uses: actions/checkout@v1
+
+      - name: Getting OD Version
+        run: |
+          cd elasticsearch/bin
+          OD_VERSION=`./version-info --od`
+          plugin_tag=v$OD_VERSION.0
+          echo "::set-env name=tag::$plugin_tag"
+
       - uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/alerting
-          ref: master
+          ref: ${{env.tag}}
+
       - name: Setup Java
         uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.java }}
+
       - name: Run Debian Staging Distrubution
         run: |
           cd elasticsearch/linux_distributions
@@ -325,14 +345,23 @@ jobs:
         java: [14]
     steps:
       - uses: actions/checkout@v1
+      - name: Getting OD Version
+        run: |
+          cd elasticsearch/bin
+          OD_VERSION=`./version-info --od`
+          plugin_tag=v$OD_VERSION.0
+          echo "::set-env name=tag::$plugin_tag"
+
       - uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/sql
-          ref: master
+          ref: ${{env.tag}}
+
       - name: Setup Java
         uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.java }}
+
       - name: Run Debian Staging Distrubution
         run: |
           cd elasticsearch/linux_distributions
@@ -377,10 +406,19 @@ jobs:
         java: [14]
     steps:
       - uses: actions/checkout@v1
+
+      - name: Getting OD Version
+        run: |
+          cd elasticsearch/bin
+          OD_VERSION=`./version-info --od`
+          plugin_tag=v$OD_VERSION.0
+          echo "::set-env name=tag::$plugin_tag"
+
       - uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/k-NN
-          ref: master
+          ref: ${{env.tag}}
+
       - name: Setup Java
         uses: actions/setup-java@v1
         with:
