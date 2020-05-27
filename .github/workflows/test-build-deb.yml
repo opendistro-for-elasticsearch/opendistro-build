@@ -37,7 +37,7 @@ jobs:
         id: wait-for-check_plugin
         with:
           repo-token: ${{ secrets.GitHub_PAT }}
-          checki-name: Check Plugin Availability Main # Require Changes
+          check-name: Check Plugin Availability Main # Require Changes
           wait-interval: 10
           ref: master
 
