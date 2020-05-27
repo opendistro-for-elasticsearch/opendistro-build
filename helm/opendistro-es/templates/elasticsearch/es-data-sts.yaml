@@ -55,6 +55,7 @@ spec:
 {{ toYaml . | indent 8 }}
     {{- end }}
       initContainers:
+{{- if .Values.elasticsearch.sysctl.enabled }}
       - name: init-sysctl
         image: {{ .Values.elasticsearch.initContainer.image }}:{{ .Values.elasticsearch.initContainer.imageTag }}
         command:
@@ -63,6 +64,7 @@ spec:
         - vm.max_map_count={{ .Values.elasticsearch.maxMapCount }}
         securityContext:
           privileged: true
+{{- end }}
       - name: fixmount
         command: [ 'sh', '-c', 'chown -R 1000:1000 /usr/share/elasticsearch/data' ]
         image: {{ .Values.elasticsearch.initContainer.image }}:{{ .Values.elasticsearch.initContainer.imageTag }}
