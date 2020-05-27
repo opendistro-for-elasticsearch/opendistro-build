@@ -108,7 +108,20 @@ jobs:
     runs-on: [ubuntu-latest]
     container:
       image: opendistroforelasticsearch/base-ubuntu
+    outputs:
+      tag: ${{steps.version.outputs.p_tag}}
     steps:
+      - uses: actions/checkout@v1
+      
+      - name: Getting OD version
+        id: version
+        run: |
+          cd elasticsearch/bin
+          OD_VERSION=`./version-info --od`
+          echo "::set-env name=od_version::$OD_VERSION"
+          plugin_tag=v$OD_VERSION.0
+          echo "::set-output name=p_tag::$plugin_tag"
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -218,14 +231,17 @@ jobs:
         java: [14]
     steps:
       - uses: actions/checkout@v1
+
       - uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/index-management
-          ref: master
+          ref: ${{needs.sign-deb-artifacts.outputs.tag}}
+
       - name: Setup Java
         uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.java }}
+
       - name: Run Debian Staging Distrubution
         run: |
           cd elasticsearch/linux_distributions
@@ -271,14 +287,17 @@ jobs:
         java: [14]
     steps:
       - uses: actions/checkout@v1
+
       - uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/alerting
-          ref: master
+          ref: ${{needs.sign-deb-artifacts.outputs.tag}}
+
       - name: Setup Java
         uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.java }}
+
       - name: Run Debian Staging Distrubution
         run: |
           cd elasticsearch/linux_distributions
@@ -325,14 +344,17 @@ jobs:
         java: [14]
     steps:
       - uses: actions/checkout@v1
+
       - uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/sql
-          ref: master
+          ref: ${{needs.sign-deb-artifacts.outputs.tag}}
+
       - name: Setup Java
         uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.java }}
+
       - name: Run Debian Staging Distrubution
         run: |
           cd elasticsearch/linux_distributions
@@ -380,7 +402,7 @@ jobs:
       - uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/k-NN
-          ref: master
+          ref: ${{needs.sign-deb-artifacts.outputs.tag}}
       - name: Setup Java
         uses: actions/setup-java@v1
         with:
