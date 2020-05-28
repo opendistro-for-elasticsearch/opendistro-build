@@ -57,6 +57,7 @@ spec:
 {{ toYaml . | indent 8 }}
     {{- end }}
       initContainers:
+{{- if .Values.elasticsearch.sysctl.enabled }}
       - name: init-sysctl
         image: {{ .Values.elasticsearch.initContainer.image }}:{{ .Values.elasticsearch.initContainer.imageTag }}
         command:
@@ -65,6 +66,7 @@ spec:
         - vm.max_map_count={{ .Values.elasticsearch.maxMapCount }}
         securityContext:
           privileged: true
+{{- end }}
       containers:
       - name: elasticsearch
         securityContext:
