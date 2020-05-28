@@ -141,6 +141,11 @@ elasticsearch:
     image: busybox
     imageTag: 1.27.2
 
+  ## Set optimal sysctl's. This requires privilege. Can be disabled if
+  ## the system has already been preconfigured.
+  sysctl:
+    enabled: true
+
   ssl:
     ## TLS is mandatory for the transport layer and can not be disabled
     transport:
