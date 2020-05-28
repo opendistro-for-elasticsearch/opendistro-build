@@ -28,20 +28,19 @@ tar -xzf elasticsearch-oss-$ES_VERSION-linux-x86_64.tar.gz
 rm -rf elasticsearch-oss-$ES_VERSION-linux-x86_64.tar.gz
 
 # Install Plugin
-PLUGINS="opendistro-sql/opendistro_sql-$OD_VERSION \
-         opendistro-alerting/opendistro_alerting-$OD_VERSION \
-         opendistro-job-scheduler/opendistro-job-scheduler-$OD_VERSION \
-         opendistro-security/opendistro_security-$OD_VERSION \
-         performance-analyzer/opendistro_performance_analyzer-$OD_VERSION \
+PLUGINS="opendistro-alerting/opendistro_alerting-$OD_VERSION \
+         opendistro-anomaly-detection/opendistro-anomaly-detection-$OD_VERSION \
          opendistro-index-management/opendistro_index_management-$OD_VERSION \
+         opendistro-job-scheduler/opendistro-job-scheduler-$OD_VERSION \
          opendistro-knn/opendistro-knn-$OD_VERSION \
-         opendistro-anomaly-detection/opendistro-anomaly-detection-$OD_VERSION"
-
+         opendistro-security/opendistro_security-$OD_VERSION \
+         opendistro-sql/opendistro_sql-$OD_VERSION \
+         performance-analyzer/opendistro_performance_analyzer-$OD_VERSION"
 
 for plugin_path in $PLUGINS
 do
   plugin_latest=`aws s3api list-objects --bucket artifacts.opendistroforelasticsearch.amazon.com --prefix "downloads/elasticsearch-plugins/${plugin_path}" --query 'Contents[].[Key]' --output text | sort | tail -n 1`
-  echo "installing $plugin_path"
+  echo "installing $plugin_latest"
   elasticsearch-$ES_VERSION/bin/elasticsearch-plugin install --batch "${ARTIFACTS_URL}/${plugin_latest}"; \
 done
 
@@ -71,7 +70,7 @@ rm -rf tarfiles
 mkdir tarfiles
 TARGET_DIR="$ROOT/tarfiles"
 tar -czf $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz $PACKAGE_NAME-$OD_VERSION
-tar -tavf $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz
+#tar -tavf $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz
 sha512sum $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz  > $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz.sha512
 sha512sum -c $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz.sha512
 echo " CHECKSUM FILE "

@@ -37,16 +37,17 @@ if [ -n $PACKAGE_TYPE ] && [ "$PACKAGE_TYPE" != "rpm" ] && [ "$PACKAGE_TYPE" != 
   exit 1
 fi
 
-PACKAGE_NAME=opendistroforelasticsearch-kibana
+PACKAGE_NAME="opendistroforelasticsearch-kibana"
 TARGET_DIR="$ROOT/target"
 ES_VERSION=$(../bin/version-info --es)
 OD_VERSION=$(../bin/version-info --od)
 ARTIFACTS_URL=https://d3g5vo6xdbdb9a.cloudfront.net
-PLUGINS="opendistro-sql-workbench/opendistro-sql-workbench-$OD_VERSION \
-         opendistro-anomaly-detection/opendistro-anomaly-detection-kibana-$OD_VERSION \
-         opendistro-security/opendistro_security_kibana_plugin-$OD_VERSION \
+PLUGINS="
          opendistro-alerting/opendistro-alerting-$OD_VERSION \
-         opendistro-index-management/opendistro_index_management_kibana-$OD_VERSION"
+         opendistro-anomaly-detection/opendistro-anomaly-detection-kibana-$OD_VERSION \
+         opendistro-index-management/opendistro_index_management_kibana-$OD_VERSION \
+         opendistro-security/opendistro_security_kibana_plugin-$OD_VERSION \
+         opendistro-sql-workbench/opendistro-sql-workbench-$OD_VERSION"
 
 if [ -z "$PLUGINS" ]; then
   echo "Provide plugin list to install (separated by space)"
@@ -150,7 +151,7 @@ if [ $# -eq 0 ] || [ "$PACKAGE_TYPE" = "tar" ]; then
   rm -rf $TARGET_DIR/*tar*
   echo "generating tar"
   tar -czf $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz $PACKAGE_NAME
-  tar -tzvf $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz
+  #tar -tzvf $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz
   sha512sum $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz  > $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz.sha512
   sha512sum -c $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz.sha512
   echo " CHECKSUM FILE "

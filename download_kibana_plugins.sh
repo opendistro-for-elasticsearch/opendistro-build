@@ -1,25 +1,20 @@
 #!/bin/bash
-CURRENT_NO_PLUGINS=4
-plugin_arr=()
-unavailable_plugin=()
-available_plugin=()
-PLUGINS="opendistro-anomaly-detection/opendistro-anomaly-detection-kibana \
-         opendistro-security/opendistro_security_kibana_plugin \
-         opendistro-alerting/opendistro-alerting \
-         opendistro-index-management/opendistro_index_management_kibana \
-         opendistro-sql-workbench/opendistro-sql-workbench"
-cd kibana/bin
-ls -ltr
-OD_VERSION=`./version-info --od`
+ROOT=`pwd`
+OD_VERSION=`$ROOT/kibana/bin/version-info --od`
+PLUGIN_DIR="$ROOT/kibana/docker/build/kibana/plugins"
+
+PLUGINS="opendistro-alerting/opendistro-alerting-$OD_VERSION \
+         opendistro-anomaly-detection/opendistro-anomaly-detection-kibana-$OD_VERSION \
+         opendistro-index-management/opendistro_index_management_kibana-$OD_VERSION \
+         opendistro-security/opendistro_security_kibana_plugin-$OD_VERSION \
+         opendistro-sql-workbench/opendistro-sql-workbench-$OD_VERSION"
+
 echo "$OD_VERSION"
-cd ..
+mkdir -p $PLUGIN_DIR
 
-mkdir docker/build/kibana/plugins
-
-for item in $PLUGINS
-  do
-     plugin_folder=`echo $item|awk -F/ '{print $1}'`
-     plguin_item=`echo $item|awk -F/ '{print $2}'`
-     plugin_arr+=( $plguin_item )
-     aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/kibana-plugins/$plugin_folder/ docker/build/kibana/plugins/ --recursive --exclude "*" --include "$plguin_item-$OD_VERSION*"
-  done
+for plugin_path in $PLUGINS
+do
+  plugin_latest=`aws s3api list-objects --bucket artifacts.opendistroforelasticsearch.amazon.com --prefix "downloads/kibana-plugins/${plugin_path}" --query 'Contents[].[Key]' --output text | sort | tail -n 1`
+  echo "installing $plugin_latest"
+  aws s3 cp "s3://artifacts.opendistroforelasticsearch.amazon.com/${plugin_latest}" "${PLUGIN_DIR}" --quiet
+done
