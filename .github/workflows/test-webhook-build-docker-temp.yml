@@ -205,6 +205,7 @@ jobs:
           DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
         run: |
           #!/bin/bash
+          echo "Executing On-demand Build for Kibana Docker Image"
           sudo apt-get install python-virtualenv
           ./download_kibana_plugins.sh
           cd kibana/bin
