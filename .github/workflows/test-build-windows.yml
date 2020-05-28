@@ -10,8 +10,18 @@ jobs:
   build-es-artifacts:
     name: Build Windows ES Artifacts
     runs-on: ubuntu-latest
+    outputs:
+      tag: ${{steps.version.outputs.p_tag}}
     steps:
     - uses: actions/checkout@v1
+    - name: Getting OD version
+      id: version
+      run: |
+        cd elasticsearch/bin
+        OD_VERSION=`./version-info --od`
+        plugin_tag=v$OD_VERSION.0
+        echo "::set-output name=p_tag::$plugin_tag"
+
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -63,7 +73,7 @@ jobs:
       - uses: actions/checkout@v1
         with:
            repository: opendistro-for-elasticsearch/index-management
-           ref: master  
+           ref: ${{needs.build-es-artifacts.outputs.tag}}  
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -118,7 +128,7 @@ jobs:
       - uses: actions/checkout@v1
         with:
            repository: opendistro-for-elasticsearch/alerting
-           ref: master  
+           ref: ${{needs.build-es-artifacts.outputs.tag}}  
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
