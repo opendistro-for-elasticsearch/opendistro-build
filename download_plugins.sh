@@ -1,7 +1,10 @@
 #!/bin/bash
+set -e
 ROOT=`pwd`
-OD_VERSION=`$ROOT/elasticsearch/bin/version-info --od`
-PLUGIN_DIR="$ROOT/elasticsearch/docker/build/elasticsearch/plugins"
+cd elasticsearch/bin
+OD_VERSION=`./version-info --od`
+cd $ROOT/elasticsearch
+PLUGIN_DIR="docker/build/elasticsearch/plugins"
 
 PLUGINS="opendistro-alerting/opendistro_alerting-$OD_VERSION \
          opendistro-anomaly-detection/opendistro-anomaly-detection-$OD_VERSION \
@@ -14,7 +17,7 @@ PLUGINS="opendistro-alerting/opendistro_alerting-$OD_VERSION \
 
 
 echo "$OD_VERSION"
-mkdir -p $PLUGIN_DIR
+mkdir $PLUGIN_DIR
 
 for plugin_path in $PLUGINS
 do

@@ -1,7 +1,10 @@
 #!/bin/bash
+set -e
 ROOT=`pwd`
-OD_VERSION=`$ROOT/kibana/bin/version-info --od`
-PLUGIN_DIR="$ROOT/kibana/docker/build/kibana/plugins"
+cd kibana/bin
+OD_VERSION=`./version-info --od`
+cd $ROOT/kibana
+PLUGIN_DIR="docker/build/kibana/plugins"
 
 PLUGINS="opendistro-alerting/opendistro-alerting-$OD_VERSION \
          opendistro-anomaly-detection/opendistro-anomaly-detection-kibana-$OD_VERSION \
@@ -10,7 +13,7 @@ PLUGINS="opendistro-alerting/opendistro-alerting-$OD_VERSION \
          opendistro-sql-workbench/opendistro-sql-workbench-$OD_VERSION"
 
 echo "$OD_VERSION"
-mkdir -p $PLUGIN_DIR
+mkdir $PLUGIN_DIR
 
 for plugin_path in $PLUGINS
 do
