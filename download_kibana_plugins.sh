@@ -6,11 +6,12 @@ OD_VERSION=`./version-info --od`
 cd $ROOT/kibana
 PLUGIN_DIR="docker/build/kibana/plugins"
 
-PLUGINS="opendistro-alerting/opendistro-alerting-$OD_VERSION \
+# Please DO NOT change the orders, they have dependencies
+PLUGINS="opendistro-sql-workbench/opendistro-sql-workbench-$OD_VERSION \
          opendistro-anomaly-detection/opendistro-anomaly-detection-kibana-$OD_VERSION \
-         opendistro-index-management/opendistro_index_management_kibana-$OD_VERSION \
          opendistro-security/opendistro_security_kibana_plugin-$OD_VERSION \
-         opendistro-sql-workbench/opendistro-sql-workbench-$OD_VERSION"
+         opendistro-alerting/opendistro-alerting-$OD_VERSION \
+         opendistro-index-management/opendistro_index_management_kibana-$OD_VERSION"
 
 echo "$OD_VERSION"
 mkdir $PLUGIN_DIR

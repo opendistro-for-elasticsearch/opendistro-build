@@ -6,14 +6,15 @@ OD_VERSION=`./version-info --od`
 cd $ROOT/elasticsearch
 PLUGIN_DIR="docker/build/elasticsearch/plugins"
 
-PLUGINS="opendistro-alerting/opendistro_alerting-$OD_VERSION \
-         opendistro-anomaly-detection/opendistro-anomaly-detection-$OD_VERSION \
-         opendistro-index-management/opendistro_index_management-$OD_VERSION \
+# Please DO NOT change the orders, they have dependencies
+PLUGINS="opendistro-sql/opendistro_sql-$OD_VERSION \
+         opendistro-alerting/opendistro_alerting-$OD_VERSION \
          opendistro-job-scheduler/opendistro-job-scheduler-$OD_VERSION \
-         opendistro-knn/opendistro-knn-$OD_VERSION \
          opendistro-security/opendistro_security-$OD_VERSION \
-         opendistro-sql/opendistro_sql-$OD_VERSION \
-         performance-analyzer/opendistro_performance_analyzer-$OD_VERSION"
+         performance-analyzer/opendistro_performance_analyzer-$OD_VERSION \
+         opendistro-index-management/opendistro_index_management-$OD_VERSION \
+         opendistro-knn/opendistro-knn-$OD_VERSION \
+         opendistro-anomaly-detection/opendistro-anomaly-detection-$OD_VERSION"
 
 
 echo "$OD_VERSION"

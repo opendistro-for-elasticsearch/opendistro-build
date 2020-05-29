@@ -20,23 +20,24 @@ PACKAGE_NAME="opendistroforelasticsearch"
 ROOT=`pwd`
 echo $ROOT
 
-# Get Artifact
+# Downloading ES oss
 wget -nv https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$ES_VERSION-linux-x86_64.tar.gz
 
 # Untar
 tar -xzf elasticsearch-oss-$ES_VERSION-linux-x86_64.tar.gz 
 rm -rf elasticsearch-oss-$ES_VERSION-linux-x86_64.tar.gz
 
-# Install Plugin
-PLUGINS="opendistro-alerting/opendistro_alerting-$OD_VERSION \
-         opendistro-anomaly-detection/opendistro-anomaly-detection-$OD_VERSION \
-         opendistro-index-management/opendistro_index_management-$OD_VERSION \
+# Please DO NOT change the orders, they have dependencies
+PLUGINS="opendistro-sql/opendistro_sql-$OD_VERSION \
+         opendistro-alerting/opendistro_alerting-$OD_VERSION \
          opendistro-job-scheduler/opendistro-job-scheduler-$OD_VERSION \
-         opendistro-knn/opendistro-knn-$OD_VERSION \
          opendistro-security/opendistro_security-$OD_VERSION \
-         opendistro-sql/opendistro_sql-$OD_VERSION \
-         performance-analyzer/opendistro_performance_analyzer-$OD_VERSION"
+         performance-analyzer/opendistro_performance_analyzer-$OD_VERSION \
+         opendistro-index-management/opendistro_index_management-$OD_VERSION \
+         opendistro-knn/opendistro-knn-$OD_VERSION \
+         opendistro-anomaly-detection/opendistro-anomaly-detection-$OD_VERSION"
 
+# Install Plugin
 for plugin_path in $PLUGINS
 do
   plugin_latest=`aws s3api list-objects --bucket artifacts.opendistroforelasticsearch.amazon.com --prefix "downloads/elasticsearch-plugins/${plugin_path}" --query 'Contents[].[Key]' --output text | sort | tail -n 1`

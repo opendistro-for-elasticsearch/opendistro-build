@@ -42,12 +42,13 @@ TARGET_DIR="$ROOT/target"
 ES_VERSION=$(../bin/version-info --es)
 OD_VERSION=$(../bin/version-info --od)
 ARTIFACTS_URL=https://d3g5vo6xdbdb9a.cloudfront.net
-PLUGINS="
-         opendistro-alerting/opendistro-alerting-$OD_VERSION \
+
+# Please DO NOT change the orders, they have dependencies
+PLUGINS="opendistro-sql-workbench/opendistro-sql-workbench-$OD_VERSION \
          opendistro-anomaly-detection/opendistro-anomaly-detection-kibana-$OD_VERSION \
-         opendistro-index-management/opendistro_index_management_kibana-$OD_VERSION \
          opendistro-security/opendistro_security_kibana_plugin-$OD_VERSION \
-         opendistro-sql-workbench/opendistro-sql-workbench-$OD_VERSION"
+         opendistro-alerting/opendistro-alerting-$OD_VERSION \
+         opendistro-index-management/opendistro_index_management_kibana-$OD_VERSION"
 
 if [ -z "$PLUGINS" ]; then
   echo "Provide plugin list to install (separated by space)"
