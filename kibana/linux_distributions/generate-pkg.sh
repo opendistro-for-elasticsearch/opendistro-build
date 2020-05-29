@@ -26,22 +26,13 @@
 
 # Initialize directories
 ROOT=`pwd`
-echo $ROOT
-mkdir target opendistroforelasticsearch-kibana
-
 PACKAGE_TYPE=$1
-
-# If the input is set, but it's set to neither rpm nor deb, then exit.
-if [ -n $PACKAGE_TYPE ] && [ "$PACKAGE_TYPE" != "rpm" ] && [ "$PACKAGE_TYPE" != "deb" ] && [ "$PACKAGE_TYPE" != "tar" ]; then
-  printf "You entered %s. Please enter 'rpm' to build rpm or 'deb' or 'tar' to build deb or nothing to build both.\n" "$PACKAGE_TYPE"
-  exit 1
-fi
-
+plugin_arr=()
 PACKAGE_NAME="opendistroforelasticsearch-kibana"
 TARGET_DIR="$ROOT/target"
 ES_VERSION=$(../bin/version-info --es)
 OD_VERSION=$(../bin/version-info --od)
-ARTIFACTS_URL=https://d3g5vo6xdbdb9a.cloudfront.net
+ARTIFACTS_URL="https://d3g5vo6xdbdb9a.cloudfront.net"
 
 # Please DO NOT change the orders, they have dependencies
 PLUGINS="opendistro-sql-workbench/opendistro-sql-workbench-$OD_VERSION \
@@ -50,15 +41,26 @@ PLUGINS="opendistro-sql-workbench/opendistro-sql-workbench-$OD_VERSION \
          opendistro-alerting/opendistro-alerting-$OD_VERSION \
          opendistro-index-management/opendistro_index_management_kibana-$OD_VERSION"
 
+echo $ROOT
+
 if [ -z "$PLUGINS" ]; then
   echo "Provide plugin list to install (separated by space)"
   exit 1
 fi
 
+# If the input is set, but it's set to neither rpm nor deb, then exit.
+if [ -n $PACKAGE_TYPE ] && [ "$PACKAGE_TYPE" != "rpm" ] && [ "$PACKAGE_TYPE" != "deb" ] && [ "$PACKAGE_TYPE" != "tar" ]; then
+  printf "You entered %s. Please enter 'rpm' to build rpm or 'deb' or 'tar' to build deb or nothing to build both.\n" "$PACKAGE_TYPE"
+  exit 1
+fi
+
+# Prepare target directories
+mkdir $TARGET_DIR
+mkdir $PACKAGE_NAME
+
 # Downloading Kibana oss
 echo "Downloading oss kibana"
-cd opendistroforelasticsearch-kibana;
-curl -Ls "https://artifacts.elastic.co/downloads/kibana/kibana-oss-$ES_VERSION-linux-x86_64.tar.gz" | tar --strip-components=1 -zxf -
+curl -Ls "https://artifacts.elastic.co/downloads/kibana/kibana-oss-$ES_VERSION-linux-x86_64.tar.gz" | tar --strip-components=1 -zxf - --directory $PACKAGE_NAME
 
 # Install required plugins
 echo "installing open distro plugins"
@@ -66,11 +68,26 @@ for plugin_path in $PLUGINS
 do
   plugin_latest=`aws s3api list-objects --bucket artifacts.opendistroforelasticsearch.amazon.com --prefix "downloads/kibana-plugins/${plugin_path}" --query 'Contents[].[Key]' --output text | sort | tail -n 1`
   echo "installing $plugin_latest"
-  bin/kibana-plugin --allow-root install "${ARTIFACTS_URL}/${plugin_latest}"
+  $PACKAGE_NAME/bin/kibana-plugin --allow-root install "${ARTIFACTS_URL}/${plugin_latest}"
+  basedir="${PACKAGE_NAME}/plugins"
+  plugin_item=`echo $plugin_path|awk -F/ '{print $2}'`
+  plugin_arr+=( "${basedir}/${plugin_item}" )
 done
 
-# Navigate to root directory
-cd $ROOT
+# Validation
+echo "validating that plugins has been installed"
+
+for d in "${plugin_arr[@]}"; do
+  echo "$d"
+  if [ -d "$d" ]; then
+    echo "directoy "$d" is present"
+  else
+    echo "ERROR: "$d" is not present"
+    exit 1;
+  fi
+done
+
+echo "Results: validated that plugins has been installed"
 
 # Replace kibana.yml with default opendistro yml
 cp config/kibana.yml $PACKAGE_NAME/config
