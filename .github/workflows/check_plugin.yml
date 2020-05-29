@@ -93,6 +93,8 @@ jobs:
           fi
           echo "#######################################"
 
+          # This plugin checks DOES NOT count in plugin installation dependencies orderings
+          # It only checks if the required plugins are presented in the s3 buckets
           PLUGINS_zip="opendistro-alerting/opendistro_alerting \
                        opendistro-anomaly-detection/opendistro-anomaly-detection \
                        opendistro-index-management/opendistro_index_management \
