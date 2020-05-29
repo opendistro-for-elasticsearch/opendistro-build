@@ -99,10 +99,8 @@ RUN set -ex && for esdirs in config data logs; do \
     done
 
 # Install the required modules
-# This is now fixed as there are dependencies in installing the plugins
-#                      ^---------------------^
 RUN for plugin_path in {{ plugin_url_paths }}; do \
-      elasticsearch-plugin install --batch file:/tmp/plugins/$plugin_path.*.zip; \
+      elasticsearch-plugin install --batch file:/tmp/plugins/$plugin_path; \
     done
 
 # Make the certificate installer script executable. This script has to be executed before ES is started.
@@ -203,3 +201,4 @@ CMD ["eswrapper"]
 ################################################################################
 # End of multi-stage Dockerfile
 ################################################################################
+
