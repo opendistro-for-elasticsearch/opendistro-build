@@ -67,6 +67,7 @@ jobs:
         DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
       run: |
         #!/bin/bash
+        set -e
         echo "Executing On-demand Build for ES Docker Image"
         workdir=`pwd`
         sudo apt-get install python-virtualenv
@@ -205,6 +206,7 @@ jobs:
           DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
         run: |
           #!/bin/bash
+          set -e
           echo "Executing On-demand Build for Kibana Docker Image"
           sudo apt-get install python-virtualenv
           ./download_kibana_plugins.sh
