@@ -102,7 +102,7 @@ RUN set -ex && for esdirs in config data logs; do \
 # This is now fixed as there are dependencies in installing the plugins
 #                      ^---------------------^
 RUN for plugin_path in {{ plugin_url_paths }}; do \
-      elasticsearch-plugin install --batch file:/tmp/plugins/$plugin_path; \
+      elasticsearch-plugin install --batch "file:/tmp/plugins/$plugin_path"*.zip; \
     done
 
 # Make the certificate installer script executable. This script has to be executed before ES is started.
