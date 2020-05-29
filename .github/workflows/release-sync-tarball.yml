@@ -3,7 +3,7 @@ on:
   repository_dispatch:
     types: [sync-tar-prod]
 jobs:
-  Sync-Deb-Prod:
+  Sync-Tarball-Prod:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1

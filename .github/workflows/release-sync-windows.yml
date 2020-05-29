@@ -3,7 +3,7 @@ on:
   repository_dispatch:
     types: [sync-windows-prod]
 jobs:
-  Sync-Deb-Prod:
+  Sync-Windows-Prod:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
