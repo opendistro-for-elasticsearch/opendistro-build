@@ -12,15 +12,13 @@ TSCRIPT_NEWLINE="%0D%0A"
 RUN_STATUS=0 # 0 is success, 1 is failure
 PLUGIN_TYPES=$1
 ODFE_VERSION=$2
-CHIME_ALERT=$3
-EMAIL_ALERT=$4
 
 # This script allows users to manually assign parameters
-if [ "$#" -gt 0 ] && [ "$#" -ne 4 ]
+if [ "$#" -gt 0 ] && [ "$#" -ne 2 ]
 then
-  echo "ERROR: Please assign 0 or 4 parameters when running this script"
-  echo "Example: $0 \"rpm,kibana\" \"1.7.0\" \"false\" \"true\""
-  echo "This will check rpm & kibana plugins, NOT send Chime MSG, send Email MSG"
+  echo "ERROR: Please assign 0 or 2 parameters when running this script"
+  echo "Example: $0 \"rpm,kibana\" \"1.7.0\""
+  echo "This will check rpm & kibana plugins"
   exit 1
 fi
 
@@ -46,56 +44,38 @@ then
 fi
 echo "#######################################"
 
-echo "#######################################"
-echo "CHIME_ALERT is: $CHIME_ALERT"
-if [ -z "$CHIME_ALERT" ]
-then
-  CHIME_ALERT=true
-  echo "Use default CHIME_ALERT: $CHIME_ALERT"
-fi
-echo "#######################################"
-
-echo "#######################################"
-echo "EMAIL_ALERT is: $EMAIL_ALERT"
-if [ -z "$EMAIL_ALERT" ]
-then
-  EMAIL_ALERT=true
-  echo "Use default EMAIL_ALERT: $EMAIL_ALERT"
-fi
-echo "#######################################"
-
 PLUGINS_zip="opendistro-alerting/opendistro_alerting \
-	     opendistro-anomaly-detection/opendistro-anomaly-detection \
-	     opendistro-index-management/opendistro_index_management \
-	     opendistro-job-scheduler/opendistro-job-scheduler \
-	     opendistro-knn/opendistro-knn \
-	     performance-analyzer/opendistro_performance_analyzer \
-	     opendistro-security/opendistro_security \
-	     opendistro-sql/opendistro_sql"
+             opendistro-anomaly-detection/opendistro-anomaly-detection \
+             opendistro-index-management/opendistro_index_management \
+             opendistro-job-scheduler/opendistro-job-scheduler \
+             opendistro-knn/opendistro-knn \
+             performance-analyzer/opendistro_performance_analyzer \
+             opendistro-security/opendistro_security \
+             opendistro-sql/opendistro_sql"
 
 PLUGINS_rpm="opendistro-alerting/opendistro-alerting \
-	     opendistro-anomaly-detection/opendistro-anomaly-detection \
-	     opendistro-index-management/opendistro-index-management \
-	     opendistro-job-scheduler/opendistro-job-scheduler \
-	     opendistro-knn/opendistro-knn \
-	     opendistro-performance-analyzer/opendistro-performance-analyzer \
-	     opendistro-security/opendistro-security \
-	     opendistro-sql/opendistro-sql"
+             opendistro-anomaly-detection/opendistro-anomaly-detection \
+             opendistro-index-management/opendistro-index-management \
+             opendistro-job-scheduler/opendistro-job-scheduler \
+             opendistro-knn/opendistro-knn \
+             opendistro-performance-analyzer/opendistro-performance-analyzer \
+             opendistro-security/opendistro-security \
+             opendistro-sql/opendistro-sql"
 
 PLUGINS_deb="opendistro-alerting/opendistro-alerting \
-	     opendistro-anomaly-detection/opendistro-anomaly-detection \
-	     opendistro-index-management/opendistro-index-management \
-	     opendistro-job-scheduler/opendistro-job-scheduler \
-	     opendistro-knn/opendistro-knn \
-	     opendistro-performance-analyzer/opendistro-performance-analyzer \
-	     opendistro-security/opendistro-security \
-	     opendistro-sql/opendistro-sql"
+             opendistro-anomaly-detection/opendistro-anomaly-detection \
+             opendistro-index-management/opendistro-index-management \
+             opendistro-job-scheduler/opendistro-job-scheduler \
+             opendistro-knn/opendistro-knn \
+             opendistro-performance-analyzer/opendistro-performance-analyzer \
+             opendistro-security/opendistro-security \
+             opendistro-sql/opendistro-sql"
 
 PLUGINS_kibana="opendistro-alerting/opendistro-alerting \
-	        opendistro-anomaly-detection/opendistro-anomaly-detection-kibana \
-	        opendistro-index-management/opendistro_index_management_kibana \
-	        opendistro-security/opendistro_security_kibana_plugin \
-	        opendistro-sql-workbench/opendistro-sql-workbench"
+                opendistro-anomaly-detection/opendistro-anomaly-detection-kibana \
+                opendistro-index-management/opendistro_index_management_kibana \
+                opendistro-security/opendistro_security_kibana_plugin \
+                opendistro-sql-workbench/opendistro-sql-workbench"
 
 # plugin_type
 IFS=,
@@ -211,7 +191,9 @@ cp -v chime_message.md /tmp/chime_message.md
 if [ "$RUN_STATUS" -eq 1 ]
 then
   echo "Plugin Checks Failure with 1 or more plugin(s) is not available"
-  exit 1
+  echo -n 1 > /tmp/plugin_status.check
 else
   echo "Plugin Checks Success"
+  echo -n 0 > /tmp/plugin_status.check
 fi
+

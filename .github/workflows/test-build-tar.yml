@@ -19,35 +19,9 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Send Dispatch Event for check_plugin Workflow
-        uses: peter-evans/repository-dispatch@v1
-        with:
-          token: ${{ secrets.GitHub_PAT }}
-          event-type: check_plugin
-          client-payload: '{"PLUGIN_TYPES_PL": "zip kibana", "ODFE_VERSION_PL": "", "CHIME_ALERT_PL": "false", "EMAIL_ALERT_PL": "false"}'
+      - name: Run check_plugin scripts
+        run: .github/scripts/check_plugin.sh; exit `cat /tmp/plugin_status.check`
 
-      - name: Sleep and wait for check_plugin to trigger
-        uses: juliangruber/sleep-action@v1
-        with:
-          time: 20s
-
-      - name: Wait for check_plugin Workflow Status Return
-        uses: lewagon/wait-on-check-action@master
-        id: wait-for-check_plugin
-        with:
-          repo-token: ${{ secrets.GitHub_PAT }}
-          check-name: Check Plugin Availability Main
-          wait-interval: 10
-          ref: master
-
-      - name: check_plugin Success
-        if: ${{ success() }}
-        run: echo "Plugin Checks Success"
-
-      - name: check_plugin Failure
-        if: ${{ failure() }}
-        run: echo "Plugin Checks Failure" && exit 1
-          
   build-es-artifacts:
     needs: [plugin-availability]
     name: Build ES Artifacts
