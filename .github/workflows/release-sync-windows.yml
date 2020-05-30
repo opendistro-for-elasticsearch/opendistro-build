@@ -1,7 +1,9 @@
 name: Sync windows artifacts to Prod
+
 on: 
   repository_dispatch:
-    types: [sync-windows-prod]
+    types: [release-sync-windows]
+
 jobs:
   Sync-Windows-Prod:
     runs-on: ubuntu-latest

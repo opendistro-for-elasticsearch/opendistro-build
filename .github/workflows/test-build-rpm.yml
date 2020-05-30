@@ -4,7 +4,7 @@ on:
   schedule:
     - cron: '0 10 * * *'
   repository_dispatch:
-    types: [build-rpm]
+    types: [test-build-rpm]
   
 jobs:
   plugin-availability:
@@ -158,7 +158,7 @@ jobs:
           subject: Opendistro for Elasticsearch Build - Centos Images For Testing
           # Read file contents as body:
           body: file://Message.md
-          to: sngri@amazon.com,odfe-distribution-build@amazon.com
+          to: odfe-distribution-build@amazon.com
           from: Opendistro Elasticsearch
           # Optional content type:
           content_type: text/html

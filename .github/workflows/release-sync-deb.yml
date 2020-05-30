@@ -1,7 +1,9 @@
 name: Sync Deb artifacts to Prod
+
 on: 
   repository_dispatch:
-    types: [sync-deb-prod]
+    types: [release-sync-deb]
+
 jobs:
   Sync-Deb-Prod:
     runs-on: ubuntu-latest

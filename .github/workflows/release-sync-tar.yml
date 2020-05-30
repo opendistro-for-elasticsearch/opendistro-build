@@ -1,7 +1,9 @@
 name: Sync tar artifacts to Prod
+
 on: 
   repository_dispatch:
-    types: [sync-tar-prod]
+    types: [release-sync-tar]
+
 jobs:
   Sync-Tarball-Prod:
     runs-on: ubuntu-latest
