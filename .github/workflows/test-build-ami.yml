@@ -2,7 +2,7 @@ name: Build ODFE AMI
 
 on:
   repository_dispatch:
-    types: [build-ami]
+    types: [test-build-ami]
     
 jobs:
   build:
