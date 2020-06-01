@@ -16,11 +16,11 @@ echo "Running $0"
 echo $ROOT
 
 # This script allows users to manually assign parameters
-if [ "$#" -gt 0 ] && [ "$#" -ne 2 ]
+if [ "$#" -gt 2 ]
 then
-  echo "ERROR: Please assign 0 or 2 parameters when running this script"
+  echo "ERROR: Please assign at most 2 parameters when running this script"
+  echo "Example: $0 \"tar\""
   echo "Example: $0 \"rpm,kibana\" \"1.7.0\""
-  echo "This will check rpm & kibana plugins"
   exit 1
 fi
 
