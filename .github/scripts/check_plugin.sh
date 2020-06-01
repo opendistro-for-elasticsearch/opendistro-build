@@ -2,7 +2,6 @@
 
 # This script is meant to be run within .github/scripts folder structure
 ROOT=`git rev-parse --show-toplevel`
-echo "Running $0"
 S3_BUCKET="artifacts.opendistroforelasticsearch.amazon.com"
 S3_DIR_zip="downloads/elasticsearch-plugins"
 S3_DIR_rpm="downloads/rpms"
@@ -13,6 +12,7 @@ RUN_STATUS=0 # 0 is success, 1 is failure
 PLUGIN_TYPES=$1
 ODFE_VERSION=$2
 
+echo "Running $0"
 echo $ROOT
 
 # This script allows users to manually assign parameters
