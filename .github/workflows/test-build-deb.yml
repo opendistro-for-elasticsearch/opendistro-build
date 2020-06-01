@@ -70,11 +70,12 @@ jobs:
       - name: Build Kibana deb
         run: |
           #!/bin/bash -x
+          set -e
+          set -u
           cd kibana/linux_distributions
-          sh generate-pkg.sh
+          ./generate-pkg.sh deb
           deb_artifact=`ls target/*.deb`
           ls -ltr target/
-          tar_checksum_artifact=`ls target/*.tar.gz.sha512`
           aws s3 cp $deb_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/debs/opendistroforelasticsearch-kibana/
 
   sign-deb-artifacts:

@@ -56,9 +56,9 @@ jobs:
         export PATH=$JAVA_HOME:$PATH
         cd elasticsearch/linux_distributions
         ./opendistro-tar-build.sh
-        tar_artifact=`ls tarfiles/*.tar.gz`
-        ls -ltr tarfiles/
-        tar_checksum_artifact=`ls tarfiles/*.tar.gz.sha512`
+        tar_artifact=`ls target/*.tar.gz`
+        ls -ltr target/
+        tar_checksum_artifact=`ls target/*.tar.gz.sha512`
 
         aws s3 cp $tar_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistro-elasticsearch/
         aws s3 cp $tar_checksum_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistro-elasticsearch/
@@ -83,11 +83,13 @@ jobs:
       - name: Build Kibana
         run: |
           #!/bin/bash -x
+          set -e
+          set -u
           cd kibana/linux_distributions 
-          sh generate-pkg.sh
-          rpm_artifact=`ls target/*.rpm`
+          ./generate-pkg.sh tar
           tar_artifact=`ls target/*.tar.gz`
           tar_checksum_artifact=`ls target/*.tar.gz.sha512`
+          ls -ltr target/
           aws s3 cp $tar_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistroforelasticsearch-kibana/
           aws s3 cp $tar_checksum_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistroforelasticsearch-kibana/
           
