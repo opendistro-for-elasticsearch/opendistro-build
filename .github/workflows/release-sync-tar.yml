@@ -3,8 +3,6 @@ name: Sync tar artifacts to Prod
 on: 
   repository_dispatch:
     types: [release-sync-tar]
-  push:
-    branches: [opendistro-infra-issue-123-1]
 
 jobs:
   Sync-Tarball-Prod:
