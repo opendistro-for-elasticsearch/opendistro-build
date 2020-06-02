@@ -23,15 +23,16 @@
 #   exit 1
 # fi
 
+set -e
 
 # Initialize directories
 ROOT=`pwd`
 PACKAGE_TYPE=$1
-PACKAGE_NAME="opendistroforelasticsearch-kibana"
-TARGET_DIR="$ROOT/target"
 ES_VERSION=$(../bin/version-info --es)
 OD_VERSION=$(../bin/version-info --od)
 ARTIFACTS_URL="https://d3g5vo6xdbdb9a.cloudfront.net"
+PACKAGE_NAME="opendistroforelasticsearch-kibana"
+TARGET_DIR="$ROOT/target"
 
 # Please DO NOT change the orders, they have dependencies
 PLUGINS="opendistro-sql-workbench/opendistro-sql-workbench-$OD_VERSION \

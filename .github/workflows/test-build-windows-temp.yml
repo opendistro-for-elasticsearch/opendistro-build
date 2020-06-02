@@ -1,0 +1,71 @@
+name: Build Windows Exe using tar artifacts
+
+on:
+  schedule:
+    - cron: '0 10 * * *'
+  repository_dispatch:
+    types: [build-windows-temp]
+  push:
+    branches: [opendistro-infra-issue-112-3]
+
+jobs:
+  build-es-artifacts:
+    name: Build Windows ES Artifacts
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{steps.version.outputs.p_tag}}
+    steps:
+    - uses: actions/checkout@v1
+    - name: Getting OD version
+      id: version
+      run: |
+        cd elasticsearch/bin
+        OD_VERSION=`./version-info --od`
+        plugin_tag=v$OD_VERSION.0
+        echo "::set-output name=p_tag::$plugin_tag"
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Set up JDK
+      uses: actions/setup-java@v1
+      with:
+        java-version: 14
+
+    - name: Build Windows
+      run: |
+        set -e
+        set -u
+        cd elasticsearch/linux_distributions
+        chmod 755 opendistro-windows-build.sh
+        ./opendistro-windows-build.sh
+        ls -lrt target/
+        
+        
+#  build-kibana-artifacts:
+#    name: Build Kibana Artifacts
+#    runs-on: [ubuntu-latest]
+#    steps:
+#    - uses: actions/checkout@v1
+#    - name: Configure AWS Credentials
+#      uses: aws-actions/configure-aws-credentials@v1
+#      with:
+#        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#        aws-region: us-east-1
+#
+#    - name: Set up JDK
+#      uses: actions/setup-java@v1
+#      with:
+#        java-version: 14
+#
+#    - name: Build Kibana
+#      run: |
+#        cd kibana/linux_distributions 
+#        chmod 755 opendistro-windows-kibana-build.sh
+#        ./opendistro-windows-kibana-build.sh
+#          

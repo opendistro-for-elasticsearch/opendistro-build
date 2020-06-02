@@ -13,10 +13,13 @@
 # express or implied. See the License for the specific language governing
 # permissions and limitations under the License.
 #Download opensourceversion
+
+set -e
+
 ROOT=`pwd`
 ES_VERSION=$(../bin/version-info --es)
 OD_VERSION=$(../bin/version-info --od)
-ARTIFACTS_URL=https://d3g5vo6xdbdb9a.cloudfront.net
+ARTIFACTS_URL="https://d3g5vo6xdbdb9a.cloudfront.net"
 PACKAGE_NAME="opendistroforelasticsearch"
 TARGET_DIR="$ROOT/target"
 
@@ -53,7 +56,7 @@ mkdir $TARGET_DIR
 
 # Downloading ES oss
 echo "Downloading ES oss"
-wget -nv https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$ES_VERSION-linux-x86_64.tar.gz
+wget -nv https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$ES_VERSION-linux-x86_64.tar.gz ; echo $?
 tar -xzf elasticsearch-oss-$ES_VERSION-linux-x86_64.tar.gz --strip-components=1 --directory "${PACKAGE_NAME}-${OD_VERSION}" && rm -rf elasticsearch-oss-$ES_VERSION-linux-x86_64.tar.gz
 # Use tar instead of curl since the image opendistroforelasticsearch/multijava08101112-git:v1 does not have curl
 # And opendistroforelasticsearch/jsenv:v1 does not have java 12
