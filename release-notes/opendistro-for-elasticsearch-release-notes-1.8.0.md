@@ -2,14 +2,13 @@
 
 Open Distro for Elasticsearch 1.8.0 is now available for [download](https://opendistro.github.io/for-elasticsearch/downloads.html).
 
-The release consists of Apache 2 licensed Elasticsearch version 7.7.0, and Kibana version 7.7.0. Plugins in the distribution include alerting, index management, performance analyzer, security, SQL and machine learning with k-NN and anomaly detection. SQL JDBC/ODBC driver, SQL CLI Client, and PerfTop, a client for Performance Analyzer are also available for download.
+The release consists of Apache 2 licensed Elasticsearch version 7.7.0, and Kibana version 7.7.0. Plugins in the distribution include alerting, index management, performance analyzer, security, SQL, and machine learning with k-NN and anomaly detection. SQL JDBC/ODBC driver, SQL CLI Client, and PerfTop, a client for Performance Analyzer are also available for download.
 
 
 ## Release Highlights
 
 * The [snapshot](https://github.com/opendistro-for-elasticsearch/index-management/pull/135) feature is now available in the Index Management plugin. This feature allows users to recover from failure and migrate indices from one cluster to another. 
 * Anomaly Detection plugin releases the new [count aggregation](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/169) feature to detect anomalies. 
-* [Tableau connector for SQL ODBC](https://opendistro.github.io/for-elasticsearch-docs/docs/sql/odbc/) to help export data from Elasticsearch to Tableau.
 * New feature [Cosine Similarity](https://github.com/opendistro-for-elasticsearch/k-NN/pull/90) is available for use in k-NN plugin.
 * [PerfTop CLI](https://opendistro.github.io/for-elasticsearch/downloads.html#PerfTop), a client to interact with Performance Analyzer.
 
