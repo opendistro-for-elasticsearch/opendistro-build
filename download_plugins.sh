@@ -1,22 +1,30 @@
 #!/bin/bash
-CURRENT_NO_PLUGINS=6
-plugin_arr=()
-unavailable_plugin=()
-available_plugin=()
-PLUGINS="opendistro-anomaly-detection/opendistro-anomaly-detection opendistro-sql/opendistro_sql opendistro-alerting/opendistro_alerting opendistro-job-scheduler/opendistro-job-scheduler opendistro-security/opendistro_security performance-analyzer/opendistro_performance_analyzer opendistro-index-management/opendistro_index_management opendistro-knn/opendistro-knn"
-
+set -e
+ROOT=`pwd`
 cd elasticsearch/bin
-ls -ltr
 OD_VERSION=`./version-info --od`
+cd $ROOT/elasticsearch
+PLUGIN_DIR="docker/build/elasticsearch/plugins"
+
+# Please DO NOT change the orders, they have dependencies
+PLUGINS="opendistro-sql/opendistro_sql-$OD_VERSION \
+         opendistro-alerting/opendistro_alerting-$OD_VERSION \
+         opendistro-job-scheduler/opendistro-job-scheduler-$OD_VERSION \
+         opendistro-security/opendistro_security-$OD_VERSION \
+         performance-analyzer/opendistro_performance_analyzer-$OD_VERSION \
+         opendistro-index-management/opendistro_index_management-$OD_VERSION \
+         opendistro-knn/opendistro-knn-$OD_VERSION \
+         opendistro-anomaly-detection/opendistro-anomaly-detection-$OD_VERSION"
+
+
 echo "$OD_VERSION"
-cd ..
+mkdir $PLUGIN_DIR
 
-mkdir docker/build/elasticsearch/plugins
+for plugin_path in $PLUGINS
+do
+  plugin_latest=`aws s3api list-objects --bucket artifacts.opendistroforelasticsearch.amazon.com --prefix "downloads/elasticsearch-plugins/${plugin_path}" --query 'Contents[].[Key]' --output text | sort | tail -n 1`
+  echo "downloading $plugin_latest"
+  aws s3 cp "s3://artifacts.opendistroforelasticsearch.amazon.com/${plugin_latest}" "${PLUGIN_DIR}" --quiet; echo $?
+done
 
-for item in $PLUGINS
-  do
-     plugin_folder=`echo $item|awk -F/ '{print $1}'`
-     plguin_item=`echo $item|awk -F/ '{print $2}'`
-     plugin_arr+=( $plguin_item )
-     aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/elasticsearch-plugins/$plugin_folder/ docker/build/elasticsearch/plugins/ --recursive --exclude "*" --include "$plguin_item-$OD_VERSION*"
-  done
+ls -lrt $PLUGIN_DIR

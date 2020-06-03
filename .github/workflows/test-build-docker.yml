@@ -218,6 +218,7 @@ jobs:
           kibana_image_id=`awk -F ' ' '{print $3}' kibana_id.out`
           echo "Docker Id is $kibana_image_id"
           docker tag $kibana_image_id opendistroforelasticsearch/opendistroforelasticsearch-kibana:$ODFE_VER
+          docker images
           docker push opendistroforelasticsearch/opendistroforelasticsearch-kibana:$ODFE_VER
           
       - name: Create Email Message
