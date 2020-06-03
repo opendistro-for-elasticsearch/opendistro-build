@@ -16,7 +16,9 @@ The release consists of Apache 2 licensed Elasticsearch version 7.7.0, and Kiban
 
 The release includes the following features, enhancements, infrastructure and documentation updates, and bug fixes.
 
+## Breaking Changes
 
+* Artifact Name of Anomaly Detection Plugin for Deb and Rpm distribution is updated from **opendistro-anomaly-detector** to **opendistro-anomaly-detection. **
 
 ## **Features**
 
