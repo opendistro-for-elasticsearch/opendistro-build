@@ -18,7 +18,7 @@ The release includes the following features, enhancements, infrastructure and do
 
 ## Breaking Changes
 
-* Artifact Name of Anomaly Detection Plugin for Deb and Rpm distribution is updated from **opendistro-anomaly-detector** to **opendistro-anomaly-detection. **
+* Artifact Name of Anomaly Detection Plugin for _*Deb*_ and _*Rpm*_ distribution is updated from **opendistro-anomaly-detector** to **opendistro-anomaly-detection. **In order to reduce the impact of this change, we recommend removing the old **opendistro-anomaly-detector **plugin first with your package manager, before installing the upgraded **opendistro-anomaly-detection**.
 
 ## **Features**
 
