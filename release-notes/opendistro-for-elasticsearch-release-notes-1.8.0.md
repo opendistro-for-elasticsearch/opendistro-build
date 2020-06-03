@@ -2,7 +2,7 @@
 
 Open Distro for Elasticsearch 1.8.0 is now available for [download](https://opendistro.github.io/for-elasticsearch/downloads.html).
 
-The release consists of Apache 2 licensed Elasticsearch version 7.7.0, and Kibana version 7.7.0. Plugins in the distribution include alerting, index management, performance analyzer, security, SQL and machine learning with k-NN and anomaly detection. SQL JDBC/ODBC driver, SQL CLI Client, and PerfTop, a client for Performance Analyzer are also available for download.
+The release consists of Apache 2 licensed Elasticsearch version 7.7.0, and Kibana version 7.7.0. Plugins in the distribution include alerting, index management, performance analyzer, security, SQL, and machine learning with k-NN and anomaly detection. SQL JDBC/ODBC driver, SQL CLI Client, and PerfTop, a client for Performance Analyzer are also available for download.
 
 
 ## Release Highlights
