@@ -39,7 +39,7 @@ The release includes the following features, enhancements, infrastructure and do
 
 ### Index Management Kibana
 
-* Adds support for Kibana 7.7.0 - ([#90](https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/pull/90))
+* Adds support for Kibana 7.7.0 ([#90](https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/pull/90))
 
 ### K-NN
 
@@ -51,7 +51,7 @@ The release includes the following features, enhancements, infrastructure and do
 
 ### SQL ODBC
 
-*  Add Tableau connector source files([#81](https://github.com/opendistro-for-elasticsearch/sql-odbc/pull/82))
+*  Add Tableau connector source files ([#81](https://github.com/opendistro-for-elasticsearch/sql-odbc/pull/82))
 
 ### SQL Workbench
 
@@ -94,7 +94,7 @@ The release includes the following features, enhancements, infrastructure and do
 
 ### Alerting Kibana
 
-* Fixes wrong time interval unit for monitor on top of anomaly detector. - ([#145](https://github.com/opendistro-for-elasticsearch/alerting-kibana-plugin/pull/145))
+* Fixes wrong time interval unit for monitor on top of anomaly detector. ([#145](https://github.com/opendistro-for-elasticsearch/alerting-kibana-plugin/pull/145))
 
 ### Anomaly Detection
 
@@ -117,7 +117,7 @@ The release includes the following features, enhancements, infrastructure and do
 
 ### SQL
 
-* Correct the column when SELECT function as field([#462](https://github.com/opendistro-for-elasticsearch/sql/pull/462))
+* Correct the column when SELECT function as field ([#462](https://github.com/opendistro-for-elasticsearch/sql/pull/462))
 
 ## **Infra Updates**
 
