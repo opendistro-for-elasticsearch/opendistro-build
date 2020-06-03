@@ -27,7 +27,7 @@ The release includes the following features, enhancements, infrastructure and do
 
 ### Anomaly Detection
 
-* Add settings to disable/enable AD dynamically (#105) ([#127](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/127))
+* Add settings to disable/enable AD dynamically ([#105](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/105)) ([#127](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/127))
 
 ### Anomaly Detection Kibana
 
