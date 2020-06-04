@@ -386,10 +386,9 @@ jobs:
 
       - name: Run Debian Staging Distrubution
         run: |
-          cd elasticsearch/linux_distributions
-          es_version=`../bin/version-info --es`
+          es_version=`./bin/version-info` --es
           echo $es_version
-          cd ../../..
+          cd ..
           sleep 20
           sudo sysctl -w vm.max_map_count=262144
 
@@ -413,7 +412,7 @@ jobs:
 
           sleep 30
           cd sql
-          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Duser=admin -Dpassword=admin
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin
           
   Test-KNN-Plugin:
     needs: [sign-deb-artifacts]
