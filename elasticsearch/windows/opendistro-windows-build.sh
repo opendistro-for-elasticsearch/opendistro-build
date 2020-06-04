@@ -1,9 +1,10 @@
 #!/bin/bash
 set -e
 
-ROOT=`pwd`
-ES_VERSION=$(../bin/version-info --es)
-OD_VERSION=$(../bin/version-info --od)
+REPO_ROOT=`git rev-parse --show-toplevel`
+ROOT=`dirname $(realpath $0)`; echo $ROOT; cd $ROOT
+ES_VERSION=`$REPO_ROOT/bin/version-info --es`
+OD_VERSION=`$REPO_ROOT/bin/version-info --od`
 ARTIFACTS_URL="https://d3g5vo6xdbdb9a.cloudfront.net"
 PACKAGE_NAME="opendistroforelasticsearch"
 TARGET_DIR="$ROOT/target"
@@ -28,7 +29,6 @@ PLUGINS_CHECKS="${basedir}/opendistro-job-scheduler \
                 ${basedir}/opendistro-knn \
                 ${basedir}/opendistro-anomaly-detection"
 
-echo $ROOT
 mkdir -p $TARGET_DIR
 mkdir -p $PACKAGE_NAME-$OD_VERSION
 
@@ -70,6 +70,7 @@ cp -r elasticsearch-$ES_VERSION/* $PACKAGE_NAME-$OD_VERSION/
 # Making zip
 echo "Generating zip"
 zip -q -r $TARGET_DIR/odfe-$OD_VERSION.zip $PACKAGE_NAME-$OD_VERSION
+ls -ltr
 
 # Build Exe
 wget -nv https://download-gcdn.ej-technologies.com/install4j/install4j_unix_8_0_4.tar.gz
@@ -80,8 +81,9 @@ echo $?
 # Build the exe
 install4j8.0.4/bin/install4jc -d $TARGET_DIR -D sourcedir=./$PACKAGE_NAME-$OD_VERSION,version=$OD_VERSION --license="L-M8-AMAZON_DEVELOPMENT_CENTER_INDIA_PVT_LTD#50047687020001-3rhvir3mkx479#484b6" ./ODFE.install4j
 
+ls -ltr $TARGET_DIR
+
 # Upload top S3
-# Temporarily move these upload commands to workflow files
-#aws s3 cp $TARGET_DIR/*.exe s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/staging/odfe-executable/
-#aws s3 cp $TARGET_DIRodfe-$OD_VERSION.zip s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/staging/odfe-window-zip/
-#aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/*"
+aws s3 cp $TARGET_DIR/*.exe s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/staging/odfe-executable/
+aws s3 cp $TARGET_DIR/*.zip s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/staging/odfe-window-zip/
+aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/*"
