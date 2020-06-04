@@ -365,6 +365,56 @@ jobs:
           cd sql
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
           
+  Test-SQL-Plugin-With-Security:
+    needs: [sign-deb-artifacts]
+    runs-on: [ubuntu-16.04]
+    strategy:
+      matrix:
+        java: [14]
+    steps:
+      - uses: actions/checkout@v1
+
+      - uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/sql
+          ref: ${{needs.sign-deb-artifacts.outputs.tag}}
+
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+
+      - name: Run Debian Staging Distrubution
+        run: |
+          cd elasticsearch/linux_distributions
+          es_version=`../bin/version-info --es`
+          echo $es_version
+          cd ../../..
+          sleep 20
+          sudo sysctl -w vm.max_map_count=262144
+
+          sudo add-apt-repository -y ppa:openjdk-r/ppa
+          sudo apt update -y
+          sudo apt install -y openjdk-11-jdk
+          sudo sudo apt install -y net-tools
+
+          wget -qO - https://d3g5vo6xdbdb9a.cloudfront.net/GPG-KEY-opendistroforelasticsearch | sudo apt-key add -
+          echo "deb https://d3g5vo6xdbdb9a.cloudfront.net/staging/apt stable main" | sudo tee -a /etc/apt/sources.list.d/opendistroforelasticsearch.list
+
+          wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$es_version-amd64.deb
+          sudo dpkg -i elasticsearch-oss-$es_version-amd64.deb
+
+          sudo apt-get -y update
+          sudo apt install -y opendistroforelasticsearch
+          
+          sudo chmod 777 /etc/elasticsearch/elasticsearch.yml
+          sudo sed -i /^node.max_local_storage_nodes/d /etc/elasticsearch/elasticsearch.yml
+          sudo /etc/init.d/elasticsearch start
+
+          sleep 30
+          cd sql
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Duser=admin -Dpassword=admin
+          
   Test-KNN-Plugin:
     needs: [sign-deb-artifacts]
     runs-on: [ubuntu-16.04]
