@@ -196,8 +196,11 @@ jobs:
           export PATH=$PATH:$JAVA_HOME
           sudo yum install unzip -y
           sudo yum install opendistroforelasticsearch-${{env.od_version}} -y
+          sudo mkdir /home/repo
+          sudo chmod 777 /home/repo
           sudo chmod 777 /etc/elasticsearch/elasticsearch.yml    
-          sudo /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro_security 
+          sudo /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro_security
+          sudo sed -i '/path.logs/a path.repo: ["/home/repo"]' /etc/elasticsearch/elasticsearch.yml 
           sudo sed -i /^opendistro_security/d /etc/elasticsearch/elasticsearch.yml
           sudo sed -i /CN=kirk/d /etc/elasticsearch/elasticsearch.yml
           sudo sed -i /^node.max_local_storage_nodes/d /etc/elasticsearch/elasticsearch.yml
