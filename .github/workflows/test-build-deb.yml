@@ -386,9 +386,10 @@ jobs:
 
       - name: Run Debian Staging Distrubution
         run: |
-          es_version=`./bin/version-info --es`
+          cd elasticsearch/linux_distributions
+          es_version=`../bin/version-info --es`
           echo $es_version
-          cd ..
+          cd ../../..
           sleep 20
           sudo sysctl -w vm.max_map_count=262144
 
