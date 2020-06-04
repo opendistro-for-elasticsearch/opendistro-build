@@ -386,7 +386,7 @@ jobs:
 
       - name: Run Debian Staging Distrubution
         run: |
-          es_version=`./bin/version-info` --es
+          es_version=`./bin/version-info --es`
           echo $es_version
           cd ..
           sleep 20
