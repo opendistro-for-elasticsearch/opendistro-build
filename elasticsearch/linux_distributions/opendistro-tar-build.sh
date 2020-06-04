@@ -16,9 +16,11 @@
 
 set -e
 
-ROOT=`pwd`
-ES_VERSION=$(../bin/version-info --es)
-OD_VERSION=$(../bin/version-info --od)
+REPO_ROOT=`git rev-parse --show-toplevel`
+ROOT=`dirname $(realpath $0)`; echo $ROOT; cd $ROOT
+ES_VERSION=`$REPO_ROOT/bin/version-info --es`; echo $ES_VERSION
+OD_VERSION=`$REPO_ROOT/bin/version-info --od`; echo $OD_VERSION
+S3_BUCKET="artifacts.opendistroforelasticsearch.amazon.com"
 ARTIFACTS_URL="https://d3g5vo6xdbdb9a.cloudfront.net"
 PACKAGE_NAME="opendistroforelasticsearch"
 TARGET_DIR="$ROOT/target"
@@ -58,15 +60,12 @@ mkdir $TARGET_DIR
 echo "Downloading ES oss"
 wget -nv https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$ES_VERSION-linux-x86_64.tar.gz ; echo $?
 tar -xzf elasticsearch-oss-$ES_VERSION-linux-x86_64.tar.gz --strip-components=1 --directory "${PACKAGE_NAME}-${OD_VERSION}" && rm -rf elasticsearch-oss-$ES_VERSION-linux-x86_64.tar.gz
-# Use tar instead of curl since the image opendistroforelasticsearch/multijava08101112-git:v1 does not have curl
-# And opendistroforelasticsearch/jsenv:v1 does not have java 12
-#curl -Ls https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$ES_VERSION-linux-x86_64.tar.gz | tar --strip-components=1 -zxf - --directory "${PACKAGE_NAME}-${OD_VERSION}"
 cp -v opendistro-tar-install.sh $PACKAGE_NAME-$OD_VERSION
 
 # Install Plugin
 for plugin_path in $PLUGINS
 do
-  plugin_latest=`aws s3api list-objects --bucket artifacts.opendistroforelasticsearch.amazon.com --prefix "downloads/elasticsearch-plugins/${plugin_path}" --query 'Contents[].[Key]' --output text | sort | tail -n 1`
+  plugin_latest=`aws s3api list-objects --bucket $S3_BUCKET --prefix "downloads/elasticsearch-plugins/${plugin_path}" --query 'Contents[].[Key]' --output text | sort | tail -n 1`
   echo "installing $plugin_latest"
   $PACKAGE_NAME-$OD_VERSION/bin/elasticsearch-plugin install --batch "${ARTIFACTS_URL}/${plugin_latest}"; \
 done
@@ -84,11 +83,10 @@ for d in $PLUGINS_CHECKS; do
     exit 1;
   fi
 done
-
 echo "Results: validated that plugins has been installed"
 
+# Tar generation
 echo "generating tar"
-
 tar -czf $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz $PACKAGE_NAME-$OD_VERSION
 #tar -tavf $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz
 sha512sum $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz  > $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz.sha512
@@ -96,3 +94,12 @@ sha512sum -c $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz.sha512
 echo " CHECKSUM FILE "
 echo "$(cat $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz.sha512)"
 rm -rf $PACKAGE_NAME-$OD_VERSION
+
+# Upload to S3
+ls -ltr $TARGET_DIR
+tar_artifact=`ls $TARGET_DIR/*.tar.gz`
+tar_checksum_artifact=`ls $TARGET_DIR/*.tar.gz.sha512`
+aws s3 cp $tar_artifact s3://$S3_BUCKET/downloads/tarball/opendistro-elasticsearch/
+aws s3 cp $tar_checksum_artifact s3://$S3_BUCKET/downloads/tarball/opendistro-elasticsearch/
+aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/*"
+
