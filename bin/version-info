@@ -26,7 +26,7 @@ from os import environ
 
 
 def get_hard_coded_version(key):
-    version_file = sys.path[0] + '/' + '/version.json'
+    version_file = sys.path[0] + '/' + 'version.json'
     version_info = json.load(open(version_file))
     return version_info[key]
 
