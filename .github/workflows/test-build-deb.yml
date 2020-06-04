@@ -224,10 +224,7 @@ jobs:
           cd ../../..
           sleep 20
           sudo sysctl -w vm.max_map_count=262144
-
-          sudo add-apt-repository -y ppa:openjdk-r/ppa
           sudo apt update -y
-          sudo apt install -y openjdk-11-jdk
           sudo sudo apt install -y net-tools
 
           wget -qO - https://d3g5vo6xdbdb9a.cloudfront.net/GPG-KEY-opendistroforelasticsearch | sudo apt-key add -
@@ -238,9 +235,11 @@ jobs:
 
           sudo apt-get -y update
           sudo apt install -y opendistroforelasticsearch
-          
+          sudo mkdir /home/runner/work/repo
+          sudo chmod 777 /home/runner/work/repo
           sudo chmod 777 /etc/elasticsearch/elasticsearch.yml
           sudo /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro_security
+          sudo sed -i '/path.logs/a path.repo: ["/home/runner/work/repo"]' /etc/elasticsearch/elasticsearch.yml
           sudo sed -i /^opendistro_security/d /etc/elasticsearch/elasticsearch.yml
           sudo sed -i /CN=kirk/d /etc/elasticsearch/elasticsearch.yml
           sudo sed -i /^node.max_local_storage_nodes/d /etc/elasticsearch/elasticsearch.yml
