@@ -67,10 +67,7 @@ jobs:
           echo "ODFE_VERSION is: $ODFE_VERSION"
           if [ -z "$ODFE_VERSION" ]
           then
-            cd $CURRENT_DIR/elasticsearch/bin
-            ls -lrt
-            ODFE_VERSION=`./version-info --od`
-            ./version-info --od
+            ODFE_VERSION=`./bin/version-info --od`
             echo "Use default ODFE_VERSION: $ODFE_VERSION"
           fi
           echo "#######################################"

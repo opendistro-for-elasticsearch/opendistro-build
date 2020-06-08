@@ -73,7 +73,7 @@ jobs:
           set -e
           set -u
           cd kibana/linux_distributions
-          ./generate-pkg.sh deb
+          ./opendistro-kibana-build.sh deb
           deb_artifact=`ls target/*.deb`
           ls -ltr target/
           aws s3 cp $deb_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/debs/opendistroforelasticsearch-kibana/

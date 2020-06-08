@@ -74,7 +74,7 @@ jobs:
           set -e
           set -u
           cd kibana/linux_distributions
-          ./generate-pkg.sh rpm
+          ./opendistro-kibana-build.sh rpm
           rpm_artifact=`ls target/*.rpm`
           ls -ltr target/
           aws s3 cp $rpm_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/rpms/opendistroforelasticsearch-kibana/
