@@ -139,8 +139,8 @@ if [ $# -eq 0 ] || [ "$PACKAGE_TYPE" = "rpm" ]; then
       # Upload to S3
       ls -ltr target/
       rpm_artifact=`ls target/*.rpm`
-      #aws s3 cp $rpm_artifact s3://$S3_BUCKET/downloads/rpms/opendistroforelasticsearch-kibana/
-      #aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/*"
+      aws s3 cp $rpm_artifact s3://$S3_BUCKET/downloads/rpms/opendistroforelasticsearch-kibana/
+      aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/*"
 
 fi
 
@@ -181,8 +181,8 @@ if [ $# -eq 0 ] || [ "$PACKAGE_TYPE" = "deb" ]; then
       # Upload to S3
       ls -ltr target/
       deb_artifact=`ls target/*.deb`
-      #aws s3 cp $deb_artifact s3://$S3_BUCKET/downloads/debs/opendistroforelasticsearch-kibana/
-      #aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/*"
+      aws s3 cp $deb_artifact s3://$S3_BUCKET/downloads/debs/opendistroforelasticsearch-kibana/
+      aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/*"
 
 fi
 
@@ -202,8 +202,8 @@ if [ $# -eq 0 ] || [ "$PACKAGE_TYPE" = "tar" ]; then
   ls -ltr target/
   tar_artifact=`ls target/*.tar.gz`
   tar_checksum_artifact=`ls target/*.tar.gz.sha512`
-  #aws s3 cp $tar_artifact s3://$S3_BUCKET/downloads/tarball/opendistroforelasticsearch-kibana/
-  #aws s3 cp $tar_checksum_artifact s3://$S3_BUCKET/downloads/tarball/opendistroforelasticsearch-kibana/
-  #aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/*"
+  aws s3 cp $tar_artifact s3://$S3_BUCKET/downloads/tarball/opendistroforelasticsearch-kibana/
+  aws s3 cp $tar_checksum_artifact s3://$S3_BUCKET/downloads/tarball/opendistroforelasticsearch-kibana/
+  aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/*"
 
 fi
