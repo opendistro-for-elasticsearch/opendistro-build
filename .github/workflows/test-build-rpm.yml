@@ -69,15 +69,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
       - name: Build Kibana rpm
-        run: |
-          #!/bin/bash -x
-          set -e
-          set -u
-          cd kibana/linux_distributions
-          ./opendistro-kibana-build.sh rpm
-          rpm_artifact=`ls target/*.rpm`
-          ls -ltr target/
-          aws s3 cp $rpm_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/rpms/opendistroforelasticsearch-kibana/
+        run: ./kibana/linux_distributions/opendistro-kibana-build.sh rpm
 
   signing-artifacts:   
     name: Sign Yum
@@ -125,9 +117,9 @@ jobs:
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
           DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
         run: |
+          ES_VER=`./bin/version-info --es`
+          ODFE_VER=`./bin/version-info --od`
           cd elasticsearch/linux_distributions
-          ES_VER=`../bin/version-info --es`
-          ODFE_VER=`../bin/version-info --od`
           cd ../../..
           cd opendistro-infra/scripts/dockerfiles/tests/elasticsearch
           docker build --build-arg VER=$ODFE_VER -t opendistroforelasticsearch/elasticsearch-test-centos:$ODFE_VER -f opendistro.elasticsearch.test.centos.Dockerfile .
@@ -183,8 +175,7 @@ jobs:
       
       - name: Getting OD version
         run: |
-          cd elasticsearch/bin
-          OD_VERSION=`./version-info --od`
+          OD_VERSION=`./bin/version-info --od`
           echo "::set-env name=od_version::$OD_VERSION"
 
       - name: Starting ES service
@@ -222,8 +213,7 @@ jobs:
 
       - name: Getting OD Version
         run: |
-          cd elasticsearch/bin
-          OD_VERSION=`./version-info --od`
+          OD_VERSION=`./bin/version-info --od`
           plugin_tag=v$OD_VERSION.0
           echo "::set-env name=tag::$plugin_tag"
 
