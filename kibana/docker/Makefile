@@ -17,7 +17,7 @@
 SHELL=/bin/bash
 export PATH := ./bin:./venv/bin:$(PATH)
 PYTHON ?= $(shell command -v python3.5 || command -v python3.6)
-OPENDISTRO_PLUGINSFIGLET := pyfiglet -w 160 -f puffy
+FIGLET := pyfiglet -w 160 -f puffy
 
 BUILD_TYPE ?= OpenDistroForElasticSearch
 BUILD_DATE := $(shell date +'%y.%m.%d')
