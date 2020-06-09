@@ -8,7 +8,7 @@ metadata:
 {{ include "opendistro-es.labels.standard" . | indent 4 }}
   annotations:
     "helm.sh/hook": {{ .Values.configurer.helm.hook }}
-    # Use higher value so that the configmap is created before this job
+    # Use higher value so that the secret is created before this job
     "helm.sh/hook-weight": "-5"
     "helm.sh/hook-delete-policy": {{ .Values.configurer.helm.deletePolicy }}
 spec:
@@ -53,6 +53,6 @@ spec:
         {{- end }}     
       volumes:
       - name: files
-        configMap:
-          name: {{ template "opendistro-es.fullname" . }}-configurer-config
+        secret:
+          secretName: {{ template "opendistro-es.fullname" . }}-configurer-config
 {{- end }}

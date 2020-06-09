@@ -1,6 +1,6 @@
 {{- if .Values.configurer.enabled }}
 apiVersion: v1
-kind: ConfigMap
+kind: Secret
 metadata:
   name: {{ template "opendistro-es.fullname" . }}-configurer-config
   labels:
@@ -9,7 +9,8 @@ metadata:
     "helm.sh/hook": {{ .Values.configurer.helm.hook }}
     "helm.sh/hook-weight": "-10"
     "helm.sh/hook-delete-policy": {{ .Values.configurer.helm.deletePolicy }}
-data:
+type: Opaque
+stringData:
   configurer.sh: |-
 {{ tpl (.Files.Get "files/configurer/configurer.sh") . | indent 4 }}
 

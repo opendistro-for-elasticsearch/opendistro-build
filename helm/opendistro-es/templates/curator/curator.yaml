@@ -38,12 +38,12 @@ spec:
               - name: ES_USERNAME
                 valueFrom:
                   secretKeyRef:
-                    name: {{ .Values.kibana.elasticsearchAccount.secret }}
+                    name: {{ .Values.curator.elasticsearchAccount.secret }}
                     key: username
               - name: ES_PASSWORD
                 valueFrom:
                   secretKeyRef:
-                    name: {{ .Values.kibana.elasticsearchAccount.secret }}
+                    name: {{ .Values.curator.elasticsearchAccount.secret }}
                     key: password
               - name: ES_AUTH
                 value: $(ES_USERNAME):$(ES_PASSWORD)

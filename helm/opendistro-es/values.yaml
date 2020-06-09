@@ -167,6 +167,7 @@ elasticsearch:
   securityConfig:
     enabled: true
     path: "/usr/share/elasticsearch/plugins/opendistro_security/securityconfig"
+
     config: {}
       # config.yml: |-
       # internal_users.yml: |-
@@ -597,6 +598,47 @@ configurer:
     hook: post-install,post-upgrade
     deletePolicy: before-hook-creation,hook-failed
 
+  elasticsearchAccount:
+    useExistingSecret: true
+    username:
+    password:
+    secret: ""
+    keyPassphrase:
+      enabled: false
+
+  # Allow specification of security plugin users,
+  # roles, and role mappings.
+  securityPlugin:
+    # Users to create
+    users:
+    # - username: your_user
+    #   definition:
+    #     password: your_password
+
+    # Roles to create
+    roles:
+    # - role_name: simple_monitor
+    #   definition:
+    #     cluster_permissions:
+    #     - "cluster:monitor/main"
+
+    # Role mappings to create
+    roles_mapping:
+    # - mapping_name: simple_monitor
+    #   definition:
+    #     users:
+    #     - your_user
+
+metricsExporter:
+  elasticsearchAccount:
+    useExistingSecret: true
+    username:
+    password:
+    secret: ""
+    keyPassphrase:
+      enabled: false
+
+slm:
   elasticsearchAccount:
     useExistingSecret: true
     username:

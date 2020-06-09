@@ -1,5 +1,11 @@
 #!/usr/bin/env sh
 
+# TODO
+# ----
+# Generalize the creation of security plugin objects,
+# as it is now duplicated for each individual object.
+# -----
+
 set -e
 
 wait_until_ready=600
@@ -10,6 +16,10 @@ snapshot_repository="s3_{{ .Values.elasticsearch.s3.provider }}_7.x"
 es_url="http://{{ template "opendistro-es.fullname" . }}-client-service:9200"
 kibana_url="http://{{ template "opendistro-es.fullname" . }}-kibana-svc:443"
 create_indices="{{ .Values.configurer.createIndices }}"
+
+users='{{ toJson .Values.configurer.securityPlugin.users }}'
+roles='{{ toJson .Values.configurer.securityPlugin.roles }}'
+rolesmappings='{{ toJson .Values.configurer.securityPlugin.roles_mapping }}'
 
 log_error_exit() {
   description=$1
@@ -155,31 +165,61 @@ init_indices() {
   done
 }
 
-create_role_definitions() {
-  echo
-  echo "Creating role definitions"
+create_role() {
+  role_name="$1"; role_definition="$2"
+  response=$(curl -X PUT "${es_url}/_opendistro/_security/api/roles/${role_name}" \
+    -H 'Content-Type: application/json' \
+    -k -s -u "${auth}" \
+    -d "${role_definition}")
 
-  create_role() {
-    role_name=$1
-    role_definition=$2
-    response=$(curl -X PUT "${es_url}/_opendistro/_security/api/roles/${role_name}" \
-      -H 'Content-Type: application/json' \
-      --insecure --silent \
-      -u "${auth}" \
-      -d "${role_definition}")
-    status=$(echo "${response}" | grep "^{" | jq -r '.status')
-    case "${status}" in
-      CREATED|OK)
-        echo "Role '${role_name}' created"
-        ;;
-      *)
-        log_error_exit "Failed to create role '${role_name}'" "${response}"
-        ;;
-    esac
-  }
+  status=$(echo "${response}" | grep "^{" | jq -r '.status')
 
-  create_role "kubernetes-log-reader" '{ "index_permissions": [{ "index_patterns": ["kubernetes*", "kubeaudit*"], "allowed_actions": ["read"]}]}'
-  create_role "backup-exporter" '{"cluster_permissions": ["cluster:monitor/state","cluster:monitor/health"], "index_permissions": [{"index_patterns": ["*"], "allowed_actions": ["monitor"]}, {"index_patterns": ["kubernetes*", "kubeaudit*"], "allowed_actions": ["read"]}]}'
+  case "${status}" in
+    CREATED|OK)
+      echo "Role '${role_name}' created"
+      ;;
+    *)
+      log_error_exit "Failed to create role '${role_name}'" "${response}"
+      ;;
+  esac
+}
+
+create_rolemapping() {
+  rolemapping_name="$1"; role_definition="$2"
+  response=$(curl -X PUT "${es_url}/_opendistro/_security/api/rolesmapping/${rolemapping_name}" \
+    -H 'Content-Type: application/json' \
+    -k -s -u "${auth}" \
+    -d "${role_definition}")
+
+  status=$(echo "${response}" | grep "^{" | jq -r '.status')
+
+  case "${status}" in
+    CREATED|OK)
+      echo "Rolemapping '${rolemapping_name}' created"
+      ;;
+    *)
+      log_error_exit "Failed to create role mapping '${rolemapping_name}'" "${response}"
+      ;;
+  esac
+}
+
+create_user() {
+  user_name="$1"; user_info="$2"
+  response=$(curl -X PUT "${es_url}/_opendistro/_security/api/internalusers/${user_name}" \
+    -H 'Content-Type: application/json' \
+    -k -s -u "${auth}" \
+    -d "${user_info}")
+
+  status=$(echo "${response}" | grep "^{" | jq -r '.status')
+
+  case "${status}" in
+    CREATED|OK)
+      echo "User '${user_name}' created"
+      ;;
+    *)
+      log_error_exit "Failed to create user '${user_name}'" "${response}"
+      ;;
+  esac
 }
 
 wait_for_kibana
@@ -188,6 +228,36 @@ register_s3_repository
 create_index_templates
 setup_policies
 if [ "${create_indices}" = "true" ]; then init_indices; fi
-create_role_definitions
 
+echo
+echo "Creating roles"
+for row in $(echo "${roles}"  | jq -r '.[] | @base64'); do
+    _jq() {
+      echo "${row}" | base64 -d | jq -r ${1}
+    }
+
+    create_role "$(_jq '.role_name')" "$(_jq '.definition')"
+done
+
+echo
+echo "Creating role mappings"
+for row in $(echo "${rolesmappings}" | jq -r '.[] | @base64'); do
+    _jq() {
+      echo ${row} | base64 -d | jq -r ${1}
+    }
+
+    create_rolemapping "$(_jq '.mapping_name')" "$(_jq '.definition')"
+done
+
+echo
+echo "Creating users"
+for row in $(echo "${users}"  | jq -r '.[] | @base64'); do
+    _jq() {
+        echo ${row} | base64 -d | jq -r ${1}
+    }
+
+    create_user "$(_jq '.username')" "$(_jq '.definition')"
+done
+
+echo
 echo "Done configuring elasticsearch and kibana"
