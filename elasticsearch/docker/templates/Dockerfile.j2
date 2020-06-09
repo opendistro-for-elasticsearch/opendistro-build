@@ -37,8 +37,8 @@
 FROM centos:7 AS prep_es_files
 
 ENV PATH /usr/share/elasticsearch/bin:$PATH
-RUN curl -s  https://download.java.net/java/GA/jdk12.0.2/e482c34c86bd4bf8b56c0b35558996b9/10/GPL/openjdk-12.0.2_linux-x64_bin.tar.gz | tar -C /opt -zxf -
-ENV JAVA_HOME /opt/jdk-12.0.2
+RUN curl -s https://github.com/AdoptOpenJDK/openjdk11-upstream-binaries/releases/download/jdk-11.0.7%2B10/OpenJDK11U-jdk_x64_linux_11.0.7_10.tar.gz | tar -C /opt -zxf -
+ENV JAVA_HOME /opt/openjdk-11.0.7+10
 RUN yum -y update \
     && yum -y groupinstall "Development Tools" \
     && yum install -y unzip glibc.x86_64 cmake \
@@ -81,7 +81,7 @@ RUN set -ex; \
  \
     && cd /tmp/jni \
  \
-    && g++ -fPIC -I/opt/jdk-12.0.2/include -I/opt/jdk-12.0.2/include/linux -I/usr/share/elasticsearch/nmslib/similarity_search/include -std=c++11 -shared -o libKNNIndexV1_7_3_6.so com_amazon_opendistroforelasticsearch_knn_index_v1736_KNNIndex.cpp -lNonMetricSpaceLib -L/usr/share/elasticsearch/nmslib/similarity_search/release \
+    && g++ -fPIC -I/opt/openjdk-11.0.7+10/include -I/opt/openjdk-11.0.7+10/include/linux -I/usr/share/elasticsearch/nmslib/similarity_search/include -std=c++11 -shared -o libKNNIndexV1_7_3_6.so com_amazon_opendistroforelasticsearch_knn_index_v1736_KNNIndex.cpp -lNonMetricSpaceLib -L/usr/share/elasticsearch/nmslib/similarity_search/release \
  \
     && rm -rf /usr/share/elasticsearch/nmslib \
  \
@@ -152,13 +152,13 @@ RUN yum update -y && \
     yum install -y nc unzip wget which && \
     yum clean all
 COPY CENTOS_LICENSING.txt /root
-COPY --from=prep_es_files --chown=1000:0 /opt/jdk-12.0.2 /opt/jdk-12.0.2
+COPY --from=prep_es_files --chown=1000:0 /opt/openjdk-11.0.7+10 /opt/openjdk-11.0.7+10
 
-ENV JAVA_HOME /opt/jdk-12.0.2
+ENV JAVA_HOME /opt/openjdk-11.0.7+10
 
 # Replace OpenJDK's built-in CA certificate keystore with the one from the OS
 # vendor. The latter is superior in several ways.
-RUN ln -sf /etc/pki/ca-trust/extracted/java/cacerts /opt/jdk-12.0.2/lib/security/cacerts
+RUN ln -sf /etc/pki/ca-trust/extracted/java/cacerts /opt/openjdk-11.0.7+10/lib/security/cacerts
 
 ENV PATH $PATH:$JAVA_HOME/bin
 
