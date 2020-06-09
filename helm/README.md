@@ -255,32 +255,32 @@ you can define secrets that map to each config given that each secret contains t
 securityConfig:
   enabled: true
   path: "/usr/share/elasticsearch/plugins/opendistro_security/securityconfig"
-  actionGroupsSecret:
-  configSecret:
-  internalUsersSecret:
-  rolesSecret:
-  rolesMappingSecret:
+  config: {}
+    # config.yml: |-
+    # internal_users.yml: |-
+    # roles.yml: |-
+    # rolesMapping.yml: |-
+    # tenants.yml: |-
 ```
 Example:
 ```
-❯ cat config.yml
-_meta:
-  type: "config"
-  config_version: 2
-config:
-  dynamic:
-    filtered_alias_mode: "warn"
-    disable_rest_auth: false
-    disable_intertransport_auth: false
-    respect_request_indices_options: false
-    license: null
-    kibana:
-      multitenancy_enabled: true
+config.yml: |-
+  _meta:
+    type: "config"
+    config_version: 2
+  config:
+    dynamic:
+      filtered_alias_mode: "warn"
+      disable_rest_auth: false
+      disable_intertransport_auth: false
+      respect_request_indices_options: false
+      license: null
+      kibana:
+        multitenancy_enabled: true
 .......
-❯ kubectl create secret generic -n logging security-config --from-file=config.yml
+
 ```
-By coupling the above secrets with `opendistro_security.allow_default_init_securityindex: true` in your
-`elasticsearch.config:` at startup all of the secrets will be mounted in and read.
+
 
 Alternatively you can set `securityConfig.enabled` to `false` and `exec` into the container and make changes as you see fit using the instructions
 [here](https://github.com/opendistro-for-elasticsearch/security/blob/master/securityconfig/elasticsearch.yml.example)
