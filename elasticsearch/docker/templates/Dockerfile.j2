@@ -52,7 +52,7 @@ USER 1000
 COPY --chown=1000:0 {{ '%s/' % artifacts_dir }} {{ artifacts_dir }}
 {% endif %}
 
-RUN mkdir /tmp/plugins
+RUN rm -rf /tmp/plugins && mkdir /tmp/plugins
 ADD plugins /tmp/plugins/
 
 WORKDIR /usr/share/elasticsearch
@@ -99,7 +99,8 @@ RUN set -ex && for esdirs in config data logs; do \
     done
 
 # Install the required modules
-RUN for plugin_path in {{ plugin_url_paths }}; do \
+#RUN for plugin_path in {{ plugin_url_paths }}; do \
+RUN for plugin_path in `cat /tmp/plugins/plugins.list`; do \
       elasticsearch-plugin install --batch file:/tmp/plugins/$plugin_path; \
     done
 
