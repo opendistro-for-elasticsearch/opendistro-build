@@ -26,11 +26,11 @@ OPENDISTRO_REGISTRY ?= amazon
 
 ES_VERSION ?= $(shell ../bin/version-info --es)
 OPENDISTRO_VERSION ?= $(shell ../bin/version-info --od)
+OPENDISTRO_PLUGIN_VERSION ?= $(OPENDISTRO_VERSION).0.zip
 IMAGE_TAG ?= $(OPENDISTRO_REGISTRY)/opendistro-for-elasticsearch-kibana
 ARTIFACTS_URL='https://d3g5vo6xdbdb9a.cloudfront.net/downloads/kibana'
 
 # These are not used for now
-OPENDISTRO_PLUGIN_VERSION ?= $(OPENDISTRO_VERSION).0.zip
 OPENDISTRO_PLUGINS ?= opendistro-sql-workbench/opendistro-sql-workbench-$(OPENDISTRO_PLUGIN_VERSION) \
                       opendistro-anomaly-detection/opendistro-anomaly-detection-kibana-$(OPENDISTRO_PLUGIN_VERSION) \
                       opendistro-security/opendistro_security_kibana_plugin-$(OPENDISTRO_PLUGIN_VERSION) \
