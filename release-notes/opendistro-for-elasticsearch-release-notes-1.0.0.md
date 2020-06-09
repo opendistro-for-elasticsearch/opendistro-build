@@ -1,5 +1,10 @@
 ## Open Distro for Elasticsearch 1.0.0 Release Notes
 
+## **Breaking Changes**
+
+* Open Distro for Elasticsearch 1.0.0 uses Elasticsearch 7.0.1, which has numerous breaking changes from 6.x.x.
+* Please follow the support docs during the upgrade. ([Support Docs](https://opendistro.github.io/for-elasticsearch-docs/docs/upgrade/1-0-0/))
+
 ### **ALERTING**
 
 * Added support for Elasticsearch 7.0.1 - PR [41](https://github.com/opendistro-for-elasticsearch/alerting/pull/41)
