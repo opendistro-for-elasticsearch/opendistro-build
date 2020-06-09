@@ -17,7 +17,7 @@
 SHELL=/bin/bash
 export PATH := ./bin:./venv/bin:$(PATH)
 PYTHON ?= $(shell command -v python3.5 || command -v python3.6)
-FIGLET := pyfiglet -w 160 -f puffy
+OPENDISTRO_PLUGINSFIGLET := pyfiglet -w 160 -f puffy
 
 BUILD_TYPE ?= OpenDistroForElasticSearch
 BUILD_DATE := $(shell date +'%y.%m.%d')
@@ -26,10 +26,16 @@ OPENDISTRO_REGISTRY ?= amazon
 
 ES_VERSION ?= $(shell ../bin/version-info --es)
 OPENDISTRO_VERSION ?= $(shell ../bin/version-info --od)
-OPENDISTRO_PLUGIN_VERSION ?= $(OPENDISTRO_VERSION).0
 IMAGE_TAG ?= $(OPENDISTRO_REGISTRY)/opendistro-for-elasticsearch-kibana
-OPENDISTRO_PLUGINS ?= opendistro-sql-workbench/opendistro-sql-workbench-$(OPENDISTRO_PLUGIN_VERSION).zip opendistro-anomaly-detection/opendistro-anomaly-detection-kibana-$(OPENDISTRO_PLUGIN_VERSION).zip opendistro-security/opendistro_security_kibana_plugin-$(OPENDISTRO_PLUGIN_VERSION).zip opendistro-alerting/opendistro-alerting-$(OPENDISTRO_PLUGIN_VERSION).zip opendistro-index-management/opendistro_index_management_kibana-$(OPENDISTRO_PLUGIN_VERSION).zip
 ARTIFACTS_URL='https://d3g5vo6xdbdb9a.cloudfront.net/downloads/kibana'
+
+# These are not used for now
+OPENDISTRO_PLUGIN_VERSION ?= $(OPENDISTRO_VERSION).0.zip
+OPENDISTRO_PLUGINS ?= opendistro-sql-workbench/opendistro-sql-workbench-$(OPENDISTRO_PLUGIN_VERSION) \
+                      opendistro-anomaly-detection/opendistro-anomaly-detection-kibana-$(OPENDISTRO_PLUGIN_VERSION) \
+                      opendistro-security/opendistro_security_kibana_plugin-$(OPENDISTRO_PLUGIN_VERSION) \
+                      opendistro-alerting/opendistro-alerting-$(OPENDISTRO_PLUGIN_VERSION) \
+                      opendistro-index-management/opendistro_index_management_kibana-$(OPENDISTRO_PLUGIN_VERSION)
 
 
 all: build test
