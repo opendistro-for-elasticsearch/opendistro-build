@@ -128,12 +128,12 @@ elasticsearch:
   securityConfig:
     enabled: true
     path: "/usr/share/elasticsearch/plugins/opendistro_security/securityconfig"
-    config: {}
-      # config.yml: |-
-      # internal_users.yml: |-
-      # roles.yml: |-
-      # rolesMapping.yml: |-
-      # tenants.yml: |-
+    actionGroupsSecret:
+    configSecret:
+    internalUsersSecret:
+    rolesSecret:
+    rolesMappingSecret:
+    tenantsSecret:
 
   extraEnvs: []
 
