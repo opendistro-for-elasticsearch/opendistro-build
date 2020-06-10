@@ -137,6 +137,20 @@ elasticsearch:
 
   extraEnvs: []
 
+  extraInitContainers: []
+  # - name: do-something
+  #   image: busybox
+  #   command: ['do', 'something']
+
+  extraVolumes: []
+  # - name: extras
+  #   emptyDir: {}
+
+  extraVolumeMounts: []
+  # - name: extras
+  #   mountPath: /usr/share/extras
+  #   readOnly: true
+
   initContainer:
     image: busybox
     imageTag: 1.27.2
