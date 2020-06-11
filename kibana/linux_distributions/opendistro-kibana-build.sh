@@ -137,8 +137,8 @@ if [ $# -eq 0 ] || [ "$PACKAGE_TYPE" = "rpm" ]; then
       $ROOT/service_templates/systemd/etc/=/etc/
 
       # Upload to S3
-      ls -ltr target/
-      rpm_artifact=`ls target/*.rpm`
+      ls -ltr $TARGET_DIR
+      rpm_artifact=`ls $TARGET_DIR/*.rpm`
       aws s3 cp $rpm_artifact s3://$S3_BUCKET/downloads/rpms/opendistroforelasticsearch-kibana/
       aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/*"
 
@@ -179,8 +179,8 @@ if [ $# -eq 0 ] || [ "$PACKAGE_TYPE" = "deb" ]; then
       $ROOT/service_templates/systemd/etc/=/etc/
 
       # Upload to S3
-      ls -ltr target/
-      deb_artifact=`ls target/*.deb`
+      ls -ltr $TARGET_DIR
+      deb_artifact=`ls $TARGET_DIR/*.deb`
       aws s3 cp $deb_artifact s3://$S3_BUCKET/downloads/debs/opendistroforelasticsearch-kibana/
       aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/*"
 
@@ -193,15 +193,17 @@ if [ $# -eq 0 ] || [ "$PACKAGE_TYPE" = "tar" ]; then
   echo "generating tar"
   tar -czf $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz $PACKAGE_NAME
   #tar -tzvf $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz
-  sha512sum $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz  > $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz.sha512
-  sha512sum -c $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz.sha512
+  cd $TARGET_DIR
+  shasum -a 512 $PACKAGE_NAME-$OD_VERSION.tar.gz > $PACKAGE_NAME-$OD_VERSION.tar.gz.sha512
+  shasum -a 512 -c $PACKAGE_NAME-$OD_VERSION.tar.gz.sha512
   echo " CHECKSUM FILE "
-  echo "$(cat $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz.sha512)"
+  echo "$(cat $PACKAGE_NAME-$OD_VERSION.tar.gz.sha512)"
+  cd $ROOT
 
   # Upload to S3
-  ls -ltr target/
-  tar_artifact=`ls target/*.tar.gz`
-  tar_checksum_artifact=`ls target/*.tar.gz.sha512`
+  ls -ltr $TARGET_DIR
+  tar_artifact=`ls $TARGET_DIR/*.tar.gz`
+  tar_checksum_artifact=`ls $TARGET_DIR/*.tar.gz.sha512`
   aws s3 cp $tar_artifact s3://$S3_BUCKET/downloads/tarball/opendistroforelasticsearch-kibana/
   aws s3 cp $tar_checksum_artifact s3://$S3_BUCKET/downloads/tarball/opendistroforelasticsearch-kibana/
   aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/*"
