@@ -14,7 +14,7 @@
 kibana:
   enabled: true
   image: amazon/opendistro-for-elasticsearch-kibana
-  imageTag: 1.6.0
+  imageTag: 1.8.0
   replicas: 1
   port: 5601
   externalPort: 443
@@ -39,9 +39,15 @@ kibana:
     kibana:
       enabled: false
       existingCertSecret:
+      existingCertSecretCertSubPath: kibana-crt.pem
+      existingCertSecretKeySubPath: kibana-key.pem
+      existingCertSecretRootCASubPath: kibana-root-ca.pem
     elasticsearch:
       enabled: false
       existingCertSecret:
+      existingCertSecretCertSubPath: elk-rest-crt.pem
+      existingCertSecretKeySubPath: elk-rest-key.pem
+      existingCertSecretRootCASubPath: elk-rest-root-ca.pem
 
 
 
@@ -137,20 +143,48 @@ elasticsearch:
 
   extraEnvs: []
 
+  extraInitContainers: []
+  # - name: do-something
+  #   image: busybox
+  #   command: ['do', 'something']
+
+  extraVolumes: []
+  # - name: extras
+  #   emptyDir: {}
+
+  extraVolumeMounts: []
+  # - name: extras
+  #   mountPath: /usr/share/extras
+  #   readOnly: true
+
   initContainer:
     image: busybox
     imageTag: 1.27.2
+
+  ## Set optimal sysctl's. This requires privilege. Can be disabled if
+  ## the system has already been preconfigured.
+  sysctl:
+    enabled: true
 
   ssl:
     ## TLS is mandatory for the transport layer and can not be disabled
     transport:
       existingCertSecret:
+      existingCertSecretCertSubPath: elk-transport-crt.pem
+      existingCertSecretKeySubPath: elk-transport-key.pem
+      existingCertSecretRootCASubPath: elk-transport-root-ca.pem
     rest:
       enabled: false
       existingCertSecret:
+      existingCertSecretCertSubPath: elk-rest-crt.pem
+      existingCertSecretKeySubPath: elk-rest-key.pem
+      existingCertSecretRootCASubPath: elk-rest-root-ca.pem
     admin:
       enabled: false
       existingCertSecret:
+      existingCertSecretCertSubPath: admin-crt.pem
+      existingCertSecretKeySubPath: admin-key.pem
+      existingCertSecretRootCASubPath: admin-root-ca.pem
 
   master:
     enabled: true
@@ -426,7 +460,7 @@ elasticsearch:
   maxMapCount: 262144
 
   image: amazon/opendistro-for-elasticsearch
-  imageTag: 1.6.0
+  imageTag: 1.8.0
   ## Specifies the image pull policy. Can be "Always" or "IfNotPresent" or "Never".
   ## Default to "Always".
   imagePullPolicy: ""

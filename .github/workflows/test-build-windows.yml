@@ -1,30 +1,40 @@
 name: Build Windows Exe using tar artifacts
 
 on:
-  push:
-    branches: 
-      - windows-fix ##Disabling daily run due to an issue with the script
+  # schedule:
+  #   - cron: '0 10 * * *'
+  repository_dispatch:
+    types: [test-build-windows]
+
 jobs:
   build-es-artifacts:
     name: Build Windows ES Artifacts
     runs-on: ubuntu-latest
+    outputs:
+      tag: ${{steps.version.outputs.p_tag}}
     steps:
     - uses: actions/checkout@v1
+    - name: Getting OD version
+      id: version
+      run: |
+        OD_VERSION=`./bin/version-info --od`
+        plugin_tag=v$OD_VERSION.0
+        echo "::set-output name=p_tag::$plugin_tag"
+
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
+
+    - name: Set up JDK
+      uses: actions/setup-java@v1
+      with:
+        java-version: 14
+
     - name: Build Windows
-      run: |
-        set -e
-        set -u
-        export JAVA_HOME=/openjdk12
-        export PATH=$JAVA_HOME:$PATH
-        cd elasticsearch/linux_distributions
-        chmod 755 opendistro-windows-build.sh
-        sh ./opendistro-windows-build.sh
+      run: ./elasticsearch/windows/opendistro-windows-build.sh
         
   build-kibana-artifacts:
     name: Build Kibana Artifacts
@@ -37,34 +47,35 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
+
+    - name: Set up JDK
+      uses: actions/setup-java@v1
+      with:
+        java-version: 14
+
     - name: Build Kibana
-      run: |
-        cd kibana/linux_distributions 
-        chmod 755 opendistro-windows-kibana-build.sh
-        sh ./opendistro-windows-kibana-build.sh
+      run: ./kibana/windows/opendistro-windows-kibana-build.sh
           
   Test-ISM-Plugin:
     needs: [build-es-artifacts, build-kibana-artifacts]
     runs-on: windows-latest
-    strategy:
-      matrix:
-        java: [13]
     steps:
       - uses: actions/checkout@v1
       - uses: actions/checkout@v1
         with:
            repository: opendistro-for-elasticsearch/index-management
-           ref: master  
+           ref: ${{needs.build-es-artifacts.outputs.tag}}  
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
+
       - name: Set Up JDK ${{ matrix.java }}
         uses: actions/setup-java@v1
         with:
-          java-version: ${{ matrix.java }}
+          java-version: 14
        
       - name: RUN ES and ISM IntegTest
         run: |
@@ -72,12 +83,10 @@ jobs:
           python -m pip install --upgrade pip
           echo pip3 -version
           pip3 install awscli
-          cd elasticsearch\bin\
           dir
           $PACKAGE="opendistroforelasticsearch"
-          $OD_VERSION=$(python .\version-info --od)
+          $OD_VERSION=$(./bin/version-info --od)
           $S3_PACKAGE="odfe-"+$OD_VERSION+".zip"
-          cd ..\..
           dir
           echo downloading zip from S3 
           aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/staging/odfe-window-zip/$S3_PACKAGE .\
@@ -98,42 +107,37 @@ jobs:
           echo running tests
           cd ..\index-management
           dir
-          ./gradlew.bat integTest -D tests.rest.cluster=localhost:9200 -D tests.cluster=localhost:9200 --stacktrace          
+          ./gradlew.bat integTest -D tests.rest.cluster=localhost:9200 -D tests.cluster=localhost:9200 -D tests.clustername=es-integrationtest --stacktrace          
 
   Test-Alerting-plugin:
     needs: [build-es-artifacts, build-kibana-artifacts]
     runs-on: windows-latest
-    strategy:
-      matrix:
-        java: [13]
     steps:
       - uses: actions/checkout@v1
       - uses: actions/checkout@v1
         with:
            repository: opendistro-for-elasticsearch/alerting
-           ref: master  
+           ref: ${{needs.build-es-artifacts.outputs.tag}}  
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
-      - name: Set Up JDK ${{ matrix.java }}
+      - name: Set Up JDK 
         uses: actions/setup-java@v1
         with:
-          java-version: ${{ matrix.java }}
+          java-version: 14
         
-      - name: RUN ES and ISM IntegTest
+      - name: RUN ES and Alerting IntegTest
         run: |
           dir
           python -m pip install --upgrade pip
           echo pip3 -version
           pip3 install awscli
-          cd elasticsearch\bin\
           $PACKAGE="opendistroforelasticsearch"
-          $OD_VERSION=$(python .\version-info --od)
+          $OD_VERSION=$(./bin/version-info --od)
           $S3_PACKAGE="odfe-"+$OD_VERSION+".zip"
-          cd ..\..
           dir
           echo downloading zip from S3 
           aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/staging/odfe-window-zip/$S3_PACKAGE .\
@@ -153,4 +157,4 @@ jobs:
           echo running tests
           cd ..\alerting\alerting
           dir
-          ../gradlew.bat integTest -D tests.rest.cluster=localhost:9200 -D tests.cluster=localhost:9200 --stacktrace
+          ../gradlew.bat integTest -D tests.rest.cluster=localhost:9200 -D tests.cluster=localhost:9200 -D tests.clustername=es-integrationtest --stacktrace

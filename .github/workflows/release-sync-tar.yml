@@ -1,0 +1,32 @@
+name: Sync tar artifacts to Prod
+
+on: 
+  repository_dispatch:
+    types: [release-sync-tar]
+
+jobs:
+  Sync-Tarball-Prod:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Getting OD version
+        run: |
+          OD_VERSION=`./bin/version-info --od`
+          echo "::set-env name=od_version::$OD_VERSION"
+    
+      - name: Moving tar artifacts from staging to prod
+        run: |
+          #!/bin/bash
+          ARTIFACT_URL="artifacts.opendistroforelasticsearch.amazon.com"
+
+          aws s3 cp "s3://${ARTIFACT_URL}/downloads/tarball/opendistro-elasticsearch/" "s3://${ARTIFACT_URL}/tarball/opendistro-elasticsearch/" --exclude "*" --include "opendistroforelasticsearch-$od_version*" --recursive
+          aws s3 cp "s3://${ARTIFACT_URL}/downloads/tarball/opendistroforelasticsearch-kibana/" "s3://${ARTIFACT_URL}/tarball/opendistroforelasticsearch-kibana/" --exclude "*" --include "opendistroforelasticsearch-kibana-$od_version*" --recursive
+          aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/tarball/*"

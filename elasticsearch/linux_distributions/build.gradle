@@ -27,10 +27,10 @@ plugins {
 
 ext {
     // Remember to increment both of these when rolling out a new version
-    es_version = System.getProperty("es.version", "7.6.1")
-    opendistroVersion = "1.7.0"
-    baseODPluginsVersion = "1.7.0"
-    nextODPluginsVersion = "1.7.1"
+    es_version = System.getProperty("es.version", "7.7.0")
+    opendistroVersion = "1.8.0"
+    baseODPluginsVersion = "1.8.0"
+    nextODPluginsVersion = "1.8.1"
 
     isSnapshot = "true" == System.getProperty("build.snapshot", "true")
 }
@@ -50,7 +50,7 @@ ospackage {
     requires('opendistro-job-scheduler', baseODPluginsVersion, GREATER | EQUAL)
     requires('opendistro-index-management', baseODPluginsVersion, GREATER | EQUAL)
     requires('opendistro-knn', baseODPluginsVersion, GREATER | EQUAL)
-    requires('opendistro-anomaly-detector', baseODPluginsVersion, GREATER | EQUAL)
+    requires('opendistro-anomaly-detection', baseODPluginsVersion, GREATER | EQUAL)
 
     requires('opendistro-alerting', nextODPluginsVersion, LESS)
     requires('opendistro-sql', nextODPluginsVersion, LESS)
@@ -59,7 +59,7 @@ ospackage {
     requires('opendistro-job-scheduler', nextODPluginsVersion, LESS)
     requires('opendistro-index-management', nextODPluginsVersion, LESS)
     requires('opendistro-knn', nextODPluginsVersion, LESS)
-    requires('opendistro-anomaly-detector', nextODPluginsVersion, LESS)
+    requires('opendistro-anomaly-detection', nextODPluginsVersion, LESS)
  
     packager = 'Amazon'
     vendor = 'Amazon'

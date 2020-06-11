@@ -52,7 +52,7 @@ USER 1000
 COPY --chown=1000:0 {{ '%s/' % artifacts_dir }} {{ artifacts_dir }}
 {% endif %}
 
-RUN mkdir /tmp/plugins
+RUN rm -rf /tmp/plugins && mkdir /tmp/plugins
 ADD plugins /tmp/plugins/
 
 WORKDIR /usr/share/elasticsearch
@@ -71,7 +71,7 @@ RUN set -ex; \
  \
     && make \
  \
-    && git clone https://github.com/opendistro-for-elasticsearch/k-NN.git /usr/share/elasticsearch/k-NN \
+    && git clone --branch v1.8.0.0 https://github.com/opendistro-for-elasticsearch/k-NN.git /usr/share/elasticsearch/k-NN \
  \
     && cd /usr/share/elasticsearch/k-NN \
  \
@@ -99,7 +99,8 @@ RUN set -ex && for esdirs in config data logs; do \
     done
 
 # Install the required modules
-RUN for plugin_path in `ls /tmp/plugins/`; do \
+#RUN for plugin_path in {{ plugin_url_paths }}; do \
+RUN for plugin_path in `cat /tmp/plugins/plugins.list`; do \
       elasticsearch-plugin install --batch file:/tmp/plugins/$plugin_path; \
     done
 
