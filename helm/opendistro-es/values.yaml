@@ -134,12 +134,22 @@ elasticsearch:
   securityConfig:
     enabled: true
     path: "/usr/share/elasticsearch/plugins/opendistro_security/securityconfig"
-    config: {}
-      # config.yml: |-
-      # internal_users.yml: |-
-      # roles.yml: |-
-      # rolesMapping.yml: |-
-      # tenants.yml: |-
+    actionGroupsSecret:
+    configSecret:
+    internalUsersSecret:
+    rolesSecret:
+    rolesMappingSecret:
+    tenantsSecret:
+    #The following option simplifies securityConfig by using a single secret and specifying the respective secrets in the corresponding files instead of creating different secrets for config,internal users, roles, roles mapping and tenants
+    #Note that this is an alternative to the above secrets and shouldn't be used if the above secrets are used
+    config:
+       securityConfigSecret:
+       data: {}
+        # config.yml: |-
+        # internal_users.yml: |-
+        # roles.yml: |-
+        # rolesMapping.yml: |-
+        # tenants.yml: |-
 
   extraEnvs: []
 
