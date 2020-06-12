@@ -19,8 +19,8 @@ OPENDISTRO_REPOSITORY ?= amazon/opendistro-for-elasticsearch
 export PATH := ./bin:./venv/bin:$(PATH)
 
 # Determine the version to build. Override by setting ELASTIC_VERSION env var.
-ELASTIC_VERSION ?= $(shell ../bin/version-info --es)
-OPENDISTRO_VERSION ?= $(shell ../bin/version-info --od)
+ELASTIC_VERSION ?= $(shell ../../bin/version-info --es)
+OPENDISTRO_VERSION ?= $(shell ../../bin/version-info --od)
 OPENDISTRO_PLUGIN_VERSION ?= $(OPENDISTRO_VERSION).0.zip
 
 #ENDS_WITH := SNAPSHOT
