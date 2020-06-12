@@ -1,0 +1,125 @@
+name: Test version upgrades
+
+# Make sure to pass prev_es_version (previous ES version) and prev_od_version (previous OD version) in the dispatch payload
+
+on: 
+  repository_dispatch:
+    types: [test-pre-release-upgrade]
+
+jobs:
+    Test-DEB:
+      name: Test DEB upgrade
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v2
+        - name: Setup Java
+          uses: actions/setup-java@v1
+          with:
+            java-version: 14
+
+        - name: Install previous version of ODFE
+          run: |
+            prev_es_version=${{github.event.client_payload.prev_es_version}}
+            sudo add-apt-repository ppa:openjdk-r/ppa
+            sudo apt update -y
+            sudo apt install openjdk-11-jdk -y
+            sudo apt install unzip wget -y
+            sudo sysctl -w vm.max_map_count=262144
+            wget -qO - https://d3g5vo6xdbdb9a.cloudfront.net/GPG-KEY-opendistroforelasticsearch | sudo apt-key add -
+            echo "deb https://d3g5vo6xdbdb9a.cloudfront.net/apt stable main" | sudo tee -a   /etc/apt/sources.list.d/opendistroforelasticsearch.list
+            wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$prev_es_version-amd64.deb
+            sudo dpkg -i elasticsearch-oss-$prev_es_version-amd64.deb
+            sudo apt-get update -y
+            sudo apt install opendistroforelasticsearch -y
+            sudo systemctl start elasticsearch.service
+            sleep 30
+            echo "####### Running ODFE-${{github.event.client_payload.prev_od_version}} ##############"
+
+        - name: Upgrading to upcoming version
+          if: ${{ success() }}
+          run: |
+            sudo systemctl stop elasticsearch.service
+            es_version=`./bin/version-info --es`
+            wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$es_version-amd64.deb
+            sudo dpkg -i elasticsearch-oss-$es_version-amd64.deb
+            echo "deb https://d3g5vo6xdbdb9a.cloudfront.net/staging/apt stable main" | sudo tee -a /etc/apt/sources.list.d/opendistroforelasticsearch.list
+            sudo apt-get update
+            sudo apt install opendistroforelasticsearch -y
+            sudo systemctl start elasticsearch.service
+
+    Test-RPM:
+      name: Test RPM upgrade
+      runs-on: [self-hosted, Linux, X64, odfe-rpm]
+      steps:
+        - uses: actions/checkout@v2
+        - name: Setup Java
+          uses: actions/setup-java@v1
+          with:
+            java-version: 14
+        
+        - name: Installing python
+          run: sudo yum install python37 -y
+
+        - name: Install previous version of ODFE
+          run: |
+            prev_od_version=${{github.event.client_payload.prev_od_version}}
+            sudo curl https://d3g5vo6xdbdb9a.cloudfront.net/yum/opendistroforelasticsearch-artifacts.repo -o /etc/yum.repos.d/opendistroforelasticsearch-artifacts.repo
+            sudo yum install wget unzip -y
+            export PATH=$PATH:$JAVA_HOME
+            sudo yum install opendistroforelasticsearch-$prev_od_version -y
+            sudo systemctl start elasticsearch.service
+            sleep 30
+            echo "#######Running ODFE-${{github.event.client_payload.prev_od_version}}##############"
+          
+
+        - name: Upgrading to upcoming version
+          if: ${{ success() }}
+          run: |
+            od_version=`./bin/version-info --od`
+            sudo systemctl stop elasticsearch.service
+            sudo curl https://d3g5vo6xdbdb9a.cloudfront.net/yum/staging-opendistroforelasticsearch-artifacts.repo  -o /etc/yum.repos.d/staging-opendistroforelasticsearch-artifacts.repo
+            sudo yum install -y opendistroforelasticsearch-$od_version
+            sudo systemctl start elasticsearch.service
+            sleep 30
+
+    Cleaning-RPM-Host:
+      needs: [Test-RPM]
+      if: always()
+      runs-on: ubuntu-latest
+      steps:
+        - name: Configuring AWS Credentials
+          uses: aws-actions/configure-aws-credentials@v1
+          with:
+            aws-access-key-id: ${{ secrets.AWS_EC2_ACCESS_KEY_ID }}
+            aws-secret-access-key: ${{ secrets.AWS_EC2_SECRET_ACCESS_KEY }}
+            aws-region: us-west-2
+  
+        - name: Resetting the host runner
+          run: |
+            #!/bin/bash
+            instanceid=`aws ec2 describe-instances --filters "Name=tag:Name,Values=ODFE-RPM" | grep InstanceId | cut -d ':' -f 2 | sed 's/[",]//g'`
+            volumeid=`aws ec2 describe-instances --filters "Name=tag:Name,Values=ODFE-RPM" | grep VolumeId | cut -d ':' -f 2 | sed 's/[",]//g'`
+            az=`aws ec2 describe-instances --filters "Name=tag:Name,Values=ODFE-RPM" | grep AvailabilityZone | cut -d ':' -f 2 | sed 's/[",]//g'`
+            aws ec2 stop-instances --instance-ids $instanceid
+            sleep 4m
+            aws ec2 detach-volume --volume-id $volumeid
+            if [[ `echo $?` -ne 0 ]]; then
+            sleep 60
+            aws ec2 detach-volume --volume-id $volumeid
+            fi
+            aws ec2 delete-volume --volume-id $volumeid
+            aws ec2 create-volume --snapshot snap-0f8358ed344f3c2e6 --availability-zone $az --tag-specifications 'ResourceType=volume,Tags=[{Key=Name,Value=odfe}]'
+            sleep 30
+            newVolumeId=`aws ec2 describe-volumes --filters "Name=tag:Name,Values=odfe" | grep VolumeId | cut -d ':' -f 2 | sed 's/[",]//g'`
+            aws ec2 attach-volume --device /dev/xvda --instance-id $instanceid --volume-id $newVolumeId
+            aws ec2 start-instances --instance-id $instanceid
+            sleep 30
+            echo "Your Self hosted runner is as new now!!!"
+
+      
+
+          
+
+
+                
+
