@@ -4,7 +4,7 @@ name: Test version upgrades
 
 on: 
   repository_dispatch:
-    types: [test-pre-release-upgrade]
+    types: [check-version-upgrade]
 
 jobs:
     Test-DEB:
@@ -19,6 +19,8 @@ jobs:
 
         - name: Install previous version of ODFE
           run: |
+            #!/bin/bash
+            set -e
             prev_es_version=${{github.event.client_payload.prev_es_version}}
             sudo add-apt-repository ppa:openjdk-r/ppa
             sudo apt update -y
@@ -38,6 +40,8 @@ jobs:
         - name: Upgrading to upcoming version
           if: ${{ success() }}
           run: |
+            #!/bin/bash
+            set -e
             sudo systemctl stop elasticsearch.service
             es_version=`./bin/version-info --es`
             wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$es_version-amd64.deb
@@ -62,6 +66,8 @@ jobs:
 
         - name: Install previous version of ODFE
           run: |
+            #!/bin/bash
+            set -e
             prev_od_version=${{github.event.client_payload.prev_od_version}}
             sudo curl https://d3g5vo6xdbdb9a.cloudfront.net/yum/opendistroforelasticsearch-artifacts.repo -o /etc/yum.repos.d/opendistroforelasticsearch-artifacts.repo
             sudo yum install wget unzip -y
@@ -75,6 +81,8 @@ jobs:
         - name: Upgrading to upcoming version
           if: ${{ success() }}
           run: |
+            #!/bin/bash
+            set -e
             od_version=`./bin/version-info --od`
             sudo systemctl stop elasticsearch.service
             sudo curl https://d3g5vo6xdbdb9a.cloudfront.net/yum/staging-opendistroforelasticsearch-artifacts.repo  -o /etc/yum.repos.d/staging-opendistroforelasticsearch-artifacts.repo
@@ -97,6 +105,7 @@ jobs:
         - name: Resetting the host runner
           run: |
             #!/bin/bash
+            set -e
             instanceid=`aws ec2 describe-instances --filters "Name=tag:Name,Values=ODFE-RPM" | grep InstanceId | cut -d ':' -f 2 | sed 's/[",]//g'`
             volumeid=`aws ec2 describe-instances --filters "Name=tag:Name,Values=ODFE-RPM" | grep VolumeId | cut -d ':' -f 2 | sed 's/[",]//g'`
             az=`aws ec2 describe-instances --filters "Name=tag:Name,Values=ODFE-RPM" | grep AvailabilityZone | cut -d ':' -f 2 | sed 's/[",]//g'`
