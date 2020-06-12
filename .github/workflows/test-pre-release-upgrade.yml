@@ -49,7 +49,7 @@ jobs:
             echo "deb https://d3g5vo6xdbdb9a.cloudfront.net/staging/apt stable main" | sudo tee -a /etc/apt/sources.list.d/opendistroforelasticsearch.list
             sudo apt-get update
             sudo apt install opendistroforelasticsearch -y
-            sudo systemctl start elasticsearch.service
+            sudo systemctl restart elasticsearch.service
 
     Test-RPM:
       name: Test RPM upgrade
@@ -75,7 +75,7 @@ jobs:
             sudo yum install opendistroforelasticsearch-$prev_od_version -y
             sudo systemctl start elasticsearch.service
             sleep 30
-            echo "#######Running ODFE-${{github.event.client_payload.prev_od_version}}##############"
+            echo "####### Running ODFE-${{github.event.client_payload.prev_od_version}} ##############"
           
 
         - name: Upgrading to upcoming version
@@ -87,7 +87,7 @@ jobs:
             sudo systemctl stop elasticsearch.service
             sudo curl https://d3g5vo6xdbdb9a.cloudfront.net/yum/staging-opendistroforelasticsearch-artifacts.repo  -o /etc/yum.repos.d/staging-opendistroforelasticsearch-artifacts.repo
             sudo yum install -y opendistroforelasticsearch-$od_version
-            sudo systemctl start elasticsearch.service
+            sudo systemctl restart elasticsearch.service
             sleep 30
 
     Cleaning-RPM-Host:
