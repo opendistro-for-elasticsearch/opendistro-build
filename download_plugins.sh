@@ -1,9 +1,9 @@
 #!/bin/bash
 set -e
-ROOT=`pwd`
-cd elasticsearch/bin
-OD_VERSION=`./version-info --od`
-cd $ROOT/elasticsearch
+REPO_ROOT=`git rev-parse --show-toplevel`
+ROOT=`dirname $(realpath $0)`; echo $ROOT; cd $ROOT
+ES_VERSION=`$REPO_ROOT/bin/version-info --es`; echo $ES_VERSION
+OD_VERSION=`$REPO_ROOT/bin/version-info --od`; echo $OD_VERSION
 PLUGIN_DIR="docker/build/elasticsearch/plugins"
 
 # Please DO NOT change the orders, they have dependencies
@@ -17,7 +17,7 @@ PLUGINS="opendistro-sql/opendistro_sql-$OD_VERSION \
          opendistro-anomaly-detection/opendistro-anomaly-detection-$OD_VERSION"
 
 
-echo "$OD_VERSION"
+cd $ROOT/elasticsearch
 mkdir $PLUGIN_DIR
 
 for plugin_path in $PLUGINS
