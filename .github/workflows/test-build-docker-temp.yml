@@ -23,7 +23,6 @@ jobs:
         OD_VERSION=`./bin/version-info --od`
         plugin_tag=v$OD_VERSION.0
         echo "::set-env name=tag::$plugin_tag"
-        echo $plugin_tag
 
     - name: Checkout ISM
       uses: actions/checkout@v1
