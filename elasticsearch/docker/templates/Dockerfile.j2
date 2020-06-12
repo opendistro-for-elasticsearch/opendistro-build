@@ -36,9 +36,12 @@
 
 FROM centos:7 AS prep_es_files
 
+RUN date && echo OD_VERSION {{version_tag}} ES_VERSION {{elastic_version}}
+
 ENV PATH /usr/share/elasticsearch/bin:$PATH
-RUN curl -s  https://download.java.net/java/GA/jdk12.0.2/e482c34c86bd4bf8b56c0b35558996b9/10/GPL/openjdk-12.0.2_linux-x64_bin.tar.gz | tar -C /opt -zxf -
-ENV JAVA_HOME /opt/jdk-12.0.2
+## Old methods, save here for possible revert
+#RUN curl -s  https://download.java.net/java/GA/jdk12.0.2/e482c34c86bd4bf8b56c0b35558996b9/10/GPL/openjdk-12.0.2_linux-x64_bin.tar.gz | tar -C /opt -zxf -
+#ENV JAVA_HOME /opt/jdk-12.0.2
 RUN yum -y update \
     && yum -y groupinstall "Development Tools" \
     && yum install -y unzip glibc.x86_64 cmake \
@@ -55,8 +58,28 @@ COPY --chown=1000:0 {{ '%s/' % artifacts_dir }} {{ artifacts_dir }}
 RUN rm -rf /tmp/plugins && mkdir /tmp/plugins
 ADD plugins /tmp/plugins/
 
+################################################################################
+
+# Set WORKDIR here
 WORKDIR /usr/share/elasticsearch
-##Compile the C-library for kNN
+
+# Download and extract defined ES version.
+RUN curl -fsSL {{ elastic_artifacts_url }}/{{ tarball }} | \
+    tar zx --strip-components=1
+
+RUN set -ex && for esdirs in config data logs; do \
+        mkdir -p "$esdirs"; \
+    done
+
+## Related to jdk version in docker, use the bundled one instead of jdk 12 here
+USER 0
+RUN cp -rp /usr/share/elasticsearch/jdk /opt/jdk
+ENV JAVA_HOME /opt/jdk
+ENV PATH $PATH:$JAVA_HOME/bin
+RUN java -version
+
+# Compile the C-library for kNN
+USER 1000
 RUN set -ex; \
  \
     git clone https://github.com/nmslib/nmslib.git /usr/share/elasticsearch/nmslib; \
@@ -71,9 +94,15 @@ RUN set -ex; \
  \
     && make \
  \
-    && git clone --branch v1.8.0.0 https://github.com/opendistro-for-elasticsearch/k-NN.git /usr/share/elasticsearch/k-NN \
+    && export KNN_VERSION=`git ls-remote --tags https://github.com/opendistro-for-elasticsearch/k-NN.git v* | grep {{version_tag}} | grep -oh "v[0-9.]*" | sort | tail -n 1` \
  \
-    && cd /usr/share/elasticsearch/k-NN \
+    && git ls-remote --tags https://github.com/opendistro-for-elasticsearch/k-NN.git v* \
+ \
+    && echo KNN_VERSION $KNN_VERSION \
+ \
+    && git clone --branch $KNN_VERSION https://github.com/opendistro-for-elasticsearch/k-NN.git /usr/share/elasticsearch/k-NN \
+ \
+    && cd /usr/share/elasticsearch/k-NN && git branch \
  \
     && mkdir /tmp/jni \
  \
@@ -81,7 +110,7 @@ RUN set -ex; \
  \
     && cd /tmp/jni \
  \
-    && g++ -fPIC -I/opt/jdk-12.0.2/include -I/opt/jdk-12.0.2/include/linux -I/usr/share/elasticsearch/nmslib/similarity_search/include -std=c++11 -shared -o libKNNIndexV1_7_3_6.so com_amazon_opendistroforelasticsearch_knn_index_v1736_KNNIndex.cpp -lNonMetricSpaceLib -L/usr/share/elasticsearch/nmslib/similarity_search/release \
+    && g++ -fPIC -I$JAVA_HOME/include -I$JAVA_HOME/include/linux -I/usr/share/elasticsearch/nmslib/similarity_search/include -std=c++11 -shared -o libKNNIndexV1_7_3_6.so com_amazon_opendistroforelasticsearch_knn_index_v1736_KNNIndex.cpp -lNonMetricSpaceLib -L/usr/share/elasticsearch/nmslib/similarity_search/release && ls -ltr /tmp/jni \
  \
     && rm -rf /usr/share/elasticsearch/nmslib \
  \
@@ -89,14 +118,6 @@ RUN set -ex; \
 
 # Bust cache for wgets
 ENV BUST_CACHE {{ bust_cache }}
-
-# Download and extract defined ES version.
-RUN curl -fsSL {{ elastic_artifacts_url }}/{{ tarball }} | \
-    tar zx --strip-components=1
-
-RUN set -ex && for esdirs in config data logs; do \
-        mkdir -p "$esdirs"; \
-    done
 
 # Install the required modules
 #RUN for plugin_path in {{ plugin_url_paths }}; do \
@@ -152,15 +173,17 @@ RUN yum update -y && \
     yum install -y nc unzip wget which && \
     yum clean all
 COPY CENTOS_LICENSING.txt /root
-COPY --from=prep_es_files --chown=1000:0 /opt/jdk-12.0.2 /opt/jdk-12.0.2
+##COPY --from=prep_es_files --chown=1000:0 /opt/jdk-12.0.2 /opt/jdk-12.0.2
 
-ENV JAVA_HOME /opt/jdk-12.0.2
+COPY --from=prep_es_files --chown=1000:0 /opt/jdk /opt/jdk
+ENV JAVA_HOME /opt/jdk
+ENV PATH $PATH:$JAVA_HOME/bin
 
 # Replace OpenJDK's built-in CA certificate keystore with the one from the OS
 # vendor. The latter is superior in several ways.
-RUN ln -sf /etc/pki/ca-trust/extracted/java/cacerts /opt/jdk-12.0.2/lib/security/cacerts
+##RUN ln -sf /etc/pki/ca-trust/extracted/java/cacerts /opt/jdk-12.0.2/lib/security/cacerts
+RUN ln -sf /etc/pki/ca-trust/extracted/java/cacerts $JAVA_HOME/lib/security/cacerts
 
-ENV PATH $PATH:$JAVA_HOME/bin
 
 RUN mkdir /usr/share/elasticsearch && \
     groupadd -g 1000 elasticsearch && \
