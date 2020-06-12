@@ -11,6 +11,7 @@ The release consists of Apache 2 licensed Elasticsearch version 7.7.0, and Kiban
 * Anomaly Detection plugin releases the new [count aggregation](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/169) feature to detect anomalies. 
 * New feature [Cosine Similarity](https://github.com/opendistro-for-elasticsearch/k-NN/pull/90) is available for use in k-NN plugin.
 * [PerfTop CLI](https://opendistro.github.io/for-elasticsearch/downloads.html#PerfTop), a client to interact with Performance Analyzer.
+* Support for connecting [PerfTop CLI](https://opendistro.github.io/for-elasticsearch/downloads.html#PerfTop), a client for Performance Analyzer to clusters with basic authentication.
 
 ## Release Details
 
