@@ -46,10 +46,8 @@ if sudo test -f "$FILE"; then
     echo "FILE EXISTS: removing $FILE"
     sudo rm $FILE
 fi
-wget https://d3g5vo6xdbdb9a.cloudfront.net/downloads/k-NN-lib/libKNNIndexV1_7_3_6.zip \
-&& unzip libKNNIndexV1_7_3_6.zip \
-&& sudo mv libKNNIndexV1_7_3_6.so /usr/lib \
-&& rm libKNNIndexV1_7_3_6.zip
+
+sudo cp $ES_HOME/plugins/opendistro-knn/knn-lib/libKNNIndexV1_7_3_6.so /usr/lib 
 
 ##Start Elastic Search
 bash $ES_HOME/bin/elasticsearch "$@"
