@@ -76,11 +76,10 @@ USER 0
 RUN cp -rp /usr/share/elasticsearch/jdk /opt/jdk
 ENV JAVA_HOME /opt/jdk
 ENV PATH $PATH:$JAVA_HOME/bin
-USER 1000
-RUN export KNN_VERSION=`git ls-remote --tags https://github.com/opendistro-for-elasticsearch/k-NN.git v* | grep {{version_tag}} | grep -oh "v[0-9.]*" | sort | tail -n 1`
-RUN java -version && echo KNN_VERSION $KNN_VERSION
+RUN java -version
 
 # Compile the C-library for kNN
+USER 1000
 RUN set -ex; \
  \
     git clone https://github.com/nmslib/nmslib.git /usr/share/elasticsearch/nmslib; \
@@ -94,6 +93,10 @@ RUN set -ex; \
     && cmake . \
  \
     && make \
+ \
+    && export KNN_VERSION=`git ls-remote --tags https://github.com/opendistro-for-elasticsearch/k-NN.git v* | grep {{version_tag}} | grep -oh "v[0-9.]*" | sort | tail -n 1` \
+ \
+    && echo KNN_VERSION $KNN_VERSION \
  \
     && git clone --branch $KNN_VERSION https://github.com/opendistro-for-elasticsearch/k-NN.git /usr/share/elasticsearch/k-NN \
  \
