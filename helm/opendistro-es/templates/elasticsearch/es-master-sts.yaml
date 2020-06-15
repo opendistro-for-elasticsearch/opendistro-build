@@ -226,6 +226,10 @@ spec:
           name: tenants
           subPath: tenants.yml
         {{- end }}
+        {{- if and .Values.elasticsearch.securityConfig.config.securityConfigSecret .Values.elasticsearch.securityConfig.config.data  }}
+        - mountPath: {{ .Values.elasticsearch.securityConfig.path }}
+          name: security-config
+        {{- end }}
 {{- if .Values.elasticsearch.extraVolumeMounts }}
 {{ toYaml .Values.elasticsearch.extraVolumeMounts | indent 8 }}
 {{- end }}
@@ -248,6 +252,11 @@ spec:
       - name: admin-certs
         secret:
           secretName: {{ .Values.elasticsearch.ssl.admin.existingCertSecret }}
+      {{- end }}
+      {{- if and .Values.elasticsearch.securityConfig.config.securityConfigSecret .Values.elasticsearch.securityConfig.config.data }}
+      - name: security-config
+        secret:
+          secretName: {{ .Values.elasticsearch.securityConfig.config.securityConfigSecret }}
       {{- end }}
       {{- if .Values.elasticsearch.securityConfig.actionGroupsSecret }}
       - name: action-groups
