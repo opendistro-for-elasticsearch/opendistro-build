@@ -173,7 +173,7 @@ RUN mkdir /usr/share/supervisor
 WORKDIR /usr/share/elasticsearch
 COPY --from=prep_es_files --chown=1000:0 /usr/share/elasticsearch /usr/share/elasticsearch
 COPY --from=prep_es_files /tmp/jni/libKNNIndexV1_7_3_6.so /usr/lib
-RUN shasum -a 512 /tmp/jni/libKNNIndexV1_7_3_6.so
+RUN sha512sum /tmp/jni/libKNNIndexV1_7_3_6.so
 
 ENV PATH /usr/share/elasticsearch/bin:$PATH
 
