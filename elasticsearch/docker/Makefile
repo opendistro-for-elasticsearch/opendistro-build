@@ -115,7 +115,7 @@ run-cluster: docker-compose
 	DATA_VOLUME1=esdata1 DATA_VOLUME2=esdata2 $(DOCKER_COMPOSE) -f docker-compose.cluster.yml up elasticsearch1 elasticsearch2
 
 build: clean venv dockerfile docker-compose
-	-pyfiglet -f puffy -w 160 "Building "; \
+	-pyfiglet -f puffy -w 160 "Building ES "; \
 	docker build -t $(IMAGE_TAG):$(OPENDISTRO_VERSION) -f build/elasticsearch/Dockerfile build/elasticsearch || \
 	docker tag $(IMAGE_TAG):$(OPENDISTRO_VERSION) $(IMAGE_TAG):$(OPENDISTRO_VERSION)
 
