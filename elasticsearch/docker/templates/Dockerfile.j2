@@ -59,7 +59,7 @@ WORKDIR /usr/share/elasticsearch
 ##Compile the C-library for kNN
 RUN set -ex; \
  \
-    && git clone --branch v1.8.0.0 https://github.com/opendistro-for-elasticsearch/k-NN.git /usr/share/elasticsearch/k-NN \
+    git clone https://github.com/opendistro-for-elasticsearch/k-NN.git /usr/share/elasticsearch/k-NN \
  \
     && cd /usr/share/elasticsearch/k-NN/jni \
  \
