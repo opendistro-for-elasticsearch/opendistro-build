@@ -36,6 +36,8 @@
 
 FROM centos:7 AS prep_es_files
 
+RUN date && echo OD_VERSION {{version_tag}} ES_VERSION {{elastic_version}}
+
 ENV PATH /usr/share/elasticsearch/bin:$PATH
 ## Old methods, save here for possible revert
 #RUN curl -s  https://download.java.net/java/GA/jdk12.0.2/e482c34c86bd4bf8b56c0b35558996b9/10/GPL/openjdk-12.0.2_linux-x64_bin.tar.gz | tar -C /opt -zxf -
@@ -70,9 +72,13 @@ RUN set -ex && for esdirs in config data logs; do \
     done
 
 ## Related to jdk version in docker, use the bundled one instead of jdk 12 here
-RUN cp -rf /usr/share/elasticsearch/jdk /opt/jdk
+USER 0
+RUN cp -rp /usr/share/elasticsearch/jdk /opt/jdk
 ENV JAVA_HOME /opt/jdk
 ENV PATH $PATH:$JAVA_HOME/bin
+ENV KNN_VERSION `git ls-remote --tags https://github.com/opendistro-for-elasticsearch/k-NN.git v* | grep {{version_tag}} | grep -oh 'v[0-9.]*' | sort | tail -n 1`
+RUN which java && java -version && echo KNN_VERSION $KNN_VERSION
+USER 1000
 
 # Compile the C-library for kNN
 RUN set -ex; \
@@ -89,7 +95,7 @@ RUN set -ex; \
  \
     && make \
  \
-    && git clone --branch v1.8.0.0 https://github.com/opendistro-for-elasticsearch/k-NN.git /usr/share/elasticsearch/k-NN \
+    && git clone --branch $KNN_VERSION https://github.com/opendistro-for-elasticsearch/k-NN.git /usr/share/elasticsearch/k-NN \
  \
     && cd /usr/share/elasticsearch/k-NN \
  \
