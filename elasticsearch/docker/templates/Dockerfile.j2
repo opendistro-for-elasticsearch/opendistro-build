@@ -69,10 +69,8 @@ RUN set -ex && for esdirs in config data logs; do \
         mkdir -p "$esdirs"; \
     done
 
-RUN ls -ltr /usr/share/elasticsearch
-
 ## Related to jdk version in docker, use the bundled one instead of jdk 12 here
-COPY /usr/share/elasticsearch/jdk /opt/jdk
+RUN cp -rf /usr/share/elasticsearch/jdk /opt/jdk
 ENV JAVA_HOME /opt/jdk
 ENV PATH $PATH:$JAVA_HOME/bin
 
