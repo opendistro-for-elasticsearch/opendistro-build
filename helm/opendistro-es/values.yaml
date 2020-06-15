@@ -15,6 +15,7 @@ kibana:
   enabled: true
   image: amazon/opendistro-for-elasticsearch-kibana
   imageTag: 1.6.0
+  imagePullPolicy: "IfNotPresent"
   replicas: 1
   port: 5601
   externalPort: 443
