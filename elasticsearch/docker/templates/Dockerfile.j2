@@ -96,11 +96,13 @@ RUN set -ex; \
  \
     && export KNN_VERSION=`git ls-remote --tags https://github.com/opendistro-for-elasticsearch/k-NN.git v* | grep {{version_tag}} | grep -oh "v[0-9.]*" | sort | tail -n 1` \
  \
+    && git ls-remote --tags https://github.com/opendistro-for-elasticsearch/k-NN.git v* \
+ \
     && echo KNN_VERSION $KNN_VERSION \
  \
     && git clone --branch $KNN_VERSION https://github.com/opendistro-for-elasticsearch/k-NN.git /usr/share/elasticsearch/k-NN \
  \
-    && cd /usr/share/elasticsearch/k-NN \
+    && cd /usr/share/elasticsearch/k-NN && git branch \
  \
     && mkdir /tmp/jni \
  \
@@ -108,7 +110,7 @@ RUN set -ex; \
  \
     && cd /tmp/jni \
  \
-    && g++ -fPIC -I$JAVA_HOME/include -I$JAVA_HOME/include/linux -I/usr/share/elasticsearch/nmslib/similarity_search/include -std=c++11 -shared -o libKNNIndexV1_7_3_6.so com_amazon_opendistroforelasticsearch_knn_index_v1736_KNNIndex.cpp -lNonMetricSpaceLib -L/usr/share/elasticsearch/nmslib/similarity_search/release \
+    && g++ -fPIC -I$JAVA_HOME/include -I$JAVA_HOME/include/linux -I/usr/share/elasticsearch/nmslib/similarity_search/include -std=c++11 -shared -o libKNNIndexV1_7_3_6.so com_amazon_opendistroforelasticsearch_knn_index_v1736_KNNIndex.cpp -lNonMetricSpaceLib -L/usr/share/elasticsearch/nmslib/similarity_search/release && ls -ltr /tmp/jni \
  \
     && rm -rf /usr/share/elasticsearch/nmslib \
  \
