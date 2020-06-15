@@ -55,6 +55,7 @@ spec:
 {{ toYaml . | indent 8 }}
     {{- end }}
       initContainers:
+{{- if .Values.elasticsearch.sysctl.enabled }}
       - name: init-sysctl
         image: {{ .Values.elasticsearch.initContainer.image }}:{{ .Values.elasticsearch.initContainer.imageTag }}
         command:
@@ -63,6 +64,7 @@ spec:
         - vm.max_map_count={{ .Values.elasticsearch.maxMapCount }}
         securityContext:
           privileged: true
+{{- end }}
       - name: fixmount
         command: [ 'sh', '-c', 'chown -R 1000:1000 /usr/share/elasticsearch/data' ]
         image: {{ .Values.elasticsearch.initContainer.image }}:{{ .Values.elasticsearch.initContainer.imageTag }}
@@ -70,6 +72,9 @@ spec:
           - mountPath: /usr/share/elasticsearch/data
             name: data
             subPath: {{ .Values.elasticsearch.data.persistence.subPath }}
+{{- if .Values.elasticsearch.extraInitContainers }}
+{{ toYaml .Values.elasticsearch.extraInitContainers| indent 6 }}
+{{- end }}
     {{- with .Values.elasticsearch.data.affinity }}
       affinity:
 {{ toYaml . | indent 8 }}
@@ -77,6 +82,9 @@ spec:
       serviceAccountName: {{ template "opendistro-es.elasticsearch.serviceAccountName" . }}
       containers:
       - name: elasticsearch
+        securityContext:
+          capabilities:
+            add: ["SYS_CHROOT"]
         env:
         - name: cluster.name
           value: {{ .Values.global.clusterName }}
@@ -144,36 +152,39 @@ spec:
         {{- if .Values.elasticsearch.ssl.transport.existingCertSecret }}
         - mountPath: {{ .Values.elasticsearch.configDirectory }}/elk-transport-crt.pem
           name: transport-certs
-          subPath: elk-transport-crt.pem
+          subPath: {{ .Values.elasticsearch.ssl.transport.existingCertSecretCertSubPath }}
         - mountPath: {{ .Values.elasticsearch.configDirectory }}/elk-transport-key.pem
           name: transport-certs
-          subPath: elk-transport-key.pem
+          subPath: {{ .Values.elasticsearch.ssl.transport.existingCertSecretKeySubPath }}
         - mountPath: {{ .Values.elasticsearch.configDirectory }}/elk-transport-root-ca.pem
           name: transport-certs
-          subPath: elk-transport-root-ca.pem
+          subPath: {{ .Values.elasticsearch.ssl.transport.existingCertSecretRootCASubPath }}
         {{- end }}
         {{- if and .Values.elasticsearch.ssl.rest.enabled .Values.elasticsearch.ssl.rest.existingCertSecret }}
         - mountPath: {{ .Values.elasticsearch.configDirectory }}/elk-rest-crt.pem
           name: rest-certs
-          subPath: elk-rest-crt.pem
+          subPath: {{ .Values.elasticsearch.ssl.rest.existingCertSecretCertSubPath }}
         - mountPath: {{ .Values.elasticsearch.configDirectory }}/elk-rest-key.pem
           name: rest-certs
-          subPath: elk-rest-key.pem
+          subPath: {{ .Values.elasticsearch.ssl.rest.existingCertSecretKeySubPath }}
         - mountPath: {{ .Values.elasticsearch.configDirectory }}/elk-rest-root-ca.pem
           name: rest-certs
-          subPath: elk-rest-root-ca.pem
+          subPath: {{ .Values.elasticsearch.ssl.rest.existingCertSecretRootCASubPath }}
         {{- end }}
         {{- if and .Values.elasticsearch.ssl.admin.enabled .Values.elasticsearch.ssl.admin.existingCertSecret }}
         - mountPath: {{ .Values.elasticsearch.configDirectory }}/admin-crt.pem
           name: admin-certs
-          subPath: admin-crt.pem
+          subPath: {{ .Values.elasticsearch.ssl.admin.existingCertSecretCertSubPath }}
         - mountPath: {{ .Values.elasticsearch.configDirectory }}/admin-key.pem
           name: admin-certs
-          subPath: admin-key.pem
+          subPath: {{ .Values.elasticsearch.ssl.admin.existingCertSecretKeySubPath }}
         - mountPath: {{ .Values.elasticsearch.configDirectory }}/admin-root-ca.pem
           name: admin-certs
-          subPath: admin-root-ca.pem
+          subPath: {{ .Values.elasticsearch.ssl.admin.existingCertSecretRootCASubPath }}
          {{- end }}
+{{- if .Values.elasticsearch.extraVolumeMounts }}
+{{ toYaml .Values.elasticsearch.extraVolumeMounts | indent 8 }}
+{{- end }}
       volumes:
       - name: config
         secret:
@@ -203,6 +214,9 @@ spec:
           claimName: {{ .Values.elasticsearch.data.persistence.existingClaim }}
       {{- end }}
       {{- end }}
+{{- if .Values.elasticsearch.extraVolumes }}
+{{ toYaml .Values.elasticsearch.extraVolumes | indent 6 }}
+{{- end }}
   {{- if and .Values.elasticsearch.data.persistence.enabled (not .Values.elasticsearch.data.persistence.existingClaim) }}
   volumeClaimTemplates:
   - metadata:

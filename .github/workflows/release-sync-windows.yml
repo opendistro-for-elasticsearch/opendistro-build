@@ -1,0 +1,34 @@
+name: Sync windows artifacts to Prod
+
+on: 
+  repository_dispatch:
+    types: [release-sync-windows]
+
+jobs:
+  Sync-Windows-Prod:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Getting OD version
+        run: |
+          OD_VERSION=`./bin/version-info --od`
+          echo "::set-env name=od_version::$OD_VERSION"
+    
+      - name: Moving windows artifacts from staging to prod
+        run: |
+          #!/bin/bash
+          ARTIFACT_URL="artifacts.opendistroforelasticsearch.amazon.com"
+
+          aws s3 cp "s3://${ARTIFACT_URL}/downloads/odfe-windows/staging/odfe-executable/" "s3://${ARTIFACT_URL}/downloads/odfe-windows/odfe-executables/" --exclude "*" --include "Open_Distro_For_Elasticsearch_$od_version*" --recursive
+          aws s3 cp "s3://${ARTIFACT_URL}/downloads/odfe-windows/staging/odfe-executable/" "s3://${ARTIFACT_URL}/downloads/odfe-windows/odfe-executables/" --exclude "*" --include "Open_Distro_For_Elasticsearch_Kibana_$od_version*" --recursive
+          aws s3 cp "s3://${ARTIFACT_URL}/downloads/odfe-windows/staging/odfe-window-zip" "s3://${ARTIFACT_URL}/downloads/odfe-windows/ode-windows-zip" --exclude "*" --include "odfe-$od_version*" --recursive
+
+          aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/odfe-windows/*"

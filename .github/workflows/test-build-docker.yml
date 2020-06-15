@@ -1,42 +1,50 @@
 name: Webhook Build ES Docker on Dispatch
+
 on: 
-  schedule:
-    - cron: '30 10 * * *'
+  # schedule:
+  #   - cron: '30 10 * * *'
   repository_dispatch:
-    types: [build-docker]
+    types: [test-build-docker]
+
 jobs:
   build-es-docker:
     strategy:
       matrix:
-        java: [13]
+        java: [14]
     name: Build ES Docker
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
 
+    - name: Getting OD Version
+      run: |
+        OD_VERSION=`./bin/version-info --od`
+        plugin_tag=v$OD_VERSION.0
+        echo "::set-env name=tag::$plugin_tag"
+
     - name: Checkout ISM
       uses: actions/checkout@v1
       with:
         repository: opendistro-for-elasticsearch/index-management
-        ref: master
+        ref: ${{env.tag}}
 
     - name: Checkout Alerting
       uses: actions/checkout@v1
       with:
         repository: opendistro-for-elasticsearch/alerting
-        ref: master
+        ref: ${{env.tag}}
 
     - name: Checkout SQL
       uses: actions/checkout@v1
       with:
         repository: opendistro-for-elasticsearch/sql
-        ref: master
+        ref: ${{env.tag}}
         
     - name: Checkout k-NN
       uses: actions/checkout@v1
       with:
         repository: opendistro-for-elasticsearch/k-NN
-        ref: master
+        ref: ${{env.tag}}
 
     - name: Configure AWS
       uses: aws-actions/configure-aws-credentials@v1
@@ -56,13 +64,12 @@ jobs:
         DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
       run: |
         echo "Executing On-demand Build for ES Docker Image"
+        ODFE_VER=`./bin/version-info --od`
+        echo "ODFE VERSION $ODFE_VER"
         workdir=`pwd`
         sudo apt-get install python-virtualenv
         ./download_plugins.sh
-        cd elasticsearch/bin
-        ODFE_VER=`./version-info --od`
-        echo "ODFE VERSION $ODFE_VER"
-        cd ..
+        cd elasticsearch
         security=`ls docker/build/elasticsearch/plugins/|grep opendistro_security|wc -l`
         
         if [ $security -gt 0 ]
@@ -80,7 +87,7 @@ jobs:
         echo "******************************"
         docker login --username $DOCKER_USER --password $DOCKER_PASS
         docker images|grep "amazon/opendistro-for-elasticsearch" > docker_id.out
-        image_id=`awk -F' ' '{print $3}' docker_id.out`
+        image_id=`awk -F ' ' '{print $3}' docker_id.out`
         echo "Docker Id is $image_id"
         docker tag $image_id opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER
         docker images
@@ -119,13 +126,13 @@ jobs:
         subject: Opendistro for Elasticsearch Build - On-Demand ODFE Image is Ready
         # Read file contents as body:
         body: file://Message.md
-        to: sngri@amazon.com,odfe-distribution-build@amazon.com
+        to: odfe-distribution-build@amazon.com
         from: Opendistro Elasticsearch
         # Optional content type:
         content_type: text/html
           
     - name: Test ISM Plugin
-      continue-on-error: true
+      if: always()
       run: |
         cd ..
         sleep 15
@@ -134,43 +141,43 @@ jobs:
         if cat plugins.out|grep opendistro_index_management
         then
           cd index-management
-          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
         else
           echo "Skipping Test as Plugin not available"
         fi
 
     - name: Test Alerting Plugin
-      continue-on-error: true
+      if: always()
       run: |
         cd ..
         if cat plugins.out|grep opendistro_alerting
         then
           cd alerting/alerting
-          ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
+          ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
         else
           echo "Skipping Test as Plugin not available"
         fi
         
     - name: Test SQL Plugin
-      continue-on-error: true
+      if: always()
       run: |
         cd ..
         if cat plugins.out|grep opendistro_sql
         then
           cd sql
-          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
         else
           echo "Skipping Test as Plugin not available"
         fi
         
     - name: Test k-NN Plugin
-      continue-on-error: true
+      if: always()
       run: |
         cd ..
         if cat plugins.out|grep opendistro-knn
         then
           cd k-NN
-          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
         else
           echo "Skipping Test as Plugin not available"
         fi
@@ -186,17 +193,17 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
+
       - name: Build Kibana Docker
         env:
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
           DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
         run: |
           sudo apt-get install python-virtualenv
-          ./download_kibana_plugins.sh
-          cd kibana/bin
-          ODFE_VER=`./version-info --od`
+          ODFE_VER=`./bin/version-info --od`
           echo "ODFE VERSION $ODFE_VER"
-          cd ..
+          ./download_kibana_plugins.sh
+          cd kibana
           cd docker
           make build
           
@@ -205,9 +212,10 @@ jobs:
           echo "******************************"
           docker login --username $DOCKER_USER --password $DOCKER_PASS
           docker images|grep "amazon/opendistro-for-elasticsearch-kibana" > kibana_id.out
-          kibana_image_id=`awk -F' ' '{print $3}' kibana_id.out`
+          kibana_image_id=`awk -F ' ' '{print $3}' kibana_id.out`
           echo "Docker Id is $kibana_image_id"
           docker tag $kibana_image_id opendistroforelasticsearch/opendistroforelasticsearch-kibana:$ODFE_VER
+          docker images
           docker push opendistroforelasticsearch/opendistroforelasticsearch-kibana:$ODFE_VER
           
       - name: Create Email Message
@@ -225,7 +233,7 @@ jobs:
           subject: Opendistro for Elasticsearch Build - On-Demand ODFE Kibana Image
           # Read file contents as body:
           body: file://Message.md
-          to: sngri@amazon.com,odfe-distribution-build@amazon.com
+          to: odfe-distribution-build@amazon.com
           from: Opendistro Elasticsearch
           # Optional content type:
           content_type: text/html
