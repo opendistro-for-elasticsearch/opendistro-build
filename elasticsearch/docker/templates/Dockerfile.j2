@@ -74,10 +74,10 @@ RUN set -ex && for esdirs in config data logs; do \
 ## Related to jdk version in docker, use the bundled one instead of jdk 12 here
 USER 0
 RUN cp -rp /usr/share/elasticsearch/jdk /opt/jdk
-RUN export KNN_VERSION=`git ls-remote --tags https://github.com/opendistro-for-elasticsearch/k-NN.git v* | grep {{version_tag}} | grep -oh "v[0-9.]*" | sort | tail -n 1`
 ENV JAVA_HOME /opt/jdk
 ENV PATH $PATH:$JAVA_HOME/bin
 USER 1000
+RUN export KNN_VERSION=`git ls-remote --tags https://github.com/opendistro-for-elasticsearch/k-NN.git v* | grep {{version_tag}} | grep -oh "v[0-9.]*" | sort | tail -n 1`
 RUN java -version && echo KNN_VERSION $KNN_VERSION
 
 # Compile the C-library for kNN
