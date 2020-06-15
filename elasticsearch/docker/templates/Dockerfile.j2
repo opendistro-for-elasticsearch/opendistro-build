@@ -59,31 +59,13 @@ WORKDIR /usr/share/elasticsearch
 ##Compile the C-library for kNN
 RUN set -ex; \
  \
-    git clone https://github.com/nmslib/nmslib.git /usr/share/elasticsearch/nmslib; \
+    && git clone --branch v1.8.0.0 https://github.com/opendistro-for-elasticsearch/k-NN.git /usr/share/elasticsearch/k-NN \
  \
-    cd /usr/share/elasticsearch/nmslib \
- \
-    && git checkout tags/v1.7.3.6 \
- \
-    && cd similarity_search \
+    && cd /usr/share/elasticsearch/k-NN/jni \
  \
     && cmake . \
  \
-    && make \
- \
-    && git clone --branch v1.8.0.0 https://github.com/opendistro-for-elasticsearch/k-NN.git /usr/share/elasticsearch/k-NN \
- \
-    && cd /usr/share/elasticsearch/k-NN \
- \
-    && mkdir /tmp/jni \
- \
-    && cp jni/src/v1736/* /tmp/jni \
- \
-    && cd /tmp/jni \
- \
-    && g++ -fPIC -I/opt/jdk-12.0.2/include -I/opt/jdk-12.0.2/include/linux -I/usr/share/elasticsearch/nmslib/similarity_search/include -std=c++11 -shared -o libKNNIndexV1_7_3_6.so com_amazon_opendistroforelasticsearch_knn_index_v1736_KNNIndex.cpp -lNonMetricSpaceLib -L/usr/share/elasticsearch/nmslib/similarity_search/release \
- \
-    && rm -rf /usr/share/elasticsearch/nmslib \
+    && make install \
  \
     && rm -rf /usr/share/elasticsearch/k-NN
 
