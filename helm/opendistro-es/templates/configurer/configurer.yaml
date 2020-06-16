@@ -41,12 +41,12 @@ spec:
         - name: ES_USERNAME
           valueFrom:
             secretKeyRef:
-              name: {{ .Values.kibana.elasticsearchAccount.secret }}
+              name: {{ .Values.configurer.elasticsearchAccount.secret }}
               key: username
         - name: ES_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: {{ .Values.kibana.elasticsearchAccount.secret }}
+              name: {{ .Values.configurer.elasticsearchAccount.secret }}
               key: password
         {{- if .Values.curator.resources }}
         resources: {{- toYaml .Values.curator.resources | nindent 10 }}

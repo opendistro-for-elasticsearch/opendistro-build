@@ -596,3 +596,11 @@ configurer:
   helm:
     hook: post-install,post-upgrade
     deletePolicy: before-hook-creation,hook-failed
+
+  elasticsearchAccount:
+    useExistingSecret: true
+    username:
+    password:
+    secret: ""
+    keyPassphrase:
+      enabled: false
