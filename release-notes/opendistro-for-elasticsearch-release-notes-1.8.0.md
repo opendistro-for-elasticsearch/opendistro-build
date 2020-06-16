@@ -10,7 +10,7 @@ The release consists of Apache 2 licensed Elasticsearch version 7.7.0, and Kiban
 * The [snapshot](https://github.com/opendistro-for-elasticsearch/index-management/pull/135) feature is now available in the Index Management plugin. This feature allows users to recover from failure and migrate indices from one cluster to another. 
 * Anomaly Detection plugin releases the new [count aggregation](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/169) feature to detect anomalies. 
 * New feature [Cosine Similarity](https://github.com/opendistro-for-elasticsearch/k-NN/pull/90) is available for use in k-NN plugin.
-* [PerfTop CLI](https://opendistro.github.io/for-elasticsearch/downloads.html#PerfTop), a client to interact with Performance Analyzer.
+* Support for connecting [PerfTop CLI](https://opendistro.github.io/for-elasticsearch/downloads.html#PerfTop), a client for Performance Analyzer to clusters with basic authentication.
 
 ## Release Details
 
@@ -18,7 +18,7 @@ The release includes the following features, enhancements, infrastructure and do
 
 ## Breaking Changes
 
-* Artifact Name of Anomaly Detection Plugin for **_*DEB*_** and **_*RPM*_** distribution is updated from **opendistro-anomaly-detector** to **opendistro-anomaly-detection**. In order to reduce the impact of this change, we recommend removing the old **opendistro-anomaly-detector** plugin first with your package manager, before installing the upgraded **opendistro-anomaly-detection**.
+* Artifact Name of Anomaly Detection Plugin for **_*DEB*_** and **_*RPM*_** distribution is updated from **opendistro-anomaly-detector** to **opendistro-anomaly-detection**. In order to reduce the impact of this change, we recommend removing the old **opendistro-anomaly-detector** plugin first with your package manager, before installing the upgraded **opendistro-anomaly-detection** ([Support Docs](https://opendistro.github.io/for-elasticsearch-docs/docs/upgrade/1-8-0/)).
 
 ## **Features**
 

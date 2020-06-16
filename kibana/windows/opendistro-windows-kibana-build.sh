@@ -3,8 +3,9 @@ set -e
 
 REPO_ROOT=`git rev-parse --show-toplevel`
 ROOT=`dirname $(realpath $0)`; echo $ROOT; cd $ROOT
-ES_VERSION=`$REPO_ROOT/bin/version-info --es`
-OD_VERSION=`$REPO_ROOT/bin/version-info --od`
+ES_VERSION=`$REPO_ROOT/bin/version-info --es`; echo $ES_VERSION
+OD_VERSION=`$REPO_ROOT/bin/version-info --od`; echo $OD_VERSION
+S3_BUCKET="artifacts.opendistroforelasticsearch.amazon.com"
 ARTIFACTS_URL="https://d3g5vo6xdbdb9a.cloudfront.net"
 PACKAGE_NAME="opendistroforelasticsearch-kibana"
 TARGET_DIR="$ROOT/target"
@@ -12,7 +13,7 @@ TARGET_DIR="$ROOT/target"
 mkdir $TARGET_DIR
 
 # Downloading tar from s3
-aws s3 cp "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/${PACKAGE_NAME}/${PACKAGE_NAME}-${OD_VERSION}.tar.gz" . --quiet ; echo $0
+aws s3 cp "s3://${S3_BUCKET}/downloads/tarball/${PACKAGE_NAME}/${PACKAGE_NAME}-${OD_VERSION}.tar.gz" . --quiet ; echo $0
 
 # Untar the tar artifact
 tar -xzf $PACKAGE_NAME-$OD_VERSION.tar.gz
@@ -50,6 +51,6 @@ install4j8.0.4/bin/install4jc -d $TARGET_DIR -D sourcedir=./$PACKAGE_NAME,versio
 ls -ltr $TARGET_DIR
 
 # Copy to s3
-aws s3 cp $TARGET_DIR/*.exe s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/staging/odfe-executable/
-aws s3 cp $TARGET_DIR/*.zip s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/staging/odfe-window-zip/
+aws s3 cp $TARGET_DIR/*.exe s3://$S3_BUCKET/downloads/odfe-windows/staging/odfe-executable/
+aws s3 cp $TARGET_DIR/*.zip s3://$S3_BUCKET/downloads/odfe-windows/staging/odfe-window-zip/
 aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/*"

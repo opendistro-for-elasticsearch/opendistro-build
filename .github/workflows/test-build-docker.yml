@@ -18,8 +18,7 @@ jobs:
 
     - name: Getting OD Version
       run: |
-        cd elasticsearch/bin
-        OD_VERSION=`./version-info --od`
+        OD_VERSION=`./bin/version-info --od`
         plugin_tag=v$OD_VERSION.0
         echo "::set-env name=tag::$plugin_tag"
 
@@ -65,13 +64,12 @@ jobs:
         DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
       run: |
         echo "Executing On-demand Build for ES Docker Image"
+        ODFE_VER=`./bin/version-info --od`
+        echo "ODFE VERSION $ODFE_VER"
         workdir=`pwd`
         sudo apt-get install python-virtualenv
         ./download_plugins.sh
-        cd elasticsearch/bin
-        ODFE_VER=`./version-info --od`
-        echo "ODFE VERSION $ODFE_VER"
-        cd ..
+        cd elasticsearch
         security=`ls docker/build/elasticsearch/plugins/|grep opendistro_security|wc -l`
         
         if [ $security -gt 0 ]
@@ -202,11 +200,10 @@ jobs:
           DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
         run: |
           sudo apt-get install python-virtualenv
-          ./download_kibana_plugins.sh
-          cd kibana/bin
-          ODFE_VER=`./version-info --od`
+          ODFE_VER=`./bin/version-info --od`
           echo "ODFE VERSION $ODFE_VER"
-          cd ..
+          ./download_kibana_plugins.sh
+          cd kibana
           cd docker
           make build
           
