@@ -15,7 +15,9 @@ kibana:
   enabled: true
   image: amazon/opendistro-for-elasticsearch-kibana
   imageTag: 1.8.0
-  imagePullPolicy: "IfNotPresent"
+  ## Specifies the image pull policy. Can be "Always" or "IfNotPresent" or "Never".
+  ## Default to "Always".
+  imagePullPolicy: ""
   replicas: 1
   port: 5601
   externalPort: 443
