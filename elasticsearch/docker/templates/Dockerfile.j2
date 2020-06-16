@@ -178,6 +178,7 @@ COPY CENTOS_LICENSING.txt /root
 COPY --from=prep_es_files --chown=1000:0 /opt/jdk /opt/jdk
 ENV JAVA_HOME /opt/jdk
 ENV PATH $PATH:$JAVA_HOME/bin
+RUN java -version
 
 # Replace OpenJDK's built-in CA certificate keystore with the one from the OS
 # vendor. The latter is superior in several ways.
