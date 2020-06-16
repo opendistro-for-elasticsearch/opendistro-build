@@ -15,6 +15,9 @@ kibana:
   enabled: true
   image: amazon/opendistro-for-elasticsearch-kibana
   imageTag: 1.8.0
+  ## Specifies the image pull policy. Can be "Always" or "IfNotPresent" or "Never".
+  ## Default to "Always".
+  imagePullPolicy: ""
   replicas: 1
   port: 5601
   externalPort: 443
@@ -140,6 +143,16 @@ elasticsearch:
     rolesSecret:
     rolesMappingSecret:
     tenantsSecret:
+    #The following option simplifies securityConfig by using a single secret and specifying the respective secrets in the corresponding files instead of creating different secrets for config,internal users, roles, roles mapping and tenants
+    #Note that this is an alternative to the above secrets and shouldn't be used if the above secrets are used
+    config:
+       securityConfigSecret:
+       data: {}
+        # config.yml: |-
+        # internal_users.yml: |-
+        # roles.yml: |-
+        # rolesMapping.yml: |-
+        # tenants.yml: |-
 
   extraEnvs: []
 
