@@ -81,14 +81,21 @@ RUN java -version
 # Compile the C-library for kNN
 USER 1000
 RUN set -ex; \
+   export KNN_VERSION=`git ls-remote --tags https://github.com/opendistro-for-elasticsearch/k-NN.git v* | grep {{version_tag}} | grep -oh "v[0-9.]*" | sort | tail -n 1` \
  \
-    git clone --recursive https://github.com/opendistro-for-elasticsearch/k-NN.git /usr/share/elasticsearch/k-NN \
+    && git ls-remote --tags https://github.com/opendistro-for-elasticsearch/k-NN.git v* \
+ \
+    && echo KNN_VERSION $KNN_VERSION \
+ \
+    && git clone --recursive --branch $KNN_VERSION https://github.com/opendistro-for-elasticsearch/k-NN.git /usr/share/elasticsearch/k-NN \
  \
     && cd /usr/share/elasticsearch/k-NN/jni \
  \
-    && cmake -D CMAKE_CXX_FLAGS="-std=c++11" . \
+    && cmake . \
  \
-    && make && mkdir /tmp/jni/ && cp release/*.so /tmp/jni/ && ls -ltr /tmp/jni/ \
+    && make \
+ \
+    && mkdir /tmp/jni/ && cp release/*.so /tmp/jni/ && ls -ltr /tmp/jni/ \
  \
     && rm -rf /usr/share/elasticsearch/k-NN
 
