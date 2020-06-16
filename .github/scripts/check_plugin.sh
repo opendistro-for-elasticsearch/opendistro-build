@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # This script is meant to be run within .github/scripts folder structure
 REPO_ROOT=`git rev-parse --show-toplevel`
@@ -17,6 +18,7 @@ ODFE_VERSION=$2
 if [ "$#" -gt 2 ]
 then
   echo "ERROR: Please assign at most 2 parameters when running this script"
+  echo "Example: $0 [\$PLUGIN_TYPES] [\$ODFE_VERSION]"
   echo "Example: $0 \"tar\""
   echo "Example: $0 \"rpm,kibana\" \"1.7.0\""
   exit 1

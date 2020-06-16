@@ -75,17 +75,8 @@ jobs:
     runs-on: [ubuntu-latest]
     container:
       image: opendistroforelasticsearch/base-ubuntu
-    outputs:
-      tag: ${{steps.version.outputs.p_tag}}
     steps:
       - uses: actions/checkout@v1
-
-      - name: Getting OD version
-        id: version
-        run: |
-          OD_VERSION=`./bin/version-info --od`
-          plugin_tag=v$OD_VERSION.0
-          echo "::set-output name=p_tag::$plugin_tag"
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -93,6 +84,7 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
+
       - name: Sign Deb Artifacts
         env:
           passphrase: ${{ secrets.PASSPHRASE }}
@@ -197,10 +189,13 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
+      - name: Retrieve plugin tags 
+        run:  echo ::set-env name=p_tag::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)
+
       - uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/index-management
-          ref: ${{needs.sign-deb-artifacts.outputs.tag}}
+          ref: ${{env.p_tag}}
 
       - name: Setup Java
         uses: actions/setup-java@v1
@@ -252,10 +247,13 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
+      - name: Retrieve plugin tags 
+        run:  echo ::set-env name=p_tag::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)
+
       - uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/alerting
-          ref: ${{needs.sign-deb-artifacts.outputs.tag}}
+          ref: ${{env.p_tag}}
 
       - name: Setup Java
         uses: actions/setup-java@v1
@@ -309,10 +307,13 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
+      - name: Retrieve plugin tags 
+        run:  echo ::set-env name=p_tag::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)
+
       - uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/sql
-          ref: ${{needs.sign-deb-artifacts.outputs.tag}}
+          ref: ${{env.p_tag}}
 
       - name: Setup Java
         uses: actions/setup-java@v1
@@ -364,10 +365,13 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
+      - name: Retrieve plugin tags 
+        run:  echo ::set-env name=p_tag::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)
+
       - uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/sql
-          ref: ${{needs.sign-deb-artifacts.outputs.tag}}
+          ref: ${{env.p_tag}}
 
       - name: Setup Java
         uses: actions/setup-java@v1
@@ -413,10 +417,12 @@ jobs:
         java: [14]
     steps:
       - uses: actions/checkout@v1
+      - name: Retrieve plugin tags 
+        run:  echo ::set-env name=p_tag::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/k-NN)
       - uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/k-NN
-          ref: ${{needs.sign-deb-artifacts.outputs.tag}}
+          ref: ${{env.p_tag}}
       - name: Setup Java
         uses: actions/setup-java@v1
         with:
