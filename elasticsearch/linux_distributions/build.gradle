@@ -78,13 +78,11 @@ ospackage {
 buildRpm() {
     arch = 'NOARCH'
     archiveName "${packageName}-${version}.rpm"
-    preInstall file('scripts/preInstall.sh')
 }
 
 buildDeb() {
     arch = 'amd64'
     archiveName "${packageName}-${version}.deb"
-    preInstall file('scripts/preInstall.sh')
 }
 
 task buildPackages(type: GradleBuild) {

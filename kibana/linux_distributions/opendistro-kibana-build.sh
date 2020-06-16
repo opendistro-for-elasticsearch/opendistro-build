@@ -26,10 +26,12 @@
 set -e
 
 # Initialize directories
-ROOT=`pwd`
+REPO_ROOT=`git rev-parse --show-toplevel`
+ROOT=`dirname $(realpath $0)`; echo $ROOT; cd $ROOT
+ES_VERSION=`$REPO_ROOT/bin/version-info --es`; echo $ES_VERSION
+OD_VERSION=`$REPO_ROOT/bin/version-info --od`; echo $OD_VERSION
 PACKAGE_TYPE=$1
-ES_VERSION=$(../bin/version-info --es)
-OD_VERSION=$(../bin/version-info --od)
+S3_BUCKET="artifacts.opendistroforelasticsearch.amazon.com"
 ARTIFACTS_URL="https://d3g5vo6xdbdb9a.cloudfront.net"
 PACKAGE_NAME="opendistroforelasticsearch-kibana"
 TARGET_DIR="$ROOT/target"
@@ -73,7 +75,7 @@ curl -Ls "https://artifacts.elastic.co/downloads/kibana/kibana-oss-$ES_VERSION-l
 echo "installing open distro plugins"
 for plugin_path in $PLUGINS
 do
-  plugin_latest=`aws s3api list-objects --bucket artifacts.opendistroforelasticsearch.amazon.com --prefix "downloads/kibana-plugins/${plugin_path}" --query 'Contents[].[Key]' --output text | sort | tail -n 1`
+  plugin_latest=`aws s3api list-objects --bucket $S3_BUCKET --prefix "downloads/kibana-plugins/${plugin_path}" --query 'Contents[].[Key]' --output text | sort | tail -n 1`
   echo "installing $plugin_latest"
   $PACKAGE_NAME/bin/kibana-plugin --allow-root install "${ARTIFACTS_URL}/${plugin_latest}"
 done
@@ -133,6 +135,13 @@ if [ $# -eq 0 ] || [ "$PACKAGE_TYPE" = "rpm" ]; then
       $ROOT/opendistroforelasticsearch-kibana/data/=/var/lib/kibana/ \
       $ROOT/service_templates/sysv/etc/=/etc/ \
       $ROOT/service_templates/systemd/etc/=/etc/
+
+      # Upload to S3
+      ls -ltr $TARGET_DIR
+      rpm_artifact=`ls $TARGET_DIR/*.rpm`
+      aws s3 cp $rpm_artifact s3://$S3_BUCKET/downloads/rpms/opendistroforelasticsearch-kibana/
+      aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/*"
+
 fi
 
 if [ $# -eq 0 ] || [ "$PACKAGE_TYPE" = "deb" ]; then
@@ -168,15 +177,35 @@ if [ $# -eq 0 ] || [ "$PACKAGE_TYPE" = "deb" ]; then
       $ROOT/opendistroforelasticsearch-kibana/data/=/var/lib/kibana/ \
       $ROOT/service_templates/sysv/etc/=/etc/ \
       $ROOT/service_templates/systemd/etc/=/etc/
+
+      # Upload to S3
+      ls -ltr $TARGET_DIR
+      deb_artifact=`ls $TARGET_DIR/*.deb`
+      aws s3 cp $deb_artifact s3://$S3_BUCKET/downloads/debs/opendistroforelasticsearch-kibana/
+      aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/*"
+
 fi
 
 if [ $# -eq 0 ] || [ "$PACKAGE_TYPE" = "tar" ]; then
+
+  # Generating tar
   rm -rf $TARGET_DIR/*tar*
   echo "generating tar"
   tar -czf $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz $PACKAGE_NAME
   #tar -tzvf $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz
-  sha512sum $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz  > $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz.sha512
-  sha512sum -c $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz.sha512
+  cd $TARGET_DIR
+  shasum -a 512 $PACKAGE_NAME-$OD_VERSION.tar.gz > $PACKAGE_NAME-$OD_VERSION.tar.gz.sha512
+  shasum -a 512 -c $PACKAGE_NAME-$OD_VERSION.tar.gz.sha512
   echo " CHECKSUM FILE "
-  echo "$(cat $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz.sha512)"
+  echo "$(cat $PACKAGE_NAME-$OD_VERSION.tar.gz.sha512)"
+  cd $ROOT
+
+  # Upload to S3
+  ls -ltr $TARGET_DIR
+  tar_artifact=`ls $TARGET_DIR/*.tar.gz`
+  tar_checksum_artifact=`ls $TARGET_DIR/*.tar.gz.sha512`
+  aws s3 cp $tar_artifact s3://$S3_BUCKET/downloads/tarball/opendistroforelasticsearch-kibana/
+  aws s3 cp $tar_checksum_artifact s3://$S3_BUCKET/downloads/tarball/opendistroforelasticsearch-kibana/
+  aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/*"
+
 fi

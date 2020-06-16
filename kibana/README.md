@@ -94,17 +94,17 @@ cd opendistro-build/kibana/linux_distributions
 
 To build the rpm package
 ```
-./generate-pkg.sh rpm
+./opendistro-kibana-build.sh rpm
 ```
 
 To build the deb package
 ```
-./generate-pkg.sh deb
+./opendistro-kibana-build.sh deb
 ```
 
-To build rpm & deb packages
+To build tar & rpm & deb packages
 ```
-./generate-pkg.sh
+./opendistro-kibana-build.sh
 ```
 
 Download and install Kibana
