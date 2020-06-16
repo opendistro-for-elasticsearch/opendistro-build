@@ -81,38 +81,21 @@ RUN java -version
 # Compile the C-library for kNN
 USER 1000
 RUN set -ex; \
- \
-    git clone https://github.com/nmslib/nmslib.git /usr/share/elasticsearch/nmslib; \
- \
-    cd /usr/share/elasticsearch/nmslib \
- \
-    && git checkout tags/v1.7.3.6 \
- \
-    && cd similarity_search \
- \
-    && cmake . \
- \
-    && make \
- \
-    && export KNN_VERSION=`git ls-remote --tags https://github.com/opendistro-for-elasticsearch/k-NN.git v* | grep {{version_tag}} | grep -oh "v[0-9.]*" | sort | tail -n 1` \
+   export KNN_VERSION=`git ls-remote --tags https://github.com/opendistro-for-elasticsearch/k-NN.git v* | grep {{version_tag}} | grep -oh "v[0-9.]*" | sort | tail -n 1` \
  \
     && git ls-remote --tags https://github.com/opendistro-for-elasticsearch/k-NN.git v* \
  \
     && echo KNN_VERSION $KNN_VERSION \
  \
-    && git clone --branch $KNN_VERSION https://github.com/opendistro-for-elasticsearch/k-NN.git /usr/share/elasticsearch/k-NN \
+    && git clone --recursive --branch $KNN_VERSION https://github.com/opendistro-for-elasticsearch/k-NN.git /usr/share/elasticsearch/k-NN \
  \
-    && cd /usr/share/elasticsearch/k-NN && git branch \
+    && cd /usr/share/elasticsearch/k-NN/jni \
  \
-    && mkdir /tmp/jni \
+    && cmake . \
  \
-    && cp jni/src/v1736/* /tmp/jni \
+    && make \
  \
-    && cd /tmp/jni \
- \
-    && g++ -fPIC -I$JAVA_HOME/include -I$JAVA_HOME/include/linux -I/usr/share/elasticsearch/nmslib/similarity_search/include -std=c++11 -shared -o libKNNIndexV1_7_3_6.so com_amazon_opendistroforelasticsearch_knn_index_v1736_KNNIndex.cpp -lNonMetricSpaceLib -L/usr/share/elasticsearch/nmslib/similarity_search/release && ls -ltr /tmp/jni \
- \
-    && rm -rf /usr/share/elasticsearch/nmslib \
+    && mkdir /tmp/jni/ && cp release/*.so /tmp/jni/ && ls -ltr /tmp/jni/ \
  \
     && rm -rf /usr/share/elasticsearch/k-NN
 
