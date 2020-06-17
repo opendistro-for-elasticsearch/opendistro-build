@@ -1,6 +1,16 @@
 #!/bin/bash
 set -e
 
+# This script allows users to manually assign parameters
+if [ "$#" -gt 2 ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]
+then
+  echo "Please assign at most 2 parameters when running this script"
+  echo "Example: $0 \$GIT_REPONAME [\$OD_VERSION]"
+  echo "Example: $0 \"opendistro-for-elasticsearch/opendistro-build\""
+  echo "Example: $0 \"opendistro-for-elasticsearch/opendistro-build\" \"1.7.0\""
+  exit 1
+fi
+
 # This script is meant to be run within .github/scripts folder structure
 REPO_ROOT=`git rev-parse --show-toplevel`
 OD_VERSION=`$REPO_ROOT/bin/version-info --od`
@@ -8,16 +18,6 @@ ROOT=`dirname $(realpath $0)`; cd $ROOT
 #GIT_GROUPNAME="https://github.com/opendistro-for-elasticsearch"
 GIT_BASEURL="https://github.com"
 GIT_REPONAME=$1
-
-# This script allows users to manually assign parameters
-if [ "$#" -gt 2 ]
-then
-  echo "ERROR: Please assign at most 2 parameters when running this script"
-  echo "Example: $0 [\$GIT_REPONAME] [\$OD_VERSION]"
-  echo "Example: $0 \"opendistro-for-elasticsearch/opendistro-build\""
-  echo "Example: $0 \"opendistro-for-elasticsearch/opendistro-build\" \"1.7.0\""
-  exit 1
-fi
 
 if [ "$#" -eq 2 ]
 then
