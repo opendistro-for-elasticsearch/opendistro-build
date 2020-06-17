@@ -10,16 +10,8 @@ jobs:
   build-es-artifacts:
     name: Build Windows ES Artifacts
     runs-on: ubuntu-latest
-    outputs:
-      tag: ${{steps.version.outputs.p_tag}}
     steps:
     - uses: actions/checkout@v1
-    - name: Getting OD version
-      id: version
-      run: |
-        OD_VERSION=`./bin/version-info --od`
-        plugin_tag=v$OD_VERSION.0
-        echo "::set-output name=p_tag::$plugin_tag"
 
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -61,10 +53,13 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v1
+      - name: Retrieve plugin tags
+        run:  echo ::set-env name=p_tag_ism::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)
+        shell: bash
       - uses: actions/checkout@v1
         with:
            repository: opendistro-for-elasticsearch/index-management
-           ref: ${{needs.build-es-artifacts.outputs.tag}}  
+           ref: ${{env.p_tag_ism}}  
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -114,10 +109,13 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v1
+      - name: Retrieve plugin tags
+        run:  echo ::set-env name=p_tag_alerting::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)
+        shell: bash
       - uses: actions/checkout@v1
         with:
            repository: opendistro-for-elasticsearch/alerting
-           ref: ${{needs.build-es-artifacts.outputs.tag}}  
+           ref: ${{env.p_tag_alerting}}  
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
