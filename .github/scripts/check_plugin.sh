@@ -1,5 +1,7 @@
 #!/bin/bash
-set -e
+
+# Please leave it commented as aws s3 will fail if no plugin presents
+#set -e
 
 # This script is meant to be run within .github/scripts folder structure
 REPO_ROOT=`git rev-parse --show-toplevel`
