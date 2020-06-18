@@ -16,35 +16,36 @@ jobs:
     steps:
     - uses: actions/checkout@v1
 
-    - name: Getting OD Version
+    - name: Retrieve plugin tags
       run: |
-        OD_VERSION=`./bin/version-info --od`
-        plugin_tag=v$OD_VERSION.0
-        echo "::set-env name=tag::$plugin_tag"
+        echo ::set-env name=p_tag_ism::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)
+        echo ::set-env name=p_tag_alerting::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)
+        echo ::set-env name=p_tag_sql::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)
+        echo ::set-env name=p_tag_knn::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/k-NN)
 
     - name: Checkout ISM
       uses: actions/checkout@v1
       with:
         repository: opendistro-for-elasticsearch/index-management
-        ref: ${{env.tag}}
+        ref: ${{env.p_tag_ism}}
 
     - name: Checkout Alerting
       uses: actions/checkout@v1
       with:
         repository: opendistro-for-elasticsearch/alerting
-        ref: ${{env.tag}}
+        ref: ${{env.p_tag_alerting}}
 
     - name: Checkout SQL
       uses: actions/checkout@v1
       with:
         repository: opendistro-for-elasticsearch/sql
-        ref: ${{env.tag}}
+        ref: ${{env.p_tag_sql}}
         
     - name: Checkout k-NN
       uses: actions/checkout@v1
       with:
         repository: opendistro-for-elasticsearch/k-NN
-        ref: ${{env.tag}}
+        ref: ${{env.p_tag_knn}}
 
     - name: Configure AWS
       uses: aws-actions/configure-aws-credentials@v1

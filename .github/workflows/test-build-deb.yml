@@ -190,12 +190,12 @@ jobs:
       - uses: actions/checkout@v1
 
       - name: Retrieve plugin tags 
-        run:  echo ::set-env name=p_tag::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)
+        run:  echo ::set-env name=p_tag_ism::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)
 
       - uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/index-management
-          ref: ${{env.p_tag}}
+          ref: ${{env.p_tag_ism}}
 
       - name: Setup Java
         uses: actions/setup-java@v1
@@ -248,12 +248,12 @@ jobs:
       - uses: actions/checkout@v1
 
       - name: Retrieve plugin tags 
-        run:  echo ::set-env name=p_tag::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)
+        run:  echo ::set-env name=p_tag_alerting::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)
 
       - uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/alerting
-          ref: ${{env.p_tag}}
+          ref: ${{env.p_tag_alerting}}
 
       - name: Setup Java
         uses: actions/setup-java@v1
@@ -308,12 +308,12 @@ jobs:
       - uses: actions/checkout@v1
 
       - name: Retrieve plugin tags 
-        run:  echo ::set-env name=p_tag::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)
+        run:  echo ::set-env name=p_tag_sql::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)
 
       - uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/sql
-          ref: ${{env.p_tag}}
+          ref: ${{env.p_tag_sql}}
 
       - name: Setup Java
         uses: actions/setup-java@v1
@@ -366,12 +366,12 @@ jobs:
       - uses: actions/checkout@v1
 
       - name: Retrieve plugin tags 
-        run:  echo ::set-env name=p_tag::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)
+        run:  echo ::set-env name=p_tag_sql::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)
 
       - uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/sql
-          ref: ${{env.p_tag}}
+          ref: ${{env.p_tag_sql}}
 
       - name: Setup Java
         uses: actions/setup-java@v1
@@ -418,11 +418,11 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Retrieve plugin tags 
-        run:  echo ::set-env name=p_tag::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/k-NN)
+        run:  echo ::set-env name=p_tag_knn::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/k-NN)
       - uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/k-NN
-          ref: ${{env.p_tag}}
+          ref: ${{env.p_tag_knn}}
       - name: Setup Java
         uses: actions/setup-java@v1
         with:
