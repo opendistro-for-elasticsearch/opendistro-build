@@ -282,6 +282,38 @@ config:
 By coupling the above secrets with `opendistro_security.allow_default_init_securityindex: true` in your
 `elasticsearch.config:` at startup all of the secrets will be mounted in and read.
 
+or You can specify  all the security configurations in the values.yaml file  as
+```
+securityConfig:
+  enabled: true
+  path: "/usr/share/elasticsearch/plugins/opendistro_security/securityconfig"
+  securityConfigSecret:
+  data: {}
+    # config.yml: |-
+    # internal_users.yml: |-
+    # roles.yml: |-
+    # rolesMapping.yml: |-
+    # tenants.yml: |-
+```
+Example:
+```
+config.yml: |-
+  _meta:
+    type: "config"
+    config_version: 2
+  config:
+    dynamic:
+      filtered_alias_mode: "warn"
+      disable_rest_auth: false
+      disable_intertransport_auth: false
+      respect_request_indices_options: false
+      license: null
+      kibana:
+        multitenancy_enabled: true
+.......
+
+```
+
 Alternatively you can set `securityConfig.enabled` to `false` and `exec` into the container and make changes as you see fit using the instructions
 [here](https://github.com/opendistro-for-elasticsearch/security/blob/master/securityconfig/elasticsearch.yml.example)
 
@@ -564,7 +596,9 @@ The following table lists the configurable parameters of the opendistro elastics
 | `elasticsearch.configDirectory`                           | Location of elasticsearch configuration                                                                                                                  | `"/usr/share/elasticsearch/config"`                                     |
 | `elasticsearch.maxMapCount`                               | elasticsearch max_map_count                                                                                                                              | `262144`                                                                |
 | `elasticsearch.extraEnvs`                                 | Extra environments variables to be passed to elasticsearch services                                                                                      | `[]`                                                                    |
-
+| `elasticsearch.extraVolumes`                              | Array of extra volumes to be added                                                                                                                       | `[]`                                                                    |
+| `elasticsearch.extraVolumeMounts`                         | Array of extra volume mounts to be added                                                                                                                 | `[]`                                                                    |
+| `elasticsearch.extraInitContainers`                       | Array of extra init containers                                                                                                                           | `[]`                                                                    |
 
 ## Acknowledgements
 * [Kalvin Chau](https://github.com/kalvinnchau) (Software Engineer - Viasat) for all his help with the Kubernetes internals, certs, and debugging

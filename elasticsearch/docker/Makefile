@@ -19,9 +19,9 @@ OPENDISTRO_REPOSITORY ?= amazon/opendistro-for-elasticsearch
 export PATH := ./bin:./venv/bin:$(PATH)
 
 # Determine the version to build. Override by setting ELASTIC_VERSION env var.
-ELASTIC_VERSION ?= $(shell ../bin/version-info --es)
-OPENDISTRO_VERSION ?= $(shell ../bin/version-info --od)
-OPENDISTRO_PLUGIN_VERSION ?= $(OPENDISTRO_VERSION).0
+ELASTIC_VERSION ?= $(shell ../../bin/version-info --es)
+OPENDISTRO_VERSION ?= $(shell ../../bin/version-info --od)
+OPENDISTRO_PLUGIN_VERSION ?= $(OPENDISTRO_VERSION).0.zip
 
 #ENDS_WITH := SNAPSHOT
 BUILD_TYPE := artifacts
@@ -41,7 +41,16 @@ BUST_CACHE ?= $(shell date +'%s')
 # endif
 
 ELASTIC_ARTIFACTS_URL ?= https://$(BUILD_TYPE).elastic.co/downloads/elasticsearch
-PLUGIN_URL_PATHS ?= opendistro_sql-$(OPENDISTRO_PLUGIN_VERSION).zip opendistro_alerting-$(OPENDISTRO_PLUGIN_VERSION).zip opendistro-job-scheduler-$(OPENDISTRO_PLUGIN_VERSION).zip opendistro_security-$(OPENDISTRO_PLUGIN_VERSION).zip opendistro_performance_analyzer-$(OPENDISTRO_PLUGIN_VERSION).zip opendistro_index_management-$(OPENDISTRO_PLUGIN_VERSION).zip opendistro-knn-$(OPENDISTRO_PLUGIN_VERSION).zip opendistro-anomaly-detection-$(OPENDISTRO_PLUGIN_VERSION).zip
+
+# This is not used for now
+PLUGIN_URL_PATHS ?= opendistro_sql-$(OPENDISTRO_PLUGIN_VERSION) \
+                    opendistro_alerting-$(OPENDISTRO_PLUGIN_VERSION) \
+                    opendistro-job-scheduler-$(OPENDISTRO_PLUGIN_VERSION) \
+                    opendistro_security-$(OPENDISTRO_PLUGIN_VERSION) \
+                    opendistro_performance_analyzer-$(OPENDISTRO_PLUGIN_VERSION) \
+                    opendistro_index_management-$(OPENDISTRO_PLUGIN_VERSION) \
+                    opendistro-knn-$(OPENDISTRO_PLUGIN_VERSION) \
+                    opendistro-anomaly-detection-$(OPENDISTRO_PLUGIN_VERSION)
 
 IMAGE_TAG ?= $(OPENDISTRO_REPOSITORY)
 # When invoking docker-compose, use an extra config fragment to map Elasticsearch's
@@ -106,7 +115,7 @@ run-cluster: docker-compose
 	DATA_VOLUME1=esdata1 DATA_VOLUME2=esdata2 $(DOCKER_COMPOSE) -f docker-compose.cluster.yml up elasticsearch1 elasticsearch2
 
 build: clean venv dockerfile docker-compose
-	-pyfiglet -f puffy -w 160 "Building "; \
+	-pyfiglet -f puffy -w 160 "Building ES "; \
 	docker build -t $(IMAGE_TAG):$(OPENDISTRO_VERSION) -f build/elasticsearch/Dockerfile build/elasticsearch || \
 	docker tag $(IMAGE_TAG):$(OPENDISTRO_VERSION) $(IMAGE_TAG):$(OPENDISTRO_VERSION)
 

@@ -24,6 +24,8 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.ODFE_AMI_AWS_SECRET_ACCESS_KEY }}
       run: |
         #!/bin/bash
+        export APT_OSS_version=`./bin/version-info --es`
+        OD_version=`./bin/version-info --od`
         cd elasticsearch/bin
         export region_name="us-east-1"
         export os="amazonLinux"
@@ -47,8 +49,6 @@ jobs:
         fi
 
         export base_image_id=$latest_base_image_id 
-        export APT_OSS_version=`./version-info --es`
-        OD_version=`./version-info --od`
         export RPM_package_version=$OD_version
         export AMI_name="Open Distro for Elasticsearch-$OD_version-`date +"%D-%H.%M.%S"`"
         cd -

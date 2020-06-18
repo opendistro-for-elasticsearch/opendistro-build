@@ -1,7 +1,11 @@
 #!/bin/bash
 
+# Please leave it commented as aws s3 will fail if no plugin presents
+#set -e
+
 # This script is meant to be run within .github/scripts folder structure
-ROOT=`git rev-parse --show-toplevel`
+REPO_ROOT=`git rev-parse --show-toplevel`
+ROOT=`dirname $(realpath $0)`; echo $ROOT; cd $ROOT
 S3_BUCKET="artifacts.opendistroforelasticsearch.amazon.com"
 S3_DIR_zip="downloads/elasticsearch-plugins"
 S3_DIR_rpm="downloads/rpms"
@@ -12,13 +16,11 @@ RUN_STATUS=0 # 0 is success, 1 is failure
 PLUGIN_TYPES=$1
 ODFE_VERSION=$2
 
-echo "Running $0"
-echo $ROOT
-
 # This script allows users to manually assign parameters
-if [ "$#" -gt 2 ]
+if [ "$#" -gt 2 ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]
 then
-  echo "ERROR: Please assign at most 2 parameters when running this script"
+  echo "Please assign at most 2 parameters when running this script"
+  echo "Example: $0 [\$PLUGIN_TYPES] [\$ODFE_VERSION]"
   echo "Example: $0 \"tar\""
   echo "Example: $0 \"rpm,kibana\" \"1.7.0\""
   exit 1
@@ -40,8 +42,7 @@ echo "#######################################"
 echo "ODFE_VERSION is: $ODFE_VERSION"
 if [ -z "$ODFE_VERSION" ]
 then
-  cd $ROOT/elasticsearch/bin
-  ODFE_VERSION=`./version-info --od`
+  ODFE_VERSION=`$REPO_ROOT/bin/version-info --od`
   echo "Use default ODFE_VERSION: $ODFE_VERSION"
 fi
 echo "#######################################"
@@ -190,6 +191,7 @@ cp -v message.md /tmp/message.md
 cp -v chime_message.md /tmp/chime_message.md
 
 # Use status to decide a success or failure run
+# DO NOT change this as workflow email is depend on this
 if [ "$RUN_STATUS" -eq 1 ]
 then
   echo "Plugin Checks Failure with 1 or more plugin(s) is not available"

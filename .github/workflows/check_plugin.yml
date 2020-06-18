@@ -1,8 +1,8 @@
 name: Check Plugin Availability Main
 
 on:
-  #schedule:
-  #  - cron: '0 0,15 * * *'
+  schedule:
+    - cron: '0 0,15 * * *'
 
   repository_dispatch:
     types: [check_plugin]
@@ -22,6 +22,7 @@ jobs:
       - name: Checking Availability
         run: |
           #!/bin/bash
+          set -e
           .github/scripts/check_plugin.sh
           echo ::set-env name=CHIME_MESSAGE::$(cat /tmp/chime_message.md)
           exit `cat /tmp/plugin_status.check`

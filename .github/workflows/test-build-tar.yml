@@ -28,19 +28,8 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: opendistroforelasticsearch/multijava08101112-git:v1
-    outputs:
-      tag: ${{steps.version.outputs.p_tag}}
     steps:
     - uses: actions/checkout@v1
-
-    - name: Getting OD version
-      id: version
-      run: |
-        cd elasticsearch/bin
-        OD_VERSION=`./version-info --od`
-        plugin_tag=v$OD_VERSION.0
-        echo "::set-output name=p_tag::$plugin_tag"
-
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -48,22 +37,7 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
     - name: Build tar
-      run: |
-        #!/bin/bash -x
-        set -e
-        set -u
-        export JAVA_HOME=/openjdk12
-        export PATH=$JAVA_HOME:$PATH
-        cd elasticsearch/linux_distributions
-        ./opendistro-tar-build.sh
-        tar_artifact=`ls tarfiles/*.tar.gz`
-        ls -ltr tarfiles/
-        tar_checksum_artifact=`ls tarfiles/*.tar.gz.sha512`
-
-        aws s3 cp $tar_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistro-elasticsearch/
-        aws s3 cp $tar_checksum_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistro-elasticsearch/
-        aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/*"
-        echo "TAR creation for ES completed"
+      run: set -u; export JAVA_HOME=/openjdk12; export PATH=$JAVA_HOME:$PATH; ./elasticsearch/linux_distributions/opendistro-tar-build.sh
 
         
   build-kibana-artifacts:
@@ -81,15 +55,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
       - name: Build Kibana
-        run: |
-          #!/bin/bash -x
-          cd kibana/linux_distributions 
-          sh generate-pkg.sh
-          rpm_artifact=`ls target/*.rpm`
-          tar_artifact=`ls target/*.tar.gz`
-          tar_checksum_artifact=`ls target/*.tar.gz.sha512`
-          aws s3 cp $tar_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistroforelasticsearch-kibana/
-          aws s3 cp $tar_checksum_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistroforelasticsearch-kibana/
+        run: ./kibana/linux_distributions/opendistro-kibana-build.sh tar
           
   Test-ISM-Plugin:
     needs: [build-es-artifacts]
@@ -110,17 +76,19 @@ jobs:
         with:
           java-version: ${{ matrix.java }}
       - uses: actions/checkout@v1
+      - name: Retrieve plugin tags
+        run:  echo ::set-env name=p_tag_ism::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)
       - name: Checkout ISM
         uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/index-management
-          ref: ${{needs.build-es-artifacts.outputs.tag}}
+          ref: ${{env.p_tag_ism}}
       - name: Run Tests
         run: |
+          odfe_version=`./bin/version-info --od`
+          echo $odfe_version
           cd ..
           cd opendistro-build/elasticsearch/linux_distributions
-          odfe_version=`../bin/version-info --od`
-          echo $odfe_version
           cd ../../..
           aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistro-elasticsearch/opendistroforelasticsearch-$odfe_version.tar.gz .
           tar -zxf opendistroforelasticsearch-$odfe_version.tar.gz
@@ -153,17 +121,19 @@ jobs:
         with:
           java-version: ${{ matrix.java }}
       - uses: actions/checkout@v1
+      - name: Retrieve plugin tags
+        run:  echo ::set-env name=p_tag_alerting::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)
       - name: Checkout Alerting
         uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/alerting
-          ref: ${{needs.build-es-artifacts.outputs.tag}}
+          ref: ${{env.p_tag_alerting}}
       - name: Run Tests
         run: |
+          odfe_version=`./bin/version-info --od`
+          echo $odfe_version
           cd ..
           cd opendistro-build/elasticsearch/linux_distributions
-          odfe_version=`../bin/version-info --od`
-          echo $odfe_version
           cd ../../..
           aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistro-elasticsearch/opendistroforelasticsearch-$odfe_version.tar.gz .
           tar -zxf opendistroforelasticsearch-$odfe_version.tar.gz
@@ -196,17 +166,19 @@ jobs:
         with:
           java-version: ${{ matrix.java }}
       - uses: actions/checkout@v1
+      - name: Retrieve plugin tags
+        run:  echo ::set-env name=p_tag_sql::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)
       - name: Checkout SQL
         uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/sql
-          ref: ${{needs.build-es-artifacts.outputs.tag}}
+          ref: ${{env.p_tag_sql}}
       - name: Run Tests
         run: |
+          odfe_version=`./bin/version-info --od`
+          echo $odfe_version
           cd ..
           cd opendistro-build/elasticsearch/linux_distributions
-          odfe_version=`../bin/version-info --od`
-          echo $odfe_version
           cd ../../..
           aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistro-elasticsearch/opendistroforelasticsearch-$odfe_version.tar.gz .
           tar -zxf opendistroforelasticsearch-$odfe_version.tar.gz
@@ -238,17 +210,19 @@ jobs:
         with:
           java-version: ${{ matrix.java }}
       - uses: actions/checkout@v1
+      - name: Retrieve plugin tags
+        run:  echo ::set-env name=p_tag_knn::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/k-NN)
       - name: Checkout k-NN
         uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/k-NN
-          ref: ${{needs.build-es-artifacts.outputs.tag}}
+          ref: ${{env.p_tag_knn}}
       - name: Run Tests
         run: |
+          odfe_version=`./bin/version-info --od`
+          echo $odfe_version
           cd ..
           cd opendistro-build/elasticsearch/linux_distributions
-          odfe_version=`../bin/version-info --od`
-          echo $odfe_version
           cd ../../..
           aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistro-elasticsearch/opendistroforelasticsearch-$odfe_version.tar.gz .
           tar -zxf opendistroforelasticsearch-$odfe_version.tar.gz

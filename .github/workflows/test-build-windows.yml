@@ -4,23 +4,14 @@ on:
   # schedule:
   #   - cron: '0 10 * * *'
   repository_dispatch:
-    types: [build-windows]
+    types: [test-build-windows]
 
 jobs:
   build-es-artifacts:
     name: Build Windows ES Artifacts
     runs-on: ubuntu-latest
-    outputs:
-      tag: ${{steps.version.outputs.p_tag}}
     steps:
     - uses: actions/checkout@v1
-    - name: Getting OD version
-      id: version
-      run: |
-        cd elasticsearch/bin
-        OD_VERSION=`./version-info --od`
-        plugin_tag=v$OD_VERSION.0
-        echo "::set-output name=p_tag::$plugin_tag"
 
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -35,12 +26,7 @@ jobs:
         java-version: 14
 
     - name: Build Windows
-      run: |
-        set -e
-        set -u
-        cd elasticsearch/linux_distributions
-        chmod 755 opendistro-windows-build.sh
-        sh ./opendistro-windows-build.sh
+      run: ./elasticsearch/windows/opendistro-windows-build.sh
         
   build-kibana-artifacts:
     name: Build Kibana Artifacts
@@ -60,20 +46,20 @@ jobs:
         java-version: 14
 
     - name: Build Kibana
-      run: |
-        cd kibana/linux_distributions 
-        chmod 755 opendistro-windows-kibana-build.sh
-        sh ./opendistro-windows-kibana-build.sh
+      run: ./kibana/windows/opendistro-windows-kibana-build.sh
           
   Test-ISM-Plugin:
     needs: [build-es-artifacts, build-kibana-artifacts]
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v1
+      - name: Retrieve plugin tags
+        run:  echo ::set-env name=p_tag_ism::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)
+        shell: bash
       - uses: actions/checkout@v1
         with:
            repository: opendistro-for-elasticsearch/index-management
-           ref: ${{needs.build-es-artifacts.outputs.tag}}  
+           ref: ${{env.p_tag_ism}}  
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -92,12 +78,10 @@ jobs:
           python -m pip install --upgrade pip
           echo pip3 -version
           pip3 install awscli
-          cd elasticsearch\bin\
           dir
           $PACKAGE="opendistroforelasticsearch"
-          $OD_VERSION=$(python .\version-info --od)
+          $OD_VERSION=$(./bin/version-info --od)
           $S3_PACKAGE="odfe-"+$OD_VERSION+".zip"
-          cd ..\..
           dir
           echo downloading zip from S3 
           aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/staging/odfe-window-zip/$S3_PACKAGE .\
@@ -125,10 +109,13 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v1
+      - name: Retrieve plugin tags
+        run:  echo ::set-env name=p_tag_alerting::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)
+        shell: bash
       - uses: actions/checkout@v1
         with:
            repository: opendistro-for-elasticsearch/alerting
-           ref: ${{needs.build-es-artifacts.outputs.tag}}  
+           ref: ${{env.p_tag_alerting}}  
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -146,11 +133,9 @@ jobs:
           python -m pip install --upgrade pip
           echo pip3 -version
           pip3 install awscli
-          cd elasticsearch\bin\
           $PACKAGE="opendistroforelasticsearch"
-          $OD_VERSION=$(python .\version-info --od)
+          $OD_VERSION=$(./bin/version-info --od)
           $S3_PACKAGE="odfe-"+$OD_VERSION+".zip"
-          cd ..\..
           dir
           echo downloading zip from S3 
           aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/staging/odfe-window-zip/$S3_PACKAGE .\
