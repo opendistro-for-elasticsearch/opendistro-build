@@ -49,13 +49,23 @@ else
     echo "TEST FAILED OR FILE NOT EXIST $FILE"
 fi
 
-##Set KNN Dylib Path for LINUX, macOS uses DYLD_LIBRARY_PATH
-if echo "$LD_LIBRARY_PATH" | grep -q "$ES_KNN_LIB_DIR"; then
-    echo "KNN lib path has been set"
+##Set KNN Dylib Path for macOS and *nix systems
+if echo "$OSTYPE" | grep -qi "darwin"; then
+    if echo "$JAVA_LIBRARY_PATH" | grep -q "$ES_KNN_LIB_DIR"; then
+        echo "KNN lib path has been set"
+    else
+        export JAVA_LIBRARY_PATH=$JAVA_LIBRARY_PATH:$ES_KNN_LIB_DIR
+        echo "KNN lib path not found, set new path"
+        echo $JAVA_LIBRARY_PATH
+    fi
 else
-    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ES_KNN_LIB_DIR
-    echo "KNN lib path not found, set new path"
-    echo $LD_LIBRARY_PATH
+    if echo "$LD_LIBRARY_PATH" | grep -q "$ES_KNN_LIB_DIR"; then
+        echo "KNN lib path has been set"
+    else
+        export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ES_KNN_LIB_DIR
+        echo "KNN lib path not found, set new path"
+        echo $LD_LIBRARY_PATH
+    fi
 fi
 
 ##Start Elastic Search
