@@ -1,25 +1,27 @@
 #!/bin/bash
-CURRENT_NO_PLUGINS=4
-plugin_arr=()
-unavailable_plugin=()
-available_plugin=()
-PLUGINS="opendistro-anomaly-detection/opendistro-anomaly-detection-kibana \
-         opendistro-security/opendistro_security_kibana_plugin \
-         opendistro-alerting/opendistro-alerting \
-         opendistro-index-management/opendistro_index_management_kibana \
-         opendistro-sql-workbench/opendistro-sql-workbench"
-cd kibana/bin
-ls -ltr
-OD_VERSION=`./version-info --od`
-echo "$OD_VERSION"
-cd ..
+set -e
+REPO_ROOT=`git rev-parse --show-toplevel`
+ROOT=`dirname $(realpath $0)`; echo $ROOT; cd $ROOT
+ES_VERSION=`$REPO_ROOT/bin/version-info --es`; echo $ES_VERSION
+OD_VERSION=`$REPO_ROOT/bin/version-info --od`; echo $OD_VERSION
+PLUGIN_DIR="docker/build/kibana/plugins"
 
-mkdir docker/build/kibana/plugins
+# Please DO NOT change the orders, they have dependencies
+PLUGINS="opendistro-sql-workbench/opendistro-sql-workbench-$OD_VERSION \
+         opendistro-anomaly-detection/opendistro-anomaly-detection-kibana-$OD_VERSION \
+         opendistro-security/opendistro_security_kibana_plugin-$OD_VERSION \
+         opendistro-alerting/opendistro-alerting-$OD_VERSION \
+         opendistro-index-management/opendistro_index_management_kibana-$OD_VERSION"
 
-for item in $PLUGINS
-  do
-     plugin_folder=`echo $item|awk -F/ '{print $1}'`
-     plguin_item=`echo $item|awk -F/ '{print $2}'`
-     plugin_arr+=( $plguin_item )
-     aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/kibana-plugins/$plugin_folder/ docker/build/kibana/plugins/ --recursive --exclude "*" --include "$plguin_item-$OD_VERSION*"
-  done
+cd $ROOT/kibana
+mkdir $PLUGIN_DIR
+
+for plugin_path in $PLUGINS
+do
+  plugin_latest=`aws s3api list-objects --bucket artifacts.opendistroforelasticsearch.amazon.com --prefix "downloads/kibana-plugins/${plugin_path}" --query 'Contents[].[Key]' --output text | sort | tail -n 1`
+  echo "downloading $plugin_latest"
+  echo `echo $plugin_latest | awk -F '/' '{print $NF}'` >> $PLUGIN_DIR/plugins_kibana.list
+  aws s3 cp "s3://artifacts.opendistroforelasticsearch.amazon.com/${plugin_latest}" "${PLUGIN_DIR}" --quiet; echo $?
+done
+
+ls -ltr $PLUGIN_DIR

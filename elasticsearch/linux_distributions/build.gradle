@@ -27,10 +27,10 @@ plugins {
 
 ext {
     // Remember to increment both of these when rolling out a new version
-    es_version = System.getProperty("es.version", "7.7.0")
-    opendistroVersion = "1.8.0"
-    baseODPluginsVersion = "1.8.0"
-    nextODPluginsVersion = "1.8.1"
+    es_version = System.getProperty("es.version", "7.7.1")
+    opendistroVersion = "1.8.1"
+    baseODPluginsVersion = "1.8.1"
+    nextODPluginsVersion = "1.8.2"
 
     isSnapshot = "true" == System.getProperty("build.snapshot", "true")
 }
@@ -78,13 +78,11 @@ ospackage {
 buildRpm() {
     arch = 'NOARCH'
     archiveName "${packageName}-${version}.rpm"
-    preInstall file('scripts/preInstall.sh')
 }
 
 buildDeb() {
     arch = 'amd64'
     archiveName "${packageName}-${version}.deb"
-    preInstall file('scripts/preInstall.sh')
 }
 
 task buildPackages(type: GradleBuild) {

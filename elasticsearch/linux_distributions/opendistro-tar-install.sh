@@ -13,7 +13,8 @@
 # express or implied. See the License for the specific language governing
 # permissions and limitations under the License.
 
-ES_HOME=`pwd`
+ES_HOME=`dirname $(realpath $0)`; cd $ES_HOME
+ES_KNN_LIB_DIR=$ES_HOME/plugins/opendistro-knn/knn-lib
 ##Security Plugin
 bash $ES_HOME/plugins/opendistro_security/tools/install_demo_configuration.sh -y -i -s
 
@@ -39,17 +40,23 @@ if ! grep -q '## OpenDistro Performance Analyzer' $ES_HOME/config/jvm.options; t
 fi
 echo "done plugins"
 
-#Move k-NN library in the /usr/lib
-echo "Fetching kNN library"
-FILE=/usr/lib/libKNNIndexV1_7_3_6.so
-if sudo test -f "$FILE"; then
-    echo "FILE EXISTS: removing $FILE"
-    sudo rm $FILE
+##Check KNN lib existence in ES TAR distribution
+echo "Checking kNN library"
+FILE=$ES_KNN_LIB_DIR/libKNNIndexV1_7_3_6.so
+if test -f "$FILE"; then
+    echo "FILE EXISTS $FILE"
+else
+    echo "TEST FAILED OR FILE NOT EXIST $FILE"
 fi
-wget https://d3g5vo6xdbdb9a.cloudfront.net/downloads/k-NN-lib/libKNNIndexV1_7_3_6.zip \
-&& unzip libKNNIndexV1_7_3_6.zip \
-&& sudo mv libKNNIndexV1_7_3_6.so /usr/lib \
-&& rm libKNNIndexV1_7_3_6.zip
+
+##Set KNN Dylib Path for LINUX, macOS uses DYLD_LIBRARY_PATH
+if echo "$LD_LIBRARY_PATH" | grep -q "$ES_KNN_LIB_DIR"; then
+    echo "KNN lib path has been set"
+else
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ES_KNN_LIB_DIR
+    echo "KNN lib path not found, set new path"
+    echo $LD_LIBRARY_PATH
+fi
 
 ##Start Elastic Search
 bash $ES_HOME/bin/elasticsearch "$@"

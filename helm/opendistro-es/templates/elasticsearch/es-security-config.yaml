@@ -1,0 +1,14 @@
+{{- if and .Values.elasticsearch.securityConfig.config.securityConfigSecret .Values.elasticsearch.securityConfig.config.data }}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.elasticsearch.securityConfig.config.securityConfigSecret }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+{{ include "opendistro-es.labels.standard" . | indent 4 }}
+type: Opaque
+data:
+{{- range $key, $val := .Values.elasticsearch.securityConfig.config.data }}
+  {{ $key }}: {{ $val | b64enc | quote }}
+{{- end }}
+{{- end}}

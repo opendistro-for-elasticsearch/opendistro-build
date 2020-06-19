@@ -29,12 +29,13 @@ WORKDIR /usr/share/kibana
 
 ENV PATH=/usr/share/kibana/bin:$PATH
 
-RUN mkdir /tmp/plugins
+RUN rm -rf /tmp/plugins && mkdir /tmp/plugins
 
 ADD plugins /tmp/plugins/
 
 RUN curl -Ls {{ kibana_url }}/{{ tarball }} | tar --strip-components=1 -zxf - && \
-    for plugin in `ls /tmp/plugins/`; do \
+    #for plugin in `ls /tmp/plugins/`; do \
+    for plugin in `cat /tmp/plugins/plugins_kibana.list`; do \
         kibana-plugin install --allow-root file:/tmp/plugins/$plugin ; \
     done && \
     rm -rf /tmp/plugins/ && \
@@ -73,6 +74,6 @@ LABEL org.label-schema.schema-version="1.0" \
   org.label-schema.license="Apache-2.0" \
   org.label-schema.build-date="{{ build_date }}"
 
-
+EXPOSE 5601
 
 CMD ["/usr/local/bin/kibana-docker"]

@@ -16,36 +16,36 @@ jobs:
     steps:
     - uses: actions/checkout@v1
 
-    - name: Getting OD Version
+    - name: Retrieve plugin tags
       run: |
-        cd elasticsearch/bin
-        OD_VERSION=`./version-info --od`
-        plugin_tag=v$OD_VERSION.0
-        echo "::set-env name=tag::$plugin_tag"
+        echo ::set-env name=p_tag_ism::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)
+        echo ::set-env name=p_tag_alerting::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)
+        echo ::set-env name=p_tag_sql::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)
+        echo ::set-env name=p_tag_knn::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/k-NN)
 
     - name: Checkout ISM
       uses: actions/checkout@v1
       with:
         repository: opendistro-for-elasticsearch/index-management
-        ref: ${{env.tag}}
+        ref: ${{env.p_tag_ism}}
 
     - name: Checkout Alerting
       uses: actions/checkout@v1
       with:
         repository: opendistro-for-elasticsearch/alerting
-        ref: ${{env.tag}}
+        ref: ${{env.p_tag_alerting}}
 
     - name: Checkout SQL
       uses: actions/checkout@v1
       with:
         repository: opendistro-for-elasticsearch/sql
-        ref: ${{env.tag}}
+        ref: ${{env.p_tag_sql}}
         
     - name: Checkout k-NN
       uses: actions/checkout@v1
       with:
         repository: opendistro-for-elasticsearch/k-NN
-        ref: ${{env.tag}}
+        ref: ${{env.p_tag_knn}}
 
     - name: Configure AWS
       uses: aws-actions/configure-aws-credentials@v1
@@ -65,13 +65,12 @@ jobs:
         DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
       run: |
         echo "Executing On-demand Build for ES Docker Image"
+        ODFE_VER=`./bin/version-info --od`
+        echo "ODFE VERSION $ODFE_VER"
         workdir=`pwd`
         sudo apt-get install python-virtualenv
         ./download_plugins.sh
-        cd elasticsearch/bin
-        ODFE_VER=`./version-info --od`
-        echo "ODFE VERSION $ODFE_VER"
-        cd ..
+        cd elasticsearch
         security=`ls docker/build/elasticsearch/plugins/|grep opendistro_security|wc -l`
         
         if [ $security -gt 0 ]
@@ -202,11 +201,10 @@ jobs:
           DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
         run: |
           sudo apt-get install python-virtualenv
-          ./download_kibana_plugins.sh
-          cd kibana/bin
-          ODFE_VER=`./version-info --od`
+          ODFE_VER=`./bin/version-info --od`
           echo "ODFE VERSION $ODFE_VER"
-          cd ..
+          ./download_kibana_plugins.sh
+          cd kibana
           cd docker
           make build
           
@@ -218,6 +216,7 @@ jobs:
           kibana_image_id=`awk -F ' ' '{print $3}' kibana_id.out`
           echo "Docker Id is $kibana_image_id"
           docker tag $kibana_image_id opendistroforelasticsearch/opendistroforelasticsearch-kibana:$ODFE_VER
+          docker images
           docker push opendistroforelasticsearch/opendistroforelasticsearch-kibana:$ODFE_VER
           
       - name: Create Email Message
