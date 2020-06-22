@@ -5,8 +5,6 @@ on:
     - cron: '0 0,15 * * *'
   repository_dispatch:
     types: [test-build-docker-ci]
-  push:
-    branch: [opendistro-infra-issue-179-1]
 
 jobs:
   build-es-docker:
