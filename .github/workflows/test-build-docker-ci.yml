@@ -1,4 +1,4 @@
-name: Webhook Build ES Docker on Dispatch
+name: Webhook Build ES Docker CI on Dispatch
 
 on: 
   schedule:
