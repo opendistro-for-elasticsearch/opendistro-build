@@ -567,6 +567,14 @@ curator:
       logformat: default
       blacklist: ['elasticsearch', 'urllib3']
 
+  elasticsearchAccount:
+    useExistingSecret: true
+    username:
+    password:
+    secret: ""
+    keyPassphrase:
+      enabled: false
+
 configurer:
   enabled: false
 
