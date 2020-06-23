@@ -28,18 +28,8 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: opendistroforelasticsearch/multijava08101112-git:v1
-    outputs:
-      tag: ${{steps.version.outputs.p_tag}}
     steps:
     - uses: actions/checkout@v1
-
-    - name: Getting OD version
-      id: version
-      run: |
-        OD_VERSION=`./bin/version-info --od`
-        plugin_tag=v$OD_VERSION.0
-        echo "::set-output name=p_tag::$plugin_tag"
-
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -86,11 +76,13 @@ jobs:
         with:
           java-version: ${{ matrix.java }}
       - uses: actions/checkout@v1
+      - name: Retrieve plugin tags
+        run:  echo ::set-env name=p_tag_ism::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)
       - name: Checkout ISM
         uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/index-management
-          ref: ${{needs.build-es-artifacts.outputs.tag}}
+          ref: ${{env.p_tag_ism}}
       - name: Run Tests
         run: |
           odfe_version=`./bin/version-info --od`
@@ -129,11 +121,13 @@ jobs:
         with:
           java-version: ${{ matrix.java }}
       - uses: actions/checkout@v1
+      - name: Retrieve plugin tags
+        run:  echo ::set-env name=p_tag_alerting::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)
       - name: Checkout Alerting
         uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/alerting
-          ref: ${{needs.build-es-artifacts.outputs.tag}}
+          ref: ${{env.p_tag_alerting}}
       - name: Run Tests
         run: |
           odfe_version=`./bin/version-info --od`
@@ -172,11 +166,13 @@ jobs:
         with:
           java-version: ${{ matrix.java }}
       - uses: actions/checkout@v1
+      - name: Retrieve plugin tags
+        run:  echo ::set-env name=p_tag_sql::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)
       - name: Checkout SQL
         uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/sql
-          ref: ${{needs.build-es-artifacts.outputs.tag}}
+          ref: ${{env.p_tag_sql}}
       - name: Run Tests
         run: |
           odfe_version=`./bin/version-info --od`
@@ -214,11 +210,13 @@ jobs:
         with:
           java-version: ${{ matrix.java }}
       - uses: actions/checkout@v1
+      - name: Retrieve plugin tags
+        run:  echo ::set-env name=p_tag_knn::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/k-NN)
       - name: Checkout k-NN
         uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/k-NN
-          ref: ${{needs.build-es-artifacts.outputs.tag}}
+          ref: ${{env.p_tag_knn}}
       - name: Run Tests
         run: |
           odfe_version=`./bin/version-info --od`

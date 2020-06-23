@@ -211,18 +211,19 @@ jobs:
       - name: Installing python
         run: sudo yum install python37 -y
 
-      - name: Getting OD Version
+      - name: Retrieve plugin tags
         run: |
-          OD_VERSION=`./bin/version-info --od`
-          plugin_tag=v$OD_VERSION.0
-          echo "::set-env name=tag::$plugin_tag"
+          echo ::set-env name=p_tag_ism::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)
+          echo ::set-env name=p_tag_alerting::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)
+          echo ::set-env name=p_tag_sql::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)
+          echo ::set-env name=p_tag_knn::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/k-NN)
 
       - name: Checking out ISM repo
         if: always()
         uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/index-management
-          ref: ${{env.tag}}
+          ref: ${{env.p_tag_ism}}
 
       - name: IT for ISM
         if: always()
@@ -236,7 +237,7 @@ jobs:
         uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/alerting
-          ref: ${{env.tag}}
+          ref: ${{env.p_tag_alerting}}
 
       - name: IT for alerting
         if: always()
@@ -250,7 +251,7 @@ jobs:
         uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/sql
-          ref: ${{env.tag}}
+          ref: ${{env.p_tag_sql}}
       
       - name: IT for SQL
         if: always()
@@ -264,7 +265,7 @@ jobs:
         uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/k-NN
-          ref: ${{env.tag}}
+          ref: ${{env.p_tag_knn}}
           
       - name: IT for KNN
         if: always()

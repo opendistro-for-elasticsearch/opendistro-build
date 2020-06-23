@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Please leave it commented as aws s3 will fail if no plugin presents
+#set -e
+
 # This script is meant to be run within .github/scripts folder structure
 REPO_ROOT=`git rev-parse --show-toplevel`
 ROOT=`dirname $(realpath $0)`; echo $ROOT; cd $ROOT
@@ -14,9 +17,10 @@ PLUGIN_TYPES=$1
 ODFE_VERSION=$2
 
 # This script allows users to manually assign parameters
-if [ "$#" -gt 2 ]
+if [ "$#" -gt 2 ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]
 then
-  echo "ERROR: Please assign at most 2 parameters when running this script"
+  echo "Please assign at most 2 parameters when running this script"
+  echo "Example: $0 [\$PLUGIN_TYPES] [\$ODFE_VERSION]"
   echo "Example: $0 \"tar\""
   echo "Example: $0 \"rpm,kibana\" \"1.7.0\""
   exit 1
