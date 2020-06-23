@@ -1,10 +1,10 @@
-name: Webhook Build ES Docker on Dispatch
+name: Webhook Build ES Docker CI on Dispatch
 
 on: 
-  # schedule:
-  #   - cron: '30 10 * * *'
+  schedule:
+    - cron: '0 0,15 * * *'
   repository_dispatch:
-    types: [test-build-docker]
+    types: [test-build-docker-ci]
 
 jobs:
   build-es-docker:
@@ -15,37 +15,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
-
-    - name: Retrieve plugin tags
-      run: |
-        echo ::set-env name=p_tag_ism::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)
-        echo ::set-env name=p_tag_alerting::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)
-        echo ::set-env name=p_tag_sql::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)
-        echo ::set-env name=p_tag_knn::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/k-NN)
-
-    - name: Checkout ISM
-      uses: actions/checkout@v1
-      with:
-        repository: opendistro-for-elasticsearch/index-management
-        ref: ${{env.p_tag_ism}}
-
-    - name: Checkout Alerting
-      uses: actions/checkout@v1
-      with:
-        repository: opendistro-for-elasticsearch/alerting
-        ref: ${{env.p_tag_alerting}}
-
-    - name: Checkout SQL
-      uses: actions/checkout@v1
-      with:
-        repository: opendistro-for-elasticsearch/sql
-        ref: ${{env.p_tag_sql}}
-        
-    - name: Checkout k-NN
-      uses: actions/checkout@v1
-      with:
-        repository: opendistro-for-elasticsearch/k-NN
-        ref: ${{env.p_tag_knn}}
 
     - name: Configure AWS
       uses: aws-actions/configure-aws-credentials@v1
@@ -90,10 +59,10 @@ jobs:
         docker images|grep "amazon/opendistro-for-elasticsearch" > docker_id.out
         image_id=`awk -F ' ' '{print $3}' docker_id.out`
         echo "Docker Id is $image_id"
-        docker tag $image_id opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER
+        docker tag $image_id opendistroforelasticsearch/opendistroforelasticsearch-ci:$ODFE_VER
         docker images
-        docker push opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER
-        #echo "<h2>The docker image opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER for ODFE has been created and uploaded to docker-hub</h2>" >> $workdir/Release.md
+        docker push opendistroforelasticsearch/opendistroforelasticsearch-ci:$ODFE_VER
+        #echo "<h2>The docker image opendistroforelasticsearch/opendistroforelasticsearch-ci:$ODFE_VER for ODFE has been created and uploaded to docker-hub</h2>" >> $workdir/Release.md
         cd ../../..
         ls -ltr
         
@@ -101,7 +70,7 @@ jobs:
         if [ $security -gt 0 ]
         then
            echo "Running newly tagged image with no security"
-           echo "FROM opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER" >> Dockerfile
+           echo "FROM opendistroforelasticsearch/opendistroforelasticsearch-ci:$ODFE_VER" >> Dockerfile
            echo "RUN /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro_security" >> Dockerfile
            docker build -t odfe-http:no-security .
            sleep 5
@@ -109,13 +78,13 @@ jobs:
            docker run -p 9200:9200 -d -p 9600:9600 -e "discovery.type=single-node" odfe-http:no-security
         else
            echo "Running originially created docker image"
-           docker run -p 9200:9200 -d -p 9600:9600 -e "discovery.type=single-node" opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER
+           docker run -p 9200:9200 -d -p 9600:9600 -e "discovery.type=single-node" opendistroforelasticsearch/opendistroforelasticsearch-ci:$ODFE_VER
         fi
     
     - name: Create Email Message
       run: |
-        echo "<h2>On-Demand Opendsitro Docker Image is Ready</h2>" >> Message.md
-        echo "<h3>Docker Image: opendistroforelasticsearch/opendistroforelasticsearch:<VERSION-TAG></h3>" >> Message.md
+        echo "<h2>On-Demand Opendsitro Docker Image (CI) is Ready</h2>" >> Message.md
+        echo "<h3>Docker Image: opendistroforelasticsearch/opendistroforelasticsearch-ci:<VERSION-TAG></h3>" >> Message.md
     
     - name: Send Email
       uses: dawidd6/action-send-mail@master
@@ -132,57 +101,6 @@ jobs:
         # Optional content type:
         content_type: text/html
           
-    - name: Test ISM Plugin
-      if: always()
-      run: |
-        cd ..
-        sleep 15
-        curl -XGET http://localhost:9200/_cat/plugins > plugins.out
-        
-        if cat plugins.out|grep opendistro_index_management
-        then
-          cd index-management
-          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
-        else
-          echo "Skipping Test as Plugin not available"
-        fi
-
-    - name: Test Alerting Plugin
-      if: always()
-      run: |
-        cd ..
-        if cat plugins.out|grep opendistro_alerting
-        then
-          cd alerting/alerting
-          ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
-        else
-          echo "Skipping Test as Plugin not available"
-        fi
-        
-    - name: Test SQL Plugin
-      if: always()
-      run: |
-        cd ..
-        if cat plugins.out|grep opendistro_sql
-        then
-          cd sql
-          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
-        else
-          echo "Skipping Test as Plugin not available"
-        fi
-        
-    - name: Test k-NN Plugin
-      if: always()
-      run: |
-        cd ..
-        if cat plugins.out|grep opendistro-knn
-        then
-          cd k-NN
-          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
-        else
-          echo "Skipping Test as Plugin not available"
-        fi
-        
   build-kibana-docker:
     runs-on: [ubuntu-16.04]
     name: Build Kibana Docker
@@ -215,14 +133,14 @@ jobs:
           docker images|grep "amazon/opendistro-for-elasticsearch-kibana" > kibana_id.out
           kibana_image_id=`awk -F ' ' '{print $3}' kibana_id.out`
           echo "Docker Id is $kibana_image_id"
-          docker tag $kibana_image_id opendistroforelasticsearch/opendistroforelasticsearch-kibana:$ODFE_VER
+          docker tag $kibana_image_id opendistroforelasticsearch/opendistroforelasticsearch-kibana-ci:$ODFE_VER
           docker images
-          docker push opendistroforelasticsearch/opendistroforelasticsearch-kibana:$ODFE_VER
+          docker push opendistroforelasticsearch/opendistroforelasticsearch-kibana-ci:$ODFE_VER
           
       - name: Create Email Message
         run: |
-          echo "<h2>On-Demand Opendsitro Kibana Docker Image is Ready</h2>" >> Message.md
-          echo "<h3>Docker Image: opendistroforelasticsearch/opendistroforelasticsearch-kibana:<VERSION-TAG></h3>" >> Message.md
+          echo "<h2>On-Demand Opendsitro Kibana Docker Image (CI) is Ready</h2>" >> Message.md
+          echo "<h3>Docker Image: opendistroforelasticsearch/opendistroforelasticsearch-kibana-ci:<VERSION-TAG></h3>" >> Message.md
           
       - name: Send Email
         uses: dawidd6/action-send-mail@master

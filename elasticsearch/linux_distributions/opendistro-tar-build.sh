@@ -85,6 +85,13 @@ for d in $PLUGINS_CHECKS; do
 done
 echo "Results: validated that plugins has been installed"
 
+# Download Knn lib 
+wget https://d3g5vo6xdbdb9a.cloudfront.net/downloads/k-NN-lib/libKNNIndexV1_7_3_6.zip \
+&& unzip libKNNIndexV1_7_3_6.zip \
+&& mkdir -p $PACKAGE_NAME-$OD_VERSION/plugins/opendistro-knn/knn-lib/ \
+&& mv libKNNIndexV1_7_3_6.so $PACKAGE_NAME-$OD_VERSION/plugins/opendistro-knn/knn-lib/ \
+&& rm libKNNIndexV1_7_3_6.zip
+
 # Tar generation
 echo "generating tar"
 tar -czf $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz $PACKAGE_NAME-$OD_VERSION
