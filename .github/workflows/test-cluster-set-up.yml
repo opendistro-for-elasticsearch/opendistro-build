@@ -1,10 +1,8 @@
 name: Create testing cluster
 
-# Make sure to pass the distribution type and security feature as parameters
-# { 
-#  "distribution": "RPM/DEB/TAR",
-#  "security": "enable/disable"
-# }
+# Make sure to pass the distribution type (RPM/DEB/TAR) and security feature (enable, disable) as client_payload in the dispatch event
+# Example: client_payload: { "distribution": "rpm", "security": "enable" }
+# Example: client_payload: { "distribution": "deb", "security": "disable" }
 
 on:
   repository_dispatch:
