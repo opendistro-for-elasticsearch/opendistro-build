@@ -1,0 +1,15 @@
+#!/bin/bash
+set -e
+ROOT=`dirname $(realpath $0)`;
+PLUGINS_LIST="$ROOT/plugins.json"
+PLUGINS_TYPE=`echo $1 | tr '[:upper:]' '[:lower:]'`
+
+if [ -z "$PLUGINS_TYPE" ]
+then
+  echo "Please enter the plugin type as a parameter"
+  echo "Example: $0 rpm"
+  exit 1
+fi
+
+jq -r ".${PLUGINS_TYPE}[]?" "${PLUGINS_LIST}"
+

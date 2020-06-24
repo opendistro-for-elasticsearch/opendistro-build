@@ -1,0 +1,39 @@
+{
+  "zip": [
+    "opendistro-alerting/opendistro_alerting",
+    "opendistro-anomaly-detection/opendistro-anomaly-detection",
+    "opendistro-index-management/opendistro_index_management",
+    "opendistro-job-scheduler/opendistro-job-scheduler",
+    "opendistro-knn/opendistro-knn",
+    "performance-analyzer/opendistro_performance_analyzer",
+    "opendistro-security/opendistro_security",
+    "opendistro-sql/opendistro_sql"
+  ],
+  "rpm": [
+    "opendistro-alerting/opendistro-alerting",
+    "opendistro-anomaly-detection/opendistro-anomaly-detection",
+    "opendistro-index-management/opendistro-index-management",
+    "opendistro-job-scheduler/opendistro-job-scheduler",
+    "opendistro-knn/opendistro-knn",
+    "opendistro-performance-analyzer/opendistro-performance-analyzer",
+    "opendistro-security/opendistro-security",
+    "opendistro-sql/opendistro-sql"
+  ],
+  "deb": [
+    "opendistro-alerting/opendistro-alerting",
+    "opendistro-anomaly-detection/opendistro-anomaly-detection",
+    "opendistro-index-management/opendistro-index-management",
+    "opendistro-job-scheduler/opendistro-job-scheduler",
+    "opendistro-knn/opendistro-knn",
+    "opendistro-performance-analyzer/opendistro-performance-analyzer",
+    "opendistro-security/opendistro-security",
+    "opendistro-sql/opendistro-sql"
+  ],
+  "kibana": [
+    "opendistro-alerting/opendistro-alerting",
+    "opendistro-anomaly-detection/opendistro-anomaly-detection-kibana",
+    "opendistro-index-management/opendistro_index_management_kibana",
+    "opendistro-security/opendistro_security_kibana_plugin",
+    "opendistro-sql-workbench/opendistro-sql-workbench"
+  ]
+}
