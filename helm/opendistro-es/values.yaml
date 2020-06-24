@@ -11,35 +11,6 @@
 # express or implied. See the License for the specific language governing
 # permissions and limitations under the License.
 
-certmanager:
-  enabled: false
-
-  ca:
-    commonName: example.com
-    duration: 21600h
-    renewBefore: 360h
-    keySize: 2048
-
-  elasticsearch:
-    transport:
-      enabled: true
-      commonName: example.com
-      duration: 21600h
-      renewBefore: 360h
-      keySize: 2048
-      usages:
-      - server auth
-      - client auth
-    admin:
-      enabled: true
-      commonName: example.com
-      duration: 21600h
-      renewBefore: 360h
-      keySize: 2048
-      usages:
-      - server auth
-      - client auth
-
 kibana:
   enabled: true
   image: amazon/opendistro-for-elasticsearch-kibana
@@ -170,19 +141,22 @@ elasticsearch:
   securityConfig:
     enabled: true
     path: "/usr/share/elasticsearch/plugins/opendistro_security/securityconfig"
-
-    config: {}
-      # config.yml: |-
-      # internal_users.yml: |-
-      # roles.yml: |-
-      # rolesMapping.yml: |-
-      # tenants.yml: |-
-
-  s3:
-    enabled: false
-    useExistingSecret: true
-    accessKey:
-    secretKey:
+    actionGroupsSecret:
+    configSecret:
+    internalUsersSecret:
+    rolesSecret:
+    rolesMappingSecret:
+    tenantsSecret:
+    #The following option simplifies securityConfig by using a single secret and specifying the respective secrets in the corresponding files instead of creating different secrets for config,internal users, roles, roles mapping and tenants
+    #Note that this is an alternative to the above secrets and shouldn't be used if the above secrets are used
+    config:
+       securityConfigSecret:
+       data: {}
+        # config.yml: |-
+        # internal_users.yml: |-
+        # roles.yml: |-
+        # rolesMapping.yml: |-
+        # tenants.yml: |-
 
   extraEnvs: []
 
@@ -517,9 +491,46 @@ elasticsearch:
     ## If not set and create is true, a name is generated using the fullname template
     name:
 
+  s3:
+    enabled: false
+    useExistingSecret: true
+    accessKey:
+    secretKey:
+
 
 nameOverride: ""
 fullnameOverride: ""
+
+
+certmanager:
+  enabled: false
+
+  ca:
+    commonName: example.com
+    duration: 21600h
+    renewBefore: 360h
+    keySize: 2048
+
+  elasticsearch:
+    transport:
+      enabled: true
+      commonName: example.com
+      duration: 21600h
+      renewBefore: 360h
+      keySize: 2048
+      usages:
+      - server auth
+      - client auth
+    admin:
+      enabled: true
+      commonName: example.com
+      duration: 21600h
+      renewBefore: 360h
+      keySize: 2048
+      usages:
+      - server auth
+      - client auth
+
 
 curator:
   enabled: false
@@ -575,20 +586,21 @@ curator:
     keyPassphrase:
       enabled: false
 
+
 configurer:
   enabled: false
 
-  # If true, configurer will create an index for each template if there is
-  # none.
+  ## If true, configurer will create an index for each template if there is
+  ## none.
   createIndices: true
 
-  # If true, configurer will update/override an index policy if it already
-  # exists.
+  ## If true, configurer will update/override an index policy if it already
+  ## exists.
   updatePolicies: true
 
-  # If true, configurer will overwrite existing templates.
-  # A negation of the 'create' parameter, see:
-  # https://opendistro.github.io/for-elasticsearch-docs/docs/elasticsearch/rest-api-reference/#indicesput_template
+  ## If true, configurer will overwrite existing templates.
+  ## A negation of the 'create' parameter, see:
+  ## https://opendistro.github.io/for-elasticsearch-docs/docs/elasticsearch/rest-api-reference/#indicesput_template
   overwriteTemplates: true
 
   ism:
@@ -617,28 +629,29 @@ configurer:
     keyPassphrase:
       enabled: false
 
-  # Allow specification of security plugin users,
-  # roles, and role mappings.
+  ## Allow specification of security plugin users,
+  ## roles, and role mappings.
   securityPlugin:
-    # Users to create
+    ## Users to create
     users:
     # - username: your_user
     #   definition:
     #     password: your_password
 
-    # Roles to create
+    ## Roles to create
     roles:
     # - role_name: simple_monitor
     #   definition:
     #     cluster_permissions:
     #     - "cluster:monitor/main"
 
-    # Role mappings to create
+    ## Role mappings to create
     roles_mapping:
     # - mapping_name: simple_monitor
     #   definition:
     #     users:
     #     - your_user
+
 
 metricsExporter:
   elasticsearchAccount:
@@ -648,6 +661,7 @@ metricsExporter:
     secret: ""
     keyPassphrase:
       enabled: false
+
 
 slm:
   elasticsearchAccount:

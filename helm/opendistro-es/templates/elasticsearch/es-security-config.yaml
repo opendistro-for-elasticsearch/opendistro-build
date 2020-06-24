@@ -1,16 +1,14 @@
-{{- if .Values.elasticsearch.securityConfig.enabled }}
+{{- if and .Values.elasticsearch.securityConfig.config.securityConfigSecret .Values.elasticsearch.securityConfig.config.data }}
 apiVersion: v1
 kind: Secret
 metadata:
-  name: {{ template "opendistro-es.fullname" . }}-es-config-secrets
+  name: {{ .Values.elasticsearch.securityConfig.config.securityConfigSecret }}
   namespace: {{ .Release.Namespace }}
   labels:
 {{ include "opendistro-es.labels.standard" . | indent 4 }}
 type: Opaque
 data:
-{{- if .Values.elasticsearch.securityConfig.config }}
-{{- range $key, $val := .Values.elasticsearch.securityConfig.config }}
+{{- range $key, $val := .Values.elasticsearch.securityConfig.config.data }}
   {{ $key }}: {{ $val | b64enc | quote }}
-{{- end }}
 {{- end }}
 {{- end}}
