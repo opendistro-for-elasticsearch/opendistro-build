@@ -37,9 +37,9 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
     - name: Build tar
-      run: set -u; export JAVA_HOME=/openjdk12; export PATH=$JAVA_HOME:$PATH; ./elasticsearch/linux_distributions/opendistro-tar-build.sh
+      run: apt install -y jq; set -u; export JAVA_HOME=/openjdk12; export PATH=$JAVA_HOME:$PATH; ./elasticsearch/linux_distributions/opendistro-tar-build.sh
 
-        
+
   build-kibana-artifacts:
     needs: [plugin-availability]
     name: Build Kibana Artifacts
@@ -55,8 +55,8 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
       - name: Build Kibana
-        run: ./kibana/linux_distributions/opendistro-kibana-build.sh tar
-          
+        run: apt install -y jq; ./kibana/linux_distributions/opendistro-kibana-build.sh tar
+
   Test-ISM-Plugin:
     needs: [build-es-artifacts]
     name: Run ISM Test
@@ -101,7 +101,7 @@ jobs:
           cd ../index-management
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
           
-  
+
   Test-Alerting-Plugin:
     needs: [build-es-artifacts]
     name: Run Alerting Test
@@ -146,7 +146,7 @@ jobs:
           sleep 45
           cd ../alerting/alerting
           ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
-          
+
   Test-SQL-Plugin:
     needs: [build-es-artifacts]
     name: Run SQL Test
@@ -190,7 +190,7 @@ jobs:
           sleep 45
           cd ../sql
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
-          
+
   Test-KNN-Plugin:
     needs: [build-es-artifacts]
     name: Run k-NN Test

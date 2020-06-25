@@ -5,7 +5,7 @@ on:
   #   - cron: '0 10 * * *'
 
   repository_dispatch:
-    types: [test-build-deb]
+    types: [test-build-deb-temp]
 
 jobs:
   plugin-availability:
@@ -122,7 +122,7 @@ jobs:
           aws s3 sync ~/.aptly/public/ s3://artifacts.opendistroforelasticsearch.amazon.com/staging/apt
 
           aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/staging/apt/*"
-
+          
   Build-ES-and-Kibana-Ubuntu-Docker:
     needs: [sign-deb-artifacts]
     runs-on: [ubuntu-latest]
@@ -158,13 +158,13 @@ jobs:
           docker push opendistroforelasticsearch/elasticsearch-test-ubuntu:$ODFE_VER
           sleep 5
           docker push opendistroforelasticsearch/kibana-test-ubuntu:$ODFE_VER
-
+          
       - name: Create Email Message
         run: |
           echo "<h2>Docker Images for Ubuntu Are Ready</h2>" >> Message.md
           echo "<h3> ES Image for Ubuntu Testing: opendistroforelasticsearch/elasticsearch-test-ubuntu:Version-Tag </h3>" >> Message.md
           echo "<h3> Kibana Image for Ubuntu Testing: opendistroforelasticsearch/kibana-test-ubuntu:Version-Tag </h3>" >> Message.md
-
+          
       - name: Send Mail
         uses: dawidd6/action-send-mail@master
         with:
@@ -179,7 +179,7 @@ jobs:
           from: Opendistro Elasticsearch
           # Optional content type:
           content_type: text/html
-
+          
   Test-ISM-Plugin:
     needs: [sign-deb-artifacts]
     runs-on: [ubuntu-16.04]
