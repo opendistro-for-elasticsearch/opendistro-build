@@ -91,7 +91,7 @@ echo "downloading $knnlib_latest"
 aws s3 cp "s3://artifacts.opendistroforelasticsearch.amazon.com/${knnlib_latest}" ./
 unzip opendistro-knnlib*.zip
 mkdir -p $PACKAGE_NAME-$OD_VERSION/plugins/opendistro-knn/knn-lib/ 
-mv libKNNIndexV1_7_3_6.so $PACKAGE_NAME-$OD_VERSION/plugins/opendistro-knn/knn-lib/ 
+mv opendistro-knnlib*/libKNNIndexV1_7_3_6.so $PACKAGE_NAME-$OD_VERSION/plugins/opendistro-knn/knn-lib/ 
 
 # Tar generation
 echo "generating tar"
