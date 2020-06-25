@@ -86,11 +86,12 @@ done
 echo "Results: validated that plugins has been installed"
 
 # Download Knn lib 
-wget https://d3g5vo6xdbdb9a.cloudfront.net/downloads/k-NN-lib/libKNNIndexV1_7_3_6.zip \
-&& unzip libKNNIndexV1_7_3_6.zip \
-&& mkdir -p $PACKAGE_NAME-$OD_VERSION/plugins/opendistro-knn/knn-lib/ \
-&& mv libKNNIndexV1_7_3_6.so $PACKAGE_NAME-$OD_VERSION/plugins/opendistro-knn/knn-lib/ \
-&& rm libKNNIndexV1_7_3_6.zip
+knnlib_latest=`aws s3api list-objects --bucket $S3_BUCKET --prefix "downloads/opendistro-libs/opendistro-knnlib/opendistro-knnlib-$OD_VERSION" --query 'Contents[].[Key]' --output text | sort | tail -n 1`
+echo "downloading $knnlib_latest"
+aws s3 cp "s3://artifacts.opendistroforelasticsearch.amazon.com/${knnlib_latest}" ./
+unzip opendistro-knnlib*.zip
+mkdir -p $PACKAGE_NAME-$OD_VERSION/plugins/opendistro-knn/knn-lib/ 
+mv opendistro-knnlib*/libKNNIndexV1_7_3_6.so $PACKAGE_NAME-$OD_VERSION/plugins/opendistro-knn/knn-lib/ 
 
 # Tar generation
 echo "generating tar"
