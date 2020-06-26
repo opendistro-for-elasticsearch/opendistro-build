@@ -38,6 +38,7 @@ RUN curl -Ls {{ kibana_url }}/{{ tarball }} | tar --strip-components=1 -zxf - &&
     for plugin in `cat /tmp/plugins/plugins_kibana.list`; do \
         kibana-plugin install --allow-root file:/tmp/plugins/$plugin ; \
     done && \
+    cp -r /usr/share/kibana/plugins/opendistro_security/node_modules/brace/* /usr/share/kibana/node_modules/brace/ &&\
     rm -rf /tmp/plugins/ && \
     ln -s /usr/share/kibana /opt/kibana && \
     chown -R 1000:0 . && \
