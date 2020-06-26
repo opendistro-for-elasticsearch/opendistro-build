@@ -1,39 +1,39 @@
 {
   "zip": {
+    "opendistro-sql/opendistro_sql": "opendistro-for-elasticsearch/sql",
     "opendistro-alerting/opendistro_alerting": "opendistro-for-elasticsearch/alerting",
-    "opendistro-anomaly-detection/opendistro-anomaly-detection": "opendistro-for-elasticsearch/anomaly-detection",
-    "opendistro-index-management/opendistro_index_management": "opendistro-for-elasticsearch/index-management",
     "opendistro-job-scheduler/opendistro-job-scheduler": "opendistro-for-elasticsearch/job-scheduler",
-    "opendistro-knn/opendistro-knn": "opendistro-for-elasticsearch/k-NN",
-    "performance-analyzer/opendistro_performance_analyzer": "opendistro-for-elasticsearch/performance-analyzer",
     "opendistro-security/opendistro_security": "opendistro-for-elasticsearch/security",
-    "opendistro-sql/opendistro_sql": "opendistro-for-elasticsearch/sql"
+    "performance-analyzer/opendistro_performance_analyzer": "opendistro-for-elasticsearch/performance-analyzer",
+    "opendistro-index-management/opendistro_index_management": "opendistro-for-elasticsearch/index-management",
+    "opendistro-knn/opendistro-knn": "opendistro-for-elasticsearch/k-NN",
+    "opendistro-anomaly-detection/opendistro-anomaly-detection": "opendistro-for-elasticsearch/anomaly-detection"
   },
   "rpm": {
+    "opendistro-sql/opendistro-sql": "opendistro-for-elasticsearch/sql",
     "opendistro-alerting/opendistro-alerting": "opendistro-for-elasticsearch/alerting",
-    "opendistro-anomaly-detection/opendistro-anomaly-detection": "opendistro-for-elasticsearch/anomaly-detection",
-    "opendistro-index-management/opendistro-index-management": "opendistro-for-elasticsearch/index-management",
     "opendistro-job-scheduler/opendistro-job-scheduler": "opendistro-for-elasticsearch/job-scheduler",
-    "opendistro-knn/opendistro-knn": "opendistro-for-elasticsearch/k-NN",
-    "opendistro-performance-analyzer/opendistro-performance-analyzer": "opendistro-for-elasticsearch/performance-analyzer",
     "opendistro-security/opendistro-security": "opendistro-for-elasticsearch/security",
-    "opendistro-sql/opendistro-sql": "opendistro-for-elasticsearch/sql"
+    "opendistro-performance-analyzer/opendistro-performance-analyzer": "opendistro-for-elasticsearch/performance-analyzer",
+    "opendistro-index-management/opendistro-index-management": "opendistro-for-elasticsearch/index-management",
+    "opendistro-knn/opendistro-knn": "opendistro-for-elasticsearch/k-NN",
+    "opendistro-anomaly-detection/opendistro-anomaly-detection": "opendistro-for-elasticsearch/anomaly-detection"
   },
   "deb": {
+    "opendistro-sql/opendistro-sql": "opendistro-for-elasticsearch/sql",
     "opendistro-alerting/opendistro-alerting": "opendistro-for-elasticsearch/alerting",
-    "opendistro-anomaly-detection/opendistro-anomaly-detection": "opendistro-for-elasticsearch/anomaly-detection",
-    "opendistro-index-management/opendistro-index-management": "opendistro-for-elasticsearch/index-management",
     "opendistro-job-scheduler/opendistro-job-scheduler": "opendistro-for-elasticsearch/job-scheduler",
-    "opendistro-knn/opendistro-knn": "opendistro-for-elasticsearch/k-NN",
-    "opendistro-performance-analyzer/opendistro-performance-analyzer": "opendistro-for-elasticsearch/performance-analyzer",
     "opendistro-security/opendistro-security": "opendistro-for-elasticsearch/security",
-    "opendistro-sql/opendistro-sql": "opendistro-for-elasticsearch/sql"
+    "opendistro-performance-analyzer/opendistro-performance-analyzer": "opendistro-for-elasticsearch/performance-analyzer",
+    "opendistro-index-management/opendistro-index-management": "opendistro-for-elasticsearch/index-management",
+    "opendistro-knn/opendistro-knn": "opendistro-for-elasticsearch/k-NN",
+    "opendistro-anomaly-detection/opendistro-anomaly-detection": "opendistro-for-elasticsearch/anomaly-detection"
   },
   "kibana": {
-    "opendistro-alerting/opendistro-alerting": "opendistro-for-elasticsearch/alerting-kibana-plugin",
+    "opendistro-sql-workbench/opendistro-sql-workbench": "opendistro-for-elasticsearch/sql-workbench",
     "opendistro-anomaly-detection/opendistro-anomaly-detection-kibana": "opendistro-for-elasticsearch/anomaly-detection-kibana-plugin",
-    "opendistro-index-management/opendistro_index_management_kibana": "opendistro-for-elasticsearch/index-management-kibana-plugin",
     "opendistro-security/opendistro_security_kibana_plugin": "opendistro-for-elasticsearch/security-kibana-plugin",
-    "opendistro-sql-workbench/opendistro-sql-workbench": "opendistro-for-elasticsearch/sql-workbench"
+    "opendistro-alerting/opendistro-alerting": "opendistro-for-elasticsearch/alerting-kibana-plugin",
+    "opendistro-index-management/opendistro_index_management_kibana": "opendistro-for-elasticsearch/index-management-kibana-plugin"
   }
 }
