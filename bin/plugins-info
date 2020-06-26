@@ -15,8 +15,8 @@ fi
 
 if [ "$2" = "--git" ]
 then
-  jq -r ".${PLUGINS_TYPE} | values[]" "${PLUGINS_LIST}"
+  jq -r ".${PLUGINS_TYPE}[].git" "${PLUGINS_LIST}"
 else
-  jq -r ".${PLUGINS_TYPE} | keys[]" "${PLUGINS_LIST}"
+  jq -r ".${PLUGINS_TYPE}[].s3" "${PLUGINS_LIST}"
 fi
 
