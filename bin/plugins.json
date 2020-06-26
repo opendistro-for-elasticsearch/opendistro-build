@@ -1,29 +1,29 @@
 {
   "zip": {
+    "opendistro-job-scheduler/opendistro-job-scheduler": "opendistro-for-elasticsearch/job-scheduler",
     "opendistro-alerting/opendistro_alerting": "opendistro-for-elasticsearch/alerting",
     "opendistro-anomaly-detection/opendistro-anomaly-detection": "opendistro-for-elasticsearch/anomaly-detection",
     "opendistro-index-management/opendistro_index_management": "opendistro-for-elasticsearch/index-management",
-    "opendistro-job-scheduler/opendistro-job-scheduler": "opendistro-for-elasticsearch/job-scheduler",
     "opendistro-knn/opendistro-knn": "opendistro-for-elasticsearch/k-NN",
     "performance-analyzer/opendistro_performance_analyzer": "opendistro-for-elasticsearch/performance-analyzer",
     "opendistro-security/opendistro_security": "opendistro-for-elasticsearch/security",
     "opendistro-sql/opendistro_sql": "opendistro-for-elasticsearch/sql"
   },
   "rpm": {
+    "opendistro-job-scheduler/opendistro-job-scheduler": "opendistro-for-elasticsearch/job-scheduler",
     "opendistro-alerting/opendistro-alerting": "opendistro-for-elasticsearch/alerting",
     "opendistro-anomaly-detection/opendistro-anomaly-detection": "opendistro-for-elasticsearch/anomaly-detection",
     "opendistro-index-management/opendistro-index-management": "opendistro-for-elasticsearch/index-management",
-    "opendistro-job-scheduler/opendistro-job-scheduler": "opendistro-for-elasticsearch/job-scheduler",
     "opendistro-knn/opendistro-knn": "opendistro-for-elasticsearch/k-NN",
     "opendistro-performance-analyzer/opendistro-performance-analyzer": "opendistro-for-elasticsearch/performance-analyzer",
     "opendistro-security/opendistro-security": "opendistro-for-elasticsearch/security",
     "opendistro-sql/opendistro-sql": "opendistro-for-elasticsearch/sql"
   },
   "deb": {
+    "opendistro-job-scheduler/opendistro-job-scheduler": "opendistro-for-elasticsearch/job-scheduler",
     "opendistro-alerting/opendistro-alerting": "opendistro-for-elasticsearch/alerting",
     "opendistro-anomaly-detection/opendistro-anomaly-detection": "opendistro-for-elasticsearch/anomaly-detection",
     "opendistro-index-management/opendistro-index-management": "opendistro-for-elasticsearch/index-management",
-    "opendistro-job-scheduler/opendistro-job-scheduler": "opendistro-for-elasticsearch/job-scheduler",
     "opendistro-knn/opendistro-knn": "opendistro-for-elasticsearch/k-NN",
     "opendistro-performance-analyzer/opendistro-performance-analyzer": "opendistro-for-elasticsearch/performance-analyzer",
     "opendistro-security/opendistro-security": "opendistro-for-elasticsearch/security",
