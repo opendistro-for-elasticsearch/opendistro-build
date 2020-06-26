@@ -29,7 +29,7 @@ TARGET_DIR="$ROOT/target"
 PLUGINS=`$REPO_ROOT/bin/plugins-info zip`
 
 basedir="${ROOT}/${PACKAGE_NAME}-${OD_VERSION}/plugins"
-PLUGINS_CHECKS=`$REPO_ROOT/bin/plugins-info zip | awk -F '/' '{print $2}' | sed "s@^@$basedir\/@g"`
+#PLUGINS_CHECKS=`$REPO_ROOT/bin/plugins-info zip | awk -F '/' '{print $2}' | sed "s@^@$basedir\/@g"`
 
 echo $ROOT
 
@@ -56,20 +56,9 @@ do
   $PACKAGE_NAME-$OD_VERSION/bin/elasticsearch-plugin install --batch "${ARTIFACTS_URL}/${plugin_latest}"; \
 done
 
-# Validation
-echo "validating that plugins has been installed"
+# List Plugins
+echo "List available plugins"
 ls -lrt $basedir
-
-for d in $PLUGINS_CHECKS; do
-  echo "$d" 
-  if [ -d "$d" ]; then
-    echo "directoy "$d" is present"
-  else
-    echo "ERROR: "$d" is not present"
-    exit 1;
-  fi
-done
-echo "Results: validated that plugins has been installed"
 
 # Download Knn lib 
 wget https://d3g5vo6xdbdb9a.cloudfront.net/downloads/k-NN-lib/libKNNIndexV1_7_3_6.zip \

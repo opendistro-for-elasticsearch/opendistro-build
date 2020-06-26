@@ -72,21 +72,9 @@ do
   $PACKAGE_NAME/bin/kibana-plugin --allow-root install "${ARTIFACTS_URL}/${plugin_latest}"
 done
 
-# Validation
-echo "validating that plugins has been installed"
+# List Plugins
+echo "List available plugins"
 ls -lrt $basedir
-
-for d in $PLUGINS_CHECKS; do
-  echo "$d"
-  if [ -d "$d" ]; then
-    echo "directoy "$d" is present"
-  else
-    echo "ERROR: "$d" is not present"
-    exit 1;
-  fi
-done
-
-echo "Results: validated that plugins has been installed"
 
 # Replace kibana.yml with default opendistro yml
 cp config/kibana.yml $PACKAGE_NAME/config

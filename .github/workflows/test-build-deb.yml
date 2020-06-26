@@ -68,7 +68,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
       - name: Build Kibana deb
-        run: ./kibana/linux_distributions/opendistro-kibana-build.sh deb
+        run: apt install -y jq; ./kibana/linux_distributions/opendistro-kibana-build.sh deb
 
   sign-deb-artifacts:
     needs: [build-es-artifacts, build-kibana-artifacts]

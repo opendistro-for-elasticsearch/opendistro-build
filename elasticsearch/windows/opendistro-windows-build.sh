@@ -14,7 +14,7 @@ TARGET_DIR="$ROOT/target"
 PLUGINS=`$REPO_ROOT/bin/plugins-info zip`
 
 basedir="${ROOT}/elasticsearch-${ES_VERSION}/plugins"
-PLUGINS_CHECKS=`$REPO_ROOT/bin/plugins-info zip | awk -F '/' '{print $2}' | sed "s@^@$basedir\/@g"`
+#PLUGINS_CHECKS=`$REPO_ROOT/bin/plugins-info zip | awk -F '/' '{print $2}' | sed "s@^@$basedir\/@g"`
 
 mkdir -p $TARGET_DIR
 mkdir -p $PACKAGE_NAME-$OD_VERSION
@@ -34,21 +34,9 @@ do
   $ROOT/elasticsearch-$ES_VERSION/bin/elasticsearch-plugin install --batch "${ARTIFACTS_URL}/${plugin_latest}"; \
 done
 
-# Validation
-echo "validating that plugins has been installed"
+# List Plugins
+echo "List available plugins"
 ls -lrt $basedir
-
-for d in $PLUGINS_CHECKS; do
-  echo "$d"
-  if [ -d "$d" ]; then
-    echo "directoy "$d" is present"
-  else
-    echo "ERROR: "$d" is not present"
-    exit 1;
-  fi
-done
-
-echo "Results: validated that plugins has been installed"
 
 bash $ROOT/elasticsearch-$ES_VERSION/plugins/opendistro_security/tools/install_demo_configuration.sh -y -i -s
 cat $ROOT/elasticsearch-$ES_VERSION/config/elasticsearch.yml
