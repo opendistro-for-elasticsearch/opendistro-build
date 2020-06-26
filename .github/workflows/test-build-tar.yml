@@ -37,7 +37,7 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
     - name: Build tar
-      run: apt install -y jq; set -u; export JAVA_HOME=/openjdk12; export PATH=$JAVA_HOME:$PATH; ./elasticsearch/linux_distributions/opendistro-tar-build.sh
+      run: apt install -y jq unzip; set -u; export JAVA_HOME=/openjdk12; export PATH=$JAVA_HOME:$PATH; ./elasticsearch/linux_distributions/opendistro-tar-build.sh
 
 
   build-kibana-artifacts:
