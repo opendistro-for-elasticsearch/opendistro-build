@@ -19,8 +19,8 @@ OPENDISTRO_REPOSITORY ?= amazon/opendistro-for-elasticsearch
 export PATH := ./bin:./venv/bin:$(PATH)
 
 # Determine the version to build. Override by setting ELASTIC_VERSION env var.
-ELASTIC_VERSION ?= $(shell ../bin/version-info --es)
-OPENDISTRO_VERSION ?= $(shell ../bin/version-info --od)
+ELASTIC_VERSION ?= $(shell ../../bin/version-info --es)
+OPENDISTRO_VERSION ?= $(shell ../../bin/version-info --od)
 OPENDISTRO_PLUGIN_VERSION ?= $(OPENDISTRO_VERSION).0.zip
 
 #ENDS_WITH := SNAPSHOT
@@ -115,7 +115,7 @@ run-cluster: docker-compose
 	DATA_VOLUME1=esdata1 DATA_VOLUME2=esdata2 $(DOCKER_COMPOSE) -f docker-compose.cluster.yml up elasticsearch1 elasticsearch2
 
 build: clean venv dockerfile docker-compose
-	-pyfiglet -f puffy -w 160 "Building "; \
+	-pyfiglet -f puffy -w 160 "Building ES "; \
 	docker build -t $(IMAGE_TAG):$(OPENDISTRO_VERSION) -f build/elasticsearch/Dockerfile build/elasticsearch || \
 	docker tag $(IMAGE_TAG):$(OPENDISTRO_VERSION) $(IMAGE_TAG):$(OPENDISTRO_VERSION)
 

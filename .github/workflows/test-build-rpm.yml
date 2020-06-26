@@ -69,7 +69,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
       - name: Build Kibana rpm
-        run: ./kibana/linux_distributions/opendistro-kibana-build.sh rpm
+        run: apt install -y jq; ./kibana/linux_distributions/opendistro-kibana-build.sh rpm
 
   signing-artifacts:   
     name: Sign Yum
@@ -99,7 +99,7 @@ jobs:
           sleep 5
           chmod 755 elasticsearch/linux_distributions/scripts/rpm-addsign.exp
           sh elasticsearch/linux_distributions/rpm-signing.sh $passphrase
-          
+
   Build-ES-and-Kibana-Centos-Docker:
     needs: [signing-artifacts]
     runs-on: [ubuntu-latest]
@@ -135,13 +135,13 @@ jobs:
           docker push opendistroforelasticsearch/elasticsearch-test-centos:$ODFE_VER
           sleep 5
           docker push opendistroforelasticsearch/kibana-test-centos:$ODFE_VER
-          
+
       - name: Create Email Message
         run: |
           echo "<h2>Docker Images for Centos Are Ready</h2>" >> Message.md
           echo "<h3> ES Image for Centos Testing: opendistroforelasticsearch/elasticsearch-test-centos:Version-Tag </h3>" >> Message.md
           echo "<h3> Kibana Image for Centos Testing: opendistroforelasticsearch/kibana-test-centos:Version-Tag </h3>" >> Message.md
-          
+
       - name: Send Mail
         uses: dawidd6/action-send-mail@master
         with:
@@ -198,7 +198,7 @@ jobs:
           sudo sed -i /^cluster.routing.allocation.disk.threshold_enabled/d /etc/elasticsearch/elasticsearch.yml
           sudo systemctl start elasticsearch.service
           sleep 30
-    
+
   Test-All-Plugins:
     needs: [Start-ES-Service]
     runs-on: [self-hosted, Linux, X64, odfe-rpm]
@@ -211,18 +211,19 @@ jobs:
       - name: Installing python
         run: sudo yum install python37 -y
 
-      - name: Getting OD Version
+      - name: Retrieve plugin tags
         run: |
-          OD_VERSION=`./bin/version-info --od`
-          plugin_tag=v$OD_VERSION.0
-          echo "::set-env name=tag::$plugin_tag"
+          echo ::set-env name=p_tag_ism::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)
+          echo ::set-env name=p_tag_alerting::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)
+          echo ::set-env name=p_tag_sql::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)
+          echo ::set-env name=p_tag_knn::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/k-NN)
 
       - name: Checking out ISM repo
         if: always()
         uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/index-management
-          ref: ${{env.tag}}
+          ref: ${{env.p_tag_ism}}
 
       - name: IT for ISM
         if: always()
@@ -236,7 +237,7 @@ jobs:
         uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/alerting
-          ref: ${{env.tag}}
+          ref: ${{env.p_tag_alerting}}
 
       - name: IT for alerting
         if: always()
@@ -250,7 +251,7 @@ jobs:
         uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/sql
-          ref: ${{env.tag}}
+          ref: ${{env.p_tag_sql}}
       
       - name: IT for SQL
         if: always()
@@ -264,7 +265,7 @@ jobs:
         uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/k-NN
-          ref: ${{env.tag}}
+          ref: ${{env.p_tag_knn}}
           
       - name: IT for KNN
         if: always()
