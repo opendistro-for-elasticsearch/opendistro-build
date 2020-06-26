@@ -47,7 +47,7 @@ jobs:
 
     - name: Build Kibana
       run: ./kibana/windows/opendistro-windows-kibana-build.sh
-          
+
   Test-ISM-Plugin:
     needs: [build-es-artifacts, build-kibana-artifacts]
     runs-on: windows-latest

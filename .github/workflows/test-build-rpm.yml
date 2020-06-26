@@ -69,7 +69,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
       - name: Build Kibana rpm
-        run: ./kibana/linux_distributions/opendistro-kibana-build.sh rpm
+        run: apt install -y jq; ./kibana/linux_distributions/opendistro-kibana-build.sh rpm
 
   signing-artifacts:   
     name: Sign Yum
@@ -99,7 +99,7 @@ jobs:
           sleep 5
           chmod 755 elasticsearch/linux_distributions/scripts/rpm-addsign.exp
           sh elasticsearch/linux_distributions/rpm-signing.sh $passphrase
-          
+
   Build-ES-and-Kibana-Centos-Docker:
     needs: [signing-artifacts]
     runs-on: [ubuntu-latest]
@@ -135,13 +135,13 @@ jobs:
           docker push opendistroforelasticsearch/elasticsearch-test-centos:$ODFE_VER
           sleep 5
           docker push opendistroforelasticsearch/kibana-test-centos:$ODFE_VER
-          
+
       - name: Create Email Message
         run: |
           echo "<h2>Docker Images for Centos Are Ready</h2>" >> Message.md
           echo "<h3> ES Image for Centos Testing: opendistroforelasticsearch/elasticsearch-test-centos:Version-Tag </h3>" >> Message.md
           echo "<h3> Kibana Image for Centos Testing: opendistroforelasticsearch/kibana-test-centos:Version-Tag </h3>" >> Message.md
-          
+
       - name: Send Mail
         uses: dawidd6/action-send-mail@master
         with:
@@ -198,7 +198,7 @@ jobs:
           sudo sed -i /^cluster.routing.allocation.disk.threshold_enabled/d /etc/elasticsearch/elasticsearch.yml
           sudo systemctl start elasticsearch.service
           sleep 30
-    
+
   Test-All-Plugins:
     needs: [Start-ES-Service]
     runs-on: [self-hosted, Linux, X64, odfe-rpm]

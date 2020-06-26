@@ -1,0 +1,22 @@
+#!/bin/bash
+set -e
+ROOT=`dirname $(realpath $0)`;
+PLUGINS_LIST="$ROOT/plugins.json"
+PLUGINS_TYPE=`echo $1 | tr '[:upper:]' '[:lower:]'`
+RETURN_TYPE=`echo $2 | tr '[:upper:]' '[:lower:]'`
+
+if [ -z "$PLUGINS_TYPE" ]
+then
+  echo "Please enter \$PLUGINS_TYPE [\$RETURN_TYPE] as parameter(s)"
+  echo "Example: \"$0 rpm\" (Retrieve S3 Paths)"
+  echo "Example: \"$0 rpm --git\" (Retrieve Git URLs)"
+  exit 1
+fi
+
+if [ "$2" = "--git" ]
+then
+  jq -r ".${PLUGINS_TYPE} | values[]" "${PLUGINS_LIST}"
+else
+  jq -r ".${PLUGINS_TYPE} | keys[]" "${PLUGINS_LIST}"
+fi
+

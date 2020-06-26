@@ -47,46 +47,13 @@ then
 fi
 echo "#######################################"
 
-PLUGINS_zip="opendistro-alerting/opendistro_alerting \
-             opendistro-anomaly-detection/opendistro-anomaly-detection \
-             opendistro-index-management/opendistro_index_management \
-             opendistro-job-scheduler/opendistro-job-scheduler \
-             opendistro-knn/opendistro-knn \
-             performance-analyzer/opendistro_performance_analyzer \
-             opendistro-security/opendistro_security \
-             opendistro-sql/opendistro_sql"
-
-PLUGINS_rpm="opendistro-alerting/opendistro-alerting \
-             opendistro-anomaly-detection/opendistro-anomaly-detection \
-             opendistro-index-management/opendistro-index-management \
-             opendistro-job-scheduler/opendistro-job-scheduler \
-             opendistro-knn/opendistro-knn \
-             opendistro-performance-analyzer/opendistro-performance-analyzer \
-             opendistro-security/opendistro-security \
-             opendistro-sql/opendistro-sql"
-
-PLUGINS_deb="opendistro-alerting/opendistro-alerting \
-             opendistro-anomaly-detection/opendistro-anomaly-detection \
-             opendistro-index-management/opendistro-index-management \
-             opendistro-job-scheduler/opendistro-job-scheduler \
-             opendistro-knn/opendistro-knn \
-             opendistro-performance-analyzer/opendistro-performance-analyzer \
-             opendistro-security/opendistro-security \
-             opendistro-sql/opendistro-sql"
-
-PLUGINS_kibana="opendistro-alerting/opendistro-alerting \
-                opendistro-anomaly-detection/opendistro-anomaly-detection-kibana \
-                opendistro-index-management/opendistro_index_management_kibana \
-                opendistro-security/opendistro_security_kibana_plugin \
-                opendistro-sql-workbench/opendistro-sql-workbench"
-
 # plugin_type
 IFS=,
 for plugin_type in $PLUGIN_TYPES
 do
   unset IFS
   # Try to dynamically assign the variables based on PLUGIN_TYPES
-  eval PLUGINS='$'PLUGINS_${plugin_type}
+  PLUGINS=`$REPO_ROOT/bin/plugins-info $plugin_type`
   eval S3_DIR='$'S3_DIR_${plugin_type}
   plugin_arr=()
   unavailable_plugin=()

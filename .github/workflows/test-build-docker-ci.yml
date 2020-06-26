@@ -33,6 +33,8 @@ jobs:
         DOCKER_USER: ${{ secrets.DOCKER_USER }}
         DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
       run: |
+        #!/bin/bash
+        set -e
         echo "Executing On-demand Build for ES Docker Image"
         ODFE_VER=`./bin/version-info --od`
         echo "ODFE VERSION $ODFE_VER"
@@ -118,6 +120,8 @@ jobs:
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
           DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
         run: |
+          #!/bin/bash
+          set -e
           sudo apt-get install python-virtualenv
           ODFE_VER=`./bin/version-info --od`
           echo "ODFE VERSION $ODFE_VER"
