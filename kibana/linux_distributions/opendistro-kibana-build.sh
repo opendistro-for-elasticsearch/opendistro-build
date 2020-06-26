@@ -72,6 +72,7 @@ do
   $PACKAGE_NAME/bin/kibana-plugin --allow-root install "${ARTIFACTS_URL}/${plugin_latest}"
 done
 
+# Temp solution to fix the service startup issue
 cp -r $PACKAGE_NAME/plugins/opendistro_security/node_modules/brace/* $PACKAGE_NAME/node_modules/brace/
 
 # List Plugins
