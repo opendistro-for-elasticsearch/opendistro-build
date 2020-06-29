@@ -21,7 +21,7 @@ bash $ES_HOME/plugins/opendistro_security/tools/install_demo_configuration.sh -y
 ##Perf Plugin
 chmod 755 $ES_HOME/plugins/opendistro_performance_analyzer/pa_bin/performance-analyzer-agent
 chmod -R 755 /dev/shm
-chmod 755 $ES_HOME/bin/performance-analyzer-agent-cli
+chmod +x $ES_HOME/bin/performance-analyzer-agent-cli
 echo "done security"
 PA_AGENT_JAVA_OPTS="-Dlog4j.configurationFile=$ES_HOME/plugins/opendistro_performance_analyzer/pa_config/log4j2.xml \
               -Xms64M -Xmx64M -XX:+UseSerialGC -XX:CICompilerCount=1 -XX:-TieredCompilation -XX:InitialCodeCacheSize=4096 \
