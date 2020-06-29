@@ -96,11 +96,12 @@ jobs:
           sed -i /install_demo_configuration/d opendistro-tar-install.sh
           ./bin/elasticsearch-plugin remove opendistro_security
           
+          mkdir -p snapshots
+          echo "path.repo: [\"$PWD/snapshots\"]" >> config/elasticsearch.yml
           nohup ./opendistro-tar-install.sh &
           sleep 45
           cd ../index-management
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
-          
 
   Test-Alerting-Plugin:
     needs: [build-es-artifacts]
