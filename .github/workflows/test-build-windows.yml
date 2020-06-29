@@ -80,7 +80,7 @@ jobs:
           pip3 install awscli
           dir
           $PACKAGE="opendistroforelasticsearch"
-          $OD_VERSION=$(./bin/version-info --od)
+          $OD_VERSION=$(python ./bin/version-info --od)
           $S3_PACKAGE="odfe-"+$OD_VERSION+".zip"
           dir
           echo downloading zip from S3 
@@ -134,7 +134,7 @@ jobs:
           echo pip3 -version
           pip3 install awscli
           $PACKAGE="opendistroforelasticsearch"
-          $OD_VERSION=$(./bin/version-info --od)
+          $OD_VERSION=$(python ./bin/version-info --od)
           $S3_PACKAGE="odfe-"+$OD_VERSION+".zip"
           dir
           echo downloading zip from S3 
