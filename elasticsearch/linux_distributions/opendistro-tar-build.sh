@@ -60,7 +60,15 @@ done
 echo "List available plugins"
 ls -lrt $basedir
 
-# Download Knn lib 
+# Move RCA files
+cp -r $PACKAGE_NAME-$OD_VERSION/plugins/opendistro_performance_analyzer/performance-analyzer-rca $PACKAGE_NAME-$OD_VERSION
+mv $PACKAGE_NAME-$OD_VERSION/bin/opendistro_performance_analyzer/performance-analyzer-agent-cli $PACKAGE_NAME-$OD_VERSION/bin
+rm -rf $PACKAGE_NAME-$OD_VERSION/bin/opendistro_performance_analyzer
+mkdir -p ${PACKAGE_NAME}-${OD_VERSION}/data
+touch ${PACKAGE_NAME}-${OD_VERSION}/data/rca_enabled.conf
+echo 'true' > ${PACKAGE_NAME}-${OD_VERSION}/data/rca_enabled.conf
+
+# Download Knn lib
 knnlib_latest=`aws s3api list-objects --bucket $S3_BUCKET --prefix "downloads/opendistro-libs/opendistro-knnlib/opendistro-knnlib-$OD_VERSION" --query 'Contents[].[Key]' --output text | sort | tail -n 1`
 echo "downloading $knnlib_latest"
 aws s3 cp "s3://artifacts.opendistroforelasticsearch.amazon.com/${knnlib_latest}" ./

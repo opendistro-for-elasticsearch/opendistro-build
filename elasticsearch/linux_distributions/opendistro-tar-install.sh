@@ -21,6 +21,15 @@ bash $ES_HOME/plugins/opendistro_security/tools/install_demo_configuration.sh -y
 ##Perf Plugin
 chmod 755 $ES_HOME/plugins/opendistro_performance_analyzer/pa_bin/performance-analyzer-agent
 chmod -R 755 /dev/shm
+chmod a+rw /tmp
+chown -R elasticsearch $ES_HOME/performance-analyzer-rca
+chown elasticsearch $ES_HOME/data/rca_enabled.conf
+mkdir -p "/var/lib/elasticsearch"
+echo 'true' > /var/lib/elasticsearch/performance_analyzer_enabled.conf
+echo 'true' > /var/lib/elasticsearch/rca_enabled.conf
+chown elasticsearch /var/lib/elasticsearch/performance_analyzer_enabled.conf
+chown elasticsearch /var/lib/elasticsearch/rca_enabled.conf
+chown -R elasticsearch "$ES_HOME/performance-analyzer-rca"
 echo "done security"
 PA_AGENT_JAVA_OPTS="-Dlog4j.configurationFile=$ES_HOME/plugins/opendistro_performance_analyzer/pa_config/log4j2.xml \
               -Xms64M -Xmx64M -XX:+UseSerialGC -XX:CICompilerCount=1 -XX:-TieredCompilation -XX:InitialCodeCacheSize=4096 \
