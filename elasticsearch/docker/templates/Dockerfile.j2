@@ -108,8 +108,10 @@ RUN for plugin_path in `cat /tmp/plugins/plugins.list`; do \
       elasticsearch-plugin install --batch file:/tmp/plugins/$plugin_path; \
     done
 
-# Pull performance analyzer agent(RCA) from the plugin directory out into ESHOME
-RUN if [ -d plugins/opendistro_performance_analyzer/performance-analyzer-rca ]; then mv plugins/opendistro_performance_analyzer/performance-analyzer-rca ./; fi
+# Pull performance analyzer agent(RCA) from the plugin directory out into ESHOME and make the agent executable.
+RUN if [ -d plugins/opendistro_performance_analyzer/performance-analyzer-rca ]; then \
+     mv plugins/opendistro_performance_analyzer/performance-analyzer-rca ./ && \
+     chmod 755 performance-analyzer-rca/pa_bin/performance-analyzer-agent; fi
 # Make the certificate installer script executable. This script has to be executed before ES is started.
 RUN security=`ls /tmp/plugins/|grep opendistro_security|wc -l` && \
     if [ $security -gt 0 ]; then chmod +x /usr/share/elasticsearch/plugins/opendistro_security/tools/install_demo_configuration.sh; \

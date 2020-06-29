@@ -91,7 +91,7 @@ fi
 if [[ -d "/usr/share/elasticsearch/plugins/opendistro_performance_analyzer" ]]; then
     CLK_TCK=`/usr/bin/getconf CLK_TCK`
     ES_JAVA_OPTS="-Dclk.tck=$CLK_TCK -Djdk.attach.allowAttachSelf=true $ES_JAVA_OPTS"
-    if [[ -d "/usr/share/elasticsearhc/performance-analyzer-rca" ]]; then
+    if [[ -d "/usr/share/elasticsearch/performance-analyzer-rca" ]]; then
         ES_JAVA_OPTS="-Djava.security.policy=file:///usr/share/elasticsearch/performance-analyzer-rca/pa_config/es_security.policy $ES_JAVA_OPTS"
         /usr/bin/supervisord -c /usr/share/elasticsearch/performance-analyzer-rca/pa_config/supervisord.conf
     else
