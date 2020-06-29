@@ -61,11 +61,16 @@ echo "List available plugins"
 ls -lrt $basedir
 
 # Move RCA files
+## Move RCA folder
 cp -r $PACKAGE_NAME-$OD_VERSION/plugins/opendistro_performance_analyzer/performance-analyzer-rca $PACKAGE_NAME-$OD_VERSION
+chmod -R 755 elasticsearch ${PACKAGE_NAME}-${OD_VERSION}/performance-analyzer-rca
+## Move agent script directly into ES_HOME/bin
 mv $PACKAGE_NAME-$OD_VERSION/bin/opendistro_performance_analyzer/performance-analyzer-agent-cli $PACKAGE_NAME-$OD_VERSION/bin
 rm -rf $PACKAGE_NAME-$OD_VERSION/bin/opendistro_performance_analyzer
+## Create the rca_enabled.conf file
 mkdir -p ${PACKAGE_NAME}-${OD_VERSION}/data
 touch ${PACKAGE_NAME}-${OD_VERSION}/data/rca_enabled.conf
+chmod 755 ${PACKAGE_NAME}-${OD_VERSION}/data/rca_enabled.conf
 echo 'true' > ${PACKAGE_NAME}-${OD_VERSION}/data/rca_enabled.conf
 
 # Download Knn lib
