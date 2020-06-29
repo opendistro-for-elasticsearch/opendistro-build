@@ -108,6 +108,8 @@ RUN for plugin_path in `cat /tmp/plugins/plugins.list`; do \
       elasticsearch-plugin install --batch file:/tmp/plugins/$plugin_path; \
     done
 
+# Pull performance analyzer agent(RCA) from the plugin directory out into ESHOME
+RUN if [ -d plugins/opendistro_performance_analyzer/performance-analyzer-rca ]; then mv plugins/opendistro_performance_analyzer/performance-analyzer-rca ./; fi
 # Make the certificate installer script executable. This script has to be executed before ES is started.
 RUN security=`ls /tmp/plugins/|grep opendistro_security|wc -l` && \
     if [ $security -gt 0 ]; then chmod +x /usr/share/elasticsearch/plugins/opendistro_security/tools/install_demo_configuration.sh; \
@@ -191,7 +193,7 @@ RUN chgrp 0 /usr/local/bin/docker-entrypoint.sh && \
     chmod g=u /etc/passwd && \
     chmod 0775 /usr/local/bin/docker-entrypoint.sh
 
-EXPOSE 9200 9300 9600
+EXPOSE 9200 9300 9600 9650
 
 LABEL org.label-schema.schema-version="1.0" \
   org.label-schema.name="opendistroforelasticsearch" \
