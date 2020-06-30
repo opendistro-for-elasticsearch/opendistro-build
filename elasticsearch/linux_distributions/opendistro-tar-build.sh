@@ -60,14 +60,13 @@ done
 echo "List available plugins"
 ls -lrt $basedir
 
-# Move RCA files
-## Move RCA folder
+# Move performance-analyzer-rca folder
 cp -r $PACKAGE_NAME-$OD_VERSION/plugins/opendistro_performance_analyzer/performance-analyzer-rca $PACKAGE_NAME-$OD_VERSION
 chmod -R 755 ${PACKAGE_NAME}-${OD_VERSION}/performance-analyzer-rca
-## Move agent script directly into ES_HOME/bin
+# Move agent script directly into ES_HOME/bin
 mv $PACKAGE_NAME-$OD_VERSION/bin/opendistro_performance_analyzer/performance-analyzer-agent-cli $PACKAGE_NAME-$OD_VERSION/bin
 rm -rf $PACKAGE_NAME-$OD_VERSION/bin/opendistro_performance_analyzer
-## Make sure the data folder exists and is writable
+# Make sure the data folder exists and is writable
 mkdir -p ${PACKAGE_NAME}-${OD_VERSION}/data
 chmod 755 ${PACKAGE_NAME}-${OD_VERSION}/data/
 
