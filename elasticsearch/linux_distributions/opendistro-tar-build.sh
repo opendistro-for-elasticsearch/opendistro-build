@@ -60,7 +60,17 @@ done
 echo "List available plugins"
 ls -lrt $basedir
 
-# Download Knn lib 
+# Move performance-analyzer-rca folder
+cp -r $PACKAGE_NAME-$OD_VERSION/plugins/opendistro_performance_analyzer/performance-analyzer-rca $PACKAGE_NAME-$OD_VERSION
+chmod -R 755 ${PACKAGE_NAME}-${OD_VERSION}/performance-analyzer-rca
+# Move agent script directly into ES_HOME/bin
+mv $PACKAGE_NAME-$OD_VERSION/bin/opendistro_performance_analyzer/performance-analyzer-agent-cli $PACKAGE_NAME-$OD_VERSION/bin
+rm -rf $PACKAGE_NAME-$OD_VERSION/bin/opendistro_performance_analyzer
+# Make sure the data folder exists and is writable
+mkdir -p ${PACKAGE_NAME}-${OD_VERSION}/data
+chmod 755 ${PACKAGE_NAME}-${OD_VERSION}/data/
+
+# Download Knn lib
 knnlib_latest=`aws s3api list-objects --bucket $S3_BUCKET --prefix "downloads/opendistro-libs/opendistro-knnlib/opendistro-knnlib-$OD_VERSION" --query 'Contents[].[Key]' --output text | sort | tail -n 1`
 echo "downloading $knnlib_latest"
 aws s3 cp "s3://artifacts.opendistroforelasticsearch.amazon.com/${knnlib_latest}" ./
