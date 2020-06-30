@@ -7,7 +7,7 @@ metadata:
 {{ include "opendistro-es.labels.standard" . | indent 4 }}
 spec:
   ca:
-    secretName: {{ template "opendistro-es.fullname" . }}-ca
+    secretName: {{ template "opendistro-es.fullname" . }}-ca-cert
 ---
 
 apiVersion: cert-manager.io/v1alpha2

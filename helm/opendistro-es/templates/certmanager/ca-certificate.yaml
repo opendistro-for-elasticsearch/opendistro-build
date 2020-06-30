@@ -6,7 +6,7 @@ metadata:
   labels:
 {{ include "opendistro-es.labels.standard" . | indent 4 }}
 spec:
-  secretName: {{ template "opendistro-es.fullname" . }}-ca
+  secretName: {{ template "opendistro-es.fullname" . }}-ca-cert
   duration: {{ .Values.certmanager.ca.duration }}
   keySize: {{ .Values.certmanager.ca.keySize }}
   renewBefore: {{ .Values.certmanager.ca.renewBefore }}
