@@ -67,11 +67,9 @@ chmod -R 755 ${PACKAGE_NAME}-${OD_VERSION}/performance-analyzer-rca
 ## Move agent script directly into ES_HOME/bin
 mv $PACKAGE_NAME-$OD_VERSION/bin/opendistro_performance_analyzer/performance-analyzer-agent-cli $PACKAGE_NAME-$OD_VERSION/bin
 rm -rf $PACKAGE_NAME-$OD_VERSION/bin/opendistro_performance_analyzer
-## Create the rca_enabled.conf file
+## Make sure the data folder exists and is writable
 mkdir -p ${PACKAGE_NAME}-${OD_VERSION}/data
-touch ${PACKAGE_NAME}-${OD_VERSION}/data/rca_enabled.conf
-chmod 755 ${PACKAGE_NAME}-${OD_VERSION}/data/rca_enabled.conf
-echo 'true' > ${PACKAGE_NAME}-${OD_VERSION}/data/rca_enabled.conf
+chmod 755 ${PACKAGE_NAME}-${OD_VERSION}/data/
 
 # Download Knn lib
 knnlib_latest=`aws s3api list-objects --bucket $S3_BUCKET --prefix "downloads/opendistro-libs/opendistro-knnlib/opendistro-knnlib-$OD_VERSION" --query 'Contents[].[Key]' --output text | sort | tail -n 1`
