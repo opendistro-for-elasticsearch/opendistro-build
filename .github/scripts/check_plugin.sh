@@ -110,7 +110,7 @@ do
   then
     # If on S3
     available_plugin+=( $plgin )
-    echo "available: ${plgin}"
+    echo "isavailable: ${plgin}"
   else
     plgin_tag=`$ROOT/plugin_tag.sh $plgin_git $ODFE_VERSION`
     if [ -z "$plgin_tag" ]
