@@ -1,6 +1,7 @@
 name: Test version upgrades
 
 # Make sure to pass prev_es_version (previous ES version) and prev_od_version (previous OD version) in the dispatch payload
+# Example: "client_payload":{ "prev_es_version" : "7.7.0", "prev_od_version": "1.8.0" }
 
 on: 
   repository_dispatch:
@@ -41,7 +42,7 @@ jobs:
           if: ${{ success() }}
           run: |
             #!/bin/bash
-            set -e
+            set +e
             sudo systemctl stop elasticsearch.service
             es_version=`./bin/version-info --es`
             wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$es_version-amd64.deb
@@ -49,7 +50,10 @@ jobs:
             echo "deb https://d3g5vo6xdbdb9a.cloudfront.net/staging/apt stable main" | sudo tee -a /etc/apt/sources.list.d/opendistroforelasticsearch.list
             sudo apt-get update
             sudo apt install opendistroforelasticsearch -y
+            sudo apt --fix-broken install
             sudo systemctl restart elasticsearch.service
+            sleep 30
+            echo "########## Upgrade successful ##########"
 
     Test-RPM:
       name: Test RPM upgrade
@@ -85,10 +89,12 @@ jobs:
             set -e
             od_version=`./bin/version-info --od`
             sudo systemctl stop elasticsearch.service
+            sudo rm -rf /etc/yum.repos.d/opendistroforelasticsearch-artifacts.repo
             sudo curl https://d3g5vo6xdbdb9a.cloudfront.net/yum/staging-opendistroforelasticsearch-artifacts.repo  -o /etc/yum.repos.d/staging-opendistroforelasticsearch-artifacts.repo
             sudo yum install -y opendistroforelasticsearch-$od_version
             sudo systemctl restart elasticsearch.service
             sleep 30
+            echo "########## Upgrade successful ##########"
 
     Cleaning-RPM-Host:
       needs: [Test-RPM]
@@ -106,20 +112,19 @@ jobs:
           run: |
             #!/bin/bash
             set -e
-            instanceid=`aws ec2 describe-instances --filters "Name=tag:Name,Values=ODFE-RPM" | grep InstanceId | cut -d ':' -f 2 | sed 's/[",]//g'`
+            instanceid=`aws ec2 describe-instances --filters "Name=tag:Name,Values=ODFE-RPM" --query 'Reservations[*].Instances[*].InstanceId' --output text`
             volumeid=`aws ec2 describe-instances --filters "Name=tag:Name,Values=ODFE-RPM" | grep VolumeId | cut -d ':' -f 2 | sed 's/[",]//g'`
-            az=`aws ec2 describe-instances --filters "Name=tag:Name,Values=ODFE-RPM" | grep AvailabilityZone | cut -d ':' -f 2 | sed 's/[",]//g'`
+            az=`aws ec2 describe-instances --filters "Name=tag:Name,Values=ODFE-RPM" --query 'Reservations[*].Instances[*].Placement.AvailabilityZone' --output text`
             aws ec2 stop-instances --instance-ids $instanceid
-            sleep 4m
+            sleep 2m
             aws ec2 detach-volume --volume-id $volumeid
             if [[ `echo $?` -ne 0 ]]; then
             sleep 60
             aws ec2 detach-volume --volume-id $volumeid
             fi
             aws ec2 delete-volume --volume-id $volumeid
-            aws ec2 create-volume --snapshot snap-0f8358ed344f3c2e6 --availability-zone $az --tag-specifications 'ResourceType=volume,Tags=[{Key=Name,Value=odfe}]'
+            newVolumeId=`aws ec2 create-volume --snapshot snap-0f8358ed344f3c2e6 --availability-zone $az --tag-specifications 'ResourceType=volume,Tags=[{Key=Name,Value=ODFE}]' --query 'VolumeId' --output text`
             sleep 30
-            newVolumeId=`aws ec2 describe-volumes --filters "Name=tag:Name,Values=odfe" | grep VolumeId | cut -d ':' -f 2 | sed 's/[",]//g'`
             aws ec2 attach-volume --device /dev/xvda --instance-id $instanceid --volume-id $newVolumeId
             aws ec2 start-instances --instance-id $instanceid
             sleep 30
