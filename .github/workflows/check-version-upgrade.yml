@@ -50,7 +50,9 @@ jobs:
             echo "deb https://d3g5vo6xdbdb9a.cloudfront.net/staging/apt stable main" | sudo tee -a /etc/apt/sources.list.d/opendistroforelasticsearch.list
             sudo apt-get update
             sudo apt install opendistroforelasticsearch -y
+            # temp fix to upgrade broken packages
             sudo apt --fix-broken install
+            
             sudo systemctl restart elasticsearch.service
             sleep 30
             echo "########## Upgrade successful ##########"
