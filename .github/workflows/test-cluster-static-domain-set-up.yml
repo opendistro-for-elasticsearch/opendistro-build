@@ -3,6 +3,7 @@ name: Create testing cluster with static domain
 # Make sure to pass the distribution type (RPM/DEB/TAR) and security feature (enable, disable) as client_payload in the dispatch event
 # Example: client_payload: { "distribution": "rpm", "security": "enable" }
 # Example: client_payload: { "distribution": "deb", "security": "disable" }
+# For scheduled workflow run all 6 combinations of the testing domains will be created
 # NOTE: This workflow is based on the static ELBs pre-configured in the AWS account
 
 on:
@@ -31,42 +32,63 @@ jobs:
             #!/bin/bash
             set -e
 
-            distribution_type=`echo ${{github.event.client_payload.distribution}} | tr [:lower:] [:upper:]`
-            security=`echo ${{github.event.client_payload.security}} | tr [:lower:] [:upper:]`
-            echo $distribution_type $security
-            stackName=ODFE-$distribution_type-SECURITY-$security
+            #Function to create stack
 
-            existingStacks=`aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE --query 'StackSummaries[*].StackName' --output text`
+            function stack_setup() {
+              distribution_type=$1
+              security=$2
+              existingStacks=`aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE --query 'StackSummaries[*].StackName' --output text`
 
-            for i in $existingStacks
-            do
-                if [[ $i = $stackName ]]
-                then
-                    echo "Stack already exists! Deleting the old stack"
-                    aws cloudformation delete-stack --stack-name $stackName
-                    aws cloudformation wait stack-delete-complete --stack-name $stackName
-                    echo "$stackName deleted successfully!!"
-                fi
-            done
-            
-            .github/scripts/userdata.sh "$distribution_type" "$security"
-            ls -ltr
+              for i in $existingStacks
+              do
+                  if [[ $i = $stackName ]]
+                  then
+                      echo "Stack already exists! Deleting the old stack"
+                      aws cloudformation delete-stack --stack-name $stackName
+                      aws cloudformation wait stack-delete-complete --stack-name $stackName
+                      echo "$stackName deleted successfully!!"
+                  fi
+              done
+              
+              .github/scripts/userdata.sh $1 $2
+              ls -ltr
 
-            # Getting target groups for ELB mapping
-            esTargetGroup=`aws elbv2 describe-target-groups --names ES-$distribution_type-SECURITY-$security --query TargetGroups[*].TargetGroupArn --output text`
-            kibanaTargetGroup=`aws elbv2 describe-target-groups --names KIBANA-$distribution_type-SECURITY-$security --query TargetGroups[*].TargetGroupArn --output text`
+              # Getting target groups for ELB mapping
+              esTargetGroup=`aws elbv2 describe-target-groups --names ES-$distribution_type-SECURITY-$security --query TargetGroups[*].TargetGroupArn --output text`
+              kibanaTargetGroup=`aws elbv2 describe-target-groups --names KIBANA-$distribution_type-SECURITY-$security --query TargetGroups[*].TargetGroupArn --output text`
+  
+              echo "Creating $stackName stack"
+  
+              aws cloudformation create-stack --stack-name $stackName \
+              --template-body file://.github/templates/odfe-testing-cluster-static-domain-template.json \
+              --parameters ParameterKey=userdata,ParameterValue=$(base64 -w0 userdata_$distribution_type.sh) \
+              ParameterKey=distribution,ParameterValue=$distribution_type \
+              ParameterKey=security,ParameterValue=$security \
+              ParameterKey=ODFESecurityGroup,ParameterValue=${{secrets.ODFESECURITYGROUP}} \
+              ParameterKey=keypair,ParameterValue=${{secrets.AWS_ODFE_TESTING_CLUSTER_KEYPAIR}} \
+              ParameterKey=esTargetGroup,ParameterValue=$esTargetGroup \
+              ParameterKey=kibanaTargetGroup,ParameterValue=$kibanaTargetGroup
+  
+              aws cloudformation wait stack-create-complete --stack-name $stackName
+              sleep 60
+            }
 
-            echo "Creating $stackName stack"
-
-            aws cloudformation create-stack --stack-name $stackName \
-            --template-body file://.github/templates/odfe-testing-cluster-static-domain-template.json \
-            --parameters ParameterKey=userdata,ParameterValue=$(base64 -w0 userdata_$distribution_type.sh) \
-            ParameterKey=distribution,ParameterValue=$distribution_type \
-            ParameterKey=security,ParameterValue=$security \
-            ParameterKey=ODFESecurityGroup,ParameterValue=${{secrets.ODFESECURITYGROUP}} \
-            ParameterKey=keypair,ParameterValue=${{secrets.AWS_ODFE_TESTING_CLUSTER_KEYPAIR}} \
-            ParameterKey=esTargetGroup,ParameterValue=$esTargetGroup \
-            ParameterKey=kibanaTargetGroup,ParameterValue=$kibanaTargetGroup
-
-            aws cloudformation wait stack-create-complete --stack-name $stackName
-            sleep 60
+            if ${{ github.event_name == 'repository_dispatch' }}
+            then
+              distribution_type=`echo ${{github.event.client_payload.distribution}} | tr [:lower:] [:upper:]`
+              security=`echo ${{github.event.client_payload.security}} | tr [:lower:] [:upper:]`
+              stackName=ODFE-$distribution_type-SECURITY-$security
+              echo $stackName
+              stack_setup $distribution_type $security
+            elif ${{ github.event_name == 'schedule' }}
+            then
+              for distribution_type in RPM DEB TAR
+              do
+                for security in ENABLE DISABLE
+                do
+                  stackName=ODFE-$distribution_type-SECURITY-$security
+                  echo $stackName
+                  stack_setup $distribution_type $security
+                done
+              done
+            fi
