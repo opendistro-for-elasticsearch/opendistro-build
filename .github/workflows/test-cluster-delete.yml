@@ -14,8 +14,8 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.STACK_KEY }}
-          aws-secret-access-key: ${{ secrets.STACK_SECRET }}
+          aws-access-key-id: ${{ secrets.AWS_STACK_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_STACK_SECRET }}
           aws-region: us-west-2
 
       - name: Deleting all ODFE clusters
