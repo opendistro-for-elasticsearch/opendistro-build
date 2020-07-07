@@ -25,35 +25,42 @@ import json
 from os import environ
 
 
-def get_hard_coded_version(key):
+def get_hard_coded_version(key1, key2):
     version_file = sys.path[0] + '/' + 'version.json'
     version_info = json.load(open(version_file))
-    return version_info[key]
+    return version_info[key1][key2]
 
 
-def get_es_version():
+def get_es_version(user_param):
     if 'ES_VERSION' in environ:
         # Then the user has forced the version. Do as they say!
         return(environ['ES_VERSION'])
     else:
-        return(get_hard_coded_version('esversion'))
+        if user_param == '--esprev':
+          return(get_hard_coded_version('esVersion', 'previous'))
+        else:
+          return(get_hard_coded_version('esVersion', 'current'))
 
-def get_od_version():
+def get_od_version(user_param):
     if 'OD_VERSION' in environ:
         # Then the user has forced the version. Do as they say!
         return(environ['OD_VERSION'])
     else:
-        return(get_hard_coded_version('odVersion'))
+        if user_param == '--odprev':
+          return(get_hard_coded_version('odVersion', 'previous'))
+        else:
+          return(get_hard_coded_version('odVersion', 'current'))
 
 if __name__ == '__main__':
     # Provide a shell compatible interface, defaults to OD version
     if len(sys.argv) == 2 :
         arg_value = sys.argv[1]
-        if arg_value == '--es':
-            print(get_es_version())
-        elif arg_value == '--od':
-            print(get_od_version())
+        if (arg_value == '--es') or (arg_value == '--esprev'):
+            print(get_es_version(arg_value))
+        elif (arg_value == '--od') or (arg_value == '--odprev'):
+            print(get_od_version(arg_value))
         else:
-            raise Exception('invalid argument, use --es or --od')
+            raise Exception('invalid argument, use --es OR --od OR --esprev OR --odprev')
     else:
-      raise Exception('invalid argument, use --es OR --od')
+      raise Exception('invalid argument, use --es OR --od OR --esprev OR --odprev')
+
