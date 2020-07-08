@@ -32,6 +32,8 @@ spec:
       port: 9300
     - name: metrics
       port: 9600
+    - name: rca
+      port: 9650
   selector:
     role: client
   type: {{ .Values.elasticsearch.client.service.type }}

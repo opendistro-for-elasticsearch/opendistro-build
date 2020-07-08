@@ -145,6 +145,8 @@ spec:
           name: http
         - containerPort: 9600
           name: metrics
+        - containerPort: 9650
+          name: rca
         volumeMounts:
         - mountPath: /usr/share/elasticsearch/data
           name: data
