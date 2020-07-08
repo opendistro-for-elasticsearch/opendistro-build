@@ -12,12 +12,11 @@ The release consists of Apache 2 licensed Elasticsearch version 7.8.0, and Kiban
 * Support for [remote cluster indexes](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/244) in Anomaly Detection
 * Introduce an ability to [set index priority action](https://github.com/opendistro-for-elasticsearch/index-management/pull/241) so that users are allowed to set the order of index recovery in Index State Management
 
-* * *
 
 ## Release Details
 
 The release of Open Distro for Elasticsearch includes the following features, enhancements, bug fixes, infrastructure, documentation, and maintenance updates.
-* * *
+
 
 ## **Features**
 
@@ -53,7 +52,6 @@ The release of Open Distro for Elasticsearch includes the following features, en
 * Add CAP_SUPPRESS_GET_SERVER_TIME instead of removing support for NOW() in tableau connector ([#119](https://github.com/opendistro-for-elasticsearch/sql-odbc/pull/119))
 * Use a queue which is created with a capacity while getting result pages  ([#120](https://github.com/opendistro-for-elasticsearch/sql-odbc/pull/120))
 
-* * *
 
 ## **Enhancements**
 
@@ -109,7 +107,6 @@ The release of Open Distro for Elasticsearch includes the following features, en
 
 * Update project layout for better module import ([#45](https://github.com/opendistro-for-elasticsearch/sql-cli/pull/45))
 
-* * *
 
 ## **Bug fixes**
 
@@ -159,7 +156,6 @@ The release of Open Distro for Elasticsearch includes the following features, en
 * Bug fix: custom plugin icon displaying improperly ([#73](https://github.com/opendistro-for-elasticsearch/sql-workbench/pull/73))
 * Fix: column name in result table shows alias if alias exists ([#75](https://github.com/opendistro-for-elasticsearch/sql-workbench/pull/75))
 
-* * *
 
 ## **Infrastructure Updates**
 
@@ -181,7 +177,6 @@ The release of Open Distro for Elasticsearch includes the following features, en
 * Add CI for e2e ([#208](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/208))
 * Add delete actions UT and fix snapshots ([#235](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/235))
 
-* * *
 
 ## Documentation Updates
 
@@ -198,7 +193,6 @@ The release of Open Distro for Elasticsearch includes the following features, en
 * Update build instructions ([#93](https://github.com/opendistro-for-elasticsearch/sql-odbc/pull/93))
 * Update README ([#116](https://github.com/opendistro-for-elasticsearch/sql-odbc/pull/116))
 
-* * *
 
 ## Maintenance
 
