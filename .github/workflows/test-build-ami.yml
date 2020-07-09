@@ -26,7 +26,6 @@ jobs:
         #!/bin/bash
         export APT_OSS_version=`./bin/version-info --es`
         OD_version=`./bin/version-info --od`
-        cd elasticsearch/bin
         export region_name="us-east-1"
         export os="amazonLinux"
         export security_group_id="sg-0ffdd3b008cfb0b63"
