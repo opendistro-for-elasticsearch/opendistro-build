@@ -50,5 +50,4 @@ jobs:
         export base_image_id=$latest_base_image_id 
         export RPM_package_version=$OD_version
         export AMI_name="Open Distro for Elasticsearch-$OD_version-`date +"%D-%H.%M.%S"`"
-        cd -
         python elasticsearch/AMI/main.py
