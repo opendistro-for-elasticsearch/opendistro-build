@@ -17,6 +17,7 @@
     {"s3": "opendistro-performance-analyzer/opendistro-performance-analyzer", "git": "opendistro-for-elasticsearch/performance-analyzer"},
     {"s3": "opendistro-index-management/opendistro-index-management", "git": "opendistro-for-elasticsearch/index-management"},
     {"s3": "opendistro-knn/opendistro-knn", "git": "opendistro-for-elasticsearch/k-NN"},
+    {"s3": "opendistro-knnlib/opendistro-knnlib", "git": "opendistro-for-elasticsearch/k-NN"},
     {"s3": "opendistro-anomaly-detection/opendistro-anomaly-detection", "git": "opendistro-for-elasticsearch/anomaly-detection"}
   ],
   "deb":[
@@ -26,7 +27,7 @@
     {"s3": "opendistro-security/opendistro-security", "git": "opendistro-for-elasticsearch/security"},
     {"s3": "opendistro-performance-analyzer/opendistro-performance-analyzer", "git": "opendistro-for-elasticsearch/performance-analyzer"},
     {"s3": "opendistro-index-management/opendistro-index-management", "git": "opendistro-for-elasticsearch/index-management"},
-    {"s3": "opendistro-knn/opendistro-knn", "git": "opendistro-for-elasticsearch/k-NN"},
+    {"s3": "opendistro-knnlib/opendistro-knnlib", "git": "opendistro-for-elasticsearch/k-NN"},
     {"s3": "opendistro-anomaly-detection/opendistro-anomaly-detection", "git": "opendistro-for-elasticsearch/anomaly-detection"}
   ],
   "kibana":[
