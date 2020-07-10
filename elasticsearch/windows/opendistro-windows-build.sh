@@ -11,7 +11,7 @@ PACKAGE_NAME="opendistroforelasticsearch"
 TARGET_DIR="$ROOT/target"
 
 # Please DO NOT change the orders, they have dependencies
-PLUGINS=`$REPO_ROOT/bin/plugins-info zip`
+PLUGINS=`$REPO_ROOT/bin/plugins-info windows`
 
 basedir="${ROOT}/elasticsearch-${ES_VERSION}/plugins"
 #PLUGINS_CHECKS=`$REPO_ROOT/bin/plugins-info zip | awk -F '/' '{print $2}' | sed "s@^@$basedir\/@g"`

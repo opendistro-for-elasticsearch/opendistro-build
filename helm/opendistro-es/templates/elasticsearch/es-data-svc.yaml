@@ -30,6 +30,8 @@ spec:
     name: http
   - port: 9600
     name: metrics
+  - port: 9650
+    name: rca
   clusterIP: None
   selector:
     role: data

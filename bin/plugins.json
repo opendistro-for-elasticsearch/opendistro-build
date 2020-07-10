@@ -9,6 +9,14 @@
     {"s3": "opendistro-knn/opendistro-knn", "git": "opendistro-for-elasticsearch/k-NN"},
     {"s3": "opendistro-anomaly-detection/opendistro-anomaly-detection", "git": "opendistro-for-elasticsearch/anomaly-detection"}
   ],
+  "windows":[
+    {"s3": "opendistro-sql/opendistro_sql", "git": "opendistro-for-elasticsearch/sql"},
+    {"s3": "opendistro-alerting/opendistro_alerting", "git": "opendistro-for-elasticsearch/alerting"},
+    {"s3": "opendistro-job-scheduler/opendistro-job-scheduler", "git": "opendistro-for-elasticsearch/job-scheduler"},
+    {"s3": "opendistro-security/opendistro_security", "git": "opendistro-for-elasticsearch/security"},
+    {"s3": "opendistro-index-management/opendistro_index_management", "git": "opendistro-for-elasticsearch/index-management"},
+    {"s3": "opendistro-anomaly-detection/opendistro-anomaly-detection", "git": "opendistro-for-elasticsearch/anomaly-detection"}
+  ],
   "rpm":[
     {"s3": "opendistro-sql/opendistro-sql", "git": "opendistro-for-elasticsearch/sql"},
     {"s3": "opendistro-alerting/opendistro-alerting", "git": "opendistro-for-elasticsearch/alerting"},
