@@ -1,1 +1,10 @@
-{"esversion": "7.8.0", "odVersion": "1.9.0"}
+{
+  "esVersion": {
+    "current":"7.8.0",
+    "previous": "7.7.0"
+  }, 
+  "odVersion": {
+    "current": "1.9.0",
+    "previous": "1.8.0"
+  }
+}
