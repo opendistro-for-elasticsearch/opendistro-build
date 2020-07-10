@@ -11,6 +11,8 @@ S3_DIR_zip="downloads/elasticsearch-plugins"
 S3_DIR_rpm="downloads/rpms"
 S3_DIR_deb="downloads/debs"
 S3_DIR_kibana="downloads/kibana-plugins"
+S3_DIR_clidvr="downloads/elasticsearch-clients"
+S3_DIR_perftop="downloads/perftop"
 TSCRIPT_NEWLINE="%0D%0A"
 RUN_STATUS=0 # 0 is success, 1 is failure
 PLUGIN_TYPES=$1
@@ -33,7 +35,7 @@ echo "PLUGIN_TYPES is: $PLUGIN_TYPES"
 if [ -z "$PLUGIN_TYPES" ]
 then
   # Kibana currently have the same plugins for all distros
-  PLUGIN_TYPES="zip,deb,rpm,kibana" # separate the types by comma here
+  PLUGIN_TYPES="zip,deb,rpm,kibana,clidvr,perftop" # separate the types by comma here
   echo "Use default PLUGIN_TYPES: $PLUGIN_TYPES"
 fi
 PLUGIN_TYPES=`echo $PLUGIN_TYPES | tr '[:upper:]' '[:lower:]'`
@@ -61,13 +63,14 @@ do
   inprogress_plugin=()
   available_plugin=()
   IFS=' ' read -r -a plugin_git_arr <<< $PLUGINS_GIT
-  IFS=$OLDIFS
+  #IFS=$OLDIFS
+  IFS=`echo -ne "\n\b"`
   echo ""
 
   echo "Proceed to check these ES Plugins ($plugin_type):"
   echo $S3_DIR
   echo "#######################################"
-  echo $PLUGINS | tr " " "\n"
+  for entry1 in $PLUGINS; do echo $entry1; done
   echo "#######################################"
   cd $ROOT
   rm -rf plugins
@@ -77,15 +80,29 @@ do
 
   for item in $PLUGINS
   do
+    # temp fix until we change the structures
     plugin_folder=`echo $item|awk -F/ '{print $1}'`
     plugin_item=`echo $item|awk -F/ '{print $2}'`
-    plugin_arr+=( $plugin_item )
-    plugin_latest=`aws s3api list-objects --bucket artifacts.opendistroforelasticsearch.amazon.com --prefix "${S3_DIR}/${item}-${ODFE_VERSION}" --query 'Contents[].[Key]' --output text | sort | tail -n 1`
+    plugin_item_extra=`echo $item|awk -F/ '{print $3}'`
+
+    if [ -z "$plugin_item_extra" ]
+    then
+      if [ -z "$plugin_item" ]
+      then
+        plugin_arr+=( $plugin_folder )
+      else
+        plugin_arr+=( $plugin_item )
+      fi
+    else
+      plugin_arr+=( $plugin_item_extra )
+    fi
+
+    plugin_latest=`aws s3api list-objects --bucket $S3_BUCKET --prefix "${S3_DIR}/${item}-${ODFE_VERSION}" --query 'Contents[].[Key]' --output text | sort | tail -n 1`
 
     # Quick fix and possible regex integration later
     if [ "$plugin_latest" = "None" ]
     then
-      plugin_latest=`aws s3api list-objects --bucket artifacts.opendistroforelasticsearch.amazon.com --prefix "${S3_DIR}/${item}_${ODFE_VERSION}" --query 'Contents[].[Key]' --output text | sort | tail -n 1`
+      plugin_latest=`aws s3api list-objects --bucket $S3_BUCKET --prefix "${S3_DIR}/${item}_${ODFE_VERSION}" --query 'Contents[].[Key]' --output text | sort | tail -n 1`
     fi
 
     echo "downloading ${item}: ${plugin_latest}"
@@ -99,32 +116,32 @@ do
   echo "${#plugin_arr[*]}"
   
   curr_plugins=`ls`
-  echo $curr_plugins
+  for entry2 in $curr_plugins; do echo $entry2; done
   echo "#######################################"
   for index in ${!plugin_arr[*]}
-    do
-        plgin=${plugin_arr[$index]}
-        plgin_git=${plugin_git_arr[$index]}
+  do
+    plgin=${plugin_arr[$index]}
+    plgin_git=${plugin_git_arr[$index]}
 
-  if echo $curr_plugins | grep -q $plgin
-  then
-    # If on S3
-    available_plugin+=( $plgin )
-    echo "isavailable: ${plgin}"
-  else
-    plgin_tag=`$ROOT/plugin_tag.sh $plgin_git $ODFE_VERSION`
-    if [ -z "$plgin_tag" ]
+    if echo $curr_plugins | grep -q $plgin
     then
-      # If not on both S3 and Git Tag
-      unavailable_plugin+=( $plgin )
-      echo "unavailable: ${plgin}"
+      # If on S3
+      available_plugin+=( $plgin )
+      echo "isavailable: ${plgin}"
     else
-      # If not on S3 but on Git Tag
-      inprogress_plugin+=( $plgin )
-      echo "in progress: ${plgin}"
+      plgin_tag=`$ROOT/plugin_tag.sh $plgin_git $ODFE_VERSION`
+      if [ -z "$plgin_tag" ]
+      then
+        # If not on both S3 and Git Tag
+        unavailable_plugin+=( $plgin )
+        echo "unavailable: ${plgin}"
+      else
+        # If not on S3 but on Git Tag
+        inprogress_plugin+=( $plgin )
+        echo "in progress: ${plgin}"
+      fi
     fi
-  fi
-    done
+  done
 
   echo "#######################################"
   #cd /home/runner/work/opendistro-build/opendistro-build/
