@@ -20,6 +20,9 @@ kind: Ingress
 metadata:
   labels:
 {{ include "opendistro-es.labels.standard" . | indent 4 }}
+  {{- range $key, $value := .Values.kibana.ingress.labels }}
+    {{ $key }}: {{ $value | quote }}
+  {{- end }}
   name: {{ template "opendistro-es.fullname" . }}-kibana
   annotations:
     {{- range $key, $value := .Values.kibana.ingress.annotations }}
