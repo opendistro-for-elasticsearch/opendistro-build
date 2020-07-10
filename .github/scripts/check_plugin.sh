@@ -84,6 +84,7 @@ do
     plugin_folder=`echo $item|awk -F/ '{print $1}'`
     plugin_item=`echo $item|awk -F/ '{print $2}'`
     plugin_item_extra=`echo $item|awk -F/ '{print $3}'`
+
     if [ -z "$plugin_item_extra" ]
     then
       if [ -z "$plugin_item" ]
