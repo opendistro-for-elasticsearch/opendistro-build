@@ -86,6 +86,7 @@ jobs:
            echo "Security plugin is NOT available"
         fi
         
+        DOCKER_NAME=odfe-test-$ODFE_VER
         cd docker
         cd ../../..
         ls -ltr
