@@ -1,9 +1,9 @@
 name: AD Docker Testing
 
 on: 
-  push:
-   branches: 
-    - weicongs-amazon-patch-3-ad-plugin-it
+#   push:
+#    branches: 
+#     - weicongs-amazon-patch-3-ad-plugin-it
 
 jobs:
   build-es-docker:
