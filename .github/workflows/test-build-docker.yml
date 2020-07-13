@@ -22,7 +22,8 @@ jobs:
         echo ::set-env name=p_tag_alerting::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)
         echo ::set-env name=p_tag_sql::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)
         echo ::set-env name=p_tag_knn::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/k-NN)
-
+        echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)
+        
     - name: Checkout ISM
       uses: actions/checkout@v1
       with:
@@ -46,7 +47,13 @@ jobs:
       with:
         repository: opendistro-for-elasticsearch/k-NN
         ref: ${{env.p_tag_knn}}
-
+  
+    - name: Checkout AD
+      uses: actions/checkout@v1
+      with:
+        repository: opendistro-for-elasticsearch/anomaly-detection
+        ref: ${{env.p_tag_ad}}
+       
     - name: Configure AWS
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -185,6 +192,18 @@ jobs:
         then
           cd k-NN
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
+        else
+          echo "Skipping Test as Plugin not available"
+        fi
+        
+    - name: Test AD Plugin
+      if: always()
+      run: |
+        cd ..
+        if cat plugins.out|grep opendistro-anomaly-detection
+        then
+          cd anomaly-detection
+          ./gradlew :integTestRunner --tests "com.amazon.opendistroforelasticsearch.ad.rest.*IT" --tests "com.amazon.opendistroforelasticsearch.ad.e2e.*IT" -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
         else
           echo "Skipping Test as Plugin not available"
         fi
