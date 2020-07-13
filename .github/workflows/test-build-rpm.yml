@@ -217,6 +217,7 @@ jobs:
           echo ::set-env name=p_tag_alerting::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)
           echo ::set-env name=p_tag_sql::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)
           echo ::set-env name=p_tag_knn::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/k-NN)
+          echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)
 
       - name: Checking out ISM repo
         if: always()
@@ -273,6 +274,20 @@ jobs:
           export PATH=$PATH:$JAVA_HOME
           cd $GITHUB_WORKSPACE/../k-NN
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
+          
+      - name: Checking out AD repo
+        if: always()
+        uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/anomaly-detection
+          ref: ${{env.p_tag_knn}}
+          
+      - name: IT for AD
+        if: always()
+        run: |
+          export PATH=$PATH:$JAVA_HOME
+          cd $GITHUB_WORKSPACE/../anomaly-detection
+          ./gradlew :integTestRunner --tests "com.amazon.opendistroforelasticsearch.ad.rest.*IT" --tests "com.amazon.opendistroforelasticsearch.ad.e2e.*IT" -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
 
   Cleaning-Host:
     needs: [Test-All-Plugins]
