@@ -1,4 +1,4 @@
-name: AD Docker Testing
+name: AD Windows Testing
 
 on: 
   push:
