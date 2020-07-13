@@ -6,102 +6,107 @@ on:
     - weicongs-amazon-patch-3-ad-plugin-it
 
 jobs:
-  
-  Test-AD-Plugin:
-    runs-on: [ubuntu-16.04]
-    strategy:
-      matrix:
-        java: [14]
+  Start-ES-Service:
+    name: Start elasticsearch service
+    runs-on: [self-hosted, Linux, X64, odfe-rpm]
     steps:
       - uses: actions/checkout@v1
-
-      - name: Retrieve plugin tags 
-        run:  echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)
-
-      - uses: actions/checkout@v1
-        with:
-          repository: opendistro-for-elasticsearch/anomaly-detection
-          ref: ${{env.p_tag_ad}}
 
       - name: Setup Java
         uses: actions/setup-java@v1
         with:
-          java-version: ${{ matrix.java }}
-
-      - name: Run Debian Staging Distrubution
+          java-version: 14
+      
+      - name: Installing python
+        run: sudo yum install python37 -y
+      
+      - name: Getting OD version
         run: |
-          es_version=`./bin/version-info --es`
-          echo $es_version
-          cd elasticsearch/linux_distributions
-          cd ../../..
-          sleep 20
-          sudo sysctl -w vm.max_map_count=262144
-          sudo add-apt-repository -y ppa:openjdk-r/ppa
-          sudo apt update -y
-          sudo apt install -y openjdk-11-jdk
-          sudo sudo apt install -y net-tools
-          wget -qO - https://d3g5vo6xdbdb9a.cloudfront.net/GPG-KEY-opendistroforelasticsearch | sudo apt-key add -
-          echo "deb https://d3g5vo6xdbdb9a.cloudfront.net/staging/apt stable main" | sudo tee -a /etc/apt/sources.list.d/opendistroforelasticsearch.list
-          wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$es_version-amd64.deb
-          sudo dpkg -i elasticsearch-oss-$es_version-amd64.deb
-          sudo apt-get -y update
-          sudo apt install -y opendistroforelasticsearch
-          
-          sudo chmod 777 /etc/elasticsearch/elasticsearch.yml
+          OD_VERSION=`./bin/version-info --od`
+          echo "::set-env name=od_version::$OD_VERSION"
+      - name: Starting ES service
+        run: |
+          echo $JAVA_HOME
+          sudo yum install git -y
+          sudo curl https://d3g5vo6xdbdb9a.cloudfront.net/yum/staging-opendistroforelasticsearch-artifacts.repo  -o /etc/yum.repos.d/staging-opendistroforelasticsearch-artifacts.repo
+          sudo yum install wget -y
+          export PATH=$PATH:$JAVA_HOME
+          sudo yum install unzip -y
+          sudo yum install opendistroforelasticsearch-${{env.od_version}} -y
+          sudo mkdir /home/repo
+          sudo chmod 777 /home/repo
+          sudo chmod 777 /etc/elasticsearch/elasticsearch.yml    
           sudo /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro_security
+          sudo sed -i '/path.logs/a path.repo: ["/home/repo"]' /etc/elasticsearch/elasticsearch.yml 
           sudo sed -i /^opendistro_security/d /etc/elasticsearch/elasticsearch.yml
           sudo sed -i /CN=kirk/d /etc/elasticsearch/elasticsearch.yml
           sudo sed -i /^node.max_local_storage_nodes/d /etc/elasticsearch/elasticsearch.yml
           sudo sed -i /^cluster.routing.allocation.disk.threshold_enabled/d /etc/elasticsearch/elasticsearch.yml
-          sudo /etc/init.d/elasticsearch start
+          sudo systemctl start elasticsearch.service
           sleep 30
-          cd anomaly-detection
-          ./gradlew :integTestRunner --tests "com.amazon.opendistroforelasticsearch.ad.rest.*IT" --tests "com.amazon.opendistroforelasticsearch.ad.e2e.*IT" -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest"
-          
-  Test-AD-Plugin-With-Security:
-    runs-on: [ubuntu-16.04]
-    strategy:
-      matrix:
-        java: [14]
+  Test-All-Plugins:
+    needs: [Start-ES-Service]
+    runs-on: [self-hosted, Linux, X64, odfe-rpm]
     steps:
-      - uses: actions/checkout@v1
-
-      - name: Retrieve plugin tags 
-        run:  echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)
-
-      - uses: actions/checkout@v1
-        with:
-          repository: opendistro-for-elasticsearch/anomaly-detection
-          ref: master
-
       - name: Setup Java
         uses: actions/setup-java@v1
         with:
-          java-version: ${{ matrix.java }}
-
-      - name: Run Debian Staging Distrubution
-        run: |
-          es_version=`./bin/version-info --es`
-          echo $es_version
-          cd elasticsearch/linux_distributions
-          cd ../../..
-          sleep 20
-          sudo sysctl -w vm.max_map_count=262144
-          sudo add-apt-repository -y ppa:openjdk-r/ppa
-          sudo apt update -y
-          sudo apt install -y openjdk-11-jdk
-          sudo sudo apt install -y net-tools
-          wget -qO - https://d3g5vo6xdbdb9a.cloudfront.net/GPG-KEY-opendistroforelasticsearch | sudo apt-key add -
-          echo "deb https://d3g5vo6xdbdb9a.cloudfront.net/staging/apt stable main" | sudo tee -a /etc/apt/sources.list.d/opendistroforelasticsearch.list
-          wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$es_version-amd64.deb
-          sudo dpkg -i elasticsearch-oss-$es_version-amd64.deb
-          sudo apt-get -y update
-          sudo apt install -y opendistroforelasticsearch
-          
-          sudo chmod 777 /etc/elasticsearch/elasticsearch.yml
-          sudo sed -i /^node.max_local_storage_nodes/d /etc/elasticsearch/elasticsearch.yml
-          sudo /etc/init.d/elasticsearch start
-          sleep 30
-          cd anomaly-detection
-          ./gradlew :integTestRunner --tests "com.amazon.opendistroforelasticsearch.ad.rest.*IT" --tests "com.amazon.opendistroforelasticsearch.ad.e2e.*IT" -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest" -Dhttps=true -Duser=admin -Dpassword=admin
+          java-version: 14
     
+      - name: Installing python
+        run: sudo yum install python37 -y
+
+      - name: Retrieve plugin tags
+        run: |
+          echo ::set-env name=p_tag_ism::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)
+          echo ::set-env name=p_tag_alerting::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)
+          echo ::set-env name=p_tag_sql::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)
+          echo ::set-env name=p_tag_knn::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/k-NN)
+          echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)
+          
+      - name: Checking out AD repo
+        if: always()
+        uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/anomaly-detection
+          ref: ${{env.p_tag_ad}}
+          
+      - name: IT for AD
+        if: always()
+        run: |
+          export PATH=$PATH:$JAVA_HOME
+          cd $GITHUB_WORKSPACE/../anomaly-detection
+          ./gradlew :integTestRunner --tests "com.amazon.opendistroforelasticsearch.ad.rest.*IT" --tests "com.amazon.opendistroforelasticsearch.ad.e2e.*IT" -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
+  Cleaning-Host:
+    needs: [Test-All-Plugins]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configuring AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_EC2_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_EC2_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
+
+      - name: Resetting the host runner
+        run: |
+          #!/bin/bash
+          instanceid=`aws ec2 describe-instances --filters "Name=tag:Name,Values=ODFE-RPM" | grep InstanceId | cut -d ':' -f 2 | sed 's/[",]//g'`
+          volumeid=`aws ec2 describe-instances --filters "Name=tag:Name,Values=ODFE-RPM" | grep VolumeId | cut -d ':' -f 2 | sed 's/[",]//g'`
+          az=`aws ec2 describe-instances --filters "Name=tag:Name,Values=ODFE-RPM" | grep AvailabilityZone | cut -d ':' -f 2 | sed 's/[",]//g'`
+          aws ec2 stop-instances --instance-ids $instanceid
+          sleep 4m
+          aws ec2 detach-volume --volume-id $volumeid
+          if [[ `echo $?` -ne 0 ]]; then
+          sleep 60
+          aws ec2 detach-volume --volume-id $volumeid
+          fi
+          aws ec2 delete-volume --volume-id $volumeid
+          aws ec2 create-volume --snapshot snap-0f8358ed344f3c2e6 --availability-zone $az --tag-specifications 'ResourceType=volume,Tags=[{Key=Name,Value=odfe}]'
+          sleep 30
+          newVolumeId=`aws ec2 describe-volumes --filters "Name=tag:Name,Values=odfe" | grep VolumeId | cut -d ':' -f 2 | sed 's/[",]//g'`
+          aws ec2 attach-volume --device /dev/xvda --instance-id $instanceid --volume-id $newVolumeId
+          aws ec2 start-instances --instance-id $instanceid
+          sleep 30
+          echo "Your Self hosted runner is as new now!!!"
