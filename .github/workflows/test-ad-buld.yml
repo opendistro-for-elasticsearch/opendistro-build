@@ -1,117 +1,60 @@
 name: AD Docker Testing
 
 on: 
-#   push:
-#    branches: 
-#     - weicongs-amazon-patch-3-ad-plugin-it
+  push:
+   branches: 
+    - weicongs-amazon-patch-3-ad-plugin-it
 
 jobs:
-  build-es-docker:
-    strategy:
-      matrix:
-        java: [14]
-    name: Build ES Docker
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v1
-
-    - name: Retrieve plugin tags
-      run: |
-        echo ::set-env name=p_tag_ism::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)
-        echo ::set-env name=p_tag_alerting::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)
-        echo ::set-env name=p_tag_sql::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)
-        echo ::set-env name=p_tag_knn::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/k-NN)
-        echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)
-        
-    - name: Checkout ISM
-      uses: actions/checkout@v1
-      with:
-        repository: opendistro-for-elasticsearch/index-management
-        ref: ${{env.p_tag_ism}}
-
-    - name: Checkout Alerting
-      uses: actions/checkout@v1
-      with:
-        repository: opendistro-for-elasticsearch/alerting
-        ref: ${{env.p_tag_alerting}}
-
-    - name: Checkout SQL
-      uses: actions/checkout@v1
-      with:
-        repository: opendistro-for-elasticsearch/sql
-        ref: ${{env.p_tag_sql}}
-        
-    - name: Checkout k-NN
-      uses: actions/checkout@v1
-      with:
-        repository: opendistro-for-elasticsearch/k-NN
-        ref: ${{env.p_tag_knn}}
+  Test-AD-plugin:
   
-    - name: Checkout AD
-      uses: actions/checkout@v1
-      with:
-        repository: opendistro-for-elasticsearch/anomaly-detection
-        ref: ${{env.p_tag_ad}}
-       
-    - name: Configure AWS
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
-
-    - name: Set Up JDK ${{ matrix.java }}
-      uses: actions/setup-java@v1
-      with:
-        java-version: ${{ matrix.java }}
-
-    - name: Starting ES Docker Build
-      env:
-        DOCKER_USER: ${{ secrets.DOCKER_USER }}
-        DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
-      run: |
-        echo "Executing On-demand Build for ES Docker Image"
-        ODFE_VER=`./bin/version-info --od`
-        echo "ODFE VERSION $ODFE_VER"
-        workdir=`pwd`
-        sudo apt-get install python-virtualenv
-        ./download_plugins.sh
-        cd elasticsearch
-        security=`ls docker/build/elasticsearch/plugins/|grep opendistro_security|wc -l`
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Retrieve plugin tags
+        run:  echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)
+        shell: bash
+      - uses: actions/checkout@v1
+        with:
+           repository: opendistro-for-elasticsearch/anomaly-detection
+           ref: ${{env.p_tag_ad}}  
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Set Up JDK 
+        uses: actions/setup-java@v1
+        with:
+          java-version: 14
         
-        if [ $security -gt 0 ]
-        then
-           echo "Security plugin is available"
-        else
-           echo "Security plugin is NOT available"
-        fi
-        
-        DOCKER_NAME=odfe-test-$ODFE_VER
-        cd docker
-        cd ../../..
-        ls -ltr
-        
-        #Run Docker Container without security
-        if [ $security -gt 0 ]
-        then
-           echo "Running newly tagged image with no security"
-           echo "FROM opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER" >> Dockerfile
-           echo "RUN /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro_security" >> Dockerfile
-           docker build -t odfe-http:no-security .
-           sleep 5
-     
-           docker run -p 9200:9200 -d -p 9600:9600 -e "discovery.type=single-node" --name $DOCKER_NAME odfe-http:no-security
-        else
-           echo "Running originially created docker image"
-           docker run -p 9200:9200 -d -p 9600:9600 -e "discovery.type=single-node" --name $DOCKER_NAME opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER
-        fi
-    
-        
-    - name: Test AD Plugin
-      if: always()
-      run: |
-        ls -ltr
-        cd ../anomaly-detection
-        ./gradlew :integTestRunner --tests "com.amazon.opendistroforelasticsearch.ad.rest.*IT" --tests "com.amazon.opendistroforelasticsearch.ad.e2e.*IT" -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
- 
-        
+      - name: RUN ES and AD IntegTest
+        run: |
+          dir
+          python -m pip install --upgrade pip
+          echo pip3 -version
+          pip3 install awscli
+          $PACKAGE="opendistroforelasticsearch"
+          $OD_VERSION=$(python ./bin/version-info --od)
+          $S3_PACKAGE="odfe-"+$OD_VERSION+".zip"
+          dir
+          echo downloading zip from S3 
+          aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/staging/odfe-window-zip/$S3_PACKAGE .\
+          echo unzipping $S3_PACKAGE
+          unzip .\$S3_PACKAGE
+          echo "removing security plugin"
+          cd $PACKAGE-$OD_VERSION\bin
+          .\elasticsearch-plugin.bat remove opendistro_security
+          cd ..\..
+          echo "Overriding with elasticsearch.yml having no certificates"
+          del .\$PACKAGE-$OD_VERSION\config\elasticsearch.yml
+          aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/utils/elasticsearch.yml .\$PACKAGE-$OD_VERSION\config
+          echo running es
+          nohup .\$PACKAGE-$OD_VERSION\bin\elasticsearch.bat &
+          echo Waiting for 2min
+          ping -n 120 127.0.0.1 >.\out.txt
+          echo running tests
+          cd ..\anomaly-detection
+          dir
+          .\gradlew.bat :integTestRunner --tests "com.amazon.opendistroforelasticsearch.ad.rest.*IT" --tests "com.amazon.opendistroforelasticsearch.ad.e2e.*IT" -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest --stacktrace      
