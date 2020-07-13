@@ -1,9 +1,9 @@
 name: AD Tar Testing
 
 on: 
-  push:
-   branches: 
-    - weicongs-amazon-patch-3-ad-plugin-it
+#   push:
+#    branches: 
+#     - weicongs-amazon-patch-3-ad-plugin-it
 
 jobs:
   Test-AD-Plugin:
