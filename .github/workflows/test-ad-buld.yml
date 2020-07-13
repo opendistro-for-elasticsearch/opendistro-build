@@ -110,12 +110,7 @@ jobs:
     - name: Test AD Plugin
       if: always()
       run: |
-        cd ..
-        if cat plugins.out|grep opendistro-anomaly-detection
-        then
-          cd anomaly-detection
-          ./gradlew :integTestRunner --tests "com.amazon.opendistroforelasticsearch.ad.rest.*IT" --tests "com.amazon.opendistroforelasticsearch.ad.e2e.*IT" -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
-        else
-          echo "Skipping Test as Plugin not available"
-        fi
+        cd anomaly-detection
+        ./gradlew :integTestRunner --tests "com.amazon.opendistroforelasticsearch.ad.rest.*IT" --tests "com.amazon.opendistroforelasticsearch.ad.e2e.*IT" -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
+ 
         
