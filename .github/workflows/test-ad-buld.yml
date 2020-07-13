@@ -1,91 +1,120 @@
-name: AD Tar Testing
+name: AD Docker Testing
 
 on: 
-#   push:
-#    branches: 
-#     - weicongs-amazon-patch-3-ad-plugin-it
+  push:
+   branches: 
+    - weicongs-amazon-patch-3-ad-plugin-it
 
 jobs:
-  Test-AD-Plugin:
-    name: Run AD Test
-    runs-on: ubuntu-latest
+  build-es-docker:
     strategy:
       matrix:
         java: [14]
+    name: Build ES Docker
+    runs-on: ubuntu-latest
     steps:
-      - name: Set up AWS Cred
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.java }}
-      - uses: actions/checkout@v1
-      - name: Retrieve plugin tags
-        run:  echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)
-      - name: Checkout anomaly-detection
-        uses: actions/checkout@v1
-        with:
-          repository: opendistro-for-elasticsearch/anomaly-detection
-          ref: ${{env.p_tag_ad}}
-      - name: Run Tests
-        run: |
-          odfe_version=`./bin/version-info --od`
-          echo $odfe_version
-          cd ..
-          cd opendistro-build/elasticsearch/linux_distributions
-          cd ../../..
-          aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistro-elasticsearch/opendistroforelasticsearch-$odfe_version.tar.gz .
-          tar -zxf opendistroforelasticsearch-$odfe_version.tar.gz
-          cd opendistroforelasticsearch-$odfe_version
-          sed -i /install_demo_configuration/d opendistro-tar-install.sh
-          ./bin/elasticsearch-plugin remove opendistro_security
-          
-          nohup ./opendistro-tar-install.sh &
-          sleep 45
-          cd ../anomaly-detection
-          ./gradlew :integTestRunner --tests "com.amazon.opendistroforelasticsearch.ad.rest.*IT" --tests "com.amazon.opendistroforelasticsearch.ad.e2e.*IT" -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
+    - uses: actions/checkout@v1
+
+    - name: Retrieve plugin tags
+      run: |
+        echo ::set-env name=p_tag_ism::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)
+        echo ::set-env name=p_tag_alerting::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)
+        echo ::set-env name=p_tag_sql::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)
+        echo ::set-env name=p_tag_knn::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/k-NN)
+        echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)
+        
+    - name: Checkout ISM
+      uses: actions/checkout@v1
+      with:
+        repository: opendistro-for-elasticsearch/index-management
+        ref: ${{env.p_tag_ism}}
+
+    - name: Checkout Alerting
+      uses: actions/checkout@v1
+      with:
+        repository: opendistro-for-elasticsearch/alerting
+        ref: ${{env.p_tag_alerting}}
+
+    - name: Checkout SQL
+      uses: actions/checkout@v1
+      with:
+        repository: opendistro-for-elasticsearch/sql
+        ref: ${{env.p_tag_sql}}
+        
+    - name: Checkout k-NN
+      uses: actions/checkout@v1
+      with:
+        repository: opendistro-for-elasticsearch/k-NN
+        ref: ${{env.p_tag_knn}}
   
-  Test-AD-Plugin-With-Security:
-    name: Run AD Test with Security Enabled
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        java: [14]
-    steps:
-      - name: Set up AWS Cred
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.java }}
-      - uses: actions/checkout@v1
-      - name: Retrieve plugin tags
-        run:  echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)
-      - name: Checkout anomaly-detection
-        uses: actions/checkout@v1
-        with:
-          repository: opendistro-for-elasticsearch/anomaly-detection
-          ref: master
-      - name: Run Tests
-        run: |
-          odfe_version=`./bin/version-info --od`
-          echo $odfe_version
-          cd ..
-          cd opendistro-build/elasticsearch/linux_distributions
-          cd ../../..
-          aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistro-elasticsearch/opendistroforelasticsearch-$odfe_version.tar.gz .
-          tar -zxf opendistroforelasticsearch-$odfe_version.tar.gz
-          cd opendistroforelasticsearch-$odfe_version
-          
-          nohup ./opendistro-tar-install.sh &
-          sleep 45
-          cd ../anomaly-detection
-          ./gradlew :integTestRunner --tests "com.amazon.opendistroforelasticsearch.ad.rest.*IT" --tests "com.amazon.opendistroforelasticsearch.ad.e2e.*IT" -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin
+    - name: Checkout AD
+      uses: actions/checkout@v1
+      with:
+        repository: opendistro-for-elasticsearch/anomaly-detection
+        ref: ${{env.p_tag_ad}}
+       
+    - name: Configure AWS
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Set Up JDK ${{ matrix.java }}
+      uses: actions/setup-java@v1
+      with:
+        java-version: ${{ matrix.java }}
+
+    - name: Starting ES Docker Build
+      env:
+        DOCKER_USER: ${{ secrets.DOCKER_USER }}
+        DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
+      run: |
+        echo "Executing On-demand Build for ES Docker Image"
+        ODFE_VER=`./bin/version-info --od`
+        echo "ODFE VERSION $ODFE_VER"
+        workdir=`pwd`
+        sudo apt-get install python-virtualenv
+        ./download_plugins.sh
+        cd elasticsearch
+        security=`ls docker/build/elasticsearch/plugins/|grep opendistro_security|wc -l`
+        
+        if [ $security -gt 0 ]
+        then
+           echo "Security plugin is available"
+        else
+           echo "Security plugin is NOT available"
+        fi
+        
+        cd docker
+        cd ../../..
+        ls -ltr
+        
+        #Run Docker Container without security
+        if [ $security -gt 0 ]
+        then
+           echo "Running newly tagged image with no security"
+           echo "FROM opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER" >> Dockerfile
+           echo "RUN /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro_security" >> Dockerfile
+           docker build -t odfe-http:no-security .
+           sleep 5
+     
+           docker run -p 9200:9200 -d -p 9600:9600 -e "discovery.type=single-node" --name $DOCKER_NAME odfe-http:no-security
+        else
+           echo "Running originially created docker image"
+           docker run -p 9200:9200 -d -p 9600:9600 -e "discovery.type=single-node" --name $DOCKER_NAME opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER
+        fi
+    
+        
+    - name: Test AD Plugin
+      if: always()
+      run: |
+        cd ..
+        if cat plugins.out|grep opendistro-anomaly-detection
+        then
+          cd anomaly-detection
+          ./gradlew :integTestRunner --tests "com.amazon.opendistroforelasticsearch.ad.rest.*IT" --tests "com.amazon.opendistroforelasticsearch.ad.e2e.*IT" -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
+        else
+          echo "Skipping Test as Plugin not available"
+        fi
+        
