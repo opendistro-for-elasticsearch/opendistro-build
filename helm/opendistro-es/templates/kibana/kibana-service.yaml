@@ -21,7 +21,7 @@ metadata:
 {{ toYaml .Values.kibana.service.annotations | indent 4 }}
   labels:
 {{ include "opendistro-es.labels.standard" . | indent 4 }}
-    role: kibana
+    role: {{ .Values.global.clusterName }}-kibana
   name: {{ template "opendistro-es.fullname" . }}-kibana-svc
 spec:
   ports:
@@ -29,6 +29,6 @@ spec:
     port: {{ .Values.kibana.externalPort }}
     targetPort: {{ .Values.kibana.port }}
   selector:
-    role: kibana
+    role: {{ .Values.global.clusterName }}-kibana
   type: {{ .Values.kibana.service.type }}
 {{- end }}

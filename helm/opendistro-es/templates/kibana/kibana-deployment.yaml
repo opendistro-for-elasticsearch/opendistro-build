@@ -19,19 +19,19 @@ kind: Deployment
 metadata:
   labels:
 {{ include "opendistro-es.labels.standard" . | indent 4 }}
-    role: kibana
+    role: {{ .Values.global.clusterName }}-kibana
   name: {{ template "opendistro-es.fullname" . }}-kibana
 spec:
   replicas: {{ .Values.kibana.replicas }}
   selector:
     matchLabels:
 {{ include "opendistro-es.labels.selector" . | indent 6 }}
-      role: kibana
+      role: {{ .Values.global.clusterName }}-kibana
   template:
     metadata:
       labels:
 {{ include "opendistro-es.labels.standard" . | indent 8 }}
-        role: kibana
+        role: {{ .Values.global.clusterName }}-kibana
       annotations:
         {{/* This forces a restart if the secret config has changed */}}
         {{- if .Values.kibana.config }}
