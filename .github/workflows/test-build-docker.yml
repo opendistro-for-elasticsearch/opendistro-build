@@ -270,8 +270,14 @@ jobs:
  
         docker run -p 9200:9200 -d -p 9600:9600 -e "discovery.type=single-node" --name $DOCKER_NAME odfe-http:security
         sleep 30
-        curl -XGET https://localhost:9200/_cat/plugins -u admin:admin --insecure 
-    
+        curl -XGET https://localhost:9200/_cat/plugins -u admin:admin --insecure
+        
+        echo "Temp Solution to remove the wrong configuration. need be fixed in building stage" 
+        docker exec -t $DOCKER_NAME /bin/bash -c "sed -i /^node.max_local_storage_nodes/d /usr/share/elasticsearch/config/elasticsearch.yml"
+        docker restart $DOCKER_NAME
+        sleep 30
+        curl -XGET https://localhost:9200/_cat/plugins -u admin:admin --insecure
+        
     - name: Test SQL Plugin
       if: always()
       run: |
