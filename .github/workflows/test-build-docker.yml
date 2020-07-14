@@ -1,3 +1,7 @@
+node.max_local_storage_nodes: 3
+
+curl -u weicongs-amazon:6b576e114f0779b86cc5e8575c91a2d1daaaa442 -X POST https://api.github.com/repos/weicongs-amazon/opendistro-build/dispatches -d '{"event_type" : "build-deb-test"}'
+
 name: Webhook Build ES Docker on Dispatch
 
 on: 
@@ -15,44 +19,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
-
-    - name: Retrieve plugin tags
-      run: |
-        echo ::set-env name=p_tag_ism::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)
-        echo ::set-env name=p_tag_alerting::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)
-        echo ::set-env name=p_tag_sql::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)
-        echo ::set-env name=p_tag_knn::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/k-NN)
-        echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)
-        
-    - name: Checkout ISM
-      uses: actions/checkout@v1
-      with:
-        repository: opendistro-for-elasticsearch/index-management
-        ref: ${{env.p_tag_ism}}
-
-    - name: Checkout Alerting
-      uses: actions/checkout@v1
-      with:
-        repository: opendistro-for-elasticsearch/alerting
-        ref: ${{env.p_tag_alerting}}
-
-    - name: Checkout SQL
-      uses: actions/checkout@v1
-      with:
-        repository: opendistro-for-elasticsearch/sql
-        ref: ${{env.p_tag_sql}}
-        
-    - name: Checkout k-NN
-      uses: actions/checkout@v1
-      with:
-        repository: opendistro-for-elasticsearch/k-NN
-        ref: ${{env.p_tag_knn}}
-  
-    - name: Checkout AD
-      uses: actions/checkout@v1
-      with:
-        repository: opendistro-for-elasticsearch/anomaly-detection
-        ref: ${{env.p_tag_ad}}
        
     - name: Configure AWS
       uses: aws-actions/configure-aws-credentials@v1
@@ -140,18 +106,85 @@ jobs:
         # Optional content type:
         content_type: text/html
           
-    - name: Test ISM Plugin
-      if: always()
+test-es-plugins-without-security:
+    strategy:
+      matrix:
+        java: [14]
+    name: Build ES Docker
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Retrieve plugin tags
+      run: |
+        echo ::set-env name=p_tag_ism::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)
+        echo ::set-env name=p_tag_alerting::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)
+        echo ::set-env name=p_tag_sql::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)
+        echo ::set-env name=p_tag_knn::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/k-NN)
+        echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)
+        
+    - name: Checkout ISM
+      uses: actions/checkout@v1
+      with:
+        repository: opendistro-for-elasticsearch/index-management
+        ref: ${{env.p_tag_ism}}
+
+    - name: Checkout Alerting
+      uses: actions/checkout@v1
+      with:
+        repository: opendistro-for-elasticsearch/alerting
+        ref: ${{env.p_tag_alerting}}
+
+    - name: Checkout SQL
+      uses: actions/checkout@v1
+      with:
+        repository: opendistro-for-elasticsearch/sql
+        ref: ${{env.p_tag_sql}}
+        
+    - name: Checkout k-NN
+      uses: actions/checkout@v1
+      with:
+        repository: opendistro-for-elasticsearch/k-NN
+        ref: ${{env.p_tag_knn}}
+  
+    - name: Checkout AD
+      uses: actions/checkout@v1
+      with:
+        repository: opendistro-for-elasticsearch/anomaly-detection
+        ref: ${{env.p_tag_ad}}
+       
+    - name: Configure AWS
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Set Up JDK ${{ matrix.java }}
+      uses: actions/setup-java@v1
+      with:
+        java-version: ${{ matrix.java }}
+
+    - name: Start ES Container without Security
       run: |
         ODFE_VER=`./bin/version-info --od`
+        echo "ODFE VERSION $ODFE_VER"
         DOCKER_NAME=odfe-test-$ODFE_VER
-        docker exec -t $DOCKER_NAME /bin/bash -c "echo ''  >> /usr/share/elasticsearch/config/elasticsearch.yml"
-        docker exec -t $DOCKER_NAME /bin/bash -c "echo path.repo: [\"/usr/share/elasticsearch\"] >> /usr/share/elasticsearch/config/elasticsearch.yml"
-        docker restart $DOCKER_NAME
-        cd ..
+        echo "Running newly tagged image with no security"
+        echo "FROM opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER" >> Dockerfile
+        echo "RUN /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro_security" >> Dockerfile
+        echo "RUN echo path.repo: [\"/usr/share/elasticsearch\"] >> /usr/share/elasticsearch/config/elasticsearch.yml" >> Dockerfile
+        docker build -t odfe-http:no-security .
+        sleep 5
+ 
+        docker run -p 9200:9200 -d -p 9600:9600 -e "discovery.type=single-node" --name $DOCKER_NAME odfe-http:no-security
         sleep 30
         curl -XGET http://localhost:9200/_cat/plugins > plugins.out
-        
+
+    - name: Test ISM Plugin
+      if: always()
+      run: | 
+        cd ..
         if cat plugins.out|grep opendistro_index_management
         then
           cd index-management
