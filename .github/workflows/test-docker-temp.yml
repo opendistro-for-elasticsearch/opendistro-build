@@ -6,6 +6,7 @@ on:
   push:
     branches:
       - weicongs-amazon-docker-security-it
+
 jobs:
   build-es-docker:
     strategy:
@@ -65,8 +66,9 @@ jobs:
         #echo "<h2>The docker image opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER for ODFE has been created and uploaded to docker-hub</h2>" >> $workdir/Release.md
         cd ../../..
         ls -ltr
-
+          
   test-es-plugins-without-security:
+    needs: [build-es-docker]
     strategy:
       matrix:
         java: [14]
@@ -134,13 +136,14 @@ jobs:
         echo "Running newly tagged image with no security"
         echo "FROM opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER" >> Dockerfile
         echo "RUN /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro_security" >> Dockerfile
+        echo "RUN echo ''  >> /usr/share/elasticsearch/config/elasticsearch.yml" >> Dockerfile
         echo "RUN echo \"path.repo: [\\\"/usr/share/elasticsearch\\\"]\" >> /usr/share/elasticsearch/config/elasticsearch.yml" >> Dockerfile
         docker build -t odfe-http:no-security .
         sleep 5
  
         docker run -p 9200:9200 -d -p 9600:9600 -e "discovery.type=single-node" --name $DOCKER_NAME odfe-http:no-security
         sleep 30
-        curl -XGET http://localhost:9200/_cat/plugins > plugins.out
+        curl -XGET http://localhost:9200/_cat/plugins 
 
     - name: Test ISM Plugin
       if: always()
@@ -172,6 +175,7 @@ jobs:
         ./gradlew :integTestRunner --tests "com.amazon.opendistroforelasticsearch.ad.rest.*IT" --tests "com.amazon.opendistroforelasticsearch.ad.e2e.*IT" -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
  
   test-es-plugins-with-security:
+    needs: [build-es-docker]
     strategy:
       matrix:
         java: [14]
@@ -238,14 +242,21 @@ jobs:
         DOCKER_NAME=odfe-test-$ODFE_VER
         echo "Running newly tagged image with security"
         echo "FROM opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER" >> Dockerfile
+        echo "RUN echo ''  >> /usr/share/elasticsearch/config/elasticsearch.yml" >> Dockerfile
         echo "RUN echo \"path.repo: [\\\"/usr/share/elasticsearch\\\"]\" >> /usr/share/elasticsearch/config/elasticsearch.yml" >> Dockerfile
         docker build -t odfe-http:security .
         sleep 5
  
         docker run -p 9200:9200 -d -p 9600:9600 -e "discovery.type=single-node" --name $DOCKER_NAME odfe-http:security
         sleep 30
-        curl -XGET https://localhost:9200/_cat/plugins -u admin:admin --insecure 
-    
+        curl -XGET https://localhost:9200/_cat/plugins -u admin:admin --insecure
+        
+        echo "Temp Solution to remove the wrong configuration. need be fixed in building stage" 
+        docker exec -t $DOCKER_NAME /bin/bash -c "sed -i /^node.max_local_storage_nodes/d /usr/share/elasticsearch/config/elasticsearch.yml"
+        docker restart $DOCKER_NAME
+        sleep 30
+        curl -XGET https://localhost:9200/_cat/plugins -u admin:admin --insecure
+        
     - name: Test SQL Plugin
       if: always()
       run: |
