@@ -156,6 +156,7 @@ jobs:
         echo "Running newly tagged image with no security"
         echo "FROM opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER" >> Dockerfile
         echo "RUN /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro_security" >> Dockerfile
+        echo "RUN echo ''  >> /usr/share/elasticsearch/config/elasticsearch.yml" >> Dockerfile
         echo "RUN echo \"path.repo: [\\\"/usr/share/elasticsearch\\\"]\" >> /usr/share/elasticsearch/config/elasticsearch.yml" >> Dockerfile
         docker build -t odfe-http:no-security .
         sleep 5
@@ -262,6 +263,7 @@ jobs:
         DOCKER_NAME=odfe-test-$ODFE_VER
         echo "Running newly tagged image with security"
         echo "FROM opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER" >> Dockerfile
+        echo "RUN echo ''  >> /usr/share/elasticsearch/config/elasticsearch.yml" >> Dockerfile
         echo "RUN echo \"path.repo: [\\\"/usr/share/elasticsearch\\\"]\" >> /usr/share/elasticsearch/config/elasticsearch.yml" >> Dockerfile
         docker build -t odfe-http:security .
         sleep 5
