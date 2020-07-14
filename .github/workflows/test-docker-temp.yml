@@ -3,9 +3,9 @@ name: Build ES Docker
 on: 
   #schedule:
   #  - cron: '30 10 * * *'
-  push:
-    branches:
-      - weicongs-amazon-docker-security-it
+#   push:
+#     branches:
+#       - weicongs-amazon-docker-security-it
 jobs:
         
   test-es-plugins-without-security:
@@ -76,7 +76,7 @@ jobs:
         echo "Running newly tagged image with no security"
         echo "FROM opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER" >> Dockerfile
         echo "RUN /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro_security" >> Dockerfile
-        echo "RUN echo path.repo: [\"/usr/share/elasticsearch\"] >> /usr/share/elasticsearch/config/elasticsearch.yml" >> Dockerfile
+        echo "RUN echo \"path.repo: [\\\"/usr/share/elasticsearch\\\"]\" >> /usr/share/elasticsearch/config/elasticsearch.yml" >> Dockerfile
         docker build -t odfe-http:no-security .
         sleep 5
  
