@@ -69,6 +69,7 @@ jobs:
 
     - name: Start ES Container without Security
       run: |
+        cd ..
         ODFE_VER=`./bin/version-info --od`
         echo "ODFE VERSION $ODFE_VER"
         DOCKER_NAME=odfe-test-$ODFE_VER
