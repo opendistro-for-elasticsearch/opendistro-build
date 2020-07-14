@@ -88,6 +88,7 @@ jobs:
         content_type: text/html
           
   test-es-plugins-without-security:
+    needs: [build-es-docker]
     strategy:
       matrix:
         java: [14]
@@ -194,6 +195,7 @@ jobs:
         ./gradlew :integTestRunner --tests "com.amazon.opendistroforelasticsearch.ad.rest.*IT" --tests "com.amazon.opendistroforelasticsearch.ad.e2e.*IT" -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
  
   test-es-plugins-with-security:
+    needs: [build-es-docker]
     strategy:
       matrix:
         java: [14]
