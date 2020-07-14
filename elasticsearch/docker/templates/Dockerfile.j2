@@ -179,7 +179,8 @@ RUN mkdir /usr/share/elasticsearch && \
     chmod 0775 /usr/share/elasticsearch && \
     chgrp 0 /usr/share/elasticsearch
 
-RUN mkdir /usr/share/supervisor
+RUN mkdir -p /usr/share/supervisor/performance_analyzer/ && \
+    chown 1000 /usr/share/supervisor/performance_analyzer
 
 WORKDIR /usr/share/elasticsearch
 COPY --from=prep_es_files --chown=1000:0 /usr/share/elasticsearch /usr/share/elasticsearch
