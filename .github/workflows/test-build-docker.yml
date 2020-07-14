@@ -162,7 +162,7 @@ jobs:
  
         docker run -p 9200:9200 -d -p 9600:9600 -e "discovery.type=single-node" --name $DOCKER_NAME odfe-http:no-security
         sleep 30
-        curl -XGET http://localhost:9200/_cat/plugins > plugins.out
+        curl -XGET http://localhost:9200/_cat/plugins 
 
     - name: Test ISM Plugin
       if: always()
