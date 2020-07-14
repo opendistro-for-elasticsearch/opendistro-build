@@ -1,8 +1,4 @@
-node.max_local_storage_nodes: 3
-
-curl -u weicongs-amazon:6b576e114f0779b86cc5e8575c91a2d1daaaa442 -X POST https://api.github.com/repos/weicongs-amazon/opendistro-build/dispatches -d '{"event_type" : "build-deb-test"}'
-
-name: Webhook Build ES Docker on Dispatch
+name: Build ES Docker
 
 on: 
   #schedule:
