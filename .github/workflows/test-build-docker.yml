@@ -66,21 +66,6 @@ jobs:
         #echo "<h2>The docker image opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER for ODFE has been created and uploaded to docker-hub</h2>" >> $workdir/Release.md
         cd ../../..
         ls -ltr
-        
-        #Run Docker Container without security
-        if [ $security -gt 0 ]
-        then
-           echo "Running newly tagged image with no security"
-           echo "FROM opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER" >> Dockerfile
-           echo "RUN /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro_security" >> Dockerfile
-           docker build -t odfe-http:no-security .
-           sleep 5
-     
-           docker run -p 9200:9200 -d -p 9600:9600 -e "discovery.type=single-node" --name $DOCKER_NAME odfe-http:no-security
-        else
-           echo "Running originially created docker image"
-           docker run -p 9200:9200 -d -p 9600:9600 -e "discovery.type=single-node" --name $DOCKER_NAME opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER
-        fi
     
     - name: Create Email Message
       run: |
@@ -165,11 +150,12 @@ test-es-plugins-without-security:
       run: |
         ODFE_VER=`./bin/version-info --od`
         echo "ODFE VERSION $ODFE_VER"
+        cd ..
         DOCKER_NAME=odfe-test-$ODFE_VER
         echo "Running newly tagged image with no security"
         echo "FROM opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER" >> Dockerfile
         echo "RUN /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro_security" >> Dockerfile
-        echo "RUN echo path.repo: [\"/usr/share/elasticsearch\"] >> /usr/share/elasticsearch/config/elasticsearch.yml" >> Dockerfile
+        echo "RUN echo \"path.repo: [\\\"/usr/share/elasticsearch\\\"]\" >> /usr/share/elasticsearch/config/elasticsearch.yml" >> Dockerfile
         docker build -t odfe-http:no-security .
         sleep 5
  
