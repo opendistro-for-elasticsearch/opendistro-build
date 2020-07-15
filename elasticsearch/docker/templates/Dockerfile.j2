@@ -81,7 +81,7 @@ RUN java -version
 # Compile the C-library for kNN
 USER 1000
 RUN set -ex; \
-   export KNN_VERSION=`git ls-remote --tags https://github.com/opendistro-for-elasticsearch/k-NN.git v* | grep {{version_tag}} | grep -oh "v[0-9.]*" | sort | tail -n 1` \
+   export KNN_VERSION=`.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/k-NN $(echo {{version_tag}} | sed -E "s/.[0-9]+$//g")` \
  \
     && git ls-remote --tags https://github.com/opendistro-for-elasticsearch/k-NN.git v* \
  \
