@@ -44,7 +44,7 @@ jobs:
           sudo sed -i /^node.max_local_storage_nodes/d /etc/elasticsearch/elasticsearch.yml
           sudo systemctl start elasticsearch.service
           sleep 30
-          curl -XGET https://127.0.0.1:5601 -u admin:admin --insecure
+          
 
       - name: Retrieve plugin tags
         run: |
@@ -64,6 +64,7 @@ jobs:
       - name: IT for SQL
         if: always()
         run: |
+          curl -XGET https://127.0.0.1:9200 -u admin:admin --insecure
           export PATH=$PATH:$JAVA_HOME
           cd $GITHUB_WORKSPACE/../sql
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin
@@ -78,6 +79,7 @@ jobs:
       - name: IT for AD
         if: always()
         run: |
+          curl -XGET https://127.0.0.1:9200 -u admin:admin --insecure
           export PATH=$PATH:$JAVA_HOME
           cd $GITHUB_WORKSPACE/../anomaly-detection
           ./gradlew :integTestRunner --tests "com.amazon.opendistroforelasticsearch.ad.rest.*IT" --tests "com.amazon.opendistroforelasticsearch.ad.e2e.*IT" -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest" -Dhttps=true -Duser=admin -Dpassword=admin
@@ -114,7 +116,7 @@ jobs:
           sudo sed -i /^cluster.routing.allocation.disk.threshold_enabled/d /etc/elasticsearch/elasticsearch.yml
           sudo systemctl start elasticsearch.service
           sleep 30
-          curl -XGET http://127.0.0.1:5601
+          
       - name: Retrieve plugin tags
         run: |
           echo ::set-env name=p_tag_ism::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)
@@ -133,7 +135,7 @@ jobs:
       - name: IT for ISM
         if: always()
         run: |  
-          curl -XGET http://127.0.0.1:5601
+          curl -XGET http://127.0.0.1:9200
           export PATH=$PATH:$JAVA_HOME
           cd $GITHUB_WORKSPACE/../index-management
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
@@ -148,7 +150,7 @@ jobs:
       - name: IT for alerting
         if: always()
         run: |
-          curl -XGET http://127.0.0.1:5601
+          curl -XGET http://127.0.0.1:9200
           export PATH=$PATH:$JAVA_HOME
           cd $GITHUB_WORKSPACE/../alerting
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
@@ -163,7 +165,7 @@ jobs:
       - name: IT for SQL
         if: always()
         run: |
-          curl -XGET http://127.0.0.1:5601
+          curl -XGET http://127.0.0.1:9200
           export PATH=$PATH:$JAVA_HOME
           cd $GITHUB_WORKSPACE/../sql
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
@@ -178,7 +180,7 @@ jobs:
       - name: IT for KNN
         if: always()
         run: |
-          curl -XGET http://127.0.0.1:5601
+          curl -XGET http://127.0.0.1:9200
           export PATH=$PATH:$JAVA_HOME
           cd $GITHUB_WORKSPACE/../k-NN
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
@@ -193,7 +195,7 @@ jobs:
       - name: IT for AD
         if: always()
         run: |
-          curl -XGET http://127.0.0.1:5601
+          curl -XGET http://127.0.0.1:9200
           export PATH=$PATH:$JAVA_HOME
           cd $GITHUB_WORKSPACE/../anomaly-detection
           ./gradlew :integTestRunner --tests "com.amazon.opendistroforelasticsearch.ad.rest.*IT" --tests "com.amazon.opendistroforelasticsearch.ad.e2e.*IT" -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
