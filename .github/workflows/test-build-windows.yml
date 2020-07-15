@@ -54,7 +54,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Retrieve plugin tags
-        run:  echo ::set-env name=p_tag_ism::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)
+        run: echo ::set-env name=p_tag_ism::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)
         shell: bash
       - uses: actions/checkout@v1
         with:
@@ -110,7 +110,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Retrieve plugin tags
-        run:  echo ::set-env name=p_tag_alerting::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)
+        run: echo ::set-env name=p_tag_alerting::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)
         shell: bash
       - uses: actions/checkout@v1
         with:
@@ -163,7 +163,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Retrieve plugin tags
-        run:  echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)
+        run: echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)
         shell: bash
       - uses: actions/checkout@v1
         with:
@@ -216,7 +216,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Retrieve plugin tags
-        run:  echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)
+        run: echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)
         shell: bash
       - uses: actions/checkout@v1
         with:
@@ -263,7 +263,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Retrieve plugin tags
-        run:  echo ::set-env name=p_tag_sql::$(.github/scripts/plugin_tag.sh  opendistro-for-elasticsearch/sql)
+        run: echo ::set-env name=p_tag_sql::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)
         shell: bash
       - uses: actions/checkout@v1
         with:
@@ -318,7 +318,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Retrieve plugin tags
-        run:  echo ::set-env name=p_tag_sql::$(.github/scripts/plugin_tag.sh  opendistro-for-elasticsearch/sql)
+        run: echo ::set-env name=p_tag_sql::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)
         shell: bash
       - uses: actions/checkout@v1
         with:
