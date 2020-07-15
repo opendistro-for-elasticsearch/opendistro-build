@@ -253,6 +253,7 @@ jobs:
           echo running es
           nohup .\$PACKAGE-$OD_VERSION\bin\elasticsearch.bat &
           echo Waiting for 2min
+          ping -n 120 127.0.0.1 >.\out.txt
           curl -XGET https://127.0.0.1:9200 -u admin:admin --insecure
           echo running tests
           cd ..\anomaly-detection
@@ -306,6 +307,7 @@ jobs:
           echo running es
           nohup .\$PACKAGE-$OD_VERSION\bin\elasticsearch.bat &
           echo Waiting for 2min
+          ping -n 120 127.0.0.1 >.\out.txt
           curl -XGET http://127.0.0.1:9200
           echo running tests
           cd ..\sql
@@ -356,6 +358,7 @@ jobs:
           echo running es
           nohup .\$PACKAGE-$OD_VERSION\bin\elasticsearch.bat &
           echo Waiting for 2min
+          ping -n 120 127.0.0.1 >.\out.txt
           curl -XGET https://127.0.0.1:9200 -u admin:admin --insecure
           echo running tests
           cd ..\sql
