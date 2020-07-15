@@ -224,7 +224,7 @@ jobs:
       - uses: actions/checkout@v1
         with:
            repository: opendistro-for-elasticsearch/anomaly-detection
-           ref: ${{env.p_tag_ad}}  
+           ref: master
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -253,7 +253,7 @@ jobs:
           echo running es
           nohup .\$PACKAGE-$OD_VERSION\bin\elasticsearch.bat &
           echo Waiting for 2min
-          ping -n 120 127.0.0.1
+          curl -XGET https://127.0.0.1:9200 -u admin:admin --insecure
           echo running tests
           cd ..\anomaly-detection
           dir
@@ -306,7 +306,7 @@ jobs:
           echo running es
           nohup .\$PACKAGE-$OD_VERSION\bin\elasticsearch.bat &
           echo Waiting for 2min
-          ping -n 120 127.0.0.1 
+          curl -XGET http://127.0.0.1:9200
           echo running tests
           cd ..\sql
           dir
@@ -356,7 +356,7 @@ jobs:
           echo running es
           nohup .\$PACKAGE-$OD_VERSION\bin\elasticsearch.bat &
           echo Waiting for 2min
-          ping -n 120 127.0.0.1 
+          curl -XGET https://127.0.0.1:9200 -u admin:admin --insecure
           echo running tests
           cd ..\sql
           dir
