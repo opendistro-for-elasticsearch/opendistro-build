@@ -5,9 +5,9 @@ on:
   #  - cron: '0 10 * * *'
   repository_dispatch:
     types: [test-build-rpm]
-  push:
-    branches:
-      - weicongs-amazon-rpm-it-security
+#   push:
+#     branches:
+#       - weicongs-amazon-rpm-it-security
 jobs:
   Test-Plugins-With-Security:
     name: Test-Plugins-With-Security
