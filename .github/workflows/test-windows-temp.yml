@@ -1,10 +1,6 @@
-name: Build Windows Exe using tar artifacts
+name: Build Windows Test
 
 on:
-  #schedule:
-  #  - cron: '30 10 * * *'
-#   repository_dispatch:
-#     types: [test-build-windows]
   push: 
     branches: 
       - weicongs-amazon-windows-it-security
