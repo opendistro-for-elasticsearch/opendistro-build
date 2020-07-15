@@ -219,7 +219,7 @@ jobs:
         uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/anomaly-detection
-          ref: master
+          ref: ${{env.p_tag_ad}}
           
       - name: IT for AD
         if: always()
