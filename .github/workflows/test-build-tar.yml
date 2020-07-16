@@ -236,9 +236,6 @@ jobs:
           cd ../sql
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin
           
-      
-
-          
   Test-KNN-Plugin:
     needs: [build-es-artifacts]
     name: Run k-NN Test
