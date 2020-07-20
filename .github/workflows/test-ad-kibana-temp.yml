@@ -22,13 +22,21 @@ jobs:
 
       - name: Retrieve plugin tags 
         run:  echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)
+    
+      - name: Checkout Kibana
+        uses: actions/checkout@v2
+        with:
+          repository: opendistro-for-elasticsearch/kibana-oss
+          ref: 7.8.0
+          token: ${{ secrets.ODFE_RELEASE_BOT_PAT }}
+          path: kibana
 
       - uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/anomaly-detection-kibana-plugin
           ref: ${{env.p_tag_ad}}
-          path: anomaly-detection-kibana-plugin
-
+          path: kibana/plugins/anomaly-detection-kibana-plugin
+      
       - name: Setup Java
         uses: actions/setup-java@v1
         with:
@@ -46,8 +54,12 @@ jobs:
           echo "Installing yarn"
           npm i -g yarn@1.21.1
           ls ../
-          ls 
       
+      - name: Bootstrap the plugin
+        run: |
+          cd kibana/plugins/anomaly-detection-kibana-plugin
+          yarn kbn bootstrap
+          
       - name: Start ES and Kibana
         run: |
           es_version=`./bin/version-info --es`
@@ -82,9 +94,10 @@ jobs:
           sudo systemctl start kibana.service
           sleep 120
           curl -v http://127.0.0.1:5601
+          
       - name: run IT
         uses: cypress-io/github-action@v1
         with:
-          working-directory: anomaly-detection-kibana-plugin
+          working-directory: kibana/plugins/anomaly-detection-kibana-plugin
           command: yarn cy:run —config baseurl=http://localhost:5601
     
