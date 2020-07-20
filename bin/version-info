@@ -36,7 +36,7 @@ def get_es_version(user_param):
         # Then the user has forced the version. Do as they say!
         return(environ['ES_VERSION'])
     else:
-        if user_param == '--esprev':
+        if user_param == '--es-prev':
           return(get_hard_coded_version('esVersion', 'previous'))
         else:
           return(get_hard_coded_version('esVersion', 'current'))
@@ -46,7 +46,7 @@ def get_od_version(user_param):
         # Then the user has forced the version. Do as they say!
         return(environ['OD_VERSION'])
     else:
-        if user_param == '--odprev':
+        if user_param == '--od-prev':
           return(get_hard_coded_version('odVersion', 'previous'))
         else:
           return(get_hard_coded_version('odVersion', 'current'))
@@ -55,12 +55,12 @@ if __name__ == '__main__':
     # Provide a shell compatible interface, defaults to OD version
     if len(sys.argv) == 2 :
         arg_value = sys.argv[1]
-        if (arg_value == '--es') or (arg_value == '--esprev'):
+        if (arg_value == '--es') or (arg_value == '--es-prev'):
             print(get_es_version(arg_value))
-        elif (arg_value == '--od') or (arg_value == '--odprev'):
+        elif (arg_value == '--od') or (arg_value == '--od-prev'):
             print(get_od_version(arg_value))
         else:
-            raise Exception('invalid argument, use --es OR --od OR --esprev OR --odprev')
+            raise Exception('invalid argument, use --es OR --od OR --es-prev OR --od-prev')
     else:
-      raise Exception('invalid argument, use --es OR --od OR --esprev OR --odprev')
+      raise Exception('invalid argument, use --es OR --od OR --es-prev OR --od-prev')
 
