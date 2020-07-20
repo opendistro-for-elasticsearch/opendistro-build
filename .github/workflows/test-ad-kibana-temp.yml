@@ -96,13 +96,20 @@ jobs:
           sudo apt install -y opendistroforelasticsearch
           
           sudo chmod 777 /etc/elasticsearch/elasticsearch.yml
-          sudo chmod 777 /etc/elasticsearch/elasticsearch.yml
+          sudo /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro_security
+          sudo sed -i /^opendistro_security/d /etc/elasticsearch/elasticsearch.yml
+          sudo sed -i /CN=kirk/d /etc/elasticsearch/elasticsearch.yml
           sudo sed -i /^node.max_local_storage_nodes/d /etc/elasticsearch/elasticsearch.yml
+          sudo sed -i /^cluster.routing.allocation.disk.threshold_enabled/d /etc/elasticsearch/elasticsearch.yml
+
           sudo /etc/init.d/elasticsearch start
           sleep 30
+          curl -XGET http://127.0.0.1:9200
           
-          curl -XGET https://127.0.0.1:9200 -u admin:admin --insecure
           sudo apt install opendistroforelasticsearch-kibana
+          sudo /usr/share/kibana/bin/kibana-plugin remove opendistro_security --allow-root
+          sed -i /^opendistro_security/d /etc/kibana/kibana.yml
+          sed -i 's/https/http/' /etc/kibana/kibana.yml
           sudo systemctl start kibana.service
           sleep 120
           curl -v http://127.0.0.1:5601
