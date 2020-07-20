@@ -45,6 +45,8 @@ jobs:
           npm uninstall -g yarn
           echo "Installing yarn"
           npm i -g yarn@1.21.1
+          ls ../
+          ls 
       
       - name: Start ES and Kibana
         run: |
