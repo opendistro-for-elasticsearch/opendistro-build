@@ -57,6 +57,9 @@ jobs:
       
       - name: Bootstrap the plugin
         run: |
+          ls ../kibana/
+          echo "checking kbn script"
+          ls ../kibana/scripts/kbn.js
           cd ../kibana/plugins/anomaly-detection-kibana-plugin
           yarn kbn bootstrap
           
