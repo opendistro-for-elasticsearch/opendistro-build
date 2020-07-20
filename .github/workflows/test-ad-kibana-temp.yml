@@ -108,8 +108,8 @@ jobs:
           
           sudo apt install opendistroforelasticsearch-kibana
           sudo /usr/share/kibana/bin/kibana-plugin remove opendistro_security --allow-root
-          sed -i /^opendistro_security/d /etc/kibana/kibana.yml
-          sed -i 's/https/http/' /etc/kibana/kibana.yml
+          sudo sed -i /^opendistro_security/d /etc/kibana/kibana.yml
+          sudo sed -i 's/https/http/' /etc/kibana/kibana.yml
           sudo systemctl start kibana.service
           sleep 120
           curl -v http://127.0.0.1:5601
