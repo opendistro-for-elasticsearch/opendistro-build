@@ -33,7 +33,9 @@ jobs:
 
       - name: check kibana plugin
         run: |
-           ls ../kibana/
+           pwd
+           ls
+           ls ../
            echo "checking kbn script"
            ls ../kibana/scripts/kbn.js
            
