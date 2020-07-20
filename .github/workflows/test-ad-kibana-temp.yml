@@ -3,26 +3,35 @@ name: Test AD Kibana Tar
 on: 
   #schedule:
   #  - cron: '0 10 * * *'
-#   push:
-#     branches: 
-#       - weicongs-amazon-ad-kibana-it
+  push:
+    branches: 
+      - weicongs-amazon-ad-kibana-it
 
 jobs:
-
-  
+  build-es-docker:
+    strategy:
+      matrix:
+        java: [14]
+    name: Build ES Docker
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+      
+  build-kibana-docker:
+    runs-on: [ubuntu-16.04]
+    name: Build Kibana Docker
+    steps:
+      - uses: actions/checkout@v2
+        
   Test-AD-Kibana-Plugin:
+    needs: [build-es-docker, build-kibana-docker]
     runs-on: [ubuntu-16.04]
     strategy:
       matrix:
         java: [14]
     steps:
       - uses: actions/checkout@v1
-      - name: Set up AWS Cred
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
+      
       - name: Retrieve plugin tags 
         run: |
           echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)
@@ -72,32 +81,29 @@ jobs:
           
       - name: Start ES and Kibana
         run: |
-          odfe_version=`./bin/version-info --od`
-          echo $odfe_version
+          ODFE_VER=`./bin/version-info --od`
+          echo "ODFE VERSION $ODFE_VER"
+          cd ..
+          DOCKER_NAME=odfe-test-$ODFE_VER
+          echo "Running newly tagged es image with no security"
+          echo "FROM opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER" >> Dockerfile
+          echo "RUN /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro_security" >> Dockerfile
+          echo "RUN echo ''  >> /usr/share/elasticsearch/config/elasticsearch.yml" >> Dockerfile
+          echo "RUN echo \"path.repo: [\\\"/usr/share/elasticsearch\\\"]\" >> /usr/share/elasticsearch/config/elasticsearch.yml" >> Dockerfile
+          docker build -t odfe-http:no-security .
+          sleep 5
+          docker run -p 9200:9200 -d -p 9600:9600 -e "discovery.type=single-node" --name $DOCKER_NAME odfe-http:no-security
+          sleep 30
+          curl -XGET http://localhost:9200/
           
-          mkdir -p odfe-testing
-          cd odfe-testing
-          aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistro-elasticsearch/opendistroforelasticsearch-$odfe_version.tar.gz .
-          tar -zxf opendistroforelasticsearch-$odfe_version.tar.gz
-          cd opendistroforelasticsearch-$odfe_version
-          sed -i /install_demo_configuration/d opendistro-tar-install.sh
-          ./bin/elasticsearch-plugin remove opendistro_security
-          nohup ./opendistro-tar-install.sh &
-          sleep 45
-          curl -XGET http://127.0.0.1:9200
-          
-          cd ../..
-          
-          mkdir -p kibana-testing
-          cd kibana-testing
-          aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistroforelasticsearch-kibana/opendistroforelasticsearch-kibana-$odfe_version.tar.gz .
-          tar -zxf opendistroforelasticsearch-kibana-$odfe_version.tar.gz
-          cd opendistroforelasticsearch-kibana
-      
-          ./bin/kibana-plugin remove opendistro_security 
-          sed -i /^opendistro_security/d ./config/kibana.yml
-          sed -i 's/https/http/' ./config/kibana.yml
-          nohup ./bin/kibana &
+          echo "Running newly tagged kibana image with no security"
+          echo "FROM opendistroforelasticsearch/opendistroforelasticsearch-kibana:$ODFE_VER" >> Dockerfile
+          echo "RUN /usr/share/kibana/bin/kibana-plugin remove opendistro_security" >> Dockerfile
+          echo "RUN sed -i /^opendistro_security/d /etc/kibana/kibana.yml" >> Dockerfile
+          echo "RUN sed -i 's/https/http/' /etc/kibana/kibana.yml" >> Dockerfile
+          docker build -t odfe-kibana-http:no-security .
+          sleep 5
+          docker run -p 5601:5601 -d --name odfe-kibana-it odfe-kibana-http:no-security
           sleep 120
           curl -v http://127.0.0.1:5601
           
