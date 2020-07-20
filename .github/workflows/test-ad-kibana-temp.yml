@@ -9,8 +9,7 @@ on:
 jobs:
 
   
-  Test-AD-Plugin:
-    needs: [sign-deb-artifacts]
+  Test-AD-Kibana-Plugin:
     runs-on: [ubuntu-16.04]
     strategy:
       matrix:
@@ -19,11 +18,11 @@ jobs:
       - uses: actions/checkout@v1
 
       - name: Retrieve plugin tags 
-        run:  echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)
+        run:  echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)
 
       - uses: actions/checkout@v1
         with:
-          repository: opendistro-for-elasticsearch/anomaly-detection
+          repository: opendistro-for-elasticsearch/anomaly-detection-kibana-plugin
           ref: ${{env.p_tag_ad}}
 
       - name: Setup Java
@@ -55,15 +54,11 @@ jobs:
           sudo apt install -y opendistroforelasticsearch
           
           sudo chmod 777 /etc/elasticsearch/elasticsearch.yml
-          sudo /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro_security
-          sudo sed -i /^opendistro_security/d /etc/elasticsearch/elasticsearch.yml
-          sudo sed -i /CN=kirk/d /etc/elasticsearch/elasticsearch.yml
+          sudo chmod 777 /etc/elasticsearch/elasticsearch.yml
           sudo sed -i /^node.max_local_storage_nodes/d /etc/elasticsearch/elasticsearch.yml
-          sudo sed -i /^cluster.routing.allocation.disk.threshold_enabled/d /etc/elasticsearch/elasticsearch.yml
-
           sudo /etc/init.d/elasticsearch start
-
           sleep 30
+          
           cd anomaly-detection
           ./gradlew :integTestRunner --tests "com.amazon.opendistroforelasticsearch.ad.rest.*IT" --tests "com.amazon.opendistroforelasticsearch.ad.e2e.*IT" -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest"
           
