@@ -3,9 +3,9 @@ name: Test AD Kibana Tar
 on: 
   #schedule:
   #  - cron: '0 10 * * *'
-  push:
-    branches: 
-      - weicongs-amazon-ad-kibana-it
+#   push:
+#     branches: 
+#       - weicongs-amazon-ad-kibana-it
 
 jobs:
 
