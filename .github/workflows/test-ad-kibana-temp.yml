@@ -57,7 +57,7 @@ jobs:
       
       - name: Bootstrap the plugin
         run: |
-          cd kibana/plugins/anomaly-detection-kibana-plugin
+          cd ../kibana/plugins/anomaly-detection-kibana-plugin
           yarn kbn bootstrap
           
       - name: Start ES and Kibana
