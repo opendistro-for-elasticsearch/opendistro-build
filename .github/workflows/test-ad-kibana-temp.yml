@@ -1,13 +1,11 @@
-name: Test AD Kibana
+name: Test AD Kibana Tar
 
 on: 
   #schedule:
   #  - cron: '0 10 * * *'
-  repository_dispatch:
-    types: [test-build-deb-kibana]
-#   push:
-#     branches: 
-#       - weicongs-amazon-ad-kibana-it
+  push:
+    branches: 
+      - weicongs-amazon-ad-kibana-it
 
 jobs:
 
@@ -19,7 +17,12 @@ jobs:
         java: [14]
     steps:
       - uses: actions/checkout@v1
-
+      - name: Set up AWS Cred
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
       - name: Retrieve plugin tags 
         run: |
           echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)
@@ -43,18 +46,24 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.java }}
-          
+      
+      - name: Get node and yarn versions
+        id: node_yarn_versions
+        run: |
+          echo ::set-env name=kibana_node_version::$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")
+          echo ::set-env name=kibana_yarn_version::$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")"   
+      
       - name: Setup node
         uses: actions/setup-node@v1
         with:
-          node-version: 10.21.0
+          node-version: ${{env.kibana_node_version}}
           registry-url: 'https://registry.npmjs.org'
       
       - name: Install correct yarn version for Kibana
         run: |
           npm uninstall -g yarn
-          echo "Installing yarn"
-          npm i -g yarn@1.21.1
+          echo "Installing yarn ${{ env.kibana_yarn_version }}"
+          npm i -g yarn@${{ env.kibana_yarn_version }}
       
       - name: Bootstrap the plugin
         run: |
@@ -63,43 +72,32 @@ jobs:
           
       - name: Start ES and Kibana
         run: |
-          es_version=`./bin/version-info --es`
-          echo $es_version
-          cd elasticsearch/linux_distributions
-          cd ../../..
-          sleep 20
-          sudo sysctl -w vm.max_map_count=262144
-
-          sudo add-apt-repository -y ppa:openjdk-r/ppa
-          sudo apt update -y
-          sudo apt install -y openjdk-11-jdk
-          sudo sudo apt install -y net-tools
-
-          wget -qO - https://d3g5vo6xdbdb9a.cloudfront.net/GPG-KEY-opendistroforelasticsearch | sudo apt-key add -
-          echo "deb https://d3g5vo6xdbdb9a.cloudfront.net/staging/apt stable main" | sudo tee -a /etc/apt/sources.list.d/opendistroforelasticsearch.list
-
-          wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$es_version-amd64.deb
-          sudo dpkg -i elasticsearch-oss-$es_version-amd64.deb
-
-          sudo apt-get -y update
-          sudo apt install -y opendistroforelasticsearch
+          odfe_version=`./bin/version-info --od`
+          echo $odfe_version
           
-          sudo chmod 777 /etc/elasticsearch/elasticsearch.yml
-          sudo /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro_security
-          sudo sed -i /^opendistro_security/d /etc/elasticsearch/elasticsearch.yml
-          sudo sed -i /CN=kirk/d /etc/elasticsearch/elasticsearch.yml
-          sudo sed -i /^node.max_local_storage_nodes/d /etc/elasticsearch/elasticsearch.yml
-          sudo sed -i /^cluster.routing.allocation.disk.threshold_enabled/d /etc/elasticsearch/elasticsearch.yml
-
-          sudo /etc/init.d/elasticsearch start
-          sleep 30
+          mkdir -p odfe-testing
+          cd odfe-testing
+          aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistro-elasticsearch/opendistroforelasticsearch-$odfe_version.tar.gz .
+          tar -zxf opendistroforelasticsearch-$odfe_version.tar.gz
+          cd opendistroforelasticsearch-$odfe_version
+          sed -i /install_demo_configuration/d opendistro-tar-install.sh
+          ./bin/elasticsearch-plugin remove opendistro_security
+          nohup ./opendistro-tar-install.sh &
+          sleep 45
           curl -XGET http://127.0.0.1:9200
           
-          sudo apt install opendistroforelasticsearch-kibana
-          sudo /usr/share/kibana/bin/kibana-plugin remove opendistro_security --allow-root
-          sudo sed -i /^opendistro_security/d /etc/kibana/kibana.yml
-          sudo sed -i 's/https/http/' /etc/kibana/kibana.yml
-          sudo systemctl start kibana.service
+          cd ../..
+          
+          mkdir -p kibana-testing
+          cd kibana-testing
+          aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistroforelasticsearch-kibana/opendistroforelasticsearch-kibana-$odfe_version.tar.gz .
+          tar -zxf opendistroforelasticsearch-kibana-$odfe_version.tar.gz
+          cd opendistroforelasticsearch-kibana-$odfe_version
+      
+          ./bin/kibana-plugin remove opendistro_security 
+          sed -i /^opendistro_security/d ./config/kibana.yml
+          sed -i 's/https/http/' ./config/kibana.yml
+          nohup ./bin/kibana &
           sleep 120
           curl -v http://127.0.0.1:5601
           
