@@ -30,7 +30,19 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.java }}
-
+          
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 10.21.0
+          registry-url: 'https://registry.npmjs.org'
+      
+      - name: Install correct yarn version for Kibana
+        run: |
+          npm uninstall -g yarn
+          echo "Installing yarn"
+          npm i -g yarn@1.21.1
+      
       - name: Start ES and Kibana
         run: |
           es_version=`./bin/version-info --es`
