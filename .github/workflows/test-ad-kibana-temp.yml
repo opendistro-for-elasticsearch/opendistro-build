@@ -28,7 +28,7 @@ jobs:
         with:
           repository: opendistro-for-elasticsearch/kibana-oss
           ref: 7.8.0
-          token: ${{ secrets.ODFE_RELEASE_BOT_PAT }}
+          token: ${{ secrets.READ_TOKEN }}
           path: kibana
 
       - uses: actions/checkout@v1
