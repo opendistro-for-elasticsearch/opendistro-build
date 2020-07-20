@@ -24,13 +24,14 @@ jobs:
         with:
           repository: opendistro-for-elasticsearch/anomaly-detection-kibana-plugin
           ref: ${{env.p_tag_ad}}
+          path: anomaly-detection-kibana-plugin
 
       - name: Setup Java
         uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.java }}
 
-      - name: Run Debian Staging Distrubution
+      - name: Start ES and Kibana
         run: |
           es_version=`./bin/version-info --es`
           echo $es_version
@@ -59,7 +60,14 @@ jobs:
           sudo /etc/init.d/elasticsearch start
           sleep 30
           
-          cd anomaly-detection
-          ./gradlew :integTestRunner --tests "com.amazon.opendistroforelasticsearch.ad.rest.*IT" --tests "com.amazon.opendistroforelasticsearch.ad.e2e.*IT" -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest"
-          
- 
+          curl -XGET https://127.0.0.1:9200 -u admin:admin --insecure
+          sudo apt install opendistroforelasticsearch-kibana
+          sudo systemctl start kibana.service
+          sleep 120
+          curl -v http://127.0.0.1:5601
+      - name: run IT
+        uses: cypress-io/github-action@v1
+        with:
+          working-directory: anomaly-detection-kibana-plugin
+          command: yarn cy:run —config baseurl=http://localhost:5601
+    
