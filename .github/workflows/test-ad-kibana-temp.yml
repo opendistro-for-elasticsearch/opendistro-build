@@ -1,0 +1,70 @@
+name: Test AD Kibana
+
+on: 
+  #schedule:
+  #  - cron: '0 10 * * *'
+  repository_dispatch:
+    types: [test-build-deb-kibana]
+
+jobs:
+
+  
+  Test-AD-Plugin:
+    needs: [sign-deb-artifacts]
+    runs-on: [ubuntu-16.04]
+    strategy:
+      matrix:
+        java: [14]
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Retrieve plugin tags 
+        run:  echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)
+
+      - uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/anomaly-detection
+          ref: ${{env.p_tag_ad}}
+
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+
+      - name: Run Debian Staging Distrubution
+        run: |
+          es_version=`./bin/version-info --es`
+          echo $es_version
+          cd elasticsearch/linux_distributions
+          cd ../../..
+          sleep 20
+          sudo sysctl -w vm.max_map_count=262144
+
+          sudo add-apt-repository -y ppa:openjdk-r/ppa
+          sudo apt update -y
+          sudo apt install -y openjdk-11-jdk
+          sudo sudo apt install -y net-tools
+
+          wget -qO - https://d3g5vo6xdbdb9a.cloudfront.net/GPG-KEY-opendistroforelasticsearch | sudo apt-key add -
+          echo "deb https://d3g5vo6xdbdb9a.cloudfront.net/staging/apt stable main" | sudo tee -a /etc/apt/sources.list.d/opendistroforelasticsearch.list
+
+          wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$es_version-amd64.deb
+          sudo dpkg -i elasticsearch-oss-$es_version-amd64.deb
+
+          sudo apt-get -y update
+          sudo apt install -y opendistroforelasticsearch
+          
+          sudo chmod 777 /etc/elasticsearch/elasticsearch.yml
+          sudo /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro_security
+          sudo sed -i /^opendistro_security/d /etc/elasticsearch/elasticsearch.yml
+          sudo sed -i /CN=kirk/d /etc/elasticsearch/elasticsearch.yml
+          sudo sed -i /^node.max_local_storage_nodes/d /etc/elasticsearch/elasticsearch.yml
+          sudo sed -i /^cluster.routing.allocation.disk.threshold_enabled/d /etc/elasticsearch/elasticsearch.yml
+
+          sudo /etc/init.d/elasticsearch start
+
+          sleep 30
+          cd anomaly-detection
+          ./gradlew :integTestRunner --tests "com.amazon.opendistroforelasticsearch.ad.rest.*IT" --tests "com.amazon.opendistroforelasticsearch.ad.e2e.*IT" -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest"
+          
+ 
