@@ -21,13 +21,15 @@ jobs:
       - uses: actions/checkout@v1
 
       - name: Retrieve plugin tags 
-        run:  echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)
-    
+        run: |
+          echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)
+          echo ::set-env name=es_version::$(./bin/version-info --es)
+          
       - name: Checkout Kibana
         uses: actions/checkout@v2
         with:
           repository: opendistro-for-elasticsearch/kibana-oss
-          ref: 7.8.0
+          ref: ${{env.es_version}}
           token: ${{ secrets.READ_TOKEN }}
           path: kibana
            
