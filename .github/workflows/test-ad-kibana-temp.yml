@@ -31,6 +31,12 @@ jobs:
           token: ${{ secrets.READ_TOKEN }}
           path: kibana
 
+      - name: check kibana plugin
+        run: |
+           ls ../kibana/
+           echo "checking kbn script"
+           ls ../kibana/scripts/kbn.js
+           
       - uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/anomaly-detection-kibana-plugin
@@ -57,6 +63,7 @@ jobs:
       
       - name: Bootstrap the plugin
         run: |
+          pwd
           ls ../kibana/
           echo "checking kbn script"
           ls ../kibana/scripts/kbn.js
