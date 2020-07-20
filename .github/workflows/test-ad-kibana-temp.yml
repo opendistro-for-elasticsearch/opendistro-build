@@ -30,14 +30,6 @@ jobs:
           ref: 7.8.0
           token: ${{ secrets.READ_TOKEN }}
           path: kibana
-
-      - name: check kibana plugin
-        run: |
-           pwd
-           ls
-           ls ../
-           echo "checking kbn script"
-           ls kibana/scripts/kbn.js
            
       - uses: actions/checkout@v2
         with:
@@ -61,11 +53,9 @@ jobs:
           npm uninstall -g yarn
           echo "Installing yarn"
           npm i -g yarn@1.21.1
-          ls ../
       
       - name: Bootstrap the plugin
         run: |
-          pwd
           cd ./kibana/plugins/anomaly-detection-kibana-plugin
           yarn kbn bootstrap
           
