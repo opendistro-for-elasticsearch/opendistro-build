@@ -385,8 +385,8 @@ jobs:
       
       - name: Retrieve plugin tags and odfe versions
         run: |
-          echo ::set-env name=od_version::$(./bin/version-info --od)
-          echo ::set-env name=es_version::$(./bin/version-info --es)
+          echo ::set-env name=od_version::$(python ./bin/version-info --od)
+          echo ::set-env name=es_version::$(python ./bin/version-info --es)
           echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)
         shell: bash
 
@@ -398,6 +398,7 @@ jobs:
           pip3 install awscli
           $PACKAGE="opendistroforelasticsearch"
           $OD_VERSION=$(python ./bin/version-info --od)
+          echo $OD_VERSION
           $S3_ES_PACKAGE="odfe-"+$OD_VERSION+".zip"
           dir
           echo "downloading zip from S3 "
