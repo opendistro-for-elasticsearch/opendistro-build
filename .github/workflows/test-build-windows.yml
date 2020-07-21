@@ -433,7 +433,7 @@ jobs:
           nohup .\bin\kibana.bat &
           echo "Waiting for 2min"
           ping -n 120 127.0.0.1 >.\out.txt
-          type nohup.out
+          dir
           curl -XGET http://127.0.0.1:5601
      
       - name: Checkout Kibana
