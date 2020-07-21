@@ -103,7 +103,7 @@ jobs:
           echo "RUN sed -i 's/https/http/' /usr/share/kibana/config/kibana.yml" >> Dockerfile
           docker build -t odfe-kibana-http:no-security .
           sleep 5
-          docker run -p 5601:5601 -d --name odfe-kibana-it odfe-kibana-http:no-security
+          docker run -d --name odfe-kibana-it --network="host" odfe-kibana-http:no-security
           sleep 120
           curl -v http://127.0.0.1:5601
           
