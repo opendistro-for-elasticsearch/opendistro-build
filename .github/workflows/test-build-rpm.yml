@@ -417,17 +417,24 @@ jobs:
           ref: ${{env.p_tag_ad}}
           path: kibana/plugins/anomaly-detection-kibana-plugin
       
+       
       - name: Bootstrap the AD kibana plugin
         run: |
+          df -h
           cd ./kibana/plugins/anomaly-detection-kibana-plugin
           yarn kbn bootstrap
+          
+      - name: Check disk size
+        if: always()
+        run: |
+          df -h
           
       - name: run IT for AD kibana plugin
         uses: cypress-io/github-action@v1
         with:
           working-directory: kibana/plugins/anomaly-detection-kibana-plugin
           command: yarn cy:run —config baseurl=http://localhost:5601
-  
+      
   Cleaning-Host:
     needs: [Test-Kibana-Plugins-Without-Security]
     if: always()
