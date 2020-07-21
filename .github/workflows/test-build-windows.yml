@@ -420,6 +420,8 @@ jobs:
           curl -XGET http://127.0.0.1:9200
           
           echo "install kibana"
+          mkdir kibana-it-test
+          cd kibana-it-test
           $S3_KIBANA_PACKAGE="odfe-"+$OD_VERSION+"-kibana.zip"
           
           aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/ode-windows-zip/$S3_KIBANA_PACKAGE .\
@@ -431,9 +433,11 @@ jobs:
           nohup .\bin\kibana.bat &
           echo "Waiting for 2min"
           ping -n 120 127.0.0.1 >.\out.txt
-          curl -v http://127.0.0.1:5601
+          type nohup.out
+          curl  http://127.0.0.1:5601
      
       - name: Checkout Kibana
+        if: always()
         uses: actions/checkout@v2
         with:
           repository: opendistro-for-elasticsearch/kibana-oss
