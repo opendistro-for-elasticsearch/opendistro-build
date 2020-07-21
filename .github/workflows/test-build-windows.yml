@@ -434,10 +434,9 @@ jobs:
           echo "Waiting for 2min"
           ping -n 120 127.0.0.1 >.\out.txt
           type nohup.out
-          curl  http://127.0.0.1:5601
+          curl -XGET http://127.0.0.1:5601
      
       - name: Checkout Kibana
-        if: always()
         uses: actions/checkout@v2
         with:
           repository: opendistro-for-elasticsearch/kibana-oss
@@ -481,10 +480,6 @@ jobs:
           cd ./kibana/plugins/anomaly-detection-kibana-plugin
           yarn kbn bootstrap
           
-      - name: Check disk size
-        if: always()
-        run: |
-          df -h
           
       - name: run IT for AD kibana plugin
         uses: cypress-io/github-action@v1
