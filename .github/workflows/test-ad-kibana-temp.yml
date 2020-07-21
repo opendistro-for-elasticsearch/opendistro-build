@@ -99,8 +99,8 @@ jobs:
           echo "Running newly tagged kibana image with no security"
           echo "FROM opendistroforelasticsearch/opendistroforelasticsearch-kibana:$ODFE_VER" >> Dockerfile
           echo "RUN /usr/share/kibana/bin/kibana-plugin remove opendistro_security" >> Dockerfile
-          echo "RUN sed -i /^opendistro_security/d /etc/kibana/kibana.yml" >> Dockerfile
-          echo "RUN sed -i 's/https/http/' /etc/kibana/kibana.yml" >> Dockerfile
+          echo "RUN sed -i /^opendistro_security/d /usr/share/kibana/config/kibana.yml" >> Dockerfile
+          echo "RUN sed -i 's/https/http/' /usr/share/kibana/config/kibana.yml" >> Dockerfile
           docker build -t odfe-kibana-http:no-security .
           sleep 5
           docker run -p 5601:5601 -d --name odfe-kibana-it odfe-kibana-http:no-security
