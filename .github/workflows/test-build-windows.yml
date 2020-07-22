@@ -363,4 +363,3 @@ jobs:
           cd ..\sql
           dir
           .\gradlew.bat integTest -D tests.rest.cluster=localhost:9200 -D tests.cluster=localhost:9200 -D tests.clustername=es-integrationtest -D https=true -D user=admin -D password=admin --stacktrace
-      
