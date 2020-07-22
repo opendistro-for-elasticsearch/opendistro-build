@@ -26,7 +26,6 @@ spec:
   ports:
     - port: 9300
       protocol: TCP
-  clusterIP: None
   selector:
     role: master
 {{- end }}

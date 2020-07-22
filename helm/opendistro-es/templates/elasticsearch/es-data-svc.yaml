@@ -32,7 +32,6 @@ spec:
     name: metrics
   - port: 9650
     name: rca
-  clusterIP: None
   selector:
     role: data
 {{- end }}
