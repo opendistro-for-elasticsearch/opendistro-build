@@ -4,8 +4,7 @@ on:
   #schedule:
   #  - cron: '0 10 * * *'
   repository_dispatch:
-    types: [test-build-rpm]
-    
+    types: [test-build-rpm] 
 jobs:
   plugin-availability:
     name: Check Plugin Availability
