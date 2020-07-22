@@ -340,8 +340,95 @@ jobs:
           cd $GITHUB_WORKSPACE/../k-NN
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
 
-  Cleaning-Host:
+  Test-Kibana-Plugins-Without-Security:
     needs: [Test-Plugins-With-Security]
+    runs-on: [self-hosted, Linux, X64, odfe-rpm]
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 14
+      
+      - name: Installing python
+        run: sudo yum install python37 -y
+      
+      - name: Retrieve plugin tags and odfe versions
+        run: |
+          echo ::set-env name=od_version::$(./bin/version-info --od)
+          echo ::set-env name=es_version::$(./bin/version-info --es)
+          echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)
+      
+      - name: Starting ES and Kibana
+        run: |
+          echo $JAVA_HOME
+          export PATH=$PATH:$JAVA_HOME
+          sudo systemctl stop elasticsearch.service  
+          sudo systemctl start elasticsearch.service
+          sleep 30
+          curl -XGET http://127.0.0.1:9200
+          
+          echo "install kibana"
+          sudo yum install opendistroforelasticsearch-kibana-${{env.od_version}} -y
+          sudo /usr/share/kibana/bin/kibana-plugin remove opendistro_security --allow-root
+          sudo sed -i /^opendistro_security/d /etc/kibana/kibana.yml
+          sudo sed -i 's/https/http/' /etc/kibana/kibana.yml
+          sudo systemctl start kibana.service
+          sleep 120
+          curl -v http://127.0.0.1:5601
+     
+      - name: Checkout Kibana
+        uses: actions/checkout@v2
+        with:
+          repository: opendistro-for-elasticsearch/kibana-oss
+          ref: ${{env.es_version}}
+          token: ${{ secrets.READ_TOKEN }}
+          path: kibana
+      
+      - name: Get node and yarn versions
+        id: node_yarn_versions
+        run: |
+          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
+          . ~/.nvm/nvm.sh
+          nvm install node
+          
+          echo ::set-env name=kibana_node_version::$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")
+          echo ::set-env name=kibana_yarn_version::$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")   
+      
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{env.kibana_node_version}}
+          registry-url: 'https://registry.npmjs.org'
+      
+      - name: Install correct yarn version for Kibana
+        run: |
+          npm uninstall -g yarn
+          echo "Installing yarn ${{ env.kibana_yarn_version }}"
+          npm i -g yarn@${{ env.kibana_yarn_version }}
+      
+      - name: Checking out ad kibana repo
+        uses: actions/checkout@v2
+        with:
+          repository: opendistro-for-elasticsearch/anomaly-detection-kibana-plugin
+          ref: ${{env.p_tag_ad}}
+          path: kibana/plugins/anomaly-detection-kibana-plugin
+      
+       
+      - name: Bootstrap the AD kibana plugin
+        run: |
+          cd ./kibana/plugins/anomaly-detection-kibana-plugin
+          yarn kbn bootstrap
+              
+      - name: run IT for AD kibana plugin
+        uses: cypress-io/github-action@v1
+        with:
+          working-directory: kibana/plugins/anomaly-detection-kibana-plugin
+          command: yarn cy:run —config baseurl=http://localhost:5601
+      
+  Cleaning-Host:
+    needs: [Test-Kibana-Plugins-Without-Security]
     if: always()
     runs-on: ubuntu-latest
     steps:

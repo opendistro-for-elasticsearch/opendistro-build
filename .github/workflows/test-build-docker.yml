@@ -345,5 +345,94 @@ jobs:
           from: Opendistro Elasticsearch
           # Optional content type:
           content_type: text/html
-        
+  
+  Test-AD-Kibana-Plugin:
+    needs: [build-es-docker, build-kibana-docker]
+    runs-on: [ubuntu-16.04]
+    strategy:
+      matrix:
+        java: [14]
+    steps:
+      - uses: actions/checkout@v1
+      
+      - name: Retrieve plugin tags 
+        run: |
+          echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)
+          echo ::set-env name=es_version::$(./bin/version-info --es)
+          
+      - name: Checkout Kibana
+        uses: actions/checkout@v2
+        with:
+          repository: opendistro-for-elasticsearch/kibana-oss
+          ref: ${{env.es_version}}
+          token: ${{ secrets.READ_TOKEN }}
+          path: kibana
+           
+      - uses: actions/checkout@v2
+        with:
+          repository: opendistro-for-elasticsearch/anomaly-detection-kibana-plugin
+          ref: ${{env.p_tag_ad}}
+          path: kibana/plugins/anomaly-detection-kibana-plugin
+      
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+      
+      - name: Get node and yarn versions
+        id: node_yarn_versions
+        run: |
+          echo ::set-env name=kibana_node_version::$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")
+          echo ::set-env name=kibana_yarn_version::$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")   
+      
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{env.kibana_node_version}}
+          registry-url: 'https://registry.npmjs.org'
+      
+      - name: Install correct yarn version for Kibana
+        run: |
+          npm uninstall -g yarn
+          echo "Installing yarn ${{ env.kibana_yarn_version }}"
+          npm i -g yarn@${{ env.kibana_yarn_version }}
+      
+      - name: Bootstrap the plugin
+        run: |
+          cd ./kibana/plugins/anomaly-detection-kibana-plugin
+          yarn kbn bootstrap
+          
+      - name: Start ES and Kibana
+        run: |
+          ODFE_VER=`./bin/version-info --od`
+          echo "ODFE VERSION $ODFE_VER"
+          cd ..
+          DOCKER_NAME=odfe-test-$ODFE_VER
+          echo "Running newly tagged es image with no security"
+          echo "FROM opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER" >> Dockerfile
+          echo "RUN /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro_security" >> Dockerfile
+          echo "RUN echo ''  >> /usr/share/elasticsearch/config/elasticsearch.yml" >> Dockerfile
+          echo "RUN echo \"path.repo: [\\\"/usr/share/elasticsearch\\\"]\" >> /usr/share/elasticsearch/config/elasticsearch.yml" >> Dockerfile
+          docker build -t odfe-http:no-security .
+          sleep 5
+          docker run -p 9200:9200 -d -p 9600:9600 -e "discovery.type=single-node" --name $DOCKER_NAME odfe-http:no-security
+          sleep 30
+          curl -XGET http://localhost:9200/
+          
+          echo "Running newly tagged kibana image with no security"
+          echo "FROM opendistroforelasticsearch/opendistroforelasticsearch-kibana:$ODFE_VER" >> Dockerfile
+          echo "RUN /usr/share/kibana/bin/kibana-plugin remove opendistro_security" >> Dockerfile
+          echo "RUN sed -i /^opendistro_security/d /usr/share/kibana/config/kibana.yml" >> Dockerfile
+          echo "RUN sed -i 's/https/http/' /usr/share/kibana/config/kibana.yml" >> Dockerfile
+          docker build -t odfe-kibana-http:no-security .
+          sleep 5
+          docker run -d --name odfe-kibana-it --network="host" odfe-kibana-http:no-security
+          sleep 120
+          curl -v http://127.0.0.1:5601
+          
+      - name: run IT
+        uses: cypress-io/github-action@v1
+        with:
+          working-directory: kibana/plugins/anomaly-detection-kibana-plugin
+          command: yarn cy:run —config baseurl=http://localhost:5601
          
