@@ -434,7 +434,7 @@ jobs:
           echo "Waiting for 2min"
           ping -n 120 127.0.0.1 >.\out.txt
           dir
-          curl -XGET http://127.0.0.1:5601
+         
      
       - name: Checkout Kibana
         uses: actions/checkout@v2
