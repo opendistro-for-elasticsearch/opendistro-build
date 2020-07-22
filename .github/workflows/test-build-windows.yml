@@ -476,7 +476,6 @@ jobs:
           df -h
           cd ./kibana/plugins/anomaly-detection-kibana-plugin
           yarn kbn bootstrap
-          cypress install
           
       - name: run IT for AD kibana plugin
         uses: cypress-io/github-action@v2
