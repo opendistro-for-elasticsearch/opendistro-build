@@ -479,7 +479,7 @@ jobs:
           
           
       - name: run IT for AD kibana plugin
-        uses: cypress-io/github-action@v1
+        uses: cypress-io/github-action@v2
         with:
           working-directory: kibana/plugins/anomaly-detection-kibana-plugin
           command: yarn cy:run —config baseurl=http://localhost:5601
