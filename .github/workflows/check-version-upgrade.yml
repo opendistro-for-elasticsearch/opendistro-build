@@ -115,10 +115,10 @@ jobs:
             sleep 30
             echo "########## Upgrade successful ##########"
 
-    CleanUp-Runners:
+    CleanUp-Runners-RPM:
       needs: [Test-RPM]
       if: always()
-      name: CleanUp-Runners
+      name: CleanUp-Runners-RPM
       runs-on: ubuntu-latest
       steps:
         - uses: actions/checkout@v1
