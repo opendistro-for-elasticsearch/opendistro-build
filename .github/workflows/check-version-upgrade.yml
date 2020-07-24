@@ -1,8 +1,5 @@
 name: Test version upgrades
 
-# Make sure to pass prev_es_version (previous ES version) and prev_od_version (previous OD version) in the dispatch payload
-# Example: "client_payload":{ "prev_es_version" : "7.7.0", "prev_od_version": "1.8.0" }
-
 on: 
   repository_dispatch:
     types: [check-version-upgrade]
