@@ -19,7 +19,6 @@ jobs:
 
       - name: Getting OD version
         run: |
-          cd elasticsearch/bin
           OD_VERSION=`./bin/version-info --od`
           echo "::set-env name=od_version::$OD_VERSION"
     

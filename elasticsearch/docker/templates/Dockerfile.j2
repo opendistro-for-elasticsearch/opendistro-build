@@ -81,7 +81,7 @@ RUN java -version
 # Compile the C-library for kNN
 USER 1000
 RUN set -ex; \
-   export KNN_VERSION=`git ls-remote --tags https://github.com/opendistro-for-elasticsearch/k-NN.git v* | grep {{version_tag}} | grep -oh "v[0-9.]*" | sort | tail -n 1` \
+   export KNN_VERSION=`.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/k-NN $(echo {{version_tag}} | sed -E "s/.[0-9]+$//g")` \
  \
     && git ls-remote --tags https://github.com/opendistro-for-elasticsearch/k-NN.git v* \
  \
@@ -108,6 +108,10 @@ RUN for plugin_path in `cat /tmp/plugins/plugins.list`; do \
       elasticsearch-plugin install --batch file:/tmp/plugins/$plugin_path; \
     done
 
+# Pull performance analyzer agent(RCA) from the plugin directory out into ESHOME and make the agent executable.
+RUN if [ -d plugins/opendistro_performance_analyzer/performance-analyzer-rca ]; then \
+     mv plugins/opendistro_performance_analyzer/performance-analyzer-rca ./ && \
+     chmod 755 performance-analyzer-rca/pa_bin/performance-analyzer-agent; fi
 # Make the certificate installer script executable. This script has to be executed before ES is started.
 RUN security=`ls /tmp/plugins/|grep opendistro_security|wc -l` && \
     if [ $security -gt 0 ]; then chmod +x /usr/share/elasticsearch/plugins/opendistro_security/tools/install_demo_configuration.sh; \
@@ -175,7 +179,8 @@ RUN mkdir /usr/share/elasticsearch && \
     chmod 0775 /usr/share/elasticsearch && \
     chgrp 0 /usr/share/elasticsearch
 
-RUN mkdir /usr/share/supervisor
+RUN mkdir -p /usr/share/supervisor/performance_analyzer/ && \
+    chown 1000 /usr/share/supervisor/performance_analyzer
 
 WORKDIR /usr/share/elasticsearch
 COPY --from=prep_es_files --chown=1000:0 /usr/share/elasticsearch /usr/share/elasticsearch
@@ -191,7 +196,7 @@ RUN chgrp 0 /usr/local/bin/docker-entrypoint.sh && \
     chmod g=u /etc/passwd && \
     chmod 0775 /usr/local/bin/docker-entrypoint.sh
 
-EXPOSE 9200 9300 9600
+EXPOSE 9200 9300 9600 9650
 
 LABEL org.label-schema.schema-version="1.0" \
   org.label-schema.name="opendistroforelasticsearch" \

@@ -1,0 +1,105 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "ODFE testing cluster set-up",
+  
+  
+    "Parameters": {
+
+        "userdata":{
+            "Type": "String",
+            "Description": "Script to install ODFE and Kibana"
+        },
+
+        "distribution":{
+            "Type": "String",
+            "Description": "Testing distribution name (RPM/DEB/TAR)",
+            "Default" : "RPM",
+            "AllowedValues" : ["RPM", "DEB", "TAR"]
+        },
+
+        "security":{
+            "Type": "String",
+            "Default" : "ENABLE",
+            "AllowedValues" : [ "ENABLE", "DISABLE" ],
+            "Description": "Security feature enabled"
+        },
+
+        "ODFESecurityGroup":{
+            "Type" : "String",
+            "Description": "Security Group id to be attached to all the resources"
+        },
+
+        "keypair":{
+            "Type" : "String",
+            "Description": "Security Group id to be attached to all the resources"
+        },
+
+        "esTargetGroup":{
+            "Type" : "String",
+            "Description": "ES Target Group ARN"
+        },
+        
+        "kibanaTargetGroup":{
+            "Type" : "String",
+            "Description": "Kibana Target Group ARN"
+        }
+  
+    },
+
+    "Mappings" : {
+        "DistributionMap" : {
+          "RPM" : { "amiId" : "ami-0e34e7b9ca0ace12d" },
+          "TAR" : { "amiId" : "ami-003634241a8fcdec0" },
+          "DEB" : { "amiId" : "ami-003634241a8fcdec0" }
+        }
+      },
+
+     "Resources": {         
+  
+        "ODFEASG" : {
+            "Type" : "AWS::AutoScaling::AutoScalingGroup",
+            "Properties" : {
+                "AvailabilityZones" : [ "us-west-2a","us-west-2b","us-west-2c","us-west-2d"  ],
+                "LaunchConfigurationName" : { "Ref" : "asgLaunchConfig" },
+                "MinSize" : "1",
+                "MaxSize" : "1",
+                "DesiredCapacity" : "1",
+                "TargetGroupARNs": [{"Ref" : "esTargetGroup"}, {"Ref":"kibanaTargetGroup"}],
+                "Tags":[{
+                    "Key" : "Name", 
+                    "Value" : {
+                        "Fn::Join": [
+                          "", [
+                            "ODFE-",
+                            {
+                              "Ref": "distribution"
+                            },
+                            "-SECURITY-",
+                            {
+                                "Ref": "security"
+                            },
+                            "-Testing-Cluster"
+                          ]
+                        ]
+                      }, 
+                    "PropagateAtLaunch" : "true"}]
+                }
+            },
+
+        "asgLaunchConfig":{
+              "Type": "AWS::AutoScaling::LaunchConfiguration",
+              "Properties": {
+                  "ImageId": { "Fn::FindInMap" : [ "DistributionMap", { "Ref" : "distribution" }, "amiId"]},
+                  "InstanceType": "m5a.large",
+                  "IamInstanceProfile": "odfe_testing_cluster_role",
+                  "KeyName": {"Ref" : "keypair"},
+                  "AssociatePublicIpAddress": true,
+                  "SecurityGroups": [{"Ref" : "ODFESecurityGroup"}],
+                  "UserData": {
+                      "Ref": "userdata"}
+                  
+                }
+        }
+    }
+
+}
