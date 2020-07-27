@@ -189,7 +189,7 @@ jobs:
         with:
           java-version: 14
       - name: Starting ES service and retrieve tags
-        run: echo ::set-env name=p_tag_sql::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql); .github/scripts/setup_runners_service_rpm.sh --es
+        run: echo ::set-env name=p_tag_sql::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql); .github/scripts/setup_runners_service.sh rpm --es
       - uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/sql
@@ -210,7 +210,7 @@ jobs:
         with:
           java-version: 14
       - name: Starting ES service and retrieve tags
-        run: echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection); .github/scripts/setup_runners_service_rpm.sh --es
+        run: echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection); .github/scripts/setup_runners_service.sh rpm --es
       - uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/anomaly-detection
@@ -231,7 +231,7 @@ jobs:
         with:
           java-version: 14
       - name: Starting ES service and retrieve tags
-        run: echo ::set-env name=p_tag_ism_nosec::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management); .github/scripts/setup_runners_service_rpm.sh --es-nosec
+        run: echo ::set-env name=p_tag_ism_nosec::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management); .github/scripts/setup_runners_service.sh rpm --es-nosec
       - uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/index-management
@@ -252,7 +252,7 @@ jobs:
         with:
           java-version: 14
       - name: Starting ES service and retrieve tags
-        run: echo ::set-env name=p_tag_alerting_nosec::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting); .github/scripts/setup_runners_service_rpm.sh --es-nosec
+        run: echo ::set-env name=p_tag_alerting_nosec::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting); .github/scripts/setup_runners_service.sh rpm --es-nosec
       - uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/alerting
@@ -273,7 +273,7 @@ jobs:
         with:
           java-version: 14
       - name: Starting ES service and retrieve tags
-        run: echo ::set-env name=p_tag_sql_nosec::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql); .github/scripts/setup_runners_service_rpm.sh --es-nosec
+        run: echo ::set-env name=p_tag_sql_nosec::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql); .github/scripts/setup_runners_service.sh rpm --es-nosec
       - uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/sql
@@ -294,7 +294,7 @@ jobs:
         with:
           java-version: 14
       - name: Starting ES service and retrieve tags
-        run: echo ::set-env name=p_tag_knn_nosec::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/k-NN); .github/scripts/setup_runners_service_rpm.sh --es-nosec
+        run: echo ::set-env name=p_tag_knn_nosec::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/k-NN); .github/scripts/setup_runners_service.sh rpm --es-nosec
       - uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/k-NN
@@ -315,7 +315,7 @@ jobs:
         with:
           java-version: 14
       - name: Starting ES service and retrieve tags
-        run: echo ::set-env name=p_tag_ad_nosec::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection); .github/scripts/setup_runners_service_rpm.sh --es-nosec
+        run: echo ::set-env name=p_tag_ad_nosec::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection); .github/scripts/setup_runners_service.sh rpm --es-nosec
       - uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/anomaly-detection
@@ -339,7 +339,7 @@ jobs:
         run: |
           echo ::set-env name=es_version_kibana::$(python ./bin/version-info --es)
           echo ::set-env name=p_tag_ad_kibana_nosec::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)
-          .github/scripts/setup_runners_service_rpm.sh --kibana-nosec; curl -XGET http://127.0.0.1:9200; curl -v http://127.0.0.1:5601
+          .github/scripts/setup_runners_service.sh rpm --kibana-nosec; curl -XGET http://127.0.0.1:9200; curl -v http://127.0.0.1:5601
 
       - name: Checkout Kibana
         uses: actions/checkout@v2
