@@ -11,24 +11,10 @@ PACKAGE_NAME="opendistroforelasticsearch"
 TARGET_DIR="$ROOT/target"
 
 # Please DO NOT change the orders, they have dependencies
-PLUGINS="opendistro-sql/opendistro_sql-$OD_VERSION \
-         opendistro-alerting/opendistro_alerting-$OD_VERSION \
-         opendistro-job-scheduler/opendistro-job-scheduler-$OD_VERSION \
-         opendistro-security/opendistro_security-$OD_VERSION \
-         performance-analyzer/opendistro_performance_analyzer-$OD_VERSION \
-         opendistro-index-management/opendistro_index_management-$OD_VERSION \
-         opendistro-knn/opendistro-knn-$OD_VERSION \
-         opendistro-anomaly-detection/opendistro-anomaly-detection-$OD_VERSION"
+PLUGINS=`$REPO_ROOT/bin/plugins-info windows`
 
 basedir="${ROOT}/elasticsearch-${ES_VERSION}/plugins"
-PLUGINS_CHECKS="${basedir}/opendistro-job-scheduler \
-                ${basedir}/opendistro_alerting \
-                ${basedir}/opendistro_performance_analyzer \
-                ${basedir}/opendistro_security \
-                ${basedir}/opendistro_sql \
-                ${basedir}/opendistro_index_management \
-                ${basedir}/opendistro-knn \
-                ${basedir}/opendistro-anomaly-detection"
+#PLUGINS_CHECKS=`$REPO_ROOT/bin/plugins-info zip | awk -F '/' '{print $2}' | sed "s@^@$basedir\/@g"`
 
 mkdir -p $TARGET_DIR
 mkdir -p $PACKAGE_NAME-$OD_VERSION
@@ -43,26 +29,14 @@ rm -rf elasticsearch-oss-$ES_VERSION-windows-x86_64.zip
 # Install plugins
 for plugin_path in $PLUGINS
 do
-  plugin_latest=`aws s3api list-objects --bucket $S3_BUCKET --prefix "downloads/elasticsearch-plugins/${plugin_path}" --query 'Contents[].[Key]' --output text | sort | tail -n 1`
+  plugin_latest=`aws s3api list-objects --bucket $S3_BUCKET --prefix "downloads/elasticsearch-plugins/${plugin_path}-${OD_VERSION}" --query 'Contents[].[Key]' --output text | sort | tail -n 1`
   echo "installing $plugin_latest"
   $ROOT/elasticsearch-$ES_VERSION/bin/elasticsearch-plugin install --batch "${ARTIFACTS_URL}/${plugin_latest}"; \
 done
 
-# Validation
-echo "validating that plugins has been installed"
+# List Plugins
+echo "List available plugins"
 ls -lrt $basedir
-
-for d in $PLUGINS_CHECKS; do
-  echo "$d"
-  if [ -d "$d" ]; then
-    echo "directoy "$d" is present"
-  else
-    echo "ERROR: "$d" is not present"
-    exit 1;
-  fi
-done
-
-echo "Results: validated that plugins has been installed"
 
 bash $ROOT/elasticsearch-$ES_VERSION/plugins/opendistro_security/tools/install_demo_configuration.sh -y -i -s
 cat $ROOT/elasticsearch-$ES_VERSION/config/elasticsearch.yml

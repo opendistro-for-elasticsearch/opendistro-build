@@ -1,8 +1,8 @@
 name: Process RPM Artifacts
 
 on:
-  # schedule:
-  #   - cron: '0 10 * * *'
+  #schedule:
+  #  - cron: '0 10 * * *'
   repository_dispatch:
     types: [test-build-rpm]
 
@@ -69,7 +69,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
       - name: Build Kibana rpm
-        run: ./kibana/linux_distributions/opendistro-kibana-build.sh rpm
+        run: apt install -y jq; ./kibana/linux_distributions/opendistro-kibana-build.sh rpm
 
   signing-artifacts:   
     name: Sign Yum
@@ -99,7 +99,7 @@ jobs:
           sleep 5
           chmod 755 elasticsearch/linux_distributions/scripts/rpm-addsign.exp
           sh elasticsearch/linux_distributions/rpm-signing.sh $passphrase
-          
+
   Build-ES-and-Kibana-Centos-Docker:
     needs: [signing-artifacts]
     runs-on: [ubuntu-latest]
@@ -135,13 +135,13 @@ jobs:
           docker push opendistroforelasticsearch/elasticsearch-test-centos:$ODFE_VER
           sleep 5
           docker push opendistroforelasticsearch/kibana-test-centos:$ODFE_VER
-          
+
       - name: Create Email Message
         run: |
           echo "<h2>Docker Images for Centos Are Ready</h2>" >> Message.md
           echo "<h3> ES Image for Centos Testing: opendistroforelasticsearch/elasticsearch-test-centos:Version-Tag </h3>" >> Message.md
           echo "<h3> Kibana Image for Centos Testing: opendistroforelasticsearch/kibana-test-centos:Version-Tag </h3>" >> Message.md
-          
+
       - name: Send Mail
         uses: dawidd6/action-send-mail@master
         with:
@@ -156,11 +156,9 @@ jobs:
           from: Opendistro Elasticsearch
           # Optional content type:
           content_type: text/html
-
-
-  Start-ES-Service:
+  Test-Plugins-With-Security:
     needs: [signing-artifacts]
-    name: Start elasticsearch service
+    name: Test-Plugins-With-Security
     runs-on: [self-hosted, Linux, X64, odfe-rpm]
     steps:
       - uses: actions/checkout@v1
@@ -177,7 +175,6 @@ jobs:
         run: |
           OD_VERSION=`./bin/version-info --od`
           echo "::set-env name=od_version::$OD_VERSION"
-
       - name: Starting ES service
         run: |
           echo $JAVA_HOME
@@ -190,62 +187,18 @@ jobs:
           sudo mkdir /home/repo
           sudo chmod 777 /home/repo
           sudo chmod 777 /etc/elasticsearch/elasticsearch.yml    
-          sudo /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro_security
           sudo sed -i '/path.logs/a path.repo: ["/home/repo"]' /etc/elasticsearch/elasticsearch.yml 
-          sudo sed -i /^opendistro_security/d /etc/elasticsearch/elasticsearch.yml
-          sudo sed -i /CN=kirk/d /etc/elasticsearch/elasticsearch.yml
           sudo sed -i /^node.max_local_storage_nodes/d /etc/elasticsearch/elasticsearch.yml
-          sudo sed -i /^cluster.routing.allocation.disk.threshold_enabled/d /etc/elasticsearch/elasticsearch.yml
           sudo systemctl start elasticsearch.service
           sleep 30
-    
-  Test-All-Plugins:
-    needs: [Start-ES-Service]
-    runs-on: [self-hosted, Linux, X64, odfe-rpm]
-    steps:
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: 14
-    
-      - name: Installing python
-        run: sudo yum install python37 -y
-
+          
       - name: Retrieve plugin tags
         run: |
           echo ::set-env name=p_tag_ism::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)
           echo ::set-env name=p_tag_alerting::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)
           echo ::set-env name=p_tag_sql::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)
           echo ::set-env name=p_tag_knn::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/k-NN)
-
-      - name: Checking out ISM repo
-        if: always()
-        uses: actions/checkout@v1
-        with:
-          repository: opendistro-for-elasticsearch/index-management
-          ref: ${{env.p_tag_ism}}
-
-      - name: IT for ISM
-        if: always()
-        run: |  
-          export PATH=$PATH:$JAVA_HOME
-          cd $GITHUB_WORKSPACE/../index-management
-          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
-
-      - name: Checking out Alerting repo
-        if: always()
-        uses: actions/checkout@v1
-        with:
-          repository: opendistro-for-elasticsearch/alerting
-          ref: ${{env.p_tag_alerting}}
-
-      - name: IT for alerting
-        if: always()
-        run: |
-          export PATH=$PATH:$JAVA_HOME
-          cd $GITHUB_WORKSPACE/../alerting
-          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
-
+          echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)
       - name: Checking out SQL repo
         if: always()
         uses: actions/checkout@v1
@@ -256,10 +209,122 @@ jobs:
       - name: IT for SQL
         if: always()
         run: |
+          curl -XGET https://127.0.0.1:9200 -u admin:admin --insecure
+          export PATH=$PATH:$JAVA_HOME
+          cd $GITHUB_WORKSPACE/../sql
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin
+          
+      - name: Checking out AD repo
+        if: always()
+        uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/anomaly-detection
+          ref: ${{env.p_tag_ad}}
+          
+      - name: IT for AD
+        if: always()
+        run: |
+          curl -XGET https://127.0.0.1:9200 -u admin:admin --insecure
+          export PATH=$PATH:$JAVA_HOME
+          cd $GITHUB_WORKSPACE/../anomaly-detection
+          ./gradlew :integTestRunner --tests "com.amazon.opendistroforelasticsearch.ad.rest.*IT" --tests "com.amazon.opendistroforelasticsearch.ad.e2e.*IT" -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest" -Dhttps=true -Duser=admin -Dpassword=admin
+  
+  Test-Plugins-Without-Security:
+    needs: [Test-Plugins-With-Security]
+    name: Test-Plugins-Without-Security
+    runs-on: [self-hosted, Linux, X64, odfe-rpm]
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 14
+      
+      - name: Installing python
+        run: sudo yum install python37 -y
+      
+      - name: Getting OD version
+        run: |
+          OD_VERSION=`./bin/version-info --od`
+          echo "::set-env name=od_version::$OD_VERSION"
+      - name: Starting ES service
+        run: |
+          echo $JAVA_HOME
+          export PATH=$PATH:$JAVA_HOME
+          sudo systemctl stop elasticsearch.service  
+          
+          sudo /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro_security
+          sudo sed -i /^opendistro_security/d /etc/elasticsearch/elasticsearch.yml
+          sudo sed -i /CN=kirk/d /etc/elasticsearch/elasticsearch.yml
+          sudo sed -i /^cluster.routing.allocation.disk.threshold_enabled/d /etc/elasticsearch/elasticsearch.yml
+          sudo systemctl start elasticsearch.service
+          sleep 30
+          
+      - name: Retrieve plugin tags
+        run: |
+          echo ::set-env name=p_tag_ism::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)
+          echo ::set-env name=p_tag_alerting::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)
+          echo ::set-env name=p_tag_sql::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)
+          echo ::set-env name=p_tag_knn::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/k-NN)
+          echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)
+      - name: Checking out ISM repo
+        if: always()
+        uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/index-management
+          ref: ${{env.p_tag_ism}}
+
+      - name: IT for ISM
+        if: always()
+        run: |  
+          curl -XGET http://127.0.0.1:9200
+          export PATH=$PATH:$JAVA_HOME
+          cd $GITHUB_WORKSPACE/../index-management
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
+      - name: Checking out Alerting repo
+        if: always()
+        uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/alerting
+          ref: ${{env.p_tag_alerting}}
+
+      - name: IT for alerting
+        if: always()
+        run: |
+          curl -XGET http://127.0.0.1:9200
+          export PATH=$PATH:$JAVA_HOME
+          cd $GITHUB_WORKSPACE/../alerting
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
+      - name: Checking out SQL repo
+        if: always()
+        uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/sql
+          ref: ${{env.p_tag_sql}}
+      
+      - name: IT for SQL
+        if: always()
+        run: |
+          curl -XGET http://127.0.0.1:9200
           export PATH=$PATH:$JAVA_HOME
           cd $GITHUB_WORKSPACE/../sql
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
-
+          
+      - name: Checking out AD repo
+        if: always()
+        uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/anomaly-detection
+          ref: ${{env.p_tag_ad}}
+          
+      - name: IT for AD
+        if: always()
+        run: |
+          curl -XGET http://127.0.0.1:9200
+          export PATH=$PATH:$JAVA_HOME
+          cd $GITHUB_WORKSPACE/../anomaly-detection
+          ./gradlew :integTestRunner --tests "com.amazon.opendistroforelasticsearch.ad.rest.*IT" --tests "com.amazon.opendistroforelasticsearch.ad.e2e.*IT" -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
       - name: Checking out k-NN repo
         if: always()
         uses: actions/checkout@v1
@@ -270,12 +335,100 @@ jobs:
       - name: IT for KNN
         if: always()
         run: |
+          curl -XGET http://127.0.0.1:9200
           export PATH=$PATH:$JAVA_HOME
           cd $GITHUB_WORKSPACE/../k-NN
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
 
+  Test-Kibana-Plugins-Without-Security:
+    needs: [Test-Plugins-With-Security]
+    runs-on: [self-hosted, Linux, X64, odfe-rpm]
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 14
+      
+      - name: Installing python
+        run: sudo yum install python37 -y
+      
+      - name: Retrieve plugin tags and odfe versions
+        run: |
+          echo ::set-env name=od_version::$(./bin/version-info --od)
+          echo ::set-env name=es_version::$(./bin/version-info --es)
+          echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)
+      
+      - name: Starting ES and Kibana
+        run: |
+          echo $JAVA_HOME
+          export PATH=$PATH:$JAVA_HOME
+          sudo systemctl stop elasticsearch.service  
+          sudo systemctl start elasticsearch.service
+          sleep 30
+          curl -XGET http://127.0.0.1:9200
+          
+          echo "install kibana"
+          sudo yum install opendistroforelasticsearch-kibana-${{env.od_version}} -y
+          sudo /usr/share/kibana/bin/kibana-plugin remove opendistro_security --allow-root
+          sudo sed -i /^opendistro_security/d /etc/kibana/kibana.yml
+          sudo sed -i 's/https/http/' /etc/kibana/kibana.yml
+          sudo systemctl start kibana.service
+          sleep 120
+          curl -v http://127.0.0.1:5601
+     
+      - name: Checkout Kibana
+        uses: actions/checkout@v2
+        with:
+          repository: opendistro-for-elasticsearch/kibana-oss
+          ref: ${{env.es_version}}
+          token: ${{ secrets.READ_TOKEN }}
+          path: kibana
+      
+      - name: Get node and yarn versions
+        id: node_yarn_versions
+        run: |
+          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
+          . ~/.nvm/nvm.sh
+          nvm install node
+          
+          echo ::set-env name=kibana_node_version::$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")
+          echo ::set-env name=kibana_yarn_version::$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")   
+      
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{env.kibana_node_version}}
+          registry-url: 'https://registry.npmjs.org'
+      
+      - name: Install correct yarn version for Kibana
+        run: |
+          npm uninstall -g yarn
+          echo "Installing yarn ${{ env.kibana_yarn_version }}"
+          npm i -g yarn@${{ env.kibana_yarn_version }}
+      
+      - name: Checking out ad kibana repo
+        uses: actions/checkout@v2
+        with:
+          repository: opendistro-for-elasticsearch/anomaly-detection-kibana-plugin
+          ref: ${{env.p_tag_ad}}
+          path: kibana/plugins/anomaly-detection-kibana-plugin
+      
+       
+      - name: Bootstrap the AD kibana plugin
+        run: |
+          cd ./kibana/plugins/anomaly-detection-kibana-plugin
+          yarn kbn bootstrap
+              
+      - name: run IT for AD kibana plugin
+        uses: cypress-io/github-action@v1
+        with:
+          working-directory: kibana/plugins/anomaly-detection-kibana-plugin
+          command: yarn cy:run —config baseurl=http://localhost:5601
+      
   Cleaning-Host:
-    needs: [Test-All-Plugins]
+    needs: [Test-Kibana-Plugins-Without-Security]
     if: always()
     runs-on: ubuntu-latest
     steps:

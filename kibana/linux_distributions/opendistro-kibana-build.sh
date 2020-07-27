@@ -37,18 +37,10 @@ PACKAGE_NAME="opendistroforelasticsearch-kibana"
 TARGET_DIR="$ROOT/target"
 
 # Please DO NOT change the orders, they have dependencies
-PLUGINS="opendistro-sql-workbench/opendistro-sql-workbench-$OD_VERSION \
-         opendistro-anomaly-detection/opendistro-anomaly-detection-kibana-$OD_VERSION \
-         opendistro-security/opendistro_security_kibana_plugin-$OD_VERSION \
-         opendistro-alerting/opendistro-alerting-$OD_VERSION \
-         opendistro-index-management/opendistro_index_management_kibana-$OD_VERSION"
+PLUGINS=`$REPO_ROOT/bin/plugins-info kibana`
 
 basedir="${ROOT}/${PACKAGE_NAME}/plugins"
-PLUGINS_CHECKS="${basedir}/opendistro-sql-workbench \
-                ${basedir}/opendistro-anomaly-detection-kibana \
-                ${basedir}/opendistro_security \
-                ${basedir}/opendistro-alerting \
-                ${basedir}/opendistro_index_management_kibana"
+PLUGINS_CHECKS=`$REPO_ROOT/bin/plugins-info kibana | awk -F '/' '{print $2}' | sed "s@^@$basedir\/@g"`
 
 echo $ROOT
 
@@ -75,26 +67,14 @@ curl -Ls "https://artifacts.elastic.co/downloads/kibana/kibana-oss-$ES_VERSION-l
 echo "installing open distro plugins"
 for plugin_path in $PLUGINS
 do
-  plugin_latest=`aws s3api list-objects --bucket $S3_BUCKET --prefix "downloads/kibana-plugins/${plugin_path}" --query 'Contents[].[Key]' --output text | sort | tail -n 1`
+  plugin_latest=`aws s3api list-objects --bucket $S3_BUCKET --prefix "downloads/kibana-plugins/${plugin_path}-${OD_VERSION}" --query 'Contents[].[Key]' --output text | sort | tail -n 1`
   echo "installing $plugin_latest"
   $PACKAGE_NAME/bin/kibana-plugin --allow-root install "${ARTIFACTS_URL}/${plugin_latest}"
 done
 
-# Validation
-echo "validating that plugins has been installed"
+# List Plugins
+echo "List available plugins"
 ls -lrt $basedir
-
-for d in $PLUGINS_CHECKS; do
-  echo "$d"
-  if [ -d "$d" ]; then
-    echo "directoy "$d" is present"
-  else
-    echo "ERROR: "$d" is not present"
-    exit 1;
-  fi
-done
-
-echo "Results: validated that plugins has been installed"
 
 # Replace kibana.yml with default opendistro yml
 cp config/kibana.yml $PACKAGE_NAME/config
