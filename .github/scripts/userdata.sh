@@ -6,7 +6,7 @@ ES_VER=`$REPO_ROOT/bin/version-info --es`
 ODFE_VER=`$REPO_ROOT/bin/version-info --od`
 echo $ES_VER $ODFE_VER
 
-if [ "$#" -eq 0 ] || [ "$#" -gt 2 ] || [ -z "$1" ] || [ -z "$2" ]
+if [ "$#" -ne 2 ] || [ -z "$1" ] || [ -z "$2" ]
 then
     echo "Please assign 2 parameters when running this script"
     echo "Format for dispatch event: \"client_payload\": {

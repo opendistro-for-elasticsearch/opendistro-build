@@ -2,9 +2,9 @@
 set -e
 
 # This script allows users to manually assign parameters
-if [ "$#" -gt 2 ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]
+if [ "$#" -eq 0 ] || [ "$#" -gt 2 ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]
 then
-  echo "Please assign at most 2 parameters when running this script"
+  echo "Please assign at least 1 / at most 2 parameters when running this script"
   echo "Example: $0 \$GIT_REPONAME [\$OD_VERSION]"
   echo "Example: $0 \"opendistro-for-elasticsearch/opendistro-build\""
   echo "Example: $0 \"opendistro-for-elasticsearch/opendistro-build\" \"1.7.0\""
