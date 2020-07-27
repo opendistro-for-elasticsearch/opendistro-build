@@ -365,7 +365,7 @@ jobs:
         with:
           repository: opendistro-for-elasticsearch/kibana-oss
           ref: ${{env.es_version}}
-          token: ${{ secrets.READ_TOKEN }}
+          token: ${{ secrets.ODFE_RELEASE_BOT_PRIVATE_READ_WRITE_TOKEN }}
           path: kibana
            
       - uses: actions/checkout@v2
