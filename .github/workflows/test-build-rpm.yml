@@ -111,7 +111,7 @@ jobs:
         with:
           repository: opendistro-for-elasticsearch/opendistro-infra
           ref: jenkins-test
-          token: ${{ secrets.READ_TOKEN }}
+          token: ${{ secrets.ODFE_RELEASE_BOT_PRIVATE_READ_WRITE_TOKEN }}
       - name: Build Centos Docker Image
         env:
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
@@ -346,7 +346,7 @@ jobs:
         with:
           repository: opendistro-for-elasticsearch/kibana-oss
           ref: ${{env.es_version_kibana}}
-          token: ${{ secrets.READ_TOKEN }}
+          token: ${{ secrets.ODFE_RELEASE_BOT_PRIVATE_READ_WRITE_TOKEN }}
           path: kibana
 
       - name: Get node and yarn versions
