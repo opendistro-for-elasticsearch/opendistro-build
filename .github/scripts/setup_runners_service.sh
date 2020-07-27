@@ -11,7 +11,7 @@ fi
 
 SETUP_DISTRO=$1
 SETUP_ACTION=$2
-SETUP_PACKAGES="python37 git unzip wget jq"
+SETUP_PACKAGES="python3 git unzip wget jq"
 
 echo "install required packages"
 sudo apt install $SETUP_PACKAGES -y || sudo yum install $SETUP_PACKAGES -y
