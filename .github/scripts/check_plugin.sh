@@ -1,5 +1,27 @@
 #!/bin/bash
 
+###### Information ############################################################################
+# Name:          check_plugin.sh
+# Maintainer:    ODFE Infra Team
+# Email:         odfe-infra@amazon.com
+# Language:      Shell
+#
+# About:         This script is to check plugin artifacts availability for odfe distros
+#                It will send emails to odfe-release-process@amazon.com and a chime msg
+#                to inform user the status of the list of plugins
+#
+#                RED:    plugin artifact is NOT in S3 and corresponding repo has NO tag cut
+#                YELLOW: plugin artifact is NOT in S3 but corresponding repo has A tag cut
+#                GREEN:  plugin artifact is in S3
+#
+# Usage:         ./check_plugin.sh $PLUGIN_TYPES [$ODFE_VERSION]
+#                $PLUGIN_TYPES: zip,deb,rpm,kibana,clidvr,perftop (optional)
+#                $ODFE_VERSION: x.y.z (optional)
+#
+# Starting Date: 2020-05-29
+# Modified Date: 2020-07-30
+###############################################################################################
+
 # Please leave it commented as aws s3 will fail if no plugin presents
 #set -e
 

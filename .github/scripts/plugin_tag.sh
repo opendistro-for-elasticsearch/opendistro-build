@@ -1,4 +1,21 @@
 #!/bin/bash
+
+###### Information ############################################################################
+# Name:          plugin-tag.sh
+# Maintainer:    ODFE Infra Team
+# Email:         odfe-infra@amazon.com
+# Language:      Shell
+#
+# About:         Retrieve the latest tag of a specific repo based on certain filters on Git
+#
+# Usage:         ./plugin-tag.sh $GIT_REPONAME [$OD_VERSION]
+#                $GIT_REPONAME: <repo_owner>/<repo_name> (required)
+#                $OD_VERSION: ODFE Version (optional)
+#
+# Starting Date: 2020-06-17
+# Modified Date: 2020-07-30
+###############################################################################################
+
 set -e
 
 # This script allows users to manually assign parameters

@@ -1,5 +1,19 @@
 #!/bin/bash
 
+###### Information ############################################################################
+# Name:          userdata.sh
+# Maintainer:    ODFE Infra Team
+# Email:         odfe-infra@amazon.com
+# Language:      Shell
+#
+# About:         Send a Git dispatch event payload to trigger specific test domain setups
+#
+# Usage:         ./userdata.sh 
+#
+# Starting Date: 2020-06-24
+# Modified Date: 2020-07-30
+###############################################################################################
+
 set -e
 REPO_ROOT=`git rev-parse --show-toplevel`
 ES_VER=`$REPO_ROOT/bin/version-info --es`
