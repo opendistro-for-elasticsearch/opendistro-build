@@ -3,7 +3,6 @@
 ###### Information ############################################################################
 # Name:          check_plugin.sh
 # Maintainer:    ODFE Infra Team
-# Email:         odfe-infra@amazon.com
 # Language:      Shell
 #
 # About:         This script is to check plugin artifacts availability for odfe distros
