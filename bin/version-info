@@ -17,7 +17,6 @@
 ###### Information ############################################################################
 # Name:          version-info
 # Maintainer:    ODFE Infra Team
-# Email:         odfe-infra@amazon.com
 # Language:      Python
 #
 # About:         Print the ES/ODFE version for the current/previous branches
