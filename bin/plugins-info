@@ -1,4 +1,21 @@
 #!/bin/bash
+
+###### Information ############################################################################
+# Name:          plugins-info
+# Maintainer:    ODFE Infra Team
+# Language:      Shell
+#
+# About:         Print the ES/KIBANA plugin names and git urls with correct dependency orders
+#                as defined in the 'plugins.json' file
+#
+# Usage:         ./plugins-info $PLUGINS_TYPE [$RETURN_TYPE]
+#                $PLUGINS_TYPE: <check plugins.json> (required)
+#                $RETURN_TYPE: <default to name> | --git (optional)
+#
+# Starting Date: 2020-06-24
+# Modified Date: 2020-07-30
+###############################################################################################
+
 set -e
 ROOT=`dirname $(realpath $0)`;
 PLUGINS_LIST="$ROOT/plugins.json"

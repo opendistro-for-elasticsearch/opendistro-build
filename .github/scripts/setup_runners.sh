@@ -1,4 +1,55 @@
 #!/bin/bash
+
+###### Information ############################################################################
+# Name:          setup_runners.sh
+# Maintainer:    ODFE Infra Team
+# Language:      Shell
+#
+# About:         1. Run instances on EC2 based on parameters defined and wait for completion
+#                2. SSH to these instances and configure / bootstrap on $GIT_URL_REPO as runners
+#                3. Unbootstrap the runners and terminate the instances for cleanups
+#
+# Usage:         ./setup_runners.sh $ACTION $EC2_INSTANCE_NAMES $GITHUB_TOKEN
+#                $ACTION: run | terminate (required)
+#                $EC2_INSTANCE_NAMES: <names of instances> (required, sep ",")
+#                $GITHUB_TOKEN: GitHub PAT with repo scope and Admin Access to $GIT_URL_REPO
+#
+# Requirements:  The env that runs this script must have its AWS IAM with these configurations
+#                
+#                * SSM Role
+#                AmazonEC2RoleforSSM
+#                AmazonSSMManagedInstanceCore 
+#                
+#                * EC2 User with FullAccess Policy requires these policies to attach to SSM Role
+#                {
+#                    "Version": "2012-10-17",
+#                    "Statement": [
+#                        {
+#                            "Sid": "VisualEditor0",
+#                            "Effect": "Allow",
+#                            "Action": [
+#                                "ssm:SendCommand",
+#                                "iam:PassRole"
+#                            ],
+#                            "Resource": [
+#                                "arn:aws:ssm:*:*:document/*",
+#                                "arn:aws:ec2:*:*:instance/*",
+#                                "arn:aws:iam::<User ID>:role/<SSM Role Name>"
+#                            ]
+#                        },
+#                        {
+#                            "Sid": "VisualEditor1",
+#                            "Effect": "Allow",
+#                            "Action": "ssm:DescribeInstanceInformation",
+#                            "Resource": "*"
+#                        }
+#                    ]
+#                }
+#
+# Starting Date: 2020-07-27
+# Modified Date: 2020-07-30
+###############################################################################################
+
 set -e
 
 #####################################
