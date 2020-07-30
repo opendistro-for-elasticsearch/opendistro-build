@@ -3,7 +3,6 @@
 ###### Information ############################################################################
 # Name:          setup_runners_service.sh
 # Maintainer:    ODFE Infra Team
-# Email:         odfe-infra@amazon.com
 # Language:      Shell
 #
 # About:         Setup ES/KIBANA for integTests on *NIX based ODFE distros w/wo Security
