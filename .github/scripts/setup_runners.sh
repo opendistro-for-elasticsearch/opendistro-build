@@ -14,7 +14,7 @@
 #                $EC2_INSTANCE_NAMES: <names of instances> (required, sep ",")
 #                $GITHUB_TOKEN: GitHub PAT with repo scope and Admin Access to $GIT_URL_REPO
 #
-# Requirements:  The env that runs this script must have its AWS AMI with these configurations
+# Requirements:  The env that runs this script must have its AWS IAM with these configurations
 #                
 #                * SSM Role
 #                AmazonEC2RoleforSSM
