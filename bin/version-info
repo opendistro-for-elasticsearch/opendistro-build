@@ -14,11 +14,20 @@
 # permissions and limitations under the License.
 #
 
-# Description: 
-# Print the ES version for the current branch, as defined in
-# the 'version.json' file.
+###### Information ############################################################################
+# Name:          version-info
+# Maintainer:    ODFE Infra Team
+# Language:      Python
 #
-# The version can also be forced by setting the ELASTIC_VERSION environment variable.
+# About:         Print the ES/ODFE version for the current/previous branches
+#                as defined in the 'version.json' file
+#
+# Usage:         [python] ./version-info $VERSION_TYPE
+#                $VERSION_TYPE: --od | --od-prev | --es | --es-prev (required)
+#
+# Starting Date: 2019-05-15
+# Modified Date: 2020-07-30
+###############################################################################################
 
 import sys
 import json

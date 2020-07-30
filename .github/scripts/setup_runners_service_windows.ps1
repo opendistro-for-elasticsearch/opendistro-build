@@ -1,6 +1,21 @@
 #!/usr/bin/env pwsh
 
+###### Information ############################################################################
+# Name:          setup_runners_service_windows.ps1
+# Maintainer:    ODFE Infra Team
+# Language:      PowerShell
+#
+# About:         Setup ES/KIBANA for integTests on Windows based ODFE distros w/wo Security
+#
+# Usage:         ./setup_runners_service_windows.ps1 $SETUP_ACTION
+#                $SETUP_ACTION: --es | --es-nosec | --kibana | --kibana-nosec (required)
+#
+# Starting Date: 2020-07-27
+# Modified Date: 2020-07-30
+###############################################################################################
+
 # Keep the pwsh script running even with errors
+# Put this line before the .\gradlew.bat run
 #$ErrorActionPreference = 'SilentlyContinue'
 
 # setup user parameters

@@ -1,5 +1,20 @@
 #!/bin/bash
 
+###### Information ############################################################################
+# Name:          setup_runners_service.sh
+# Maintainer:    ODFE Infra Team
+# Language:      Shell
+#
+# About:         Setup ES/KIBANA for integTests on *NIX based ODFE distros w/wo Security
+#
+# Usage:         ./setup_runners_service.sh $SETUP_DISTRO $SETUP_ACTION
+#                $SETUP_DISTRO: tar | deb | rpm (required)
+#                $SETUP_ACTION: --es | --es-nosec | --kibana | --kibana-nosec (required)
+#
+# Starting Date: 2020-07-27
+# Modified Date: 2020-07-30
+###############################################################################################
+
 # This script allows users to manually assign parameters
 if [ "$#" -ne 2 ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]
 then
