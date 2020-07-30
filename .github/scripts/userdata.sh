@@ -3,7 +3,6 @@
 ###### Information ############################################################################
 # Name:          userdata.sh
 # Maintainer:    ODFE Infra Team
-# Email:         odfe-infra@amazon.com
 # Language:      Shell
 #
 # About:         This script is related to testing-domains set-up.
