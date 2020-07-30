@@ -3,7 +3,6 @@
 ###### Information ############################################################################
 # Name:          setup_runners.sh
 # Maintainer:    ODFE Infra Team
-# Email:         odfe-infra@amazon.com
 # Language:      Shell
 #
 # About:         1. Run instances on EC2 based on parameters defined and wait for completion
