@@ -7,7 +7,7 @@
 # Language:      Shell
 #
 # About:         This script is to check plugin artifacts availability for odfe distros
-#                It will send emails to odfe-release-process@amazon.com and a chime msg
+#                It will prepare emails to odfe-release-process@amazon.com and a chime msg
 #                to inform user the status of the list of plugins
 #
 #                RED:    plugin artifact is NOT in S3 and corresponding repo has NO tag cut

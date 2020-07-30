@@ -7,7 +7,7 @@
 # Language:      Shell
 #
 # About:         1. Run instances on EC2 based on parameters defined and wait for completion
-#                2. SSH to these instances and configure / bootstrap on Git as runners
+#                2. SSH to these instances and configure / bootstrap on $GIT_URL_REPO as runners
 #                3. Unbootstrap the runners and terminate the instances for cleanups
 #
 # Usage:         ./setup_runners.sh $ACTION $EC2_INSTANCE_NAMES $GITHUB_TOKEN

@@ -6,7 +6,7 @@
 # Email:         odfe-infra@amazon.com
 # Language:      Shell
 #
-# About:         Retrieve the latest tag of a specific repo based on certain filters on Git
+# About:         Retrieve the latest tag of a specific repo on Git based on certain filters
 #
 # Usage:         ./plugin-tag.sh $GIT_REPONAME [$OD_VERSION]
 #                $GIT_REPONAME: <repo_owner>/<repo_name> (required)
