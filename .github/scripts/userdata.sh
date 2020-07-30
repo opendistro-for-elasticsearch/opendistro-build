@@ -6,9 +6,16 @@
 # Email:         odfe-infra@amazon.com
 # Language:      Shell
 #
-# About:         Send a Git dispatch event payload to trigger specific test domain setups
+# About:         This script is related to testing-domains set-up.
+#                See https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/283
 #
-# Usage:         ./userdata.sh 
+#                In order to set-up domains, EC2 needs to have ES and Kibana running, 
+#                hence this script will act as userdata input to install and configure 
+#                the necessary services while installing the EC2 via AutoScaling Groups
+#
+# Usage:         ./userdata.sh $distribution $security
+#                $distribution: TAR | DEB | RPM (required)
+#                $security: ENABLE | DISABLE (required)
 #
 # Starting Date: 2020-06-24
 # Modified Date: 2020-07-30
