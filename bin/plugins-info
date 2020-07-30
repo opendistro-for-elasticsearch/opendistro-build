@@ -3,7 +3,6 @@
 ###### Information ############################################################################
 # Name:          plugins-info
 # Maintainer:    ODFE Infra Team
-# Email:         odfe-infra@amazon.com
 # Language:      Shell
 #
 # About:         Print the ES/KIBANA plugin names and git urls with correct dependency orders
