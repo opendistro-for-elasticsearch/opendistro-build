@@ -5,7 +5,7 @@
 # Maintainer:    ODFE Infra Team
 # Language:      Shell
 #
-# About:         Retrieve the latest tag of a specific repo on Git based on certain filters
+# About:         Retrieve the latest tag of a specific repo on Git based on user parameters
 #
 # Usage:         ./plugin-tag.sh $GIT_REPONAME [$OD_VERSION]
 #                $GIT_REPONAME: <repo_owner>/<repo_name> (required)
