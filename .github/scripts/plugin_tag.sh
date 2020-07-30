@@ -3,7 +3,6 @@
 ###### Information ############################################################################
 # Name:          plugin-tag.sh
 # Maintainer:    ODFE Infra Team
-# Email:         odfe-infra@amazon.com
 # Language:      Shell
 #
 # About:         Retrieve the latest tag of a specific repo on Git based on certain filters
