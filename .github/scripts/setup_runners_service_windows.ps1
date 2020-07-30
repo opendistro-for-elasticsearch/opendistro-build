@@ -3,7 +3,6 @@
 ###### Information ############################################################################
 # Name:          setup_runners_service_windows.ps1
 # Maintainer:    ODFE Infra Team
-# Email:         odfe-infra@amazon.com
 # Language:      PowerShell
 #
 # About:         Setup ES/KIBANA for integTests on Windows based ODFE distros w/wo Security
