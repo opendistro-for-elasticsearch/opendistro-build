@@ -4,7 +4,7 @@ on:
   #schedule:
   #  - cron: '0 10 * * *'
   repository_dispatch:
-    types: [test-build-rpm]
+    types: [staging-build-rpm]
 
 jobs:
   plugin-availability:
@@ -111,7 +111,7 @@ jobs:
         with:
           repository: opendistro-for-elasticsearch/opendistro-infra
           ref: jenkins-test
-          token: ${{ secrets.ODFE_RELEASE_BOT_PRIVATE_READ_WRITE_TOKEN }}
+          token: ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
       - name: Build Centos Docker Image
         env:
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
@@ -178,48 +178,6 @@ jobs:
           RUNNERS+="odfe-rpm-ad-kibana-nosec"
           .github/scripts/setup_runners.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
 
-  Test-SQL:
-    needs: [Provision-Runners]
-    name: Test-SQL
-    runs-on: [self-hosted, Linux, X64, odfe-rpm-sql]
-    steps:
-      - uses: actions/checkout@v1
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: 14
-      - name: Starting ES service and retrieve tags
-        run: echo ::set-env name=p_tag_sql::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql); .github/scripts/setup_runners_service.sh rpm --es
-      - uses: actions/checkout@v1
-        with:
-          repository: opendistro-for-elasticsearch/sql
-          ref: ${{env.p_tag_sql}}
-      - name: IT for SQL
-        run: |
-          curl -XGET https://127.0.0.1:9200 -u admin:admin --insecure; export PATH=$PATH:$JAVA_HOME; cd $GITHUB_WORKSPACE/../sql
-          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin
-
-  Test-AD:
-    needs: [Provision-Runners]
-    name: Test-AD
-    runs-on: [self-hosted, Linux, X64, odfe-rpm-ad]
-    steps:
-      - uses: actions/checkout@v1
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: 14
-      - name: Starting ES service and retrieve tags
-        run: echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection); .github/scripts/setup_runners_service.sh rpm --es
-      - uses: actions/checkout@v1
-        with:
-          repository: opendistro-for-elasticsearch/anomaly-detection
-          ref: ${{env.p_tag_ad}}
-      - name: IT for AD
-        run: |
-          curl -XGET https://127.0.0.1:9200 -u admin:admin --insecure; export PATH=$PATH:$JAVA_HOME; cd $GITHUB_WORKSPACE/../anomaly-detection
-          ./gradlew :integTestRunner --tests "com.amazon.opendistroforelasticsearch.ad.rest.*IT" --tests "com.amazon.opendistroforelasticsearch.ad.e2e.*IT" -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest" -Dhttps=true -Duser=admin -Dpassword=admin
-
   Test-ISM-NoSec:
     needs: [Provision-Runners]
     name: Test-ISM-NoSec
@@ -238,7 +196,7 @@ jobs:
           ref: ${{env.p_tag_ism_nosec}}
       - name: IT for ISM NoSec
         run: |
-          curl -XGET http://127.0.0.1:9200; export PATH=$PATH:$JAVA_HOME; cd $GITHUB_WORKSPACE/../index-management
+          export PATH=$PATH:$JAVA_HOME; cd $GITHUB_WORKSPACE/../index-management; pwd
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
   
   Test-ALERTING-NoSec:
@@ -259,7 +217,7 @@ jobs:
           ref: ${{env.p_tag_alerting_nosec}}
       - name: IT for ALERTING NoSec
         run: |
-          curl -XGET http://127.0.0.1:9200; export PATH=$PATH:$JAVA_HOME; cd $GITHUB_WORKSPACE/../alerting
+          export PATH=$PATH:$JAVA_HOME; cd $GITHUB_WORKSPACE/../alerting; pwd
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
 
   Test-SQL-NoSec:
@@ -280,7 +238,7 @@ jobs:
           ref: ${{env.p_tag_sql_nosec}}
       - name: IT for SQL NoSec
         run: |
-          curl -XGET http://127.0.0.1:9200; export PATH=$PATH:$JAVA_HOME; cd $GITHUB_WORKSPACE/../sql
+          export PATH=$PATH:$JAVA_HOME; cd $GITHUB_WORKSPACE/../sql; pwd
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
 
   Test-KNN-NoSec:
@@ -301,7 +259,7 @@ jobs:
           ref: ${{env.p_tag_knn_nosec}}
       - name: IT for KNN NoSec
         run: |
-          curl -XGET http://127.0.0.1:9200; export PATH=$PATH:$JAVA_HOME; cd $GITHUB_WORKSPACE/../k-NN
+          export PATH=$PATH:$JAVA_HOME; cd $GITHUB_WORKSPACE/../k-NN; pwd
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
 
   Test-AD-NoSec:
@@ -322,8 +280,50 @@ jobs:
           ref: ${{env.p_tag_ad_nosec}}
       - name: IT for AD NoSec
         run: |
-          curl -XGET http://127.0.0.1:9200; export PATH=$PATH:$JAVA_HOME; cd $GITHUB_WORKSPACE/../anomaly-detection
+          export PATH=$PATH:$JAVA_HOME; cd $GITHUB_WORKSPACE/../anomaly-detection; pwd
           ./gradlew :integTestRunner --tests "com.amazon.opendistroforelasticsearch.ad.rest.*IT" --tests "com.amazon.opendistroforelasticsearch.ad.e2e.*IT" -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
+
+  Test-SQL:
+    needs: [Provision-Runners]
+    name: Test-SQL
+    runs-on: [self-hosted, Linux, X64, odfe-rpm-sql]
+    steps:
+      - uses: actions/checkout@v1
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 14
+      - name: Starting ES service and retrieve tags
+        run: echo ::set-env name=p_tag_sql::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql); .github/scripts/setup_runners_service.sh rpm --es
+      - uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/sql
+          ref: ${{env.p_tag_sql}}
+      - name: IT for SQL
+        run: |
+          export PATH=$PATH:$JAVA_HOME; cd $GITHUB_WORKSPACE/../sql; pwd
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin
+
+  Test-AD:
+    needs: [Provision-Runners]
+    name: Test-AD
+    runs-on: [self-hosted, Linux, X64, odfe-rpm-ad]
+    steps:
+      - uses: actions/checkout@v1
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 14
+      - name: Starting ES service and retrieve tags
+        run: echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection); .github/scripts/setup_runners_service.sh rpm --es
+      - uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/anomaly-detection
+          ref: ${{env.p_tag_ad}}
+      - name: IT for AD
+        run: |
+          export PATH=$PATH:$JAVA_HOME; cd $GITHUB_WORKSPACE/../anomaly-detection; pwd
+          ./gradlew :integTestRunner --tests "com.amazon.opendistroforelasticsearch.ad.rest.*IT" --tests "com.amazon.opendistroforelasticsearch.ad.e2e.*IT" -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest" -Dhttps=true -Duser=admin -Dpassword=admin
 
   Test-AD-KIBANA-NoSec:
     needs: [Provision-Runners]
@@ -339,14 +339,14 @@ jobs:
         run: |
           echo ::set-env name=es_version_kibana::$(python ./bin/version-info --es)
           echo ::set-env name=p_tag_ad_kibana_nosec::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)
-          .github/scripts/setup_runners_service.sh rpm --kibana-nosec; curl -XGET http://127.0.0.1:9200; curl -v http://127.0.0.1:5601
+          .github/scripts/setup_runners_service.sh rpm --kibana-nosec
 
       - name: Checkout Kibana
         uses: actions/checkout@v2
         with:
           repository: opendistro-for-elasticsearch/kibana-oss
           ref: ${{env.es_version_kibana}}
-          token: ${{ secrets.ODFE_RELEASE_BOT_PRIVATE_READ_WRITE_TOKEN }}
+          token: ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
           path: kibana
 
       - name: Get node and yarn versions
