@@ -8,7 +8,7 @@
 # About:         Setup ES/KIBANA for integTests on *NIX based ODFE distros w/wo Security
 #
 # Usage:         ./setup_runners_service.sh $SETUP_DISTRO $SETUP_ACTION
-#                $SETUP_DISTRO: zip | deb | rpm (required)
+#                $SETUP_DISTRO: tar | deb | rpm (required)
 #                $SETUP_ACTION: --es | --es-nosec | --kibana | --kibana-nosec (required)
 #
 # Requirements:  This script assumes java 14 is already installed on the servers
@@ -22,7 +22,7 @@ if [ "$#" -ne 2 ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]
 then
   echo "Please assign 2 parameters when running this script"
   echo "Example: $0 \$SETUP_DISTRO \$SETUP_ACTION"
-  echo "Example: $0 \"zip | deb | rpm\" \"--es | --es-nosec | --kibana | --kibana-nosec\""
+  echo "Example: $0 \"tar | deb | rpm\" \"--es | --es-nosec | --kibana | --kibana-nosec\""
   exit 1
 fi
 
@@ -59,11 +59,11 @@ which java
 java -version
 sudo sysctl -w vm.max_map_count=262144
 
-if [ "$SETUP_DISTRO" = "zip" ]
+if [ "$SETUP_DISTRO" = "tar" ]
 then
   mkdir -p $ES_ROOT
   aws s3 cp s3://$S3_BUCKET/downloads/tarball/opendistro-elasticsearch/$ES_PACKAGE_NAME.tar.gz . --quiet; echo $?
-  tar -zxf $ES_PACKAGE_NAME.tar.gz -C $ES_ROOT --strip 1
+  tar -zxf $ES_PACKAGE_NAME.tar.gz $ES_ROOT --strip 1
 fi
 
 if [ "$SETUP_DISTRO" = "deb" ]
@@ -77,6 +77,22 @@ then
   sudo dpkg -i elasticsearch-oss-$ES_VERSION-amd64.deb
   sudo apt update -y
   sudo apt install -y opendistroforelasticsearch=$OD_VERSION*
+
+  ############################
+  sudo apt install cmake g++ git rpm -y
+  export JAVA_HOME=/usr/share/elasticsearch/jdk
+  git clone https://github.com/opendistro-for-elasticsearch/k-NN.git
+  cd k-NN
+  git fetch
+  git checkout opendistro-1.9
+  cd jni
+  cmake .
+  make package
+
+  sudo apt remove opendistro-knnlib -y
+  sudo dpkg -i packages/opendistro-knnlib-1.9.0.0-0.1_linux.x86_64.deb
+  sudo apt install opendistro-knn -y  
+
 fi
 
 if [ "$SETUP_DISTRO" = "rpm" ]
@@ -91,12 +107,10 @@ fi
 echo "setup es"
 
 # everything needs es
-if [ "$SETUP_DISTRO" = "zip" ]
+if [ "$SETUP_DISTRO" = "tar" ]
 then
   sed -i /install_demo_configuration/d $ES_ROOT/opendistro-tar-install.sh
   sed -i /^node.max_local_storage_nodes/d $ES_ROOT/config/elasticsearch.yml
-  mkdir -p snapshots
-  echo "path.repo: [\"$PWD/snapshots\"]" >> $ES_ROOT/config/elasticsearch.yml
 else
   sudo mkdir -p /home/repo
   sudo chmod 777 /home/repo
@@ -107,14 +121,13 @@ fi
 
 if [ "$SETUP_ACTION" = "--es" ]
 then
-  if [ "$SETUP_DISTRO" = "zip" ]
+  if [ "$SETUP_DISTRO" = "tar" ]
   then
     cd $ES_ROOT
-    nohup ./opendistro-tar-install.sh > /dev/null 2>&1 &
+    nohup ./opendistro-tar-install.sh &
   else
     sudo systemctl restart elasticsearch.service
   fi
-  echo "Sleep 120 seconds"
   sleep 120
   curl -XGET https://localhost:9200 -u admin:admin --insecure
   curl -XGET https://localhost:9200/_cluster/health?pretty -u admin:admin --insecure
@@ -130,7 +143,7 @@ if [ "$SETUP_ACTION" = "--es-nosec" ] || [ "$SETUP_ACTION" = "--kibana-nosec" ]
 then
   echo "remove es security"
 
-  if [ "$SETUP_DISTRO" = "zip" ]
+  if [ "$SETUP_DISTRO" = "tar" ]
   then
     $ES_ROOT/bin/elasticsearch-plugin remove opendistro_security
     sed -i '/http\.port/s/^# *//' $ES_ROOT/config/elasticsearch.yml
@@ -145,14 +158,13 @@ fi
 
 if [ "$SETUP_ACTION" = "--es-nosec" ]
 then
-  if [ "$SETUP_DISTRO" = "zip" ]
+  if [ "$SETUP_DISTRO" = "tar" ]
   then
     cd $ES_ROOT
-    nohup ./opendistro-tar-install.sh > /dev/null 2>&1 &
+    nohup ./opendistro-tar-install.sh &
   else
     sudo systemctl restart elasticsearch.service
   fi
-  echo "Sleep 120 seconds"
   sleep 120
   curl -XGET http://localhost:9200
   curl -XGET http://localhost:9200/_cluster/health?pretty
@@ -168,7 +180,7 @@ if [ "$SETUP_ACTION" = "--kibana" ] || [ "$SETUP_ACTION" = "--kibana-nosec" ]
 then
   echo "setup kibana"
 
-  if [ "$SETUP_DISTRO" = "zip" ]
+  if [ "$SETUP_DISTRO" = "tar" ]
   then
     mkdir -p $KIBANA_ROOT
     aws s3 cp s3://$S3_BUCKET/downloads/tarball/$KIBANA_PACKAGE_NAME/$KIBANA_PACKAGE_NAME-$OD_VERSION.tar.gz . --quiet; echo $?
@@ -180,17 +192,16 @@ fi
 
 if [ "$SETUP_ACTION" = "--kibana" ]
 then
-  if [ "$SETUP_DISTRO" = "zip" ]
+  if [ "$SETUP_DISTRO" = "tar" ]
   then
     cd $ES_ROOT
-    nohup ./opendistro-tar-install.sh > /dev/null 2>&1 &
+    nohup ./opendistro-tar-install.sh &
     cd $KIBANA_ROOT
-    nohup ./bin/kibana > /dev/null 2>&1 &
+    nohup ./bin/kibana &
   else
     sudo systemctl restart elasticsearch.service
     sudo systemctl restart kibana.service
   fi
-  echo "Sleep 120 seconds"
   sleep 120
   curl -XGET https://localhost:9200 -u admin:admin --insecure
   curl -XGET https://localhost:9200/_cluster/health?pretty -u admin:admin --insecure
@@ -208,16 +219,16 @@ if [ "$SETUP_ACTION" = "--kibana-nosec" ]
 then
   echo "remove kibana security"
 
-  if [ "$SETUP_DISTRO" = "zip" ]
+  if [ "$SETUP_DISTRO" = "tar" ]
   then
     $KIBANA_ROOT/bin/kibana-plugin remove opendistro_security 
     sed -i /^opendistro_security/d $KIBANA_ROOT/config/kibana.yml
     sed -i 's/https/http/' $KIBANA_ROOT/config/kibana.yml
 
     cd $ES_ROOT
-    nohup ./opendistro-tar-install.sh > /dev/null 2>&1 &
+    nohup ./opendistro-tar-install.sh &
     cd $KIBANA_ROOT
-    nohup ./bin/kibana > /dev/null 2>&1 &
+    nohup ./bin/kibana &
   else
     sudo /usr/share/kibana/bin/kibana-plugin remove opendistro_security --allow-root
     sudo sed -i /^opendistro_security/d /etc/kibana/kibana.yml
@@ -225,14 +236,14 @@ then
     sudo systemctl restart elasticsearch.service
     sudo systemctl restart kibana.service
   fi
-  echo "Sleep 120 seconds"
-  sleep 120
-  curl -XGET http://localhost:9200
-  curl -XGET http://localhost:9200/_cluster/health?pretty
-  curl -v -XGET http://localhost:5601
-  curl -v -XGET http://localhost:5601/api/status
-  echo "es & kibana-nosec start"
+
+    sleep 120
+    curl -XGET http://localhost:9200
+    curl -XGET http://localhost:9200/_cluster/health?pretty
+    curl -v -XGET http://localhost:5601
+    curl -v -XGET http://localhost:5601/api/status
+    echo "es & kibana-nosec start"
   cd $REPO_ROOT
-  exit 0
+    exit 0
 fi
 

@@ -111,9 +111,9 @@ jobs:
           .github\scripts\setup_runners_service_windows.ps1 --es-nosec
           $ErrorActionPreference = 'SilentlyContinue'
           echo running tests
-          cd ..\alerting
+          cd ..\alerting\alerting
           dir
-          ./gradlew.bat integTest -D tests.rest.cluster=localhost:9200 -D tests.cluster=localhost:9200 -D tests.clustername=es-integrationtest --stacktrace
+          ../gradlew.bat integTest -D tests.rest.cluster=localhost:9200 -D tests.cluster=localhost:9200 -D tests.clustername=es-integrationtest --stacktrace
 
   Test-SQL-NoSec:
     needs: [build-es-artifacts, build-kibana-artifacts]
@@ -314,4 +314,4 @@ jobs:
           dir
           npx cypress verify
           cd ./kibana/plugins/anomaly-detection-kibana-plugin
-          yarn cy:run —config baseurl=http://localhost:5601
+          yarn cy:run --config baseurl=http://localhost:5601
