@@ -14,7 +14,7 @@
 # Requirements:  This script assumes java 14 is already installed on the servers
 #
 # Starting Date: 2020-07-27
-# Modified Date: 2020-07-30
+# Modified Date: 2020-08-02
 ###############################################################################################
 
 # This script allows users to manually assign parameters
