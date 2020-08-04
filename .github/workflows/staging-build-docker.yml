@@ -87,209 +87,6 @@ jobs:
         # Optional content type:
         content_type: text/html
           
-  test-es-plugins-without-security:
-    needs: [build-es-docker]
-    strategy:
-      matrix:
-        java: [14]
-    name: test-es-plugins-without-security
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v1
-
-    - name: Retrieve plugin tags
-      run: |
-        echo ::set-env name=p_tag_ism::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)
-        echo ::set-env name=p_tag_alerting::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)
-        echo ::set-env name=p_tag_sql::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)
-        echo ::set-env name=p_tag_knn::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/k-NN)
-        echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)
-        
-    - name: Checkout ISM
-      uses: actions/checkout@v1
-      with:
-        repository: opendistro-for-elasticsearch/index-management
-        ref: ${{env.p_tag_ism}}
-
-    - name: Checkout Alerting
-      uses: actions/checkout@v1
-      with:
-        repository: opendistro-for-elasticsearch/alerting
-        ref: ${{env.p_tag_alerting}}
-
-    - name: Checkout SQL
-      uses: actions/checkout@v1
-      with:
-        repository: opendistro-for-elasticsearch/sql
-        ref: ${{env.p_tag_sql}}
-        
-    - name: Checkout k-NN
-      uses: actions/checkout@v1
-      with:
-        repository: opendistro-for-elasticsearch/k-NN
-        ref: ${{env.p_tag_knn}}
-  
-    - name: Checkout AD
-      uses: actions/checkout@v1
-      with:
-        repository: opendistro-for-elasticsearch/anomaly-detection
-        ref: ${{env.p_tag_ad}}
-       
-    - name: Configure AWS
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
-
-    - name: Set Up JDK ${{ matrix.java }}
-      uses: actions/setup-java@v1
-      with:
-        java-version: ${{ matrix.java }}
-
-    - name: Start ES Container without Security
-      run: |
-        ODFE_VER=`./bin/version-info --od`
-        echo "ODFE VERSION $ODFE_VER"
-        cd ..
-        DOCKER_NAME=odfe-test-$ODFE_VER
-        echo "Running newly tagged image with no security"
-        echo "FROM opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER" >> Dockerfile
-        echo "RUN /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro_security" >> Dockerfile
-        echo "RUN echo ''  >> /usr/share/elasticsearch/config/elasticsearch.yml" >> Dockerfile
-        echo "RUN echo \"path.repo: [\\\"/usr/share/elasticsearch\\\"]\" >> /usr/share/elasticsearch/config/elasticsearch.yml" >> Dockerfile
-        docker build -t odfe-http:no-security .
-        sleep 5
- 
-        docker run -p 9200:9200 -d -p 9600:9600 -e "discovery.type=single-node" --name $DOCKER_NAME odfe-http:no-security
-        sleep 30
-        curl -XGET http://localhost:9200/_cat/plugins 
-
-    - name: Test ISM Plugin
-      if: always()
-      run: | 
-        cd ../index-management
-        ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
-
-    - name: Test Alerting Plugin
-      if: always()
-      run: |
-        cd ../alerting/alerting
-        ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
-        
-    - name: Test SQL Plugin
-      if: always()
-      run: |
-        cd ../sql
-        ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
-        
-    - name: Test k-NN Plugin
-      if: always()
-      run: |
-        cd ../k-NN
-        ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
-        
-    - name: Test AD Plugin
-      if: always()
-      run: |
-        cd ../anomaly-detection
-        ./gradlew :integTestRunner --tests "com.amazon.opendistroforelasticsearch.ad.rest.*IT" --tests "com.amazon.opendistroforelasticsearch.ad.e2e.*IT" -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
- 
-  test-es-plugins-with-security:
-    needs: [build-es-docker]
-    strategy:
-      matrix:
-        java: [14]
-    name: test-es-plugins-with-security
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v1
-
-    - name: Retrieve plugin tags
-      run: |
-        echo ::set-env name=p_tag_ism::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)
-        echo ::set-env name=p_tag_alerting::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)
-        echo ::set-env name=p_tag_sql::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)
-        echo ::set-env name=p_tag_knn::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/k-NN)
-        echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)
-        
-    - name: Checkout ISM
-      uses: actions/checkout@v1
-      with:
-        repository: opendistro-for-elasticsearch/index-management
-        ref: ${{env.p_tag_ism}}
-
-    - name: Checkout Alerting
-      uses: actions/checkout@v1
-      with:
-        repository: opendistro-for-elasticsearch/alerting
-        ref: ${{env.p_tag_alerting}}
-
-    - name: Checkout SQL
-      uses: actions/checkout@v1
-      with:
-        repository: opendistro-for-elasticsearch/sql
-        ref: ${{env.p_tag_sql}}
-        
-    - name: Checkout k-NN
-      uses: actions/checkout@v1
-      with:
-        repository: opendistro-for-elasticsearch/k-NN
-        ref: ${{env.p_tag_knn}}
-  
-    - name: Checkout AD
-      uses: actions/checkout@v1
-      with:
-        repository: opendistro-for-elasticsearch/anomaly-detection
-        ref: ${{env.p_tag_ad}}
-       
-    - name: Configure AWS
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
-
-    - name: Set Up JDK ${{ matrix.java }}
-      uses: actions/setup-java@v1
-      with:
-        java-version: ${{ matrix.java }}
-
-    - name: Start ES Container with Security
-      run: |
-        ODFE_VER=`./bin/version-info --od`
-        echo "ODFE VERSION $ODFE_VER"
-        cd ..
-        DOCKER_NAME=odfe-test-$ODFE_VER
-        echo "Running newly tagged image with security"
-        echo "FROM opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER" >> Dockerfile
-        echo "RUN echo ''  >> /usr/share/elasticsearch/config/elasticsearch.yml" >> Dockerfile
-        echo "RUN echo \"path.repo: [\\\"/usr/share/elasticsearch\\\"]\" >> /usr/share/elasticsearch/config/elasticsearch.yml" >> Dockerfile
-        docker build -t odfe-http:security .
-        sleep 5
- 
-        docker run -p 9200:9200 -d -p 9600:9600 -e "discovery.type=single-node" --name $DOCKER_NAME odfe-http:security
-        sleep 30
-        curl -XGET https://localhost:9200/_cat/plugins -u admin:admin --insecure
-        
-        echo "Temp Solution to remove the wrong configuration. need be fixed in building stage" 
-        docker exec -t $DOCKER_NAME /bin/bash -c "sed -i /^node.max_local_storage_nodes/d /usr/share/elasticsearch/config/elasticsearch.yml"
-        docker restart $DOCKER_NAME
-        sleep 30
-        curl -XGET https://localhost:9200/_cat/plugins -u admin:admin --insecure
-        
-    - name: Test SQL Plugin
-      if: always()
-      run: |
-        cd ../sql
-        ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin
-        
-    - name: Test AD Plugin
-      if: always()
-      run: |
-        cd ../anomaly-detection
-        ./gradlew :integTestRunner --tests "com.amazon.opendistroforelasticsearch.ad.rest.*IT" --tests "com.amazon.opendistroforelasticsearch.ad.e2e.*IT" -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest" -Dhttps=true -Duser=admin -Dpassword=admin
-
   build-kibana-docker:
     runs-on: [ubuntu-16.04]
     name: Build Kibana Docker
@@ -346,6 +143,206 @@ jobs:
           # Optional content type:
           content_type: text/html
   
+  Test-ISM-NoSec:
+    needs: [build-es-docker]
+    runs-on: [ubuntu-latest]
+    name: Test-ISM-NoSec
+    strategy:
+      matrix:
+        java: [14]
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Retrieve plugin tags 
+        run:  echo ::set-env name=p_tag_ism::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)
+
+      - uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/index-management
+          ref: ${{env.p_tag_ism}}
+
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+
+      - name: IT
+        run: |
+          .github/scripts/setup_runners_service.sh docker --es-nosec
+          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../index-management; pwd
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
+          
+
+  Test-ALERTING-NoSec:
+    needs: [build-es-docker]
+    runs-on: [ubuntu-latest]
+    name: Test-ALERTING-NoSec
+    strategy:
+      matrix:
+        java: [14]
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Retrieve plugin tags 
+        run:  echo ::set-env name=p_tag_alerting::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)
+
+      - uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/alerting
+          ref: ${{env.p_tag_alerting}}
+
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+
+      - name: IT
+        run: |
+          .github/scripts/setup_runners_service.sh docker --es-nosec
+          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../alerting/alerting; pwd
+          ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
+          
+  Test-SQL-NoSec:
+    needs: [build-es-docker]
+    runs-on: [ubuntu-latest]
+    name: Test-SQL-NoSec
+    strategy:
+      matrix:
+        java: [14]
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Retrieve plugin tags 
+        run:  echo ::set-env name=p_tag_sql::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)
+
+      - uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/sql
+          ref: ${{env.p_tag_sql}}
+
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+
+      - name: IT
+        run: |
+          .github/scripts/setup_runners_service.sh docker --es-nosec
+          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../sql; pwd
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
+  
+  Test-KNN-NoSec:
+    needs: [build-es-docker]
+    runs-on: [ubuntu-latest]
+    name: Test-KNN-NoSec
+    strategy:
+      matrix:
+        java: [14]
+    steps:
+      - uses: actions/checkout@v1
+      - name: Retrieve plugin tags 
+        run:  echo ::set-env name=p_tag_knn::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/k-NN)
+      - uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/k-NN
+          ref: ${{env.p_tag_knn}}
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+      - name: IT
+        run: |
+          .github/scripts/setup_runners_service.sh docker --es-nosec
+          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../k-NN; pwd
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
+   
+  Test-AD-NoSec:
+    needs: [build-es-docker]
+    runs-on: [ubuntu-latest]
+    name: Test-AD-NoSec
+    strategy:
+      matrix:
+        java: [14]
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Retrieve plugin tags 
+        run:  echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)
+
+      - uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/anomaly-detection
+          ref: ${{env.p_tag_ad}}
+
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+
+      - name: IT
+        run: |
+          .github/scripts/setup_runners_service.sh docker --es-nosec
+          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../anomaly-detection; pwd
+          ./gradlew :integTestRunner --tests "com.amazon.opendistroforelasticsearch.ad.rest.*IT" --tests "com.amazon.opendistroforelasticsearch.ad.e2e.*IT" -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest"
+
+  Test-SQL:
+    needs: [build-es-docker]
+    runs-on: [ubuntu-latest]
+    name: Test-SQL
+    strategy:
+      matrix:
+        java: [14]
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Retrieve plugin tags
+        run:  echo ::set-env name=p_tag_sql::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)
+
+      - uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/sql
+          ref: ${{env.p_tag_sql}}
+
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+
+      - name: IT
+        run: |
+          .github/scripts/setup_runners_service.sh docker --es
+          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../sql; pwd
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin
+
+  Test-AD:
+    needs: [build-es-docker]
+    runs-on: [ubuntu-latest]
+    name: Test-AD
+    strategy:
+      matrix:
+        java: [14]
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Retrieve plugin tags
+        run:  echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)
+
+      - uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/anomaly-detection
+          ref: ${{env.p_tag_ad}}
+
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+
+      - name: IT
+        run: |
+          .github/scripts/setup_runners_service.sh docker --es
+          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../anomaly-detection; pwd
+          ./gradlew :integTestRunner --tests "com.amazon.opendistroforelasticsearch.ad.rest.*IT" --tests "com.amazon.opendistroforelasticsearch.ad.e2e.*IT" -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest" -Dhttps=true -Duser=admin -Dpassword=admin 
+
   Test-AD-Kibana-Plugin:
     needs: [build-es-docker, build-kibana-docker]
     runs-on: [ubuntu-16.04]
@@ -403,32 +400,7 @@ jobs:
           yarn kbn bootstrap
           
       - name: Start ES and Kibana
-        run: |
-          ODFE_VER=`./bin/version-info --od`
-          echo "ODFE VERSION $ODFE_VER"
-          cd ..
-          DOCKER_NAME=odfe-test-$ODFE_VER
-          echo "Running newly tagged es image with no security"
-          echo "FROM opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER" >> Dockerfile
-          echo "RUN /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro_security" >> Dockerfile
-          echo "RUN echo ''  >> /usr/share/elasticsearch/config/elasticsearch.yml" >> Dockerfile
-          echo "RUN echo \"path.repo: [\\\"/usr/share/elasticsearch\\\"]\" >> /usr/share/elasticsearch/config/elasticsearch.yml" >> Dockerfile
-          docker build -t odfe-http:no-security .
-          sleep 5
-          docker run -p 9200:9200 -d -p 9600:9600 -e "discovery.type=single-node" --name $DOCKER_NAME odfe-http:no-security
-          sleep 30
-          curl -XGET http://localhost:9200/
-          
-          echo "Running newly tagged kibana image with no security"
-          echo "FROM opendistroforelasticsearch/opendistroforelasticsearch-kibana:$ODFE_VER" >> Dockerfile
-          echo "RUN /usr/share/kibana/bin/kibana-plugin remove opendistro_security" >> Dockerfile
-          echo "RUN sed -i /^opendistro_security/d /usr/share/kibana/config/kibana.yml" >> Dockerfile
-          echo "RUN sed -i 's/https/http/' /usr/share/kibana/config/kibana.yml" >> Dockerfile
-          docker build -t odfe-kibana-http:no-security .
-          sleep 5
-          docker run -d --name odfe-kibana-it --network="host" odfe-kibana-http:no-security
-          sleep 120
-          curl -v http://127.0.0.1:5601
+        run: .github/scripts/setup_runners_service.sh docker --kibana-nosec
           
       - name: run IT
         uses: cypress-io/github-action@v1
