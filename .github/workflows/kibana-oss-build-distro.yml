@@ -27,4 +27,4 @@ jobs:
           #!/bin/bash
           export OSS_S3_PATH=${{ secrets.OSS_S3_PATH }};
           export OSS_S3_PATH_2=${{ secrets.OSS_S3_PATH_2 }} ;
-          apt install -y jq; ./kibana/linux_distributions/opendistro-kibana-oss-build.sh
+          apt install -y jq; ./kibana/linux_distributions/opendistro-kibana-oss-build.sh;
