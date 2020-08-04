@@ -2,7 +2,7 @@ name: Sync ami artifacts to Prod
 
 on: 
   repository_dispatch:
-    types: [release-sync-ami]
+    types: [prod-sync-ami]
 
 jobs:
   Sync-AMI-Prod:

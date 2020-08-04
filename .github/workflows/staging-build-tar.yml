@@ -4,7 +4,7 @@ on:
   #schedule:
   #  - cron: '0 10 * * *'
   repository_dispatch:
-    types: [test-build-tar]
+    types: [staging-build-tar]
 
 jobs:
   plugin-availability:
@@ -57,10 +57,10 @@ jobs:
       - name: Build Kibana
         run: apt install -y jq; ./kibana/linux_distributions/opendistro-kibana-build.sh tar
 
-  Test-ISM-Plugin:
+  Test-ISM-NoSec:
     needs: [build-es-artifacts]
-    name: Run ISM Test
     runs-on: ubuntu-latest
+    name: Test-ISM-NoSec
     strategy:
       matrix:
         java: [14]
@@ -83,30 +83,16 @@ jobs:
         with:
           repository: opendistro-for-elasticsearch/index-management
           ref: ${{env.p_tag_ism}}
-      - name: Run Tests
+      - name: IT
         run: |
-          odfe_version=`./bin/version-info --od`
-          echo $odfe_version
-          cd ..
-          cd opendistro-build/elasticsearch/linux_distributions
-          cd ../../..
-          aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistro-elasticsearch/opendistroforelasticsearch-$odfe_version.tar.gz .
-          tar -zxf opendistroforelasticsearch-$odfe_version.tar.gz
-          cd opendistroforelasticsearch-$odfe_version
-          sed -i /install_demo_configuration/d opendistro-tar-install.sh
-          ./bin/elasticsearch-plugin remove opendistro_security
-          
-          mkdir -p snapshots
-          echo "path.repo: [\"$PWD/snapshots\"]" >> config/elasticsearch.yml
-          nohup ./opendistro-tar-install.sh &
-          sleep 45
-          cd ../index-management
+          .github/scripts/setup_runners_service.sh zip --es-nosec
+          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../index-management; pwd
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
 
-  Test-Alerting-Plugin:
+  Test-Alerting-NoSec:
     needs: [build-es-artifacts]
-    name: Run Alerting Test
     runs-on: ubuntu-latest
+    name: Test-Alerting-NoSec
     strategy:
       matrix:
         java: [14]
@@ -129,29 +115,16 @@ jobs:
         with:
           repository: opendistro-for-elasticsearch/alerting
           ref: ${{env.p_tag_alerting}}
-      - name: Run Tests
+      - name: IT
         run: |
-          odfe_version=`./bin/version-info --od`
-          echo $odfe_version
-          cd ..
-          cd opendistro-build/elasticsearch/linux_distributions
-          cd ../../..
-          aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistro-elasticsearch/opendistroforelasticsearch-$odfe_version.tar.gz .
-          tar -zxf opendistroforelasticsearch-$odfe_version.tar.gz
-          cd opendistroforelasticsearch-$odfe_version
-          sed -i /install_demo_configuration/d opendistro-tar-install.sh
-          sed -i '/http\.port/s/^# *//' config/elasticsearch.yml
-          ./bin/elasticsearch-plugin remove opendistro_security
-          
-          nohup ./opendistro-tar-install.sh &          
-          sleep 45
-          cd ../alerting/alerting
+          .github/scripts/setup_runners_service.sh zip --es-nosec
+          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../alerting/alerting; pwd
           ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
 
-  Test-SQL-Plugin:
+  Test-SQL-NoSec:
     needs: [build-es-artifacts]
-    name: Run SQL Test
     runs-on: ubuntu-latest
+    name: Test-SQL-NoSec
     strategy:
       matrix:
         java: [14]
@@ -174,72 +147,16 @@ jobs:
         with:
           repository: opendistro-for-elasticsearch/sql
           ref: ${{env.p_tag_sql}}
-      - name: Run Tests
+      - name: IT
         run: |
-          odfe_version=`./bin/version-info --od`
-          echo $odfe_version
-          cd ..
-          cd opendistro-build/elasticsearch/linux_distributions
-          cd ../../..
-          aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistro-elasticsearch/opendistroforelasticsearch-$odfe_version.tar.gz .
-          tar -zxf opendistroforelasticsearch-$odfe_version.tar.gz
-          cd opendistroforelasticsearch-$odfe_version
-          sed -i /install_demo_configuration/d opendistro-tar-install.sh
-          ./bin/elasticsearch-plugin remove opendistro_security
-          
-          nohup ./opendistro-tar-install.sh &
-          sleep 45
-          cd ../sql
+          .github/scripts/setup_runners_service.sh zip --es-nosec
+          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../sql; pwd
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
           
-  Test-SQL-Plugin-With-Security:
+  Test-KNN-NoSec:
     needs: [build-es-artifacts]
-    name: Run SQL Test with Security
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        java: [14]
-    steps:
-      - name: Set up AWS Cred
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.java }}
-      - uses: actions/checkout@v1
-      - name: Retrieve plugin tags
-        run:  echo ::set-env name=p_tag_sql::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)
-      - name: Checkout SQL
-        uses: actions/checkout@v1
-        with:
-          repository: opendistro-for-elasticsearch/sql
-          ref: ${{env.p_tag_sql}}
-      - name: Run Tests
-        run: |
-          odfe_version=`./bin/version-info --od`
-          echo $odfe_version
-          cd ..
-          cd opendistro-build/elasticsearch/linux_distributions
-          cd ../../..
-          aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistro-elasticsearch/opendistroforelasticsearch-$odfe_version.tar.gz .
-          tar -zxf opendistroforelasticsearch-$odfe_version.tar.gz
-          cd opendistroforelasticsearch-$odfe_version
-          bash ./plugins/opendistro_security/tools/install_demo_configuration.sh -y -i -s
-          sed -i /^node.max_local_storage_nodes/d ./config/elasticsearch.yml
-          cat ./config/elasticsearch.yml
-          nohup ./opendistro-tar-install.sh &
-          sleep 45
-          cd ../sql
-          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin
-          
-  Test-KNN-Plugin:
-    needs: [build-es-artifacts]
-    name: Run k-NN Test
-    runs-on: ubuntu-latest
+    name: Test-KNN-NoSec
     strategy:
       matrix:
         java: [14]
@@ -262,28 +179,16 @@ jobs:
         with:
           repository: opendistro-for-elasticsearch/k-NN
           ref: ${{env.p_tag_knn}}
-      - name: Run Tests
+      - name: IT
         run: |
-          odfe_version=`./bin/version-info --od`
-          echo $odfe_version
-          cd ..
-          cd opendistro-build/elasticsearch/linux_distributions
-          cd ../../..
-          aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistro-elasticsearch/opendistroforelasticsearch-$odfe_version.tar.gz .
-          tar -zxf opendistroforelasticsearch-$odfe_version.tar.gz
-          cd opendistroforelasticsearch-$odfe_version
-          sed -i /install_demo_configuration/d opendistro-tar-install.sh
-          ./bin/elasticsearch-plugin remove opendistro_security
-          
-          nohup ./opendistro-tar-install.sh &
-          sleep 45
-          cd ../k-NN
+          .github/scripts/setup_runners_service.sh zip --es-nosec
+          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../k-NN; pwd
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
           
-  Test-AD-Plugin:
+  Test-AD-NoSec:
     needs: [build-es-artifacts]
-    name: Run AD Test
     runs-on: ubuntu-latest
+    name: Test-AD-NoSec
     strategy:
       matrix:
         java: [14]
@@ -306,28 +211,48 @@ jobs:
         with:
           repository: opendistro-for-elasticsearch/anomaly-detection
           ref: ${{env.p_tag_ad}}
-      - name: Run Tests
+      - name: IT
         run: |
-          odfe_version=`./bin/version-info --od`
-          echo $odfe_version
-          cd ..
-          cd opendistro-build/elasticsearch/linux_distributions
-          cd ../../..
-          aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistro-elasticsearch/opendistroforelasticsearch-$odfe_version.tar.gz .
-          tar -zxf opendistroforelasticsearch-$odfe_version.tar.gz
-          cd opendistroforelasticsearch-$odfe_version
-          sed -i /install_demo_configuration/d opendistro-tar-install.sh
-          ./bin/elasticsearch-plugin remove opendistro_security
-          
-          nohup ./opendistro-tar-install.sh &
-          sleep 45
-          cd ../anomaly-detection
+          .github/scripts/setup_runners_service.sh zip --es-nosec
+          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../anomaly-detection; pwd
           ./gradlew :integTestRunner --tests "com.amazon.opendistroforelasticsearch.ad.rest.*IT" --tests "com.amazon.opendistroforelasticsearch.ad.e2e.*IT" -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
-  
-  Test-AD-Plugin-With-Security:
+          
+  Test-SQL:
     needs: [build-es-artifacts]
-    name: Run AD Test with Security Enabled
     runs-on: ubuntu-latest
+    name: Test-SQL
+    strategy:
+      matrix:
+        java: [14]
+    steps:
+      - name: Set up AWS Cred
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+      - uses: actions/checkout@v1
+      - name: Retrieve plugin tags
+        run:  echo ::set-env name=p_tag_sql::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)
+      - name: Checkout SQL
+        uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/sql
+          ref: ${{env.p_tag_sql}}
+      - name: IT
+        run: |
+          .github/scripts/setup_runners_service.sh zip --es
+          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../sql; pwd
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin
+  
+  Test-AD:
+    needs: [build-es-artifacts]
+    runs-on: ubuntu-latest
+    name: Test-AD
     strategy:
       matrix:
         java: [14]
@@ -350,25 +275,16 @@ jobs:
         with:
           repository: opendistro-for-elasticsearch/anomaly-detection
           ref: ${{env.p_tag_ad}}
-      - name: Run Tests
+      - name: IT
         run: |
-          odfe_version=`./bin/version-info --od`
-          echo $odfe_version
-          cd ..
-          cd opendistro-build/elasticsearch/linux_distributions
-          cd ../../..
-          aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistro-elasticsearch/opendistroforelasticsearch-$odfe_version.tar.gz .
-          tar -zxf opendistroforelasticsearch-$odfe_version.tar.gz
-          cd opendistroforelasticsearch-$odfe_version
-          
-          nohup ./opendistro-tar-install.sh &
-          sleep 45
-          cd ../anomaly-detection
+          .github/scripts/setup_runners_service.sh zip --es
+          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../anomaly-detection; pwd
           ./gradlew :integTestRunner --tests "com.amazon.opendistroforelasticsearch.ad.rest.*IT" --tests "com.amazon.opendistroforelasticsearch.ad.e2e.*IT" -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin
   
-  Test-AD-Kibana-Plugin:
+  Test-AD-KIBANA-NoSec:
     needs: [build-es-artifacts, build-kibana-artifacts]
     runs-on: [ubuntu-16.04]
+    name: Test-AD-KIBANA-NoSec
     strategy:
       matrix:
         java: [14]
@@ -428,39 +344,11 @@ jobs:
           yarn kbn bootstrap
           
       - name: Start ES and Kibana
-        run: |
-          odfe_version=`./bin/version-info --od`
-          echo $odfe_version
-          
-          mkdir -p odfe-testing
-          cd odfe-testing
-          aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistro-elasticsearch/opendistroforelasticsearch-$odfe_version.tar.gz .
-          tar -zxf opendistroforelasticsearch-$odfe_version.tar.gz
-          cd opendistroforelasticsearch-$odfe_version
-          sed -i /install_demo_configuration/d opendistro-tar-install.sh
-          ./bin/elasticsearch-plugin remove opendistro_security
-          nohup ./opendistro-tar-install.sh &
-          sleep 45
-          curl -XGET http://127.0.0.1:9200
-          
-          cd ../..
-          
-          mkdir -p kibana-testing
-          cd kibana-testing
-          aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/tarball/opendistroforelasticsearch-kibana/opendistroforelasticsearch-kibana-$odfe_version.tar.gz .
-          tar -zxf opendistroforelasticsearch-kibana-$odfe_version.tar.gz
-          cd opendistroforelasticsearch-kibana
-      
-          ./bin/kibana-plugin remove opendistro_security 
-          sed -i /^opendistro_security/d ./config/kibana.yml
-          sed -i 's/https/http/' ./config/kibana.yml
-          nohup ./bin/kibana &
-          sleep 120
-          curl -v http://127.0.0.1:5601
-          
+        run: .github/scripts/setup_runners_service.sh zip --kibana-nosec
+ 
       - name: run IT
         uses: cypress-io/github-action@v1
         with:
           working-directory: kibana/plugins/anomaly-detection-kibana-plugin
-          command: yarn cy:run —config baseurl=http://localhost:5601
+          command: yarn cy:run --config baseurl=http://localhost:5601
     

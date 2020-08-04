@@ -2,7 +2,7 @@ name: Sync windows artifacts to Prod
 
 on: 
   repository_dispatch:
-    types: [release-sync-windows]
+    types: [prod-sync-windows]
 
 jobs:
   Sync-Windows-Prod:
