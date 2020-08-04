@@ -5,8 +5,8 @@ on:
   #  - cron: '0 10 * * *'
   repository_dispatch:
     types: [kibana-oss-build-distro]
-  #push:
-  #  branches: [opendistro-infra-issues-227-1]
+  push:
+    branches: [opendistro-infra-issues-227-1]
 
 jobs:
   build-kibana-artifacts:

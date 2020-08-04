@@ -187,8 +187,8 @@ if [ $# -eq 0 ] || [ "$PACKAGE_TYPE" = "tar" ]; then
   ls -ltr $TARGET_DIR
   tar_artifact=`ls $TARGET_DIR/*.tar.gz`
   tar_checksum_artifact=`ls $TARGET_DIR/*.tar.gz.sha512`
-  #aws s3 cp $tar_artifact s3://$S3_BUCKET/$OSS_S3_PATH/tarball/opendistroforelasticsearch-kibana/
-  #aws s3 cp $tar_checksum_artifact s3://$S3_BUCKET/$OSS_S3_PATH/tarball/opendistroforelasticsearch-kibana/
-  #aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/*"
+  aws s3 cp $tar_artifact s3://$S3_BUCKET/$OSS_S3_PATH/tarball/opendistroforelasticsearch-kibana/
+  aws s3 cp $tar_checksum_artifact s3://$S3_BUCKET/$OSS_S3_PATH/tarball/opendistroforelasticsearch-kibana/
+  aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/*"
 
 fi

@@ -5,8 +5,8 @@ on:
   #  - cron: '0 10 * * *'
   repository_dispatch:
     types: [kibana-oss-integTest]
-  push:
-    branches: [opendistro-infra-issues-227-1]
+  #push:
+  #  branches: [opendistro-infra-issues-227-1]
 
 jobs:
   Test-AD-KIBANA-TAR-NoSec:
