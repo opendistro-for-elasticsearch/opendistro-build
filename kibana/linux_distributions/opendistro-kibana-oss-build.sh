@@ -63,7 +63,7 @@ mkdir $PACKAGE_NAME
 
 # Downloading Kibana oss
 echo "Downloading kibana oss"
-aws s3 cp s3://$S3_BUCKET/$OSS_S3_PATH_2/7.8.0/kibana-oss-$ES_VERSION-linux-x86_64.tar.gz . --quiet; echo $?
+aws s3 cp s3://$S3_BUCKET/$OSS_S3_PATH_2/$ES_VERSION/kibana-oss-$ES_VERSION-linux-x86_64.tar.gz . --quiet; echo $?
 tar --strip-components=1 -zxf kibana-oss-$ES_VERSION-linux-x86_64.tar.gz --directory $PACKAGE_NAME
 
 # Install required plugins
