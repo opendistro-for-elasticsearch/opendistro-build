@@ -68,7 +68,7 @@ if [ "$SETUP_DISTRO" = "zip" ]
 then
   mkdir -p $ES_ROOT
   aws s3 cp s3://$S3_BUCKET/downloads/tarball/opendistro-elasticsearch/$ES_PACKAGE_NAME.tar.gz . --quiet; echo $?
-  tar -zxf $ES_PACKAGE_NAME.tar.gz -C $ES_ROOT --strip 1
+  tar -zxf $ES_PACKAGE_NAME.tar.gz -C $ES_ROOT --strip-components 1
 fi
 
 if [ "$SETUP_DISTRO" = "docker" ]
@@ -212,7 +212,7 @@ then
   then
     mkdir -p $KIBANA_ROOT
     aws s3 cp s3://$S3_BUCKET/downloads/tarball/$KIBANA_PACKAGE_NAME/$KIBANA_PACKAGE_NAME-$OD_VERSION.tar.gz . --quiet; echo $?
-    tar -zxf $KIBANA_PACKAGE_NAME-$OD_VERSION.tar.gz -C $KIBANA_ROOT --strip 1
+    tar -zxf $KIBANA_PACKAGE_NAME-$OD_VERSION.tar.gz -C $KIBANA_ROOT --strip-components 1
   elif [ "$SETUP_DISTRO" = "docker" ]
   then
     echo "FROM opendistroforelasticsearch/opendistroforelasticsearch-kibana:$OD_VERSION" >> Dockerfile.kibana
