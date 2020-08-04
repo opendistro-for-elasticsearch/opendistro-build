@@ -36,6 +36,10 @@ ARTIFACTS_URL="https://d3g5vo6xdbdb9a.cloudfront.net"
 PACKAGE_NAME="opendistroforelasticsearch-kibana"
 TARGET_DIR="$ROOT/target"
 
+OSS_S3_PATH=${{ secrets.OSS_S3_PATH }}
+OSS_S3_PATH_2=${{ secrets.OSS_S3_PATH_2 }}
+
+
 # Please DO NOT change the orders, they have dependencies
 PLUGINS=`$REPO_ROOT/bin/plugins-info kibana`
 
@@ -61,7 +65,8 @@ mkdir $PACKAGE_NAME
 
 # Downloading Kibana oss
 echo "Downloading kibana oss"
-curl -Ls "https://artifacts.elastic.co/downloads/kibana/kibana-oss-$ES_VERSION-linux-x86_64.tar.gz" | tar --strip-components=1 -zxf - --directory $PACKAGE_NAME
+aws s3 cp s3://$S3_BUCKET/$OSS_S3_PATH_2/7.8.0/kibana-oss-$ES_VERSION-linux-x86_64.tar.gz . --quiet; echo $?
+tar --strip-components=1 -zxf kibana-oss-$ES_VERSION-linux-x86_64.tar.gz --directory $PACKAGE_NAME
 
 # Install required plugins
 echo "installing open distro plugins"
@@ -119,7 +124,7 @@ if [ $# -eq 0 ] || [ "$PACKAGE_TYPE" = "rpm" ]; then
       # Upload to S3
       ls -ltr $TARGET_DIR
       rpm_artifact=`ls $TARGET_DIR/*.rpm`
-      aws s3 cp $rpm_artifact s3://$S3_BUCKET/downloads/rpms/opendistroforelasticsearch-kibana/
+      aws s3 cp $rpm_artifact s3://$S3_BUCKET/$OSS_S3_PATH/rpms/opendistroforelasticsearch-kibana/
       aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/*"
 
 fi
@@ -161,7 +166,7 @@ if [ $# -eq 0 ] || [ "$PACKAGE_TYPE" = "deb" ]; then
       # Upload to S3
       ls -ltr $TARGET_DIR
       deb_artifact=`ls $TARGET_DIR/*.deb`
-      aws s3 cp $deb_artifact s3://$S3_BUCKET/downloads/debs/opendistroforelasticsearch-kibana/
+      aws s3 cp $deb_artifact s3://$S3_BUCKET/$OSS_S3_PATH/debs/opendistroforelasticsearch-kibana/
       aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/*"
 
 fi
@@ -184,8 +189,8 @@ if [ $# -eq 0 ] || [ "$PACKAGE_TYPE" = "tar" ]; then
   ls -ltr $TARGET_DIR
   tar_artifact=`ls $TARGET_DIR/*.tar.gz`
   tar_checksum_artifact=`ls $TARGET_DIR/*.tar.gz.sha512`
-  aws s3 cp $tar_artifact s3://$S3_BUCKET/downloads/tarball/opendistroforelasticsearch-kibana/
-  aws s3 cp $tar_checksum_artifact s3://$S3_BUCKET/downloads/tarball/opendistroforelasticsearch-kibana/
+  aws s3 cp $tar_artifact s3://$S3_BUCKET/$OSS_S3_PATH/tarball/opendistroforelasticsearch-kibana/
+  aws s3 cp $tar_checksum_artifact s3://$S3_BUCKET/$OSS_S3_PATH/tarball/opendistroforelasticsearch-kibana/
   aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/*"
 
 fi

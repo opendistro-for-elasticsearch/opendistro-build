@@ -1,0 +1,26 @@
+name: Process TAR Artifacts
+
+on:
+  #schedule:
+  #  - cron: '0 10 * * *'
+  repository_dispatch:
+    types: [kibana-oss-build-distro]
+  push:
+    branches: [opendistro-infra-issues-227-1]
+
+jobs:
+  build-kibana-artifacts:
+    name: Build Kibana Artifacts
+    runs-on: [ubuntu-latest]
+    container:
+        image: opendistroforelasticsearch/jsenv:v1
+    steps:
+      - uses: actions/checkout@v1
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Build Kibana
+        run: apt install -y jq; ./kibana/linux_distributions/opendistro-kibana-oss-build.sh
