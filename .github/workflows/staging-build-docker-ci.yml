@@ -4,7 +4,7 @@ on:
   #schedule:
   #  - cron: '0 0,15 * * *'
   repository_dispatch:
-    types: [test-build-docker-ci]
+    types: [staging-build-docker-ci]
 
 jobs:
   build-es-docker:

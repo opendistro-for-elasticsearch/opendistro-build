@@ -10,8 +10,10 @@
 # Usage:         ./setup_runners_service_windows.ps1 $SETUP_ACTION
 #                $SETUP_ACTION: --es | --es-nosec | --kibana | --kibana-nosec (required)
 #
+# Requirements:  This script assumes java 14 is already installed on the servers
+#
 # Starting Date: 2020-07-27
-# Modified Date: 2020-07-30
+# Modified Date: 2020-08-02
 ###############################################################################################
 
 # Keep the pwsh script running even with errors
@@ -31,6 +33,7 @@ echo "User enters $SETUP_ACTION"
 echo "############################################################"
 
 echo "setup es"
+java -version
 dir
 python -m pip install --upgrade pip
 echo pip3 -version
@@ -58,9 +61,10 @@ if ($SETUP_ACTION -eq "--es"){
   echo "running es"
   nohup .\$PACKAGE-$OD_VERSION\bin\elasticsearch.bat &
 
-  echo "Waiting for 60 seconds"
-  ping -n 60 127.0.0.1 >.\out.txt
-  curl -XGET https://localhost:9200 -u admin:admin --insecure
+  echo "Waiting for 160 seconds"
+  ping -n 160 127.0.0.1 >.\out.txt
+  #curl -XGET https://localhost:9200 -u admin:admin --insecure
+  #curl -XGET https://localhost:9200/_cluster/health?pretty -u admin:admin --insecure
 
   echo "es start"
   exit 0
@@ -84,9 +88,10 @@ if ($SETUP_ACTION -eq "--es-nosec"){
   echo "running es"
   nohup .\$PACKAGE-$OD_VERSION\bin\elasticsearch.bat &
 
-  echo "Waiting for 60 seconds"
-  ping -n 60 127.0.0.1 >.\out.txt
-  curl -XGET http://localhost:9200
+  echo "Waiting for 160 seconds"
+  ping -n 160 127.0.0.1 >.\out.txt
+  #curl -XGET http://localhost:9200
+  #curl -XGET http://localhost:9200/_cluster/health?pretty
 
   echo "es-nosec start"
   exit 0
@@ -115,10 +120,12 @@ if ($SETUP_ACTION -eq "--kibana"){
   nohup .\bin\kibana.bat &
   cd ..\..
 
-  echo "Waiting for 120 seconds"
-  ping -n 120 127.0.0.1 >.\out.txt
-  curl -XGET https://localhost:9200 -u admin:admin --insecure
-  curl -v -XGET https://localhost:5601 --insecure
+  echo "Waiting for 160 seconds"
+  ping -n 160 127.0.0.1 >.\out.txt
+  #curl -XGET https://localhost:9200 -u admin:admin --insecure
+  #curl -XGET https://localhost:9200/_cluster/health?pretty -u admin:admin --insecure
+  #curl -v -XGET https://localhost:5601 --insecure
+  #curl -v -XGET https://localhost:5601/api/status --insecure
 
   echo "kibana start"
   exit 0
@@ -144,10 +151,12 @@ if ($SETUP_ACTION -eq "--kibana-nosec"){
   nohup .\bin\kibana.bat &
   cd ..\..
 
-  echo "Waiting for 120 seconds"
-  ping -n 120 127.0.0.1 >.\out.txt
-  curl -XGET http://localhost:9200
-  curl -v -XGET http://localhost:5601
+  echo "Waiting for 160 seconds"
+  ping -n 160 127.0.0.1 >.\out.txt
+  #curl -XGET http://localhost:9200
+  #curl -XGET http://localhost:9200/_cluster/health?pretty
+  #curl -v -XGET http://localhost:5601
+  #curl -v -XGET http://localhost:5601/api/status
 
   echo "kibana-nosec start"
   exit 0
