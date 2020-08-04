@@ -50,8 +50,6 @@ DOCKER_NAME_KIBANA_NoSec="Test-Docker-Kibana-${OD_VERSION}-NoSec"
 
 S3_BUCKET="artifacts.opendistroforelasticsearch.amazon.com"
 
-OSS_S3_PATH=${{ secrets.OSS_S3_PATH }}
-
 #####################################################################################################
 
 echo "############################################################"
@@ -224,7 +222,8 @@ then
     docker build -t odfe-kibana-http:security -f Dockerfile.kibana .
     sleep 5
   else
-    #sudo apt install $KIBANA_PACKAGE_NAME=$OD_VERSION* -y || sudo yum install $KIBANA_PACKAGE_NAME-$OD_VERSION -y
+    aws s3 cp s3://$S3_BUCKET/$OSS_S3_PATH/debs/opendistroforelasticsearch-kibana/opendistroforelasticsearch-kibana-1.9.0.deb  . --quiet; echo $?
+    sudo dpkg -i opendistroforelasticsearch-kibana-1.9.0.deb  # || sudo yum install $KIBANA_PACKAGE_NAME-$OD_VERSION -y
   fi
 fi
 
