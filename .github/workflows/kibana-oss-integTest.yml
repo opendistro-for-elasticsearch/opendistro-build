@@ -71,7 +71,7 @@ jobs:
           yarn kbn bootstrap
           
       - name: Start ES and Kibana
-        run: export OSS_S3_PATH=${{ secrets.OSS_S3_PATH }}; .github/scripts/setup_runners_service.sh zip --kibana-nosec
+        run: export OSS_S3_PATH=${{ secrets.OSS_S3_PATH }}; .github/scripts/setup_runners_service_oss.sh zip --kibana-nosec
  
       - name: run IT
         uses: cypress-io/github-action@v1
@@ -141,7 +141,7 @@ jobs:
           yarn kbn bootstrap
           
       - name: Start ES and Kibana
-        run: export OSS_S3_PATH=${{ secrets.OSS_S3_PATH }}; .github/scripts/setup_runners_service.sh deb --kibana-nosec
+        run: export OSS_S3_PATH=${{ secrets.OSS_S3_PATH }}; .github/scripts/setup_runners_service_oss.sh deb --kibana-nosec
  
       - name: run IT
         uses: cypress-io/github-action@v1
