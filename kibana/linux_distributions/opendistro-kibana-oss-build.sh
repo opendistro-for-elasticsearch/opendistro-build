@@ -36,8 +36,6 @@ ARTIFACTS_URL="https://d3g5vo6xdbdb9a.cloudfront.net"
 PACKAGE_NAME="opendistroforelasticsearch-kibana"
 TARGET_DIR="$ROOT/target"
 
-OSS_S3_PATH=${{ secrets.OSS_S3_PATH }}
-OSS_S3_PATH_2=${{ secrets.OSS_S3_PATH_2 }}
 
 
 # Please DO NOT change the orders, they have dependencies
