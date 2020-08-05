@@ -6,7 +6,7 @@ on:
 
 jobs:
   Sync-Deb-Prod:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     container: 
       image: opendistroforelasticsearch/base-ubuntu
     name: Sync Deb Artifacts to Prod

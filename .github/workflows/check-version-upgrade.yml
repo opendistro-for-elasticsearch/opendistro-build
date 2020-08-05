@@ -7,7 +7,7 @@ on:
 jobs:
     Provision-Runners-RPM:
       name: Provision-Runners-RPM
-      runs-on: ubuntu-latest
+      runs-on: ubuntu-18.04
       steps:
         - uses: actions/checkout@v1
         - name: Configure AWS Credentials
@@ -24,7 +24,7 @@ jobs:
 
     Test-DEB:
       name: Test DEB upgrade
-      runs-on: ubuntu-latest
+      runs-on: ubuntu-18.04
       steps:
         - uses: actions/checkout@v2
         - name: Setup Java
@@ -119,7 +119,7 @@ jobs:
       needs: [Test-RPM]
       if: always()
       name: CleanUp-Runners-RPM
-      runs-on: ubuntu-latest
+      runs-on: ubuntu-18.04
       steps:
         - uses: actions/checkout@v1
         - name: Configure AWS Credentials
