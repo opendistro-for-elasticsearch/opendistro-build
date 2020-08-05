@@ -33,6 +33,13 @@ ext {
     nextODPluginsVersion = "1.9.1"
 
     isSnapshot = "true" == System.getProperty("build.snapshot", "true")
+
+    println("Executing myScript")
+    def proc = "../../bin/plugins-info --curr_version".execute()
+    proc.waitForProcessOutput(System.out)
+    println(System.out)
+    System.exit(1)
+
 }
 group 'com.amazon.opendistroforelasticsearch'
 version = opendistroVersion + (isSnapshot ? "-SNAPSHOT" : "")

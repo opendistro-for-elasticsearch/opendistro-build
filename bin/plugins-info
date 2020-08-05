@@ -13,7 +13,7 @@
 #                $RETURN_TYPE: <default to name> | --git (optional)
 #
 # Starting Date: 2020-06-24
-# Modified Date: 2020-07-30
+# Modified Date: 2020-08-07
 ###############################################################################################
 
 set -e
@@ -26,14 +26,28 @@ if [ -z "$PLUGINS_TYPE" ]
 then
   echo "Please enter \$PLUGINS_TYPE [\$RETURN_TYPE] as parameter(s)"
   echo "Example: \"$0 rpm\" (Retrieve S3 Paths)"
+  echo "Example: \"$0 rpm --s3\" (Retrieve S3 Paths)"
   echo "Example: \"$0 rpm --git\" (Retrieve Git URLs)"
+  echo "Example: \"$0 rpm --curr_version\" (Retrieve Plugin Current Versions)"
+  echo "Example: \"$0 rpm --next_version\" (Retrieve Plugin Future Versions)"
   exit 1
 fi
 
-if [ "$2" = "--git" ]
+if [ "$RETURN_TYPE" = "--git" ]
 then
   jq -r ".${PLUGINS_TYPE}[].git" "${PLUGINS_LIST}"
-else
+
+elif [ "$RETURN_TYPE" = "--curr_version" ]
+then
+  jq -r ".${PLUGINS_TYPE}[].curr_version" "${PLUGINS_LIST}"
+
+elif [ "$RETURN_TYPE" = "--next_version" ]
+then
+  jq -r ".${PLUGINS_TYPE}[].next_version" "${PLUGINS_LIST}"
+
+elif [ -z "$RETURN_TYPE" ] || [ "$RETURN_TYPE" = "--s3" ]
+then
   jq -r ".${PLUGINS_TYPE}[].s3" "${PLUGINS_LIST}"
+
 fi
 
