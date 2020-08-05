@@ -9,7 +9,7 @@ on:
 jobs:
   plugin-availability:
     name: Check Plugin Availability
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v1
       - name: Configure AWS Credentials
@@ -25,7 +25,7 @@ jobs:
   build-es-artifacts:
     needs: [plugin-availability]
     name: Build ES Artifacts
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     container:
       image: opendistroforelasticsearch/multijava08101112-git:v1
     steps:
@@ -55,7 +55,7 @@ jobs:
   build-kibana-artifacts:
     needs: [plugin-availability]
     name: Build Kibana Artifacts
-    runs-on: [ubuntu-latest]
+    runs-on: [ubuntu-18.04]
     container:
       image: opendistroforelasticsearch/jsenv:v1
     steps:
@@ -71,7 +71,7 @@ jobs:
 
   sign-deb-artifacts:
     needs: [build-es-artifacts, build-kibana-artifacts]
-    runs-on: [ubuntu-latest]
+    runs-on: [ubuntu-18.04]
     container:
       image: opendistroforelasticsearch/base-ubuntu
     steps:
@@ -124,7 +124,7 @@ jobs:
 
   Build-ES-and-Kibana-Ubuntu-Docker:
     needs: [sign-deb-artifacts]
-    runs-on: [ubuntu-latest]
+    runs-on: [ubuntu-18.04]
     name: Build ubuntu image for Sanity Testing
     steps:
       - uses: actions/checkout@v1
@@ -181,7 +181,7 @@ jobs:
 
   Test-ISM-NoSec:
     needs: [sign-deb-artifacts]
-    runs-on: [ubuntu-latest]
+    runs-on: [ubuntu-18.04]
     name: Test-ISM-NoSec
     strategy:
       matrix:
@@ -211,7 +211,7 @@ jobs:
 
   Test-ALERTING-NoSec:
     needs: [sign-deb-artifacts]
-    runs-on: [ubuntu-latest]
+    runs-on: [ubuntu-18.04]
     name: Test-ALERTING-NoSec
     strategy:
       matrix:
@@ -240,7 +240,7 @@ jobs:
           
   Test-SQL-NoSec:
     needs: [sign-deb-artifacts]
-    runs-on: [ubuntu-latest]
+    runs-on: [ubuntu-18.04]
     name: Test-SQL-NoSec
     strategy:
       matrix:
@@ -269,7 +269,7 @@ jobs:
   
   Test-KNN-NoSec:
     needs: [sign-deb-artifacts]
-    runs-on: [ubuntu-latest]
+    runs-on: [ubuntu-18.04]
     name: Test-KNN-NoSec
     strategy:
       matrix:
@@ -294,7 +294,7 @@ jobs:
    
   Test-AD-NoSec:
     needs: [sign-deb-artifacts]
-    runs-on: [ubuntu-latest]
+    runs-on: [ubuntu-18.04]
     name: Test-AD-NoSec
     strategy:
       matrix:
@@ -323,7 +323,7 @@ jobs:
           
   Test-SQL:
     needs: [sign-deb-artifacts]
-    runs-on: [ubuntu-latest]
+    runs-on: [ubuntu-18.04]
     name: Test-SQL
     strategy:
       matrix:
@@ -352,7 +352,7 @@ jobs:
           
   Test-AD:
     needs: [sign-deb-artifacts]
-    runs-on: [ubuntu-latest]
+    runs-on: [ubuntu-18.04]
     name: Test-AD
     strategy:
       matrix:
@@ -382,7 +382,7 @@ jobs:
           
   Test-AD-KIBANA-NoSec:
     needs: [sign-deb-artifacts]
-    runs-on: [ubuntu-latest]
+    runs-on: [ubuntu-18.04]
     name: Test-AD-KIBANA-NoSec
     strategy:
       matrix:

@@ -12,7 +12,7 @@ jobs:
       matrix:
         java: [14]
     name: Build ES Docker
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
     - uses: actions/checkout@v1
        
@@ -145,7 +145,7 @@ jobs:
   
   Test-ISM-NoSec:
     needs: [build-es-docker]
-    runs-on: [ubuntu-latest]
+    runs-on: [ubuntu-18.04]
     name: Test-ISM-NoSec
     strategy:
       matrix:
@@ -175,7 +175,7 @@ jobs:
 
   Test-ALERTING-NoSec:
     needs: [build-es-docker]
-    runs-on: [ubuntu-latest]
+    runs-on: [ubuntu-18.04]
     name: Test-ALERTING-NoSec
     strategy:
       matrix:
@@ -204,7 +204,7 @@ jobs:
           
   Test-SQL-NoSec:
     needs: [build-es-docker]
-    runs-on: [ubuntu-latest]
+    runs-on: [ubuntu-18.04]
     name: Test-SQL-NoSec
     strategy:
       matrix:
@@ -233,7 +233,7 @@ jobs:
   
   Test-KNN-NoSec:
     needs: [build-es-docker]
-    runs-on: [ubuntu-latest]
+    runs-on: [ubuntu-18.04]
     name: Test-KNN-NoSec
     strategy:
       matrix:
@@ -258,7 +258,7 @@ jobs:
    
   Test-AD-NoSec:
     needs: [build-es-docker]
-    runs-on: [ubuntu-latest]
+    runs-on: [ubuntu-18.04]
     name: Test-AD-NoSec
     strategy:
       matrix:
@@ -287,7 +287,7 @@ jobs:
 
   Test-SQL:
     needs: [build-es-docker]
-    runs-on: [ubuntu-latest]
+    runs-on: [ubuntu-18.04]
     name: Test-SQL
     strategy:
       matrix:
@@ -316,7 +316,7 @@ jobs:
 
   Test-AD:
     needs: [build-es-docker]
-    runs-on: [ubuntu-latest]
+    runs-on: [ubuntu-18.04]
     name: Test-AD
     strategy:
       matrix:

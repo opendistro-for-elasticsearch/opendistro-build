@@ -9,7 +9,7 @@ on:
 jobs:
   plugin-availability:
     name: Check Plugin Availability
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v1
       - name: Configure AWS Credentials
@@ -25,7 +25,7 @@ jobs:
   build-es-artifacts:
     needs: [plugin-availability]
     name: Build ES Artifacts
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     container:
       image: opendistroforelasticsearch/multijava08101112-git:v1
 
@@ -57,7 +57,7 @@ jobs:
   build-kibana-artifacts:
     needs: [plugin-availability]
     name: Build Kibana Artifacts
-    runs-on: [ubuntu-latest]
+    runs-on: [ubuntu-18.04]
     container:
       image: opendistroforelasticsearch/jsenv:v1
     steps:
@@ -102,7 +102,7 @@ jobs:
 
   Build-ES-and-Kibana-Centos-Docker:
     needs: [signing-artifacts]
-    runs-on: [ubuntu-latest]
+    runs-on: [ubuntu-18.04]
     name: Build Centos image for Sanity Testing
     steps:
       - uses: actions/checkout@v1
@@ -160,7 +160,7 @@ jobs:
   Provision-Runners:
     needs: [signing-artifacts]
     name: Provision-Runners
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v1
       - name: Configure AWS Credentials
@@ -402,7 +402,7 @@ jobs:
     needs: [Test-SQL, Test-AD, Test-ISM-NoSec, Test-ALERTING-NoSec, Test-SQL-NoSec, Test-KNN-NoSec, Test-AD-NoSec, Test-AD-KIBANA-NoSec]
     if: always()
     name: CleanUp-Runners
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v1
       - name: Configure AWS Credentials

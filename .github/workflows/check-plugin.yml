@@ -9,7 +9,7 @@ on:
 jobs:
   plugin-availability-main:
     name: Check Plugin Availability Main
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v1
       - name: Configure AWS Credentials
