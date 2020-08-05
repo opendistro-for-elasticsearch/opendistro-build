@@ -9,7 +9,7 @@ on:
 jobs:
   build-es-artifacts:
     name: Build Windows ES Artifacts
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
     - uses: actions/checkout@v1
 
@@ -30,7 +30,7 @@ jobs:
         
   build-kibana-artifacts:
     name: Build Kibana Artifacts
-    runs-on: [ubuntu-latest]
+    runs-on: [ubuntu-18.04]
     steps:
     - uses: actions/checkout@v1
     - name: Configure AWS Credentials
