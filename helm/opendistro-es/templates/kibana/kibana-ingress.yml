@@ -16,13 +16,12 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  labels:
-    {{ include "opendistro-es.labels.standard" . | nindent 4 }}
-  name: {{ template "opendistro-es.fullname" . }}-kibana
+  labels: {{ include "opendistro-es.labels.standard" . | nindent 4 }}
+  name: {{ template "opendistro-es.fullname" . }}-kibana-ing
   annotations:
-    {{- range $key, $value := .Values.kibana.ingress.annotations }}
-      {{ $key }}: {{ $value | quote }}
-    {{- end }}
+  {{- range $key, $value := .Values.kibana.ingress.annotations }}
+    {{ $key }}: {{ $value | quote }}
+  {{- end }}
 spec:
   rules:
     - host: {{ .Values.kibana.ingress.host }}
@@ -30,11 +29,9 @@ spec:
         paths:
           - path: {{ .Values.kibana.ingress.path }}
             backend:
-              serviceName: {{ printf "%s-%s" (include "opendistro-es.fullname" .) "kibana-svc" }}
+              serviceName: {{ template "opendistro-es.fullname" . }}-kibana-svc
               servicePort: {{ .Values.kibana.externalPort }}
   {{- if .Values.kibana.ingress.tls }}
-  tls:
-    {{ toYaml .Values.kibana.ingress.tls | nindent 4 }}
+  tls: {{ toYaml .Values.kibana.ingress.tls | nindent 4 }}
   {{- end }}
 {{- end }}
-
