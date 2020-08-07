@@ -33,6 +33,44 @@ ext {
     nextODPluginsVersion = "1.9.1"
 
     isSnapshot = "true" == System.getProperty("build.snapshot", "true")
+
+    println("get dependencies names and corresponding versions")
+
+    new ByteArrayOutputStream().withStream { os1 ->
+      def result1 = exec {
+        executable = '../../bin/plugins-info'
+        args = ['rpm']
+        standardOutput = os1
+      }
+      ext.plugin_names = os1.toString()
+    }
+
+    new ByteArrayOutputStream().withStream { os2 ->
+      def result2 = exec {
+        executable = '../../bin/plugins-info'
+        args = ['rpm', '--curr_version']
+        standardOutput = os2
+      }
+      ext.plugin_versions = os2.toString()
+    }
+
+    new ByteArrayOutputStream().withStream { os3 ->
+      def result2 = exec {
+        executable = '../../bin/plugins-info'
+        args = ['rpm', '--next_version']
+        standardOutput = os3
+      }
+      ext.plugin_versions_next = os3.toString()
+    }
+
+    pname_arr = ext.plugin_names.split("\n").toList()
+    pver_arr = ext.plugin_versions.split("\n").toList()
+    pver_next_arr = ext.plugin_versions_next.split("\n").toList()
+
+    // there are not direct dependencies to ODFE ES
+    // plugin owners handle these in their own build scripts
+    indirect_deps = ['opendistro-knnlib']
+
 }
 group 'com.amazon.opendistroforelasticsearch'
 version = opendistroVersion + (isSnapshot ? "-SNAPSHOT" : "")
@@ -41,26 +79,25 @@ ospackage {
     packageName = "opendistroforelasticsearch"
     release = isSnapshot ? "0.1" : '1'
     version = "${project.version}" - "-SNAPSHOT"
-
+    
+    println("setup these dependencies: \n##################")
+    println("elasticsearch-oss" + "\n = " + es_version)
     requires('elasticsearch-oss', es_version, EQUAL)
-    requires('opendistro-alerting', baseODPluginsVersion, GREATER | EQUAL)
-    requires('opendistro-sql', baseODPluginsVersion, GREATER | EQUAL)
-    requires('opendistro-security', baseODPluginsVersion, GREATER | EQUAL)
-    requires('opendistro-performance-analyzer', baseODPluginsVersion, GREATER | EQUAL)
-    requires('opendistro-job-scheduler', baseODPluginsVersion, GREATER | EQUAL)
-    requires('opendistro-index-management', baseODPluginsVersion, GREATER | EQUAL)
-    requires('opendistro-knn', baseODPluginsVersion, GREATER | EQUAL)
-    requires('opendistro-anomaly-detection', baseODPluginsVersion, GREATER | EQUAL)
 
-    requires('opendistro-alerting', nextODPluginsVersion, LESS)
-    requires('opendistro-sql', nextODPluginsVersion, LESS)
-    requires('opendistro-security', nextODPluginsVersion, LESS)
-    requires('opendistro-performance-analyzer', nextODPluginsVersion, LESS)
-    requires('opendistro-job-scheduler', nextODPluginsVersion, LESS)
-    requires('opendistro-index-management', nextODPluginsVersion, LESS)
-    requires('opendistro-knn', nextODPluginsVersion, LESS)
-    requires('opendistro-anomaly-detection', nextODPluginsVersion, LESS)
- 
+    for (int i = 0; i < pname_arr.size; i++){
+      String pluginName = pname_arr[i].substring(pname_arr[i].lastIndexOf("/") + 1)
+      String pluginVersion = pver_arr[i]
+      String pluginVersionNext = pver_next_arr[i]
+
+
+      for (int j = 0; j < indirect_deps.size; j++)
+        if (!pluginName.contains(indirect_deps[j])){
+          println(pluginName + "\n>= " + pluginVersion + " | < " + pluginVersionNext)
+          requires(pluginName, pluginVersion, GREATER | EQUAL)
+          requires(pluginName, pluginVersionNext, LESS)
+        }
+    } 
+
     packager = 'Amazon'
     vendor = 'Amazon'
     os = 'LINUX'
