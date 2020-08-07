@@ -33,6 +33,7 @@ jobs:
           ./gradlew buildDeb --console=plain -Dbuild.snapshot=false -b ./build.gradle
           ls -ltr build/distributions/*.deb
           deb_artifact=`ls build/distributions/*.deb`
+          dpkg -i $deb_artifact
 
           #aws s3 cp $deb_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/debs/opendistro-elasticsearch/
           #aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/*"
