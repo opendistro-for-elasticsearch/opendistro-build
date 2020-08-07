@@ -89,7 +89,6 @@ ospackage {
       String pluginVersion = pver_arr[i]
       String pluginVersionNext = pver_next_arr[i]
 
-
       for (int j = 0; j < indirect_deps.size; j++)
         if (!pluginName.contains(indirect_deps[j])){
           println(pluginName + "\n>= " + pluginVersion + " | < " + pluginVersionNext)
