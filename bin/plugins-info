@@ -8,9 +8,10 @@
 # About:         Print the ES/KIBANA plugin names and git urls with correct dependency orders
 #                as defined in the 'plugins.json' file
 #
-# Usage:         ./plugins-info $PLUGINS_TYPE [$RETURN_TYPE]
+# Usage:         ./plugins-info $PLUGINS_TYPE [$RETURN_TYPE] [$GITHUB_TOKEN_PAT]
 #                $PLUGINS_TYPE: <check plugins.json> (required)
 #                $RETURN_TYPE: <default to name> | --git (optional)
+#                $GITHUB_TOKEN_PAT: GitHub Personal Access Token for API Calls Here (optional)
 #
 # Starting Date: 2020-06-24
 # Modified Date: 2020-08-07
@@ -21,6 +22,7 @@ ROOT=`dirname $(realpath $0)`;
 PLUGINS_LIST="$ROOT/plugins.json"
 PLUGINS_TYPE=`echo $1 | tr '[:upper:]' '[:lower:]'`
 RETURN_TYPE=`echo $2 | tr '[:upper:]' '[:lower:]'`
+GITHUB_TOKEN_PAT=$3
 
 if [ -z "$PLUGINS_TYPE" ]
 then
@@ -28,7 +30,7 @@ then
   echo "Example: \"$0 rpm\" (Retrieve S3 Paths)"
   echo "Example: \"$0 rpm --s3\" (Retrieve S3 Paths)"
   echo "Example: \"$0 rpm --git\" (Retrieve Git URLs)"
-  echo "Example: \"$0 rpm --curr_version\" (Retrieve Plugin Current Versions)"
+  echo "Example: \"$0 rpm --curr_version <GitHub Token>\" (Retrieve Plugin Current Versions from Latest Release Tags)"
   echo "Example: \"$0 rpm --next_version\" (Retrieve Plugin Future Versions)"
   exit 1
 fi
@@ -39,11 +41,28 @@ then
 
 elif [ "$RETURN_TYPE" = "--curr_version" ]
 then
-  jq -r ".${PLUGINS_TYPE}[].curr_version" "${PLUGINS_LIST}"
+  REPO_LIST=`jq -r ".${PLUGINS_TYPE}[].git" "${PLUGINS_LIST}"`
+
+  for REPO in $REPO_LIST
+  do
+
+    GIT_JSON=$(curl -XGET -H "Accept: application/vnd.github.everest-preview+json" \
+               -H "Authorization: token $GITHUB_TOKEN_PAT"  --silent \
+               https://api.github.com/repos/$REPO/releases/latest)
+
+    echo $REPO
+    if echo $GIT_JSON | grep -q "Bad credentials"
+    then
+      echo "Bad credentials"
+    else
+      echo $GIT_JSON | jq -r '. | select(.draft == false) | .tag_name'
+    fi
+
+  done
 
 elif [ "$RETURN_TYPE" = "--next_version" ]
 then
-  jq -r ".${PLUGINS_TYPE}[].next_version" "${PLUGINS_LIST}"
+  $ROOT/version-info --od-next
 
 elif [ -z "$RETURN_TYPE" ] || [ "$RETURN_TYPE" = "--s3" ]
 then
