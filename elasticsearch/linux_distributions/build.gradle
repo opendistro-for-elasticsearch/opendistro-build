@@ -67,7 +67,7 @@ ext {
     pver_arr = ext.plugin_versions.split("\n").toList()
     pver_next_arr = ext.plugin_versions_next.split("\n").toList()
 
-    // there are not direct dependencies to ODFE ES
+    // these are not direct dependencies to ODFE ES
     // plugin owners handle these in their own build scripts
     indirect_deps = ['opendistro-knnlib']
 
