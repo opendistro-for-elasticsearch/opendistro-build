@@ -26,41 +26,59 @@ plugins {
 }
 
 ext {
-    // Remember to increment both of these when rolling out a new version
-    es_version = System.getProperty("es.version", "7.8.0")
-    opendistroVersion = "1.9.0"
-    baseODPluginsVersion = "1.9.0"
-    nextODPluginsVersion = "1.9.1"
-
-    isSnapshot = "true" == System.getProperty("build.snapshot", "true")
-
     println("get dependencies names and corresponding versions")
 
     new ByteArrayOutputStream().withStream { os1 ->
-      def result1 = exec {
-        executable = '../../bin/plugins-info'
-        args = ['rpm']
+      def result1 exec {
+        executable = '../../bin/version-info'
+        args = ['--es']
         standardOutput = os1
       }
-      ext.plugin_names = os1.toString()
+      ext.es_version = os1.toString()
     }
+    elasticsearchVersion = System.getProperty("es.version", ext.es_version)
+    println("es_version: " + elasticsearchVersion)
 
     new ByteArrayOutputStream().withStream { os2 ->
-      def result2 = exec {
-        executable = '../../bin/plugins-info'
-        args = ['rpm', '--curr_version']
+      def result2 exec {
+        executable = '../../bin/version-info'
+        args = ['--od']
         standardOutput = os2
       }
-      ext.plugin_versions = os2.toString()
+      ext.od_version = os2.toString()
     }
+    opendistroVersion = ext.od_version
+    println("od_version: " + opendistroVersion)
+
+    isSnapshot = "true" == System.getProperty("build.snapshot", "true")
+
+    ///////////////////////////////////////////////////////////////////
 
     new ByteArrayOutputStream().withStream { os3 ->
-      def result2 = exec {
+      def result3 = exec {
         executable = '../../bin/plugins-info'
-        args = ['rpm', '--next_version']
+        args = ['rpm']
         standardOutput = os3
       }
-      ext.plugin_versions_next = os3.toString()
+      ext.plugin_names = os3.toString()
+    }
+
+    new ByteArrayOutputStream().withStream { os4 ->
+      def result4 = exec {
+        executable = '../../bin/plugins-info'
+        args = ['rpm', '--curr_version']
+        standardOutput = os4
+      }
+      ext.plugin_versions = os4.toString()
+    }
+
+    new ByteArrayOutputStream().withStream { os5 ->
+      def result5 = exec {
+        executable = '../../bin/version-info'
+        args = ['--od-next']
+        standardOutput = os5
+      }
+      ext.plugin_versions_next = os5.toString()
     }
 
     pname_arr = ext.plugin_names.split("\n").toList()
@@ -81,8 +99,10 @@ ospackage {
     version = "${project.version}" - "-SNAPSHOT"
     
     println("setup these dependencies: \n##################")
-    println("elasticsearch-oss" + "\n = " + es_version)
-    requires('elasticsearch-oss', es_version, EQUAL)
+    println("elasticsearch-oss" + "\n = " + elasticsearchVersion)
+
+    // setup package requirements
+    requires('elasticsearch-oss', elasticsearchVersion, EQUAL)
 
     for (int i = 0; i < pname_arr.size; i++){
       String pluginName = pname_arr[i].substring(pname_arr[i].lastIndexOf("/") + 1)
