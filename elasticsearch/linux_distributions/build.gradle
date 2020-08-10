@@ -29,7 +29,7 @@ ext {
     println("get dependencies names and corresponding versions")
 
     new ByteArrayOutputStream().withStream { os1 ->
-      def result1 exec {
+      def result1 = exec {
         executable = '../../bin/version-info'
         args = ['--es']
         standardOutput = os1
@@ -40,7 +40,7 @@ ext {
     println("es_version: " + elasticsearchVersion)
 
     new ByteArrayOutputStream().withStream { os2 ->
-      def result2 exec {
+      def result2 = exec {
         executable = '../../bin/version-info'
         args = ['--od']
         standardOutput = os2
