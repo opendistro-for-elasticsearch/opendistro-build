@@ -66,19 +66,28 @@ ext {
     new ByteArrayOutputStream().withStream { os4 ->
       def result4 = exec {
         executable = '../../bin/plugins-info'
-        args = ['rpm', '--curr_version']
+        args = ['rpm', '--git']
         standardOutput = os4
       }
-      ext.plugin_versions = os4.toString()
+      ext.plugin_git = os4.toString().replaceAll("\n", ",")
     }
 
     new ByteArrayOutputStream().withStream { os5 ->
       def result5 = exec {
-        executable = '../../bin/version-info'
-        args = ['--od-next']
+        executable = '../../.github/scripts/plugin_tag.sh'
+        args = [ext.plugin_git, opendistroVersion]
         standardOutput = os5
       }
-      ext.plugin_versions_next = os5.toString()
+      ext.plugin_versions = os5.toString().replaceAll("v", "")
+    }
+
+    new ByteArrayOutputStream().withStream { os6 ->
+      def result6 = exec {
+        executable = '../../bin/version-info'
+        args = ['--od-next']
+        standardOutput = os6
+      }
+      ext.plugin_versions_next = os6.toString()
     }
 
     pname_arr = ext.plugin_names.split("\n").toList()
