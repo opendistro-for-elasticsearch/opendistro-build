@@ -13,33 +13,31 @@
 
 # @formatter:off
 {{- if and .Values.kibana.ingress.enabled .Values.kibana.enabled }}
-{{- $serviceName:= printf "%s-%s"  (include "opendistro-es.fullname" .) "kibana-svc" }}
+{{- $serviceName := printf "%s-%s" (include "opendistro-es.fullname" .) "kibana-svc" }}
 {{- $servicePort := .Values.kibana.externalPort }}
+{{- $ingressPath := .Values.kibana.ingress.path }}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
+  name: {{ template "opendistro-es.fullname" . }}-kibana-ing
   labels:
-{{ include "opendistro-es.labels.standard" . | indent 4 }}
-  name: {{ template "opendistro-es.fullname" . }}-kibana
+    {{- include "opendistro-es.labels.standard" . | nindent 4 }}
+  {{- with .Values.kibana.ingress.annotations }}
   annotations:
-    {{- range $key, $value := .Values.kibana.ingress.annotations }}
-      {{ $key }}: {{ $value | quote }}
-    {{- end }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   rules:
     {{- range .Values.kibana.ingress.hosts }}
-      {{- $url := splitList "/" . }}
-    - host: {{ first $url }}
+    - host: {{ . | quote }}
       http:
         paths:
-          - path: /{{ rest $url | join "/" }}
+          - path: {{ $ingressPath }}
             backend:
               serviceName: {{ $serviceName }}
               servicePort: {{ $servicePort }}
-    {{- end -}}
+    {{- end }}
   {{- if .Values.kibana.ingress.tls }}
-  tls:
-{{ toYaml .Values.kibana.ingress.tls | indent 4 }}
+  tls: {{ toYaml .Values.kibana.ingress.tls | nindent 4 }}
   {{- end }}
 {{- end }}
-
