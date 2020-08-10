@@ -13,24 +13,30 @@
 
 # @formatter:off
 {{- if and .Values.kibana.ingress.enabled .Values.kibana.enabled }}
+{{- $serviceName := printf "%s-%s" (include "opendistro-es.fullname" .) "kibana-svc" }}
+{{- $servicePort := .Values.kibana.externalPort }}
+{{- $ingressPath := .Values.kibana.ingress.path }}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  labels: {{ include "opendistro-es.labels.standard" . | nindent 4 }}
   name: {{ template "opendistro-es.fullname" . }}-kibana-ing
+  labels:
+    {{- include "opendistro-es.labels.standard" . | nindent 4 }}
+  {{- with .Values.kibana.ingress.annotations }}
   annotations:
-  {{- range $key, $value := .Values.kibana.ingress.annotations }}
-    {{ $key }}: {{ $value | quote }}
+    {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
   rules:
-    - host: {{ .Values.kibana.ingress.host }}
+    {{- range .Values.kibana.ingress.hosts }}
+    - host: {{ . | quote }}
       http:
         paths:
-          - path: {{ .Values.kibana.ingress.path }}
+          - path: {{ $ingressPath }}
             backend:
-              serviceName: {{ template "opendistro-es.fullname" . }}-kibana-svc
-              servicePort: {{ .Values.kibana.externalPort }}
+              serviceName: {{ $serviceName }}
+              servicePort: {{ $servicePort }}
+    {{- end }}
   {{- if .Values.kibana.ingress.tls }}
   tls: {{ toYaml .Values.kibana.ingress.tls | nindent 4 }}
   {{- end }}

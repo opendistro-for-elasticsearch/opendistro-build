@@ -65,11 +65,12 @@ kibana:
     #  kubernetes.io/tls-acme: "true"
     labels: {}
     path: /
-    host: kibana.local
+    hosts:
+      - chart-example.local
     tls: []
     #  - secretName: chart-example-tls
     #    hosts:
-    #      - kibana.local
+    #      - chart-example.local
 
   service:
     type: ClusterIP
