@@ -87,7 +87,7 @@ ext {
         args = ['--od-next']
         standardOutput = os6
       }
-      ext.plugin_versions_next = os6.toString()
+      ext.plugin_versions_next = os6.toString() + ".0"
     }
 
     pname_arr = ext.plugin_names.split("\n").toList()
