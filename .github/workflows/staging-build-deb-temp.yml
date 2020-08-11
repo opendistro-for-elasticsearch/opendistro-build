@@ -32,7 +32,7 @@ jobs:
           export JAVA_HOME=/openjdk12
           export PATH=$JAVA_HOME:$PATH
           cd elasticsearch/linux_distributions
-          ./gradlew buildDeb --console=plain -Dbuild.snapshot=false -b ./build.gradle --info 
+          ./gradlew buildDeb --console=plain -Dbuild.snapshot=false -b ./build.gradle --debug
           ls -ltr build/distributions/*.deb
           deb_artifact=`ls build/distributions/*.deb`
           dpkg -i $deb_artifact
