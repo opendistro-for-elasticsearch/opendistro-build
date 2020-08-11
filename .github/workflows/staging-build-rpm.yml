@@ -46,7 +46,7 @@ jobs:
           export PATH=$JAVA_HOME:$PATH
           cd elasticsearch/linux_distributions
           apt update -y
-          apt install jq python3 -y
+          apt install jq python -y
           ./gradlew buildRpm --console=plain -Dbuild.snapshot=false -b ./build.gradle
           rpm_artifact=`ls build/distributions/*.rpm`
           ls -ltr build/distributions/*.rpm
