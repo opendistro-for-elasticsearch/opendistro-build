@@ -84,7 +84,7 @@ jobs:
             java-version: 14
         
         - name: Installing python
-          run: sudo yum install python37 -y
+          run: sudo yum install python3 -y
 
         - name: Install previous version of ODFE
           run: |
