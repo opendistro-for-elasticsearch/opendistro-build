@@ -44,7 +44,7 @@ jobs:
           export JAVA_HOME=/openjdk12
           export PATH=$JAVA_HOME:$PATH
           cd elasticsearch/linux_distributions
-          apt install jq -y
+          apt install jq python3 -y
           ./gradlew buildDeb --console=plain -Dbuild.snapshot=false -b ./build.gradle
           ls -ltr build/distributions/*.deb
           deb_artifact=`ls build/distributions/*.deb`

@@ -27,7 +27,7 @@ jobs:
           #!/bin/bash -x
           set -e
           set -u
-          apt install jq -y
+          apt install jq python3 -y
           export JAVA_HOME=/openjdk12
           export PATH=$JAVA_HOME:$PATH
           cd elasticsearch/linux_distributions
