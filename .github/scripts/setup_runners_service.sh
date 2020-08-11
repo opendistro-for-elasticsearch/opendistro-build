@@ -250,8 +250,9 @@ then
   sleep 120
   curl -XGET https://localhost:9200 -u admin:admin --insecure
   curl -XGET https://localhost:9200/_cluster/health?pretty -u admin:admin --insecure
-  curl -v -XGET https://localhost:5601 --insecure
-  curl -v -XGET https://localhost:5601/api/status --insecure
+  # kibana can still use http to check status
+  curl -v -XGET http://localhost:5601
+  curl -v -XGET http://localhost:5601/api/status
   echo "es & kibana start"
   cd $REPO_ROOT
   exit 0

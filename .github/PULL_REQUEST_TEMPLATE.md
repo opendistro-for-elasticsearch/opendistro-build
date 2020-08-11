@@ -1,3 +1,7 @@
-Does this PR include tests?
+*Issue #, if available:*
 
-This project is developed under a test-driven workflow, so please refrain from submitting patches without test coverage. If you are not familiar with testing in Python, please raise an issue instead.
+*Description of changes:*
+
+*Test Results:*
+
+By submitting this pull request, I confirm that my contribution is made under the terms of the Apache 2.0 license.

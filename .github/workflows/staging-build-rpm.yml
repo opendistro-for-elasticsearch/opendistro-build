@@ -73,7 +73,7 @@ jobs:
       - name: Build Kibana rpm
         run: apt install -y jq; ./kibana/linux_distributions/opendistro-kibana-build.sh rpm
 
-  signing-artifacts:   
+  signing-artifacts:
     name: Sign Yum
     runs-on: [ubuntu-16.04]
     container: 
@@ -81,7 +81,7 @@ jobs:
     needs: [build-es-artifacts, build-kibana-artifacts]
     steps:
       - uses: actions/checkout@v1
-        
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -175,9 +175,10 @@ jobs:
         run: |
           #!/bin/bash
           # Please add comma at the end of the RUNNERS strings
-          RUNNERS="odfe-rpm-sql,odfe-rpm-ad,"
-          RUNNERS+="odfe-rpm-ism-nosec,odfe-rpm-alerting-nosec,odfe-rpm-sql-nosec,odfe-rpm-knn-nosec,odfe-rpm-ad-nosec,"
-          RUNNERS+="odfe-rpm-ad-kibana-nosec"
+          RUNNERS="odfe-rpm-ism-nosec,odfe-rpm-alerting-nosec,odfe-rpm-sql-nosec,odfe-rpm-knn-nosec,odfe-rpm-ad-nosec,"
+          RUNNERS+="odfe-rpm-sql,odfe-rpm-ad,"
+          RUNNERS+="odfe-rpm-ad-kibana-nosec,"
+          RUNNERS+="odfe-rpm-ad-kibana"
           .github/scripts/setup_runners.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
 
   Test-ISM-NoSec:
@@ -201,7 +202,7 @@ jobs:
           .github/scripts/setup_runners_service.sh rpm --es-nosec
           export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../index-management; pwd
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
-  
+
   Test-ALERTING-NoSec:
     needs: [Provision-Runners]
     name: Test-ALERTING-NoSec
@@ -337,6 +338,7 @@ jobs:
   Test-AD-KIBANA-NoSec:
     needs: [Provision-Runners]
     runs-on: [self-hosted, Linux, X64, odfe-rpm-ad-kibana-nosec]
+    name: Test-AD-KIBANA-NoSec
     steps:
       - uses: actions/checkout@v1
       - name: Setup Java
@@ -394,14 +396,81 @@ jobs:
       - name: Start ES and Kibana
         run: .github/scripts/setup_runners_service.sh rpm --kibana-nosec
 
-      - name: run IT for AD kibana plugin
+      - name: run IT
         uses: cypress-io/github-action@v1
         with:
           working-directory: kibana/plugins/anomaly-detection-kibana-plugin
           command: yarn cy:run --config baseurl=http://localhost:5601
 
+  Test-AD-KIBANA:
+    needs: [Provision-Runners]
+    runs-on: [self-hosted, Linux, X64, odfe-rpm-ad-kibana]
+    name: Test-AD-KIBANA
+    steps:
+      - uses: actions/checkout@v1
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 14
+
+      - name: Retrieve plugin tags
+        run: |
+          echo ::set-env name=es_version_kibana::$(./bin/version-info --es)
+          echo ::set-env name=p_tag_ad_kibana::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)
+
+      - name: Checkout Kibana
+        uses: actions/checkout@v2
+        with:
+          repository: opendistro-for-elasticsearch/kibana-oss
+          ref: ${{env.es_version_kibana}}
+          token: ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
+          path: kibana
+
+      - name: Get node and yarn versions
+        id: node_yarn_versions
+        run: |
+          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
+          . ~/.nvm/nvm.sh
+          nvm install node
+          
+          echo ::set-env name=kibana_node_version::$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")
+          echo ::set-env name=kibana_yarn_version::$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")
+
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{env.kibana_node_version}}
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install correct yarn version for Kibana
+        run: |
+          npm uninstall -g yarn
+          echo "Installing yarn ${{ env.kibana_yarn_version }}"
+          npm i -g yarn@${{ env.kibana_yarn_version }}
+
+      - name: Checking out ad kibana repo
+        uses: actions/checkout@v2
+        with:
+          repository: opendistro-for-elasticsearch/anomaly-detection-kibana-plugin
+          ref: ${{env.p_tag_ad_kibana}}
+          path: kibana/plugins/anomaly-detection-kibana-plugin
+
+      - name: Bootstrap the AD kibana plugin
+        run: |
+          cd ./kibana/plugins/anomaly-detection-kibana-plugin
+          yarn kbn bootstrap
+
+      - name: Start ES and Kibana
+        run: .github/scripts/setup_runners_service.sh rpm --kibana
+
+      - name: run IT
+        uses: cypress-io/github-action@v1
+        with:
+          working-directory: kibana/plugins/anomaly-detection-kibana-plugin
+          command: yarn cy:run-with-security --config baseurl=http://localhost:5601
+
   CleanUp-Runners:
-    needs: [Test-SQL, Test-AD, Test-ISM-NoSec, Test-ALERTING-NoSec, Test-SQL-NoSec, Test-KNN-NoSec, Test-AD-NoSec, Test-AD-KIBANA-NoSec]
+    needs: [Test-SQL, Test-AD, Test-ISM-NoSec, Test-ALERTING-NoSec, Test-SQL-NoSec, Test-KNN-NoSec, Test-AD-NoSec, Test-AD-KIBANA-NoSec, Test-AD-KIBANA]
     if: always()
     name: CleanUp-Runners
     runs-on: ubuntu-18.04
@@ -417,8 +486,9 @@ jobs:
         run: |
           #!/bin/bash
           # Please add comma at the end of the RUNNERS strings
-          RUNNERS="odfe-rpm-sql,odfe-rpm-ad,"
-          RUNNERS+="odfe-rpm-ism-nosec,odfe-rpm-alerting-nosec,odfe-rpm-sql-nosec,odfe-rpm-knn-nosec,odfe-rpm-ad-nosec,"
-          RUNNERS+="odfe-rpm-ad-kibana-nosec"
+          RUNNERS+"odfe-rpm-ism-nosec,odfe-rpm-alerting-nosec,odfe-rpm-sql-nosec,odfe-rpm-knn-nosec,odfe-rpm-ad-nosec,"
+          RUNNERS+="odfe-rpm-sql,odfe-rpm-ad,"
+          RUNNERS+="odfe-rpm-ad-kibana-nosec,"
+          RUNNERS+="odfe-rpm-ad-kibana"
           .github/scripts/setup_runners.sh terminate $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
 
