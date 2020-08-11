@@ -108,7 +108,7 @@ ospackage {
     version = "${project.version}" - "-SNAPSHOT"
     
     println("setup these dependencies: \n##################")
-    println("elasticsearch-oss" + ":\t = " + elasticsearchVersion)
+    println("elasticsearch-oss" + ": = " + elasticsearchVersion)
 
     // setup package requirements
     requires('elasticsearch-oss', elasticsearchVersion, EQUAL)
@@ -120,7 +120,7 @@ ospackage {
 
       for (int j = 0; j < indirect_deps.size; j++)
         if (!pluginName.contains(indirect_deps[j])){
-          println(pluginName + ":\t >= " + pluginVersion + " | < " + pluginVersionNext)
+          println(pluginName + ": >= " + pluginVersion + " | < " + pluginVersionNext)
           requires(pluginName, pluginVersion, GREATER | EQUAL)
           requires(pluginName, pluginVersionNext, LESS)
         }
