@@ -34,7 +34,7 @@ ext {
         args = ['--es']
         standardOutput = os1
       }
-      ext.es_version = os1.toString()
+      ext.es_version = os1.toString().trim()
     }
     elasticsearchVersion = System.getProperty("es.version", ext.es_version)
     println("es_version: " + elasticsearchVersion)
@@ -45,7 +45,7 @@ ext {
         args = ['--od']
         standardOutput = os2
       }
-      ext.od_version = os2.toString()
+      ext.od_version = os2.toString().trim()
     }
     opendistroVersion = ext.od_version
     println("od_version: " + opendistroVersion)
