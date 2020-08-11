@@ -45,6 +45,7 @@ jobs:
           export JAVA_HOME=/openjdk12
           export PATH=$JAVA_HOME:$PATH
           cd elasticsearch/linux_distributions
+          apt update -y
           apt install jq python3 -y
           ./gradlew buildRpm --console=plain -Dbuild.snapshot=false -b ./build.gradle
           rpm_artifact=`ls build/distributions/*.rpm`
@@ -345,7 +346,7 @@ jobs:
 
       - name: Retrieve plugin tags
         run: |
-          echo ::set-env name=es_version_kibana::$(python ./bin/version-info --es)
+          echo ::set-env name=es_version_kibana::$(./bin/version-info --es)
           echo ::set-env name=p_tag_ad_kibana::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)
 
       - name: Checkout Kibana
