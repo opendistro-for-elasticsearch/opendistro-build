@@ -105,7 +105,7 @@ version = opendistroVersion + (isSnapshot ? "-SNAPSHOT" : "")
 ospackage {
     packageName = "opendistroforelasticsearch"
     release = isSnapshot ? "0.1" : '1'
-    archiveVersion = "${project.version}" - "-SNAPSHOT"
+    version = "${project.version}" - "-SNAPSHOT"
     
     println("setup these dependencies: \n##################")
     println("elasticsearch-oss" + ": = " + elasticsearchVersion)
@@ -142,12 +142,12 @@ ospackage {
 
 buildRpm() {
     arch = 'NOARCH'
-    archiveFileName "${packageName}-${archiveVersion}.rpm"
+    archiveFileName "${packageName}-${version}.rpm"
 }
 
 buildDeb() {
     arch = 'amd64'
-    archiveFileName "${packageName}-${archiveVersion}.deb"
+    archiveFileName "${packageName}-${version}.deb"
 }
 
 task buildPackages(type: GradleBuild) {
