@@ -92,7 +92,7 @@ ext {
 
     pname_arr = ext.plugin_names.split("\n").toList()
     pver_arr = ext.plugin_versions.split("\n").toList()
-    pver_next_arr = ext.plugin_versions_next.split("\n").toList()
+    pver_next = ext.plugin_versions_next
 
     // these are not direct dependencies to ODFE ES
     // plugin owners handle these in their own build scripts
@@ -116,7 +116,7 @@ ospackage {
     for (int i = 0; i < pname_arr.size; i++){
       String pluginName = pname_arr[i].substring(pname_arr[i].lastIndexOf("/") + 1)
       String pluginVersion = pver_arr[i]
-      String pluginVersionNext = pver_next_arr[i]
+      String pluginVersionNext = pver_next
 
       for (int j = 0; j < indirect_deps.size; j++)
         if (!pluginName.contains(indirect_deps[j])){
