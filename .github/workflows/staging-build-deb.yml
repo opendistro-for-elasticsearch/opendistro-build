@@ -4,12 +4,12 @@ on:
   #schedule:
   #  - cron: '0 10 * * *'
   repository_dispatch:
-    types: [test-build-deb]
+    types: [staging-build-deb]
 
 jobs:
   plugin-availability:
     name: Check Plugin Availability
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v1
       - name: Configure AWS Credentials
@@ -25,7 +25,7 @@ jobs:
   build-es-artifacts:
     needs: [plugin-availability]
     name: Build ES Artifacts
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     container:
       image: opendistroforelasticsearch/multijava08101112-git:v1
     steps:
@@ -44,6 +44,8 @@ jobs:
           export JAVA_HOME=/openjdk12
           export PATH=$JAVA_HOME:$PATH
           cd elasticsearch/linux_distributions
+          apt update -y
+          apt install jq python -y
           ./gradlew buildDeb --console=plain -Dbuild.snapshot=false -b ./build.gradle
           ls -ltr build/distributions/*.deb
           deb_artifact=`ls build/distributions/*.deb`
@@ -55,7 +57,7 @@ jobs:
   build-kibana-artifacts:
     needs: [plugin-availability]
     name: Build Kibana Artifacts
-    runs-on: [ubuntu-latest]
+    runs-on: [ubuntu-18.04]
     container:
       image: opendistroforelasticsearch/jsenv:v1
     steps:
@@ -71,7 +73,7 @@ jobs:
 
   sign-deb-artifacts:
     needs: [build-es-artifacts, build-kibana-artifacts]
-    runs-on: [ubuntu-latest]
+    runs-on: [ubuntu-18.04]
     container:
       image: opendistroforelasticsearch/base-ubuntu
     steps:
@@ -124,7 +126,7 @@ jobs:
 
   Build-ES-and-Kibana-Ubuntu-Docker:
     needs: [sign-deb-artifacts]
-    runs-on: [ubuntu-latest]
+    runs-on: [ubuntu-18.04]
     name: Build ubuntu image for Sanity Testing
     steps:
       - uses: actions/checkout@v1
@@ -133,7 +135,7 @@ jobs:
         with:
           repository: opendistro-for-elasticsearch/opendistro-infra
           ref: jenkins-test
-          token: ${{ secrets.READ_TOKEN }}
+          token: ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
       - name: Build Ubuntu Docker Image
         env:
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
@@ -179,9 +181,10 @@ jobs:
           # Optional content type:
           content_type: text/html
 
-  Test-ISM-Plugin:
+  Test-ISM-NoSec:
     needs: [sign-deb-artifacts]
-    runs-on: [ubuntu-16.04]
+    runs-on: [ubuntu-18.04]
+    name: Test-ISM-NoSec
     strategy:
       matrix:
         java: [14]
@@ -201,45 +204,17 @@ jobs:
         with:
           java-version: ${{ matrix.java }}
 
-      - name: Run Debian Staging Distrubution
+      - name: IT
         run: |
-          es_version=`./bin/version-info --es`
-          echo $es_version
-          cd elasticsearch/linux_distributions
-          cd ../../..
-          sleep 20
-          sudo sysctl -w vm.max_map_count=262144
-          sudo apt update -y
-          sudo sudo apt install -y net-tools
-
-          wget -qO - https://d3g5vo6xdbdb9a.cloudfront.net/GPG-KEY-opendistroforelasticsearch | sudo apt-key add -
-          echo "deb https://d3g5vo6xdbdb9a.cloudfront.net/staging/apt stable main" | sudo tee -a /etc/apt/sources.list.d/opendistroforelasticsearch.list
-
-          wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$es_version-amd64.deb
-          sudo dpkg -i elasticsearch-oss-$es_version-amd64.deb
-
-          sudo apt-get -y update
-          sudo apt install -y opendistroforelasticsearch
-          sudo mkdir /home/runner/work/repo
-          sudo chmod 777 /home/runner/work/repo
-          sudo chmod 777 /etc/elasticsearch/elasticsearch.yml
-          sudo /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro_security
-          sudo sed -i '/path.logs/a path.repo: ["/home/runner/work/repo"]' /etc/elasticsearch/elasticsearch.yml
-          sudo sed -i /^opendistro_security/d /etc/elasticsearch/elasticsearch.yml
-          sudo sed -i /CN=kirk/d /etc/elasticsearch/elasticsearch.yml
-          sudo sed -i /^node.max_local_storage_nodes/d /etc/elasticsearch/elasticsearch.yml
-          sudo sed -i /^cluster.routing.allocation.disk.threshold_enabled/d /etc/elasticsearch/elasticsearch.yml
-
-          sudo /etc/init.d/elasticsearch start
-
-          sleep 30
-          cd index-management   
+          .github/scripts/setup_runners_service.sh deb --es-nosec
+          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../index-management; pwd
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
           
 
-  Test-Alerting-Plugin:
+  Test-ALERTING-NoSec:
     needs: [sign-deb-artifacts]
-    runs-on: [ubuntu-16.04]
+    runs-on: [ubuntu-18.04]
+    name: Test-ALERTING-NoSec
     strategy:
       matrix:
         java: [14]
@@ -259,47 +234,16 @@ jobs:
         with:
           java-version: ${{ matrix.java }}
 
-      - name: Run Debian Staging Distrubution
+      - name: IT
         run: |
-          es_version=`./bin/version-info --es`
-          echo $es_version
-          cd elasticsearch/linux_distributions
-          cd ../../..
-          sleep 20
-          sudo sysctl -w vm.max_map_count=262144
-
-          sudo add-apt-repository -y ppa:openjdk-r/ppa
-          sudo apt update -y
-          sudo apt install -y openjdk-11-jdk
-          sudo sudo apt install -y net-tools
-
-          wget -qO - https://d3g5vo6xdbdb9a.cloudfront.net/GPG-KEY-opendistroforelasticsearch | sudo apt-key add -
-          echo "deb https://d3g5vo6xdbdb9a.cloudfront.net/staging/apt stable main" | sudo tee -a /etc/apt/sources.list.d/opendistroforelasticsearch.list
-
-          wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$es_version-amd64.deb
-          sudo dpkg -i elasticsearch-oss-$es_version-amd64.deb
-
-          sudo apt-get -y update
-          sudo apt install -y opendistroforelasticsearch
-          
-          sudo chmod 777 /etc/elasticsearch/elasticsearch.yml
-          sudo /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro_security
-          sudo sed -i /^opendistro_security/d /etc/elasticsearch/elasticsearch.yml
-          sudo sed -i /CN=kirk/d /etc/elasticsearch/elasticsearch.yml
-          sudo sed -i '/http\.port/s/^# *//' /etc/elasticsearch/elasticsearch.yml
-          sudo sed -i /^node.max_local_storage_nodes/d /etc/elasticsearch/elasticsearch.yml
-          sudo sed -i /^cluster.routing.allocation.disk.threshold_enabled/d /etc/elasticsearch/elasticsearch.yml
-
-          sudo /etc/init.d/elasticsearch start
-
-          sleep 30
-          
-          cd alerting/alerting
+          .github/scripts/setup_runners_service.sh deb --es-nosec
+          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../alerting/alerting; pwd
           ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
           
-  Test-SQL-Plugin:
+  Test-SQL-NoSec:
     needs: [sign-deb-artifacts]
-    runs-on: [ubuntu-16.04]
+    runs-on: [ubuntu-18.04]
+    name: Test-SQL-NoSec
     strategy:
       matrix:
         java: [14]
@@ -319,98 +263,16 @@ jobs:
         with:
           java-version: ${{ matrix.java }}
 
-      - name: Run Debian Staging Distrubution
+      - name: IT
         run: |
-          es_version=`./bin/version-info --es`
-          echo $es_version
-          cd elasticsearch/linux_distributions
-          cd ../../..
-          sleep 20
-          sudo sysctl -w vm.max_map_count=262144
-
-          sudo add-apt-repository -y ppa:openjdk-r/ppa
-          sudo apt update -y
-          sudo apt install -y openjdk-11-jdk
-          sudo sudo apt install -y net-tools
-
-          wget -qO - https://d3g5vo6xdbdb9a.cloudfront.net/GPG-KEY-opendistroforelasticsearch | sudo apt-key add -
-          echo "deb https://d3g5vo6xdbdb9a.cloudfront.net/staging/apt stable main" | sudo tee -a /etc/apt/sources.list.d/opendistroforelasticsearch.list
-
-          wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$es_version-amd64.deb
-          sudo dpkg -i elasticsearch-oss-$es_version-amd64.deb
-
-          sudo apt-get -y update
-          sudo apt install -y opendistroforelasticsearch
-          
-          sudo chmod 777 /etc/elasticsearch/elasticsearch.yml
-          sudo /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro_security
-          sudo sed -i /^opendistro_security/d /etc/elasticsearch/elasticsearch.yml
-          sudo sed -i /CN=kirk/d /etc/elasticsearch/elasticsearch.yml
-          sudo sed -i /^node.max_local_storage_nodes/d /etc/elasticsearch/elasticsearch.yml
-          sudo sed -i /^cluster.routing.allocation.disk.threshold_enabled/d /etc/elasticsearch/elasticsearch.yml
-
-          sudo /etc/init.d/elasticsearch start
-
-          sleep 30
-          cd sql
+          .github/scripts/setup_runners_service.sh deb --es-nosec
+          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../sql; pwd
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
-          
-  Test-SQL-Plugin-With-Security:
+  
+  Test-KNN-NoSec:
     needs: [sign-deb-artifacts]
-    runs-on: [ubuntu-16.04]
-    strategy:
-      matrix:
-        java: [14]
-    steps:
-      - uses: actions/checkout@v1
-
-      - name: Retrieve plugin tags 
-        run:  echo ::set-env name=p_tag_sql::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)
-
-      - uses: actions/checkout@v1
-        with:
-          repository: opendistro-for-elasticsearch/sql
-          ref: ${{env.p_tag_sql}}
-
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.java }}
-
-      - name: Run Debian Staging Distrubution
-        run: |
-          es_version=`./bin/version-info --es`
-          echo $es_version
-          cd elasticsearch/linux_distributions
-          cd ../../..
-          sleep 20
-          sudo sysctl -w vm.max_map_count=262144
-
-          sudo add-apt-repository -y ppa:openjdk-r/ppa
-          sudo apt update -y
-          sudo apt install -y openjdk-11-jdk
-          sudo sudo apt install -y net-tools
-
-          wget -qO - https://d3g5vo6xdbdb9a.cloudfront.net/GPG-KEY-opendistroforelasticsearch | sudo apt-key add -
-          echo "deb https://d3g5vo6xdbdb9a.cloudfront.net/staging/apt stable main" | sudo tee -a /etc/apt/sources.list.d/opendistroforelasticsearch.list
-
-          wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$es_version-amd64.deb
-          sudo dpkg -i elasticsearch-oss-$es_version-amd64.deb
-
-          sudo apt-get -y update
-          sudo apt install -y opendistroforelasticsearch
-          
-          sudo chmod 777 /etc/elasticsearch/elasticsearch.yml
-          sudo sed -i /^node.max_local_storage_nodes/d /etc/elasticsearch/elasticsearch.yml
-          sudo /etc/init.d/elasticsearch start
-
-          sleep 30
-          cd sql
-          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin
-          
-  Test-KNN-Plugin:
-    needs: [sign-deb-artifacts]
-    runs-on: [ubuntu-16.04]
+    runs-on: [ubuntu-18.04]
+    name: Test-KNN-NoSec
     strategy:
       matrix:
         java: [14]
@@ -426,38 +288,163 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.java }}
-      - name: Run Debian Staging Distrubution
+      - name: IT
         run: |
-          es_version=`./bin/version-info --es`
-          echo $es_version
-          cd elasticsearch/linux_distributions
-          cd ../../..
-          sleep 20
-          sudo sysctl -w vm.max_map_count=262144
-
-          sudo add-apt-repository -y ppa:openjdk-r/ppa
-          sudo apt update -y
-          sudo apt install -y openjdk-11-jdk
-          sudo sudo apt install -y net-tools
-
-          wget -qO - https://d3g5vo6xdbdb9a.cloudfront.net/GPG-KEY-opendistroforelasticsearch | sudo apt-key add -
-          echo "deb https://d3g5vo6xdbdb9a.cloudfront.net/staging/apt stable main" | sudo tee -a /etc/apt/sources.list.d/opendistroforelasticsearch.list
-
-          wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$es_version-amd64.deb
-          sudo dpkg -i elasticsearch-oss-$es_version-amd64.deb
-
-          sudo apt-get -y update
-          sudo apt install -y opendistroforelasticsearch
-          
-          sudo chmod 777 /etc/elasticsearch/elasticsearch.yml
-          sudo /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro_security
-          sudo sed -i /^opendistro_security/d /etc/elasticsearch/elasticsearch.yml
-          sudo sed -i /CN=kirk/d /etc/elasticsearch/elasticsearch.yml
-          sudo sed -i /^node.max_local_storage_nodes/d /etc/elasticsearch/elasticsearch.yml
-          sudo sed -i /^cluster.routing.allocation.disk.threshold_enabled/d /etc/elasticsearch/elasticsearch.yml
-
-          sudo /etc/init.d/elasticsearch start
-
-          sleep 30
-          cd k-NN
+          .github/scripts/setup_runners_service.sh deb --es-nosec
+          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../k-NN; pwd
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
+   
+  Test-AD-NoSec:
+    needs: [sign-deb-artifacts]
+    runs-on: [ubuntu-18.04]
+    name: Test-AD-NoSec
+    strategy:
+      matrix:
+        java: [14]
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Retrieve plugin tags 
+        run:  echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)
+
+      - uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/anomaly-detection
+          ref: ${{env.p_tag_ad}}
+
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+
+      - name: IT
+        run: |
+          .github/scripts/setup_runners_service.sh deb --es-nosec
+          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../anomaly-detection; pwd
+          ./gradlew :integTestRunner --tests "com.amazon.opendistroforelasticsearch.ad.rest.*IT" --tests "com.amazon.opendistroforelasticsearch.ad.e2e.*IT" -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest"
+          
+  Test-SQL:
+    needs: [sign-deb-artifacts]
+    runs-on: [ubuntu-18.04]
+    name: Test-SQL
+    strategy:
+      matrix:
+        java: [14]
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Retrieve plugin tags 
+        run:  echo ::set-env name=p_tag_sql::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)
+
+      - uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/sql
+          ref: ${{env.p_tag_sql}}
+
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+
+      - name: IT
+        run: |
+          .github/scripts/setup_runners_service.sh deb --es
+          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../sql; pwd
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin
+          
+  Test-AD:
+    needs: [sign-deb-artifacts]
+    runs-on: [ubuntu-18.04]
+    name: Test-AD
+    strategy:
+      matrix:
+        java: [14]
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Retrieve plugin tags 
+        run:  echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)
+
+      - uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/anomaly-detection
+          ref: ${{env.p_tag_ad}}
+
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+
+      - name: IT
+        run: |
+          .github/scripts/setup_runners_service.sh deb --es
+          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../anomaly-detection; pwd
+          ./gradlew :integTestRunner --tests "com.amazon.opendistroforelasticsearch.ad.rest.*IT" --tests "com.amazon.opendistroforelasticsearch.ad.e2e.*IT" -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest" -Dhttps=true -Duser=admin -Dpassword=admin
+       
+          
+  Test-AD-KIBANA-NoSec:
+    needs: [sign-deb-artifacts]
+    runs-on: [ubuntu-18.04]
+    name: Test-AD-KIBANA-NoSec
+    strategy:
+      matrix:
+        java: [14]
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Retrieve plugin tags 
+        run: |
+          echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)
+          echo ::set-env name=es_version::$(./bin/version-info --es)
+          
+      - name: Checkout Kibana
+        uses: actions/checkout@v2
+        with:
+          repository: opendistro-for-elasticsearch/kibana-oss
+          ref: ${{env.es_version}}
+          token: ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
+          path: kibana
+           
+      - uses: actions/checkout@v2
+        with:
+          repository: opendistro-for-elasticsearch/anomaly-detection-kibana-plugin
+          ref: ${{env.p_tag_ad}}
+          path: kibana/plugins/anomaly-detection-kibana-plugin
+      
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+      
+      - name: Get node and yarn versions
+        id: node_yarn_versions
+        run: |
+          echo ::set-env name=kibana_node_version::$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")
+          echo ::set-env name=kibana_yarn_version::$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")   
+      
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{env.kibana_node_version}}
+          registry-url: 'https://registry.npmjs.org'
+      
+      - name: Install correct yarn version for Kibana
+        run: |
+          npm uninstall -g yarn
+          echo "Installing yarn ${{ env.kibana_yarn_version }}"
+          npm i -g yarn@${{ env.kibana_yarn_version }}     
+      
+      - name: Bootstrap the plugin
+        run: |
+          cd ./kibana/plugins/anomaly-detection-kibana-plugin
+          yarn kbn bootstrap
+          
+      - name: Start ES and Kibana
+        run: .github/scripts/setup_runners_service.sh deb --kibana-nosec
+          
+      - name: run IT
+        uses: cypress-io/github-action@v1
+        with:
+          working-directory: kibana/plugins/anomaly-detection-kibana-plugin
+          command: yarn cy:run --config baseurl=http://localhost:5601
+          

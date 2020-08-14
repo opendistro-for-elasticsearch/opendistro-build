@@ -1,12 +1,32 @@
 #!/bin/bash
 
+###### Information ############################################################################
+# Name:          userdata.sh
+# Maintainer:    ODFE Infra Team
+# Language:      Shell
+#
+# About:         This script is related to testing-domains set-up.
+#                See https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/283
+#
+#                In order to set-up domains, EC2 needs to have ES and Kibana running, 
+#                hence this script will act as userdata input to install and configure 
+#                the necessary services while installing the EC2 via AutoScaling Groups
+#
+# Usage:         ./userdata.sh $distribution $security
+#                $distribution: TAR | DEB | RPM (required)
+#                $security: ENABLE | DISABLE (required)
+#
+# Starting Date: 2020-06-24
+# Modified Date: 2020-07-30
+###############################################################################################
+
 set -e
 REPO_ROOT=`git rev-parse --show-toplevel`
 ES_VER=`$REPO_ROOT/bin/version-info --es`
 ODFE_VER=`$REPO_ROOT/bin/version-info --od`
 echo $ES_VER $ODFE_VER
 
-if [ "$#" -eq 0 ] || [ "$#" -gt 2 ] || [ -z "$1" ] || [ -z "$2" ]
+if [ "$#" -ne 2 ] || [ -z "$1" ] || [ -z "$2" ]
 then
     echo "Please assign 2 parameters when running this script"
     echo "Format for dispatch event: \"client_payload\": {

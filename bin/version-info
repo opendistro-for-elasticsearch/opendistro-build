@@ -14,46 +14,66 @@
 # permissions and limitations under the License.
 #
 
-# Description: 
-# Print the ES version for the current branch, as defined in
-# the 'version.json' file.
+###### Information ############################################################################
+# Name:          version-info
+# Maintainer:    ODFE Infra Team
+# Language:      Python
 #
-# The version can also be forced by setting the ELASTIC_VERSION environment variable.
+# About:         Print the ES/ODFE version for the current/previous branches
+#                as defined in the 'version.json' file
+#
+# Usage:         [python] ./version-info $VERSION_TYPE
+#                $VERSION_TYPE: --od | --od-prev | --es | --es-prev (required)
+#
+# Starting Date: 2019-05-15
+# Modified Date: 2020-07-30
+###############################################################################################
 
 import sys
 import json
 from os import environ
 
 
-def get_hard_coded_version(key):
+def get_hard_coded_version(key1, key2):
     version_file = sys.path[0] + '/' + 'version.json'
     version_info = json.load(open(version_file))
-    return version_info[key]
+    return version_info[key1][key2]
 
 
-def get_es_version():
+def get_es_version(user_param):
     if 'ES_VERSION' in environ:
         # Then the user has forced the version. Do as they say!
         return(environ['ES_VERSION'])
     else:
-        return(get_hard_coded_version('esversion'))
+        if user_param == '--es-prev':
+          return(get_hard_coded_version('esVersion', 'previous'))
+        elif user_param == '--es-next':
+          return(get_hard_coded_version('esVersion', 'next'))
+        else:
+          return(get_hard_coded_version('esVersion', 'current'))
 
-def get_od_version():
+def get_od_version(user_param):
     if 'OD_VERSION' in environ:
         # Then the user has forced the version. Do as they say!
         return(environ['OD_VERSION'])
     else:
-        return(get_hard_coded_version('odVersion'))
+        if user_param == '--od-prev':
+          return(get_hard_coded_version('odVersion', 'previous'))
+        elif user_param == '--od-next':
+          return(get_hard_coded_version('odVersion', 'next'))
+        else:
+          return(get_hard_coded_version('odVersion', 'current'))
 
 if __name__ == '__main__':
     # Provide a shell compatible interface, defaults to OD version
     if len(sys.argv) == 2 :
         arg_value = sys.argv[1]
-        if arg_value == '--es':
-            print(get_es_version())
-        elif arg_value == '--od':
-            print(get_od_version())
+        if (arg_value == '--es') or (arg_value == '--es-prev') or (arg_value == '--es-next'):
+            print(get_es_version(arg_value))
+        elif (arg_value == '--od') or (arg_value == '--od-prev') or (arg_value == '--od-next'):
+            print(get_od_version(arg_value))
         else:
-            raise Exception('invalid argument, use --es or --od')
+            raise Exception('invalid argument, use --es OR --od OR --es-prev OR --od-prev OR --es-next OR --od-next')
     else:
-      raise Exception('invalid argument, use --es OR --od')
+      raise Exception('invalid argument, use --es OR --od OR --es-prev OR --od-prev OR --es-next OR --od-next')
+

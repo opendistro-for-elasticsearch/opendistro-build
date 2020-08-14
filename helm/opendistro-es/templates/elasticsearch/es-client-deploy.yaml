@@ -117,6 +117,8 @@ spec:
           name: transport
         - containerPort: 9600
           name: metrics
+        - containerPort: 9650
+          name: rca
     {{- with .Values.elasticsearch.client.readinessProbe}}
         readinessProbe:
 {{ toYaml . | indent 10 }}
