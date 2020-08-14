@@ -20,14 +20,11 @@ Steps to reproduce the behavior:
 **Expected behavior**
 A clear and concise description of what you expected to happen.
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
-
 **Configuration (please complete the following information):**
  - ODFE/Kibana version [e.g. 1.7.0, 1.8.0]
  - Distribution [e.g. RPM, DEB, TAR, etc]
  - Host Machine [e.g: Centos7, MacOS]
 
 
-**Additional context**
-Add any other context about the problem here.
+**Relevant information**
+Please include any relevant log snippets or files here.
