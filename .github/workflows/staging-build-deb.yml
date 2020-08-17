@@ -239,7 +239,7 @@ jobs:
       - name: IT
         run: |
           .github/scripts/setup_runners_service.sh deb --es
-          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../alerting; pwd
+          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../alerting/alerting; pwd
           ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin
 
 
