@@ -214,7 +214,7 @@ jobs:
   #         ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
           
   Test-ALERTING:
-    needs: [sign-deb-artifacts]
+    # needs: [sign-deb-artifacts]
     runs-on: [ubuntu-18.04]
     name: Test-ALERTING
     strategy:
