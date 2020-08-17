@@ -356,7 +356,7 @@ jobs:
   #         ./gradlew :integTestRunner --tests "com.amazon.opendistroforelasticsearch.ad.rest.*IT" --tests "com.amazon.opendistroforelasticsearch.ad.e2e.*IT" -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest"
           
   Test-SQL:
-    needs: [sign-deb-artifacts]
+    # needs: [sign-deb-artifacts]
     runs-on: [ubuntu-18.04]
     name: Test-SQL
     strategy:
