@@ -1,29 +1,23 @@
-name: Process TAR Artifacts
+name: Process Debian Artifacts
 
-on:
+on: 
   #schedule:
   #  - cron: '0 10 * * *'
   repository_dispatch:
-    types: [staging-build-tar]
-  #push:
-  #  branches: [opendistro-infra-issues-232-1]
+    types: [staging-build-deb-temp]
+  push:
+    branches: [opendistro-infra-issues-232-1]
 
 jobs:
   Test-AD-KIBANA:
-    #needs: [build-es-artifacts, build-kibana-artifacts]
-    runs-on: [ubuntu-16.04]
+    runs-on: [ubuntu-18.04]
     name: Test-AD-KIBANA
     strategy:
       matrix:
         java: [14]
     steps:
       - uses: actions/checkout@v1
-      - name: Set up AWS Cred
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
+
       - name: Retrieve plugin tags 
         run: |
           echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)
@@ -64,7 +58,7 @@ jobs:
         run: |
           npm uninstall -g yarn
           echo "Installing yarn ${{ env.kibana_yarn_version }}"
-          npm i -g yarn@${{ env.kibana_yarn_version }}
+          npm i -g yarn@${{ env.kibana_yarn_version }}     
       
       - name: Bootstrap the plugin
         run: |
@@ -72,8 +66,8 @@ jobs:
           yarn kbn bootstrap
           
       - name: Start ES and Kibana
-        run: .github/scripts/setup_runners_service.sh zip --kibana
- 
+        run: .github/scripts/setup_runners_service.sh deb --kibana
+          
       - name: run IT
         uses: cypress-io/github-action@v1
         with:
