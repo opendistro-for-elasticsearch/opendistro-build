@@ -310,15 +310,13 @@ jobs:
           cd ./kibana/plugins/anomaly-detection-kibana-plugin
           yarn kbn bootstrap
 
-      - name: Start ES and Kibana
-        run: .github\scripts\setup_runners_service_windows.ps1 --kibana-nosec
-
-      - name: run IT
+      - name: run ES and kibana and IT (RUN IN ONE STEP OR WINDOWS BREAK)
         run: |
+          .github\scripts\setup_runners_service_windows.ps1 --kibana-nosec
           dir
           npx cypress verify
           cd ./kibana/plugins/anomaly-detection-kibana-plugin
-          yarn cy:run --config baseurl=http://localhost:5601
+          yarn cy:run-with-security --config baseurl=http://localhost:5601
 
   Test-AD-KIBANA:
     needs: [build-es-artifacts, build-kibana-artifacts]
@@ -384,11 +382,9 @@ jobs:
           cd ./kibana/plugins/anomaly-detection-kibana-plugin
           yarn kbn bootstrap
 
-      - name: Start ES and Kibana
-        run: .github\scripts\setup_runners_service_windows.ps1 --kibana
-
-      - name: run IT
+      - name: run ES and kibana and IT (RUN IN ONE STEP OR WINDOWS BREAK)
         run: |
+          .github\scripts\setup_runners_service_windows.ps1 --kibana
           dir
           npx cypress verify
           cd ./kibana/plugins/anomaly-detection-kibana-plugin
