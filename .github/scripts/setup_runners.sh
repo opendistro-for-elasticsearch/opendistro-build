@@ -47,7 +47,7 @@
 #                }
 #
 # Starting Date: 2020-07-27
-# Modified Date: 2020-08-02
+# Modified Date: 2020-08-09
 ###############################################################################################
 
 set -e
@@ -68,7 +68,7 @@ fi
 SETUP_ACTION=$1
 SETUP_INSTANCE=`echo $2 | sed 's/,/ /g'`
 SETUP_TOKEN=$3
-SETUP_AMI_ID="ami-0655d7056d3941cd2"
+SETUP_AMI_ID="ami-042f29d2ac35db697"
 SETUP_AMI_USER="ec2-user"
 SETUP_INSTANCE_TYPE="m5.xlarge"
 SETUP_INSTANCE_SIZE=20 #GiB

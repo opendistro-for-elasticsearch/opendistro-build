@@ -14,7 +14,7 @@
 # Requirements:  This script assumes java 14 is already installed on the servers
 #
 # Starting Date: 2020-07-27
-# Modified Date: 2020-08-04
+# Modified Date: 2020-08-17
 ###############################################################################################
 
 # This script allows users to manually assign parameters
@@ -216,8 +216,6 @@ then
   elif [ "$SETUP_DISTRO" = "docker" ]
   then
     echo "FROM opendistroforelasticsearch/opendistroforelasticsearch-kibana:$OD_VERSION" >> Dockerfile.kibana
-    echo "RUN sed -i /^opendistro_security/d /usr/share/kibana/config/kibana.yml" >> Dockerfile.kibana
-    echo "RUN sed -i 's/https/http/' /usr/share/kibana/config/kibana.yml" >> Dockerfile.kibana
     docker build -t odfe-kibana-http:security -f Dockerfile.kibana .
     sleep 5
   else
@@ -240,7 +238,7 @@ then
   elif [ "$SETUP_DISTRO" = "docker" ]
   then
     docker restart $DOCKER_NAME
-    docker run -d -p 5601:5601 --name $DOCKER_NAME_KIBANA --network="host" odfe-kibana-http:security
+    docker run -d --name $DOCKER_NAME_KIBANA --network="host" odfe-kibana-http:security
     docker ps
   else
     sudo systemctl restart elasticsearch.service
@@ -250,8 +248,9 @@ then
   sleep 120
   curl -XGET https://localhost:9200 -u admin:admin --insecure
   curl -XGET https://localhost:9200/_cluster/health?pretty -u admin:admin --insecure
-  curl -v -XGET https://localhost:5601 --insecure
-  curl -v -XGET https://localhost:5601/api/status --insecure
+  # kibana can still use http to check status
+  curl -v -XGET http://localhost:5601
+  curl -v -XGET http://localhost:5601/api/status
   echo "es & kibana start"
   cd $REPO_ROOT
   exit 0
@@ -277,10 +276,12 @@ then
   elif [ "$SETUP_DISTRO" = "docker" ]
   then
     echo "RUN /usr/share/kibana/bin/kibana-plugin remove opendistro_security" >> Dockerfile.kibana
+    echo "RUN sed -i /^opendistro_security/d /usr/share/kibana/config/kibana.yml" >> Dockerfile.kibana
+    echo "RUN sed -i 's/https/http/' /usr/share/kibana/config/kibana.yml" >> Dockerfile.kibana
     docker build -t odfe-kibana-http:no-security -f Dockerfile.kibana .
     sleep 5
     docker run -d -p 9200:9200 -d -p 9600:9600 -e "discovery.type=single-node" --name $DOCKER_NAME_NoSec odfe-http:no-security
-    docker run -d -p 5601:5601 --name $DOCKER_NAME_KIBANA_NoSec --network="host" odfe-kibana-http:no-security
+    docker run -d --name $DOCKER_NAME_KIBANA_NoSec --network="host" odfe-kibana-http:no-security
     docker ps
   else
     sudo /usr/share/kibana/bin/kibana-plugin remove opendistro_security --allow-root
