@@ -493,7 +493,7 @@ jobs:
           command: yarn cy:run-with-security --config baseurl=http://localhost:5601
 
   CleanUp-Runners:
-    needs: [Test-SQL, Test-AD, Test-ISM-NoSec, Test-ALERTING-NoSec, Test-SQL-NoSec, Test-KNN-NoSec, Test-AD-NoSec, Test-AD-KIBANA-NoSec, Test-AD-KIBANA]
+    needs: [Test-SQL, Test-AD, Test-ISM-NoSec, Test-ALERTING-NoSec, Test-SQL-NoSec, Test-KNN-NoSec, Test-AD-NoSec, Test-AD-KIBANA-NoSec, Test-AD-KIBANA, Test-ALERTING]
     if: always()
     name: CleanUp-Runners
     runs-on: ubuntu-18.04
