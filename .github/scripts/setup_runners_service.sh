@@ -292,7 +292,7 @@ then
     sudo systemctl restart kibana.service
   fi
   echo "Sleep 120 seconds"
-  sleep 120
+  sleep 60
   curl -XGET http://localhost:9200
   curl -XGET http://localhost:9200/_cluster/health?pretty
   curl -v -XGET http://localhost:5601
