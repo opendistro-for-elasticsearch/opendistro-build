@@ -246,6 +246,43 @@ jobs:
           dir
           .\gradlew.bat :integTestRunner --tests "com.amazon.opendistroforelasticsearch.ad.rest.*IT" --tests "com.amazon.opendistroforelasticsearch.ad.e2e.*IT" -D tests.rest.cluster=localhost:9200 -D tests.cluster=localhost:9200 -D tests.clustername=es-integrationtest -D https=true -D user=admin -D password=admin --stacktrace
 
+  Test-ALERTING:
+    needs: [build-es-artifacts, build-kibana-artifacts]
+    runs-on: windows-latest
+    name: Test-ALERTING
+    steps:
+      - uses: actions/checkout@v1
+      - name: Retrieve plugin tags
+        run: echo ::set-env name=p_tag_alerting::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)
+        shell: bash
+
+      - uses: actions/checkout@v1
+        with:
+            repository: opendistro-for-elasticsearch/sql
+            ref: ${{env.p_tag_alerting}}
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Set Up JDK 
+        uses: actions/setup-java@v1
+        with:
+          java-version: 14
+        
+      - name: Run alerting IT
+        run: |
+          .github\scripts\setup_runners_service_windows.ps1 --es
+          $ErrorActionPreference = 'SilentlyContinue'
+          echo "running tests"
+          cd ..\alerting\alerting
+          dir
+          ../gradlew.bat integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin
+        
+
   Test-AD-KIBANA-NoSec:
     needs: [build-es-artifacts, build-kibana-artifacts]
     runs-on: windows-latest
