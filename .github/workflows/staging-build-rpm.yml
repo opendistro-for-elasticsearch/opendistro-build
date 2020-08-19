@@ -334,7 +334,29 @@ jobs:
           .github/scripts/setup_runners_service.sh rpm --es
           export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../anomaly-detection; pwd
           ./gradlew :integTestRunner --tests "com.amazon.opendistroforelasticsearch.ad.rest.*IT" --tests "com.amazon.opendistroforelasticsearch.ad.e2e.*IT" -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest" -Dhttps=true -Duser=admin -Dpassword=admin
-
+  
+  Test-ALERTING:
+    needs: [Provision-Runners]
+    name: Test-ALERTING
+    runs-on: [self-hosted, Linux, X64, odfe-rpm-alerting]
+    steps:
+      - uses: actions/checkout@v1
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 14
+      - name: Retrieve plugin tags
+        run: echo ::set-env name=p_tag_alerting::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)
+      - uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/alerting
+          ref: ${{env.p_tag_alerting}}
+      - name: IT for Alerting
+        run: |
+          .github/scripts/setup_runners_service.sh rpm --es
+          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../alerting/alerting; pwd
+          ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin
+        
   Test-AD-KIBANA-NoSec:
     needs: [Provision-Runners]
     runs-on: [self-hosted, Linux, X64, odfe-rpm-ad-kibana-nosec]
@@ -402,6 +424,7 @@ jobs:
           working-directory: kibana/plugins/anomaly-detection-kibana-plugin
           command: yarn cy:run --config baseurl=http://localhost:5601
 
+          
   Test-AD-KIBANA:
     needs: [Provision-Runners]
     runs-on: [self-hosted, Linux, X64, odfe-rpm-ad-kibana]
