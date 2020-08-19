@@ -240,7 +240,7 @@ then
   elif [ "$SETUP_DISTRO" = "docker" ]
   then
     docker restart $DOCKER_NAME
-    docker run -d -p 5601:5601 --name $DOCKER_NAME_KIBANA --network="host" odfe-kibana-http:security
+    docker run -d --name $DOCKER_NAME_KIBANA --network="host" odfe-kibana-http:security
     docker ps
   else
     sudo systemctl restart elasticsearch.service
@@ -281,7 +281,7 @@ then
     docker build -t odfe-kibana-http:no-security -f Dockerfile.kibana .
     sleep 5
     docker run -d -p 9200:9200 -d -p 9600:9600 -e "discovery.type=single-node" --name $DOCKER_NAME_NoSec odfe-http:no-security
-    docker run -d -p 5601:5601 --name $DOCKER_NAME_KIBANA_NoSec --network="host" odfe-kibana-http:no-security
+    docker run -d --name $DOCKER_NAME_KIBANA_NoSec --network="host" odfe-kibana-http:no-security
     docker ps
   else
     sudo /usr/share/kibana/bin/kibana-plugin remove opendistro_security --allow-root
