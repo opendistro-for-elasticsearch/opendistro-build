@@ -18,7 +18,7 @@
 #                $ODFE_VERSION: x.y.z (optional)
 #
 # Starting Date: 2020-05-29
-# Modified Date: 2020-07-30
+# Modified Date: 2020-08-19
 ###############################################################################################
 
 # Please leave it commented as aws s3 will fail if no plugin presents
@@ -41,9 +41,9 @@ ODFE_VERSION=$2
 OLDIFS=$IFS
 
 # This script allows users to manually assign parameters
-if [ "$#" -eq 0 ] || [ "$#" -gt 2 ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]
+if [ "$#" -gt 2 ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]
 then
-  echo "Please assign at least 1 / at most 2 parameters when running this script"
+  echo "Please assign at most 2 parameters when running this script"
   echo "Example: $0 \$PLUGIN_TYPES [\$ODFE_VERSION]"
   echo "Example: $0 \"tar\""
   echo "Example: $0 \"rpm,kibana\" \"1.7.0\""
