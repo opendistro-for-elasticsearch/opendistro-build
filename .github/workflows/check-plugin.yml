@@ -26,13 +26,6 @@ jobs:
           echo ::set-env name=CHIME_MESSAGE::$(cat /tmp/chime_message.md)
           exit `cat /tmp/plugin_status.check`
 
-#      - name: Send Chime Message
-#        if: ${{ always() }}
-#        uses: ros-tooling/action-amazon-chime@master
-#        with:
-#          message: ${{ env.CHIME_MESSAGE }}
-#          webhook: ${{ secrets.CHIME_ODFE_RELEASE }}
-
       - name: Send Slack Message
         if: ${{ always() }}
         uses: peterzhuamazon/github-slack-action@master
