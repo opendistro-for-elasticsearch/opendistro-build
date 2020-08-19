@@ -216,8 +216,6 @@ then
   elif [ "$SETUP_DISTRO" = "docker" ]
   then
     echo "FROM opendistroforelasticsearch/opendistroforelasticsearch-kibana:$OD_VERSION" >> Dockerfile.kibana
-    echo "RUN sed -i /^opendistro_security/d /usr/share/kibana/config/kibana.yml" >> Dockerfile.kibana
-    echo "RUN sed -i 's/https/http/' /usr/share/kibana/config/kibana.yml" >> Dockerfile.kibana
     docker build -t odfe-kibana-http:security -f Dockerfile.kibana .
     sleep 5
   else
@@ -248,7 +246,6 @@ then
   fi
   echo "Sleep 120 seconds"
   sleep 120
-  netstat -ntlp
   curl -XGET https://localhost:9200 -u admin:admin --insecure
   curl -XGET https://localhost:9200/_cluster/health?pretty -u admin:admin --insecure
   # kibana can still use http to check status
@@ -279,6 +276,8 @@ then
   elif [ "$SETUP_DISTRO" = "docker" ]
   then
     echo "RUN /usr/share/kibana/bin/kibana-plugin remove opendistro_security" >> Dockerfile.kibana
+    echo "RUN sed -i /^opendistro_security/d /usr/share/kibana/config/kibana.yml" >> Dockerfile.kibana
+    echo "RUN sed -i 's/https/http/' /usr/share/kibana/config/kibana.yml" >> Dockerfile.kibana
     docker build -t odfe-kibana-http:no-security -f Dockerfile.kibana .
     sleep 5
     docker run -d -p 9200:9200 -d -p 9600:9600 -e "discovery.type=single-node" --name $DOCKER_NAME_NoSec odfe-http:no-security
@@ -292,7 +291,7 @@ then
     sudo systemctl restart kibana.service
   fi
   echo "Sleep 120 seconds"
-  sleep 60
+  sleep 120
   curl -XGET http://localhost:9200
   curl -XGET http://localhost:9200/_cluster/health?pretty
   curl -v -XGET http://localhost:5601
