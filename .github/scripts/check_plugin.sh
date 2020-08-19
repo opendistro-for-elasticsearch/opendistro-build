@@ -18,7 +18,7 @@
 #                $ODFE_VERSION: x.y.z (optional)
 #
 # Starting Date: 2020-05-29
-# Modified Date: 2020-07-30
+# Modified Date: 2020-08-19
 ###############################################################################################
 
 # Please leave it commented as aws s3 will fail if no plugin presents
