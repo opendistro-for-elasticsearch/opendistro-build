@@ -248,6 +248,7 @@ then
   fi
   echo "Sleep 120 seconds"
   sleep 120
+  netstat -ntlp
   curl -XGET https://localhost:9200 -u admin:admin --insecure
   curl -XGET https://localhost:9200/_cluster/health?pretty -u admin:admin --insecure
   # kibana can still use http to check status
