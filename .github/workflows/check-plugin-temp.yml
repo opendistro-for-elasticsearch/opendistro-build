@@ -1,0 +1,36 @@
+name: Check Plugin Availability TEMP
+
+on:
+  schedule:
+    - cron: '0 0,15 * * *'
+  repository_dispatch:
+    types: [check-plugin-temp]
+  push:
+    branches: [opendistro-infra-issues-251-1]
+
+jobs:
+  plugin-availability-main:
+    name: Check Plugin Availability Main
+    runs-on: [ubuntu-18.04]
+    steps:
+      - uses: actions/checkout@v1
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Checking Availability
+        run: |
+          #!/bin/bash
+          set -e
+          .github/scripts/check_plugin.sh
+          echo ::set-env name=CHIME_MESSAGE::$(cat /tmp/chime_message.md)
+          exit `cat /tmp/plugin_status.check`
+
+      - name: Send Slack Message
+        if: ${{ always() }}
+        uses: peterzhuamazon/github-slack-action@master
+        with:
+          text: ${{ env.CHIME_MESSAGE }}
+          webhook: ${{ secrets.SLACK_TEST_MESSAGE }}

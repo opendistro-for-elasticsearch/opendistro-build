@@ -167,15 +167,15 @@
       "git":"opendistro-for-elasticsearch/sql"
     },
     {
-      "s3":"opendistro-sql-odbc/windows/ODFE SQL ODBC Driver 64-bit",
+      "s3":"opendistro-sql-odbc/mac/Open Distro for Elasticsearch SQL ODBC Driver 64-bit",
       "git":"opendistro-for-elasticsearch/sql"
     },
     {
-      "s3":"opendistro-sql-odbc/windows/ODFE SQL ODBC Driver 32-bit",
+      "s3":"opendistro-sql-odbc/windows/Open Distro for Elasticsearch SQL ODBC Driver 64-bit",
       "git":"opendistro-for-elasticsearch/sql"
     },
     {
-      "s3":"opendistro-sql-odbc/mac/ODFE SQL ODBC Driver 64-bit",
+      "s3":"opendistro-sql-odbc/windows/Open Distro for Elasticsearch SQL ODBC Driver 32-bit",
       "git":"opendistro-for-elasticsearch/sql"
     }
   ],
