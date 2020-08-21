@@ -1,0 +1,93 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "com.amazon",
+    "module": "opendistroforelasticsearch",
+    "version": "1.10.0",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "6.5.1",
+      "buildId": "mrqmrlp4avfuphlxh67vpiobmy"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 14,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "dependencies": [
+        {
+          "group": "org.elasticsearch.gradle",
+          "module": "build-tools",
+          "version": {
+            "requires": "7.9.0"
+          }
+        },
+        {
+          "group": "com.github.jengelman.gradle.plugins",
+          "module": "shadow",
+          "version": {
+            "requires": "5.1.0"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "opendistroforelasticsearch-1.10.0.jar",
+          "url": "opendistroforelasticsearch-1.10.0.jar",
+          "size": 35371,
+          "sha512": "8533a5da3c3257fcc648b8b5ab54a587e6616a50f93ed3155e074d89ef8f40cba71aa5b89eda91eb144cef0e1922fa7bd12d9c96ceb2cf016171807d30f8c3b2",
+          "sha256": "bf5394232ac29924c9764376cb653dd641a8a2cbb6b85a97a5e130e595f24807",
+          "sha1": "a852acfd4a156d4440a0f04278019ebeca1ae708",
+          "md5": "447d848e35c3137aa939c29bc08fb065"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 14,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "org.elasticsearch.gradle",
+          "module": "build-tools",
+          "version": {
+            "requires": "7.9.0"
+          }
+        },
+        {
+          "group": "com.github.jengelman.gradle.plugins",
+          "module": "shadow",
+          "version": {
+            "requires": "5.1.0"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "opendistroforelasticsearch-1.10.0.jar",
+          "url": "opendistroforelasticsearch-1.10.0.jar",
+          "size": 35371,
+          "sha512": "8533a5da3c3257fcc648b8b5ab54a587e6616a50f93ed3155e074d89ef8f40cba71aa5b89eda91eb144cef0e1922fa7bd12d9c96ceb2cf016171807d30f8c3b2",
+          "sha256": "bf5394232ac29924c9764376cb653dd641a8a2cbb6b85a97a5e130e595f24807",
+          "sha1": "a852acfd4a156d4440a0f04278019ebeca1ae708",
+          "md5": "447d848e35c3137aa939c29bc08fb065"
+        }
+      ]
+    }
+  ]
+}

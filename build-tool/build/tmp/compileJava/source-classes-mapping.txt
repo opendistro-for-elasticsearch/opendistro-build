@@ -1,0 +1,4 @@
+com/opendistroforelasticsearch/PluginPropertiesExtension.java
+ com.opendistroforelasticsearch.PluginPropertiesExtension
+com/opendistroforelasticsearch/OdfeVersionProperties.java
+ com.opendistroforelasticsearch.OdfeVersionProperties
