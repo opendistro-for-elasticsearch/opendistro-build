@@ -68,9 +68,7 @@ jobs:
       
       - name: Bootstrap the plugin
         run: |
-          cd ./kibana/plugins/sql
-          # only for sql-workbench as it is in sub-directory of sql repository
-          ls -l
+          cd ./kibana/plugins
           cp -rp sql/sql-workbench .
           rm -rf sql/
           cd sql-workbench
