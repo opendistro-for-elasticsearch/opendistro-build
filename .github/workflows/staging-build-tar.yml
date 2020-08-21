@@ -447,7 +447,11 @@ jobs:
       
       - name: Bootstrap the plugin
         run: |
-          cd ./kibana/plugins/sql/sql-workbench
+          cd ./kibana/plugins/sql
+          # only for sql-workbench as it is in sub-directory of sql repository
+          cp -rp sql/sql-workbench .
+          rm -rf sql/
+          cd sql-workbench
           yarn kbn bootstrap
           
       - name: Start ES and Kibana
