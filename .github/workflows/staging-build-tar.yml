@@ -451,8 +451,16 @@ jobs:
           cp -rp sql/sql-workbench .
           rm -rf sql/
           cd sql-workbench
-          yarn kbn bootstrap
-          
+
+      - name: Retry Bootstraps
+        # sql repo has a bug that you have to bootstrap at least twice to success
+        # this is a temp solution and they will try to fix it later
+        uses: nick-invision/retry@v1
+        with:
+          timeout_minutes: 60
+          max_attempts: 3
+          command: pwd; yarn kbn bootstrap
+
       - name: Start ES and Kibana
         run: |
           .github/scripts/setup_runners_service.sh zip --kibana-nosec
