@@ -459,7 +459,7 @@ jobs:
         with:
           timeout_minutes: 60
           max_attempts: 3
-          command: pwd; yarn kbn bootstrap
+          command: cd ./kibana/plugins/sql-workbench; pwd; yarn kbn bootstrap
 
       - name: Start ES and Kibana
         run: |
