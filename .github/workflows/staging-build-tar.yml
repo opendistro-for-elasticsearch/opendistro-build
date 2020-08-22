@@ -452,7 +452,7 @@ jobs:
           rm -rf sql/
           cd sql-workbench
 
-      - name: Retry Bootstraps
+      - name: Retry the bootstraps
         # sql repo has a bug that you have to bootstrap at least twice to success
         # this is a temp solution and they will try to fix it later
         uses: nick-invision/retry@v1
