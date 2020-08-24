@@ -18,18 +18,23 @@ set -e
 
 REPO_ROOT=`git rev-parse --show-toplevel`
 ROOT=`dirname $(realpath $0)`; echo $ROOT; cd $ROOT
-ES_VERSION=`$REPO_ROOT/bin/version-info --es`; echo $ES_VERSION
-OD_VERSION=`$REPO_ROOT/bin/version-info --od`; echo $OD_VERSION
+ES_VERSION=`$REPO_ROOT/bin/version-info --es`; echo ES_VERSION: $ES_VERSION
+OD_VERSION=`$REPO_ROOT/bin/version-info --od`; echo OD_VERSION: $OD_VERSION
+IS_CUT=`$REPO_ROOT/bin/version-info --is-cut`; echo IS_CUT: $IS_CUT
 S3_BUCKET="artifacts.opendistroforelasticsearch.amazon.com"
 ARTIFACTS_URL="https://d3g5vo6xdbdb9a.cloudfront.net"
 PACKAGE_NAME="opendistroforelasticsearch"
 TARGET_DIR="$ROOT/target"
+plugin_version=$OD_VERSION
+knnlib_version=$OD_VERSION # knnlib version only for tar distros here
 
 # Please DO NOT change the orders, they have dependencies
-PLUGINS=`$REPO_ROOT/bin/plugins-info zip`
+PLUGINS=`$REPO_ROOT/bin/plugins-info elasticsearch zip --require-install-true`
+PLUGINS_ARRAY=( $PLUGINS )
+CUT_VERSIONS=`$REPO_ROOT/bin/plugins-info elasticsearch cutversion --require-install-true`
+CUT_VERSIONS_ARRAY=( $CUT_VERSIONS )
 
 basedir="${ROOT}/${PACKAGE_NAME}-${OD_VERSION}/plugins"
-#PLUGINS_CHECKS=`$REPO_ROOT/bin/plugins-info zip | awk -F '/' '{print $2}' | sed "s@^@$basedir\/@g"`
 
 echo $ROOT
 
@@ -49,11 +54,21 @@ tar -xzf elasticsearch-oss-$ES_VERSION-linux-x86_64.tar.gz --strip-components=1 
 cp -v opendistro-tar-install.sh $PACKAGE_NAME-$OD_VERSION
 
 # Install Plugin
-for plugin_path in $PLUGINS
+for index in ${!PLUGINS_ARRAY[@]}
 do
-  plugin_latest=`aws s3api list-objects --bucket $S3_BUCKET --prefix "downloads/elasticsearch-plugins/${plugin_path}-${OD_VERSION}" --query 'Contents[].[Key]' --output text | sort | tail -n 1`
-  echo "installing $plugin_latest"
-  $PACKAGE_NAME-$OD_VERSION/bin/elasticsearch-plugin install --batch "${ARTIFACTS_URL}/${plugin_latest}"; \
+  if [ "$IS_CUT" = "true" ]
+  then
+    plugin_version=${CUT_VERSIONS_ARRAY[$index]}
+  fi
+
+  plugin_path=${PLUGINS_ARRAY[$index]}
+  plugin_latest=`aws s3api list-objects --bucket $S3_BUCKET --prefix "downloads/elasticsearch-plugins/${plugin_path}-${plugin_version}" --query 'Contents[].[Key]' --output text | sort | tail -n 1`
+
+  if [ "$plugin_path" != "none" ]
+  then
+    echo "installing $plugin_latest"
+    $PACKAGE_NAME-$OD_VERSION/bin/elasticsearch-plugin install --batch "${ARTIFACTS_URL}/${plugin_latest}"; \
+  fi
 done
 
 # List Plugins
@@ -71,7 +86,23 @@ mkdir -p ${PACKAGE_NAME}-${OD_VERSION}/data
 chmod 755 ${PACKAGE_NAME}-${OD_VERSION}/data/
 
 # Download Knn lib
-knnlib_latest=`aws s3api list-objects --bucket $S3_BUCKET --prefix "downloads/opendistro-libs/opendistro-knnlib/opendistro-knnlib-$OD_VERSION" --query 'Contents[].[Key]' --output text | sort | tail -n 1`
+# Get knnlib artifact information from plugins.json
+plugin_array_noinstall=( `$REPO_ROOT/bin/plugins-info elasticsearch zip --require-install-false` )
+cutversion_array_noinstall=( `$REPO_ROOT/bin/plugins-info elasticsearch cutversion --require-install-false` )
+for index_noinstall in ${!plugin_array_noinstall[@]}
+do
+  if echo ${plugin_array_noinstall[$index_noinstall]} | grep -qi "knnlib"
+  then
+  knnlib_path=${plugin_array_noinstall[$index_noinstall]}
+
+    if [ "$IS_CUT" = "true" ]
+    then
+      knnlib_version=${cutversion_array_noinstall[$index_noinstall]}
+      break
+    fi
+  fi
+done
+knnlib_latest=`aws s3api list-objects --bucket $S3_BUCKET --prefix "downloads/${knnlib_path}-${knnlib_version}" --query 'Contents[].[Key]' --output text | sort | tail -n 1`
 echo "downloading $knnlib_latest"
 aws s3 cp "s3://artifacts.opendistroforelasticsearch.amazon.com/${knnlib_latest}" ./
 unzip opendistro-knnlib*.zip
