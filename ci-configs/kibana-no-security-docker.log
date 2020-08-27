@@ -1,0 +1,324 @@
+  log   [22:26:53.495] [info][plugins-service] Plugin "telemetryManagementSection" has been disabled since the following direct or transitive dependencies are missing or disabled: [telemetry]
+  log   [22:26:53.501] [info][plugins-service] Plugin "newsfeed" is disabled.
+  log   [22:26:53.501] [info][plugins-service] Plugin "telemetry" is disabled.
+  log   [22:26:53.502] [info][plugins-service] Plugin "visTypeXy" is disabled.
+
+  `@babel/polyfill` is deprecated. Please, use required parts of `core-js`
+  and `regenerator-runtime/runtime` separately
+  log   [22:26:56.138] [warning][legacy-service] Some installed third party plugin(s) [opendistro-alerting, opendistro-sql-workbench, opendistro_index_management_kibana, opendistro-anomaly-detection-kibana] are using the legacy plugin format and will no longer work in a future Kibana release. Please refer to https://ela.st/kibana-breaking-changes-8-0 for a list of breaking changes and https://ela.st/kibana-platform-migration for documentation on how to migrate legacy plugins.
+  log   [22:26:56.223] [info][plugins-system] Setting up [36] plugins: [usageCollection,telemetryCollectionManager,kibanaUsageCollection,kibanaLegacy,mapsLegacy,timelion,share,legacyExport,esUiShared,charts,bfetch,expressions,data,home,console,apmOss,management,indexPatternManagement,advancedSettings,savedObjects,visualizations,visualize,visTypeVislib,visTypeVega,visTypeTimeseries,visTypeTimelion,visTypeTagcloud,visTypeTable,visTypeMetric,visTypeMarkdown,tileMap,regionMap,inputControlVis,discover,dashboard,savedObjectsManagement]
+  log   [22:26:56.434] [info][savedobjects-service] Waiting until all Elasticsearch nodes are compatible with Kibana before starting saved objects migrations...
+  log   [22:26:56.491] [info][savedobjects-service] Starting saved objects migrations
+  log   [22:26:56.617] [info][plugins-system] Starting [36] plugins: [usageCollection,telemetryCollectionManager,kibanaUsageCollection,kibanaLegacy,mapsLegacy,timelion,share,legacyExport,esUiShared,charts,bfetch,expressions,data,home,console,apmOss,management,indexPatternManagement,advancedSettings,savedObjects,visualizations,visualize,visTypeVislib,visTypeVega,visTypeTimeseries,visTypeTimelion,visTypeTagcloud,visTypeTable,visTypeMetric,visTypeMarkdown,tileMap,regionMap,inputControlVis,discover,dashboard,savedObjectsManagement]
+  log   [22:26:57.761] [info][optimize] Optimizing and caching bundles for opendistro-alerting, opendistro-sql-workbench, opendistro_index_management_kibana, opendistro-anomaly-detection-kibana, status_page and timelion. This may take a few minutes
+Error in worker TypeError [ERR_INVALID_ARG_TYPE]: The "id" argument must be of type string. Received type object
+Error in worker TypeError [ERR_INVALID_ARG_TYPE]: The "id" argument must be of type string. Received type object
+Error in worker TypeError [ERR_INVALID_ARG_TYPE]: The "id" argument must be of type string. Received type object
+  log   [22:28:12.488] [fatal][root] { Error: Optimizations failure.
+   1511 modules
+
+    ERROR in ./node_modules/@elastic/charts/dist/components/chart.js
+    Module not found: Error: Can't resolve 'redux-immutable-state-invariant' in '/usr/share/kibana/node_modules/@elastic/charts/dist/components'
+
+    ERROR in ./node_modules/@elastic/charts/dist/components/chart.js
+    Module not found: Error: Can't resolve 'redux-logger' in '/usr/share/kibana/node_modules/@elastic/charts/dist/components'
+
+    ERROR in ./plugins/opendistro-alerting/public/app.js
+    Module not found: Error: Can't resolve 'ui/autoload/styles' in '/usr/share/kibana/plugins/opendistro-alerting/public'
+
+    ERROR in ./plugins/opendistro-sql-workbench/public/app.js
+    Module not found: Error: Can't resolve 'ui/autoload/styles' in '/usr/share/kibana/plugins/opendistro-sql-workbench/public'
+
+    at FsOptimizer.failedStatsToError (/usr/share/kibana/src/optimize/base_optimizer.js:433:26)
+    at compiler.run (/usr/share/kibana/src/optimize/fs_optimizer.js:43:26)
+    at finalCallback (/usr/share/kibana/node_modules/webpack/lib/Compiler.js:257:39)
+    at hooks.done.callAsync.err (/usr/share/kibana/node_modules/webpack/lib/Compiler.js:273:13)
+    at AsyncSeriesHook.eval [as callAsync] (eval at create (/usr/share/kibana/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:15:1)
+    at AsyncSeriesHook.lazyCompileHook (/usr/share/kibana/node_modules/tapable/lib/Hook.js:154:20)
+    at onCompiled (/usr/share/kibana/node_modules/webpack/lib/Compiler.js:271:21)
+    at hooks.afterCompile.callAsync.err (/usr/share/kibana/node_modules/webpack/lib/Compiler.js:681:15)
+    at AsyncSeriesHook.eval [as callAsync] (eval at create (/usr/share/kibana/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:15:1)
+    at AsyncSeriesHook.lazyCompileHook (/usr/share/kibana/node_modules/tapable/lib/Hook.js:154:20)
+    at compilation.seal.err (/usr/share/kibana/node_modules/webpack/lib/Compiler.js:678:31)
+    at AsyncSeriesHook.eval [as callAsync] (eval at create (/usr/share/kibana/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:6:1)
+    at AsyncSeriesHook.lazyCompileHook (/usr/share/kibana/node_modules/tapable/lib/Hook.js:154:20)
+    at hooks.optimizeAssets.callAsync.err (/usr/share/kibana/node_modules/webpack/lib/Compilation.js:1423:35)
+    at AsyncSeriesHook.eval [as callAsync] (eval at create (/usr/share/kibana/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:6:1)
+    at AsyncSeriesHook.lazyCompileHook (/usr/share/kibana/node_modules/tapable/lib/Hook.js:154:20)
+  cause:
+   { Error: Optimizations failure.
+      1511 modules
+
+       ERROR in ./node_modules/@elastic/charts/dist/components/chart.js
+       Module not found: Error: Can't resolve 'redux-immutable-state-invariant' in '/usr/share/kibana/node_modules/@elastic/charts/dist/components'
+
+       ERROR in ./node_modules/@elastic/charts/dist/components/chart.js
+       Module not found: Error: Can't resolve 'redux-logger' in '/usr/share/kibana/node_modules/@elastic/charts/dist/components'
+
+       ERROR in ./plugins/opendistro-alerting/public/app.js
+       Module not found: Error: Can't resolve 'ui/autoload/styles' in '/usr/share/kibana/plugins/opendistro-alerting/public'
+
+       ERROR in ./plugins/opendistro-sql-workbench/public/app.js
+       Module not found: Error: Can't resolve 'ui/autoload/styles' in '/usr/share/kibana/plugins/opendistro-sql-workbench/public'
+
+       at FsOptimizer.failedStatsToError (/usr/share/kibana/src/optimize/base_optimizer.js:433:26)
+       at compiler.run (/usr/share/kibana/src/optimize/fs_optimizer.js:43:26)
+       at finalCallback (/usr/share/kibana/node_modules/webpack/lib/Compiler.js:257:39)
+       at hooks.done.callAsync.err (/usr/share/kibana/node_modules/webpack/lib/Compiler.js:273:13)
+       at AsyncSeriesHook.eval [as callAsync] (eval at create (/usr/share/kibana/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:15:1)
+       at AsyncSeriesHook.lazyCompileHook (/usr/share/kibana/node_modules/tapable/lib/Hook.js:154:20)
+       at onCompiled (/usr/share/kibana/node_modules/webpack/lib/Compiler.js:271:21)
+       at hooks.afterCompile.callAsync.err (/usr/share/kibana/node_modules/webpack/lib/Compiler.js:681:15)
+       at AsyncSeriesHook.eval [as callAsync] (eval at create (/usr/share/kibana/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:15:1)
+       at AsyncSeriesHook.lazyCompileHook (/usr/share/kibana/node_modules/tapable/lib/Hook.js:154:20)
+       at compilation.seal.err (/usr/share/kibana/node_modules/webpack/lib/Compiler.js:678:31)
+       at AsyncSeriesHook.eval [as callAsync] (eval at create (/usr/share/kibana/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:6:1)
+       at AsyncSeriesHook.lazyCompileHook (/usr/share/kibana/node_modules/tapable/lib/Hook.js:154:20)
+       at hooks.optimizeAssets.callAsync.err (/usr/share/kibana/node_modules/webpack/lib/Compilation.js:1423:35)
+       at AsyncSeriesHook.eval [as callAsync] (eval at create (/usr/share/kibana/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:6:1)
+       at AsyncSeriesHook.lazyCompileHook (/usr/share/kibana/node_modules/tapable/lib/Hook.js:154:20)
+     data:
+      { errors: [Array],
+        warnings: [],
+        version: '4.41.5',
+        hash: '06430794046fd1162cf9',
+        time: 74147,
+        builtAt: 1598567292149,
+        publicPath: '__REPLACE_WITH_PUBLIC_PATH__',
+        outputPath: '/usr/share/kibana/optimize/bundles',
+        assetsByChunkName: [Object],
+        assets: [Array],
+        filteredAssets: 0,
+        entrypoints: [Object],
+        namedChunkGroups: [Object],
+        chunks: [Array],
+        modules: [Array],
+        filteredModules: 0,
+        logging: [Object],
+        children: [Array] },
+     isBoom: true,
+     isServer: true,
+     output: { statusCode: 500, payload: [Object], headers: {} },
+     reformat: [Function],
+     typeof: [Function: internal] },
+  isOperational: true,
+  data:
+   { errors:
+      [ './node_modules/@elastic/charts/dist/components/chart.js\nModule not found: Error: Can\'t resolve \'redux-immutable-state-invariant\' in \'/usr/share/kibana/node_modules/@elastic/charts/dist/components\'\nresolve \'redux-immutable-state-invariant\' in \'/usr/share/kibana/node_modules/@elastic/charts/dist/components\'\n  Parsed request is a module\n  using description file: /usr/share/kibana/node_modules/@elastic/charts/package.json (relative path: ./dist/components)\n    Field \'browser\' doesn\'t contain a valid alias configuration\n    resolve as module\n      /usr/share/kibana/node_modules/@elastic/charts/dist/components/webpackShims doesn\'t exist or is not a directory\n      /usr/share/kibana/node_modules/@elastic/charts/dist/webpackShims doesn\'t exist or is not a directory\n      /usr/share/kibana/node_modules/@elastic/charts/webpackShims doesn\'t exist or is not a directory\n      /usr/share/kibana/node_modules/@elastic/webpackShims doesn\'t exist or is not a directory\n      /usr/share/kibana/node_modules/webpackShims doesn\'t exist or is not a directory\n      /usr/share/webpackShims doesn\'t exist or is not a directory\n      /usr/webpackShims doesn\'t exist or is not a directory\n      /webpackShims doesn\'t exist or is not a directory\n      looking for modules in /usr/share/kibana/webpackShims\n        using description file: /usr/share/kibana/package.json (relative path: ./webpackShims)\n          Field \'browser\' doesn\'t contain a valid alias configuration\n          using description file: /usr/share/kibana/package.json (relative path: ./webpackShims/redux-immutable-state-invariant)\n            no extension\n              Field \'browser\' doesn\'t contain a valid alias configuration\n              /usr/share/kibana/webpackShims/redux-immutable-state-invariant doesn\'t exist\n            .js\n              Field \'browser\' doesn\'t contain a valid alias configuration\n              /usr/share/kibana/webpackShims/redux-immutable-state-invariant.js doesn\'t exist\n            .ts\n              Field \'browser\' doesn\'t contain a valid alias configuration\n              /usr/share/kibana/webpackShims/redux-immutable-state-invariant.ts doesn\'t exist\n            .tsx\n              Field \'browser\' doesn\'t contain a valid alias configuration\n              /usr/share/kibana/webpackShims/redux-immutable-state-invariant.tsx doesn\'t exist\n            .json\n              Field \'browser\' doesn\'t contain a valid alias configuration\n              /usr/share/kibana/webpackShims/redux-immutable-state-invariant.json doesn\'t exist\n            as directory\n              /usr/share/kibana/webpackShims/redux-immutable-state-invariant doesn\'t exist\n      looking for modules in /usr/share/kibana/webpackShims\n        using description file: /usr/share/kibana/package.json (relative path: ./webpackShims)\n          Field \'browser\' doesn\'t contain a valid alias configuration\n          using description file: /usr/share/kibana/package.json (relative path: ./webpackShims/redux-immutable-state-invariant)\n            no extension\n              Field \'browser\' doesn\'t contain a valid alias configuration\n              /usr/share/kibana/webpackShims/redux-immutable-state-invariant doesn\'t exist\n            .js\n              Field \'browser\' doesn\'t contain a valid alias configuration\n              /usr/share/kibana/webpackShims/redux-immutable-state-invariant.js doesn\'t exist\n            .ts\n              Field \'browser\' doesn\'t contain a valid alias configuration\n              /usr/share/kibana/webpackShims/redux-immutable-state-invariant.ts doesn\'t exist\n            .tsx\n              Field \'browser\' doesn\'t contain a valid alias configuration\n              /usr/share/kibana/webpackShims/redux-immutable-state-invariant.tsx doesn\'t exist\n            .json\n              Field \'browser\' doesn\'t contain a valid alias configuration\n              /usr/share/kibana/webpackShims/redux-immutable-state-invariant.json doesn\'t exist\n            as directory\n              /usr/share/kibana/webpackShims/redux-immutable-state-invariant doesn\'t exist\n      /usr/share/kibana/node_modules/@elastic/charts/dist/components/node_modules doesn\'t exist or is not a directory\n      /usr/share/kibana/node_modules/@elastic/charts/dist/node_modules doesn\'t exist or is not a directory\n      /usr/share/kibana/node_modules/@elastic/node_modules doesn\'t exist or is not a directory\n      /usr/share/kibana/node_modules/node_modules doesn\'t exist or is not a directory\n      /usr/share/node_modules doesn\'t exist or is not a directory\n      /usr/node_modules doesn\'t exist or is not a directory\n      /node_modules doesn\'t exist or is not a directory\n      looking for modules in /usr/share/kibana/node_modules/@elastic/charts/node_modules\n        using description file: /usr/share/kibana/node_modules/@elastic/charts/package.json (relative path: ./node_modules)\n          Field \'browser\' doesn\'t contain a valid alias configuration\n      looking for modules in /usr/share/kibana/node_modules\n        using description file: /usr/share/kibana/package.json (relative path: ./node_modules)\n          Field \'browser\' doesn\'t contain a valid alias configuration\n          using description file: /usr/share/kibana/node_modules/@elastic/charts/package.json (relative path: ./node_modules/redux-immutable-state-invariant)\n            no extension\n              Field \'browser\' doesn\'t contain a valid alias configuration\n          using description file: /usr/share/kibana/package.json (relative path: ./node_modules/redux-immutable-state-invariant)\n            no extension\n              Field \'browser\' doesn\'t contain a valid alias configuration\n              /usr/share/kibana/node_modules/@elastic/charts/node_modules/redux-immutable-state-invariant doesn\'t exist\n            .js\n              Field \'browser\' doesn\'t contain a valid alias configuration\n              /usr/share/kibana/node_modules/redux-immutable-state-invariant doesn\'t exist\n            .js\n              Field \'browser\' doesn\'t contain a valid alias configuration\n              /usr/share/kibana/node_modules/@elastic/charts/node_modules/redux-immutable-state-invariant.js doesn\'t exist\n            .ts\n              Field \'browser\' doesn\'t contain a valid alias configuration\n              /usr/share/kibana/node_modules/redux-immutable-state-invariant.js doesn\'t exist\n            .ts\n              Field \'browser\' doesn\'t contain a valid alias configuration\n              /usr/share/kibana/node_modules/@elastic/charts/node_modules/redux-immutable-state-invariant.ts doesn\'t exist\n            .tsx\n              Field \'browser\' doesn\'t contain a valid alias configuration\n              /usr/share/kibana/node_modules/redux-immutable-state-invariant.ts doesn\'t exist\n            .tsx\n              Field \'browser\' doesn\'t contain a valid alias configuration\n              /usr/share/kibana/node_modules/@elastic/charts/node_modules/redux-immutable-state-invariant.tsx doesn\'t exist\n            .json\n              Field \'browser\' doesn\'t contain a valid alias configuration\n              /usr/share/kibana/node_modules/redux-immutable-state-invariant.tsx doesn\'t exist\n            .json\n              Field \'browser\' doesn\'t contain a valid alias configuration\n              /usr/share/kibana/node_modules/@elastic/charts/node_modules/redux-immutable-state-invariant.json doesn\'t exist\n              /usr/share/kibana/node_modules/redux-immutable-state-invariant.json doesn\'t exist\n            as directory\n              /usr/share/kibana/node_modules/@elastic/charts/node_modules/redux-immutable-state-invariant doesn\'t exist\n            as directory\n              /usr/share/kibana/node_modules/redux-immutable-state-invariant doesn\'t exist\n      looking for modules in /usr/share/kibana/node_modules\n        using description file: /usr/share/kibana/package.json (relative path: ./node_modules)\n          Field \'browser\' doesn\'t contain a valid alias configuration\n          using description file: /usr/share/kibana/package.json (relative path: ./node_modules/redux-immutable-state-invariant)\n            no extension\n              Field \'browser\' doesn\'t contain a valid alias configuration\n              /usr/share/kibana/node_modules/redux-immutable-state-invariant doesn\'t exist\n            .js\n              Field \'browser\' doesn\'t contain a valid alias configuration\n              /usr/share/kibana/node_modules/redux-immutable-state-invariant.js doesn\'t exist\n            .ts\n              Field \'browser\' doesn\'t contain a valid alias configuration\n              /usr/share/kibana/node_modules/redux-immutable-state-invariant.ts doesn\'t exist\n            .tsx\n              Field \'browser\' doesn\'t contain a valid alias configuration\n              /usr/share/kibana/node_modules/redux-immutable-state-invariant.tsx doesn\'t exist\n            .json\n              Field \'browser\' doesn\'t contain a valid alias configuration\n              /usr/share/kibana/node_modules/redux-immutable-state-invariant.json doesn\'t exist\n            as directory\n              /usr/share/kibana/node_modules/redux-immutable-state-invariant doesn\'t exist\n[/usr/share/kibana/node_modules/@elastic/charts/dist/components/webpackShims]\n[/usr/share/kibana/node_modules/@elastic/charts/dist/webpackShims]\n[/usr/share/kibana/node_modules/@elastic/charts/webpackShims]\n[/usr/share/kibana/node_modules/@elastic/webpackShims]\n[/usr/share/kibana/node_modules/webpackShims]\n[/usr/share/webpackShims]\n[/usr/webpackShims]\n[/webpackShims]\n[/usr/share/kibana/webpackShims/redux-immutable-state-invariant]\n[/usr/share/kibana/webpackShims/redux-immutable-state-invariant.js]\n[/usr/share/kibana/webpackShims/redux-immutable-state-invariant.ts]\n[/usr/share/kibana/webpackShims/redux-immutable-state-invariant.tsx]\n[/usr/share/kibana/webpackShims/redux-immutable-state-invariant.json]\n[/usr/share/kibana/node_modules/@elastic/charts/dist/components/node_modules]\n[/usr/share/kibana/node_modules/@elastic/charts/dist/node_modules]\n[/usr/share/kibana/node_modules/@elastic/node_modules]\n[/usr/share/kibana/node_modules/node_modules]\n[/usr/share/node_modules]\n[/usr/node_modules]\n[/node_modules]\n[/usr/share/kibana/node_modules/@elastic/charts/node_modules/redux-immutable-state-invariant]\n[/usr/share/kibana/node_modules/redux-immutable-state-invariant]\n[/usr/share/kibana/node_modules/@elastic/charts/node_modules/redux-immutable-state-invariant.js]\n[/usr/share/kibana/node_modules/redux-immutable-state-invariant.js]\n[/usr/share/kibana/node_modules/@elastic/charts/node_modules/redux-immutable-state-invariant.ts]\n[/usr/share/kibana/node_modules/redux-immutable-state-invariant.ts]\n[/usr/share/kibana/node_modules/@elastic/charts/node_modules/redux-immutable-state-invariant.tsx]\n[/usr/share/kibana/node_modules/redux-immutable-state-invariant.tsx]\n[/usr/share/kibana/node_modules/@elastic/charts/node_modules/redux-immutable-state-invariant.json]\n[/usr/share/kibana/node_modules/redux-immutable-state-invariant.json]\n @ ./node_modules/@elastic/charts/dist/components/chart.js 67:23-65\n @ ./node_modules/@elastic/charts/dist/components/index.js\n @ ./node_modules/@elastic/charts/dist/index.js\n @ ./plugins/opendistro-anomaly-detection-kibana/public/pages/Dashboard/Components/AnomaliesDistribution.js\n @ ./plugins/opendistro-anomaly-detection-kibana/public/pages/Dashboard/Container/DashboardOverview.js\n @ ./plugins/opendistro-anomaly-detection-kibana/public/pages/main/Main.js\n @ ./plugins/opendistro-anomaly-detection-kibana/public/pages/main/index.js\n @ ./plugins/opendistro-anomaly-detection-kibana/public/app.js\n @ ./optimize/bundles/opendistro-anomaly-detection-kibana.entry.js',
+        './node_modules/@elastic/charts/dist/components/chart.js\nModule not found: Error: Can\'t resolve \'redux-logger\' in \'/usr/share/kibana/node_modules/@elastic/charts/dist/components\'\nresolve \'redux-logger\' in \'/usr/share/kibana/node_modules/@elastic/charts/dist/components\'\n  Parsed request is a module\n  using description file: /usr/share/kibana/node_modules/@elastic/charts/package.json (relative path: ./dist/components)\n    Field \'browser\' doesn\'t contain a valid alias configuration\n    resolve as module\n      /usr/share/kibana/node_modules/@elastic/charts/dist/components/webpackShims doesn\'t exist or is not a directory\n      /usr/share/kibana/node_modules/@elastic/charts/dist/webpackShims doesn\'t exist or is not a directory\n      /usr/share/kibana/node_modules/@elastic/charts/webpackShims doesn\'t exist or is not a directory\n      /usr/share/kibana/node_modules/@elastic/webpackShims doesn\'t exist or is not a directory\n      /usr/share/kibana/node_modules/webpackShims doesn\'t exist or is not a directory\n      /usr/share/webpackShims doesn\'t exist or is not a directory\n      /usr/webpackShims doesn\'t exist or is not a directory\n      /webpackShims doesn\'t exist or is not a directory\n      looking for modules in /usr/share/kibana/webpackShims\n        using description file: /usr/share/kibana/package.json (relative path: ./webpackShims)\n          Field \'browser\' doesn\'t contain a valid alias configuration\n          using description file: /usr/share/kibana/package.json (relative path: ./webpackShims/redux-logger)\n            no extension\n              Field \'browser\' doesn\'t contain a valid alias configuration\n              /usr/share/kibana/webpackShims/redux-logger doesn\'t exist\n            .js\n              Field \'browser\' doesn\'t contain a valid alias configuration\n              /usr/share/kibana/webpackShims/redux-logger.js doesn\'t exist\n            .ts\n              Field \'browser\' doesn\'t contain a valid alias configuration\n              /usr/share/kibana/webpackShims/redux-logger.ts doesn\'t exist\n            .tsx\n              Field \'browser\' doesn\'t contain a valid alias configuration\n              /usr/share/kibana/webpackShims/redux-logger.tsx doesn\'t exist\n            .json\n              Field \'browser\' doesn\'t contain a valid alias configuration\n              /usr/share/kibana/webpackShims/redux-logger.json doesn\'t exist\n            as directory\n              /usr/share/kibana/webpackShims/redux-logger doesn\'t exist\n      looking for modules in /usr/share/kibana/webpackShims\n        using description file: /usr/share/kibana/package.json (relative path: ./webpackShims)\n          Field \'browser\' doesn\'t contain a valid alias configuration\n          using description file: /usr/share/kibana/package.json (relative path: ./webpackShims/redux-logger)\n            no extension\n              Field \'browser\' doesn\'t contain a valid alias configuration\n              /usr/share/kibana/webpackShims/redux-logger doesn\'t exist\n            .js\n              Field \'browser\' doesn\'t contain a valid alias configuration\n              /usr/share/kibana/webpackShims/redux-logger.js doesn\'t exist\n            .ts\n              Field \'browser\' doesn\'t contain a valid alias configuration\n              /usr/share/kibana/webpackShims/redux-logger.ts doesn\'t exist\n            .tsx\n              Field \'browser\' doesn\'t contain a valid alias configuration\n              /usr/share/kibana/webpackShims/redux-logger.tsx doesn\'t exist\n            .json\n              Field \'browser\' doesn\'t contain a valid alias configuration\n              /usr/share/kibana/webpackShims/redux-logger.json doesn\'t exist\n            as directory\n              /usr/share/kibana/webpackShims/redux-logger doesn\'t exist\n      /usr/share/kibana/node_modules/@elastic/charts/dist/components/node_modules doesn\'t exist or is not a directory\n      /usr/share/kibana/node_modules/@elastic/charts/dist/node_modules doesn\'t exist or is not a directory\n      /usr/share/kibana/node_modules/@elastic/node_modules doesn\'t exist or is not a directory\n      /usr/share/kibana/node_modules/node_modules doesn\'t exist or is not a directory\n      /usr/share/node_modules doesn\'t exist or is not a directory\n      /usr/node_modules doesn\'t exist or is not a directory\n      /node_modules doesn\'t exist or is not a directory\n      looking for modules in /usr/share/kibana/node_modules/@elastic/charts/node_modules\n        using description file: /usr/share/kibana/node_modules/@elastic/charts/package.json (relative path: ./node_modules)\n          Field \'browser\' doesn\'t contain a valid alias configuration\n      looking for modules in /usr/share/kibana/node_modules\n        using description file: /usr/share/kibana/package.json (relative path: ./node_modules)\n          Field \'browser\' doesn\'t contain a valid alias configuration\n          using description file: /usr/share/kibana/node_modules/@elastic/charts/package.json (relative path: ./node_modules/redux-logger)\n            no extension\n              Field \'browser\' doesn\'t contain a valid alias configuration\n          using description file: /usr/share/kibana/package.json (relative path: ./node_modules/redux-logger)\n            no extension\n              Field \'browser\' doesn\'t contain a valid alias configuration\n              /usr/share/kibana/node_modules/@elastic/charts/node_modules/redux-logger doesn\'t exist\n            .js\n              Field \'browser\' doesn\'t contain a valid alias configuration\n              /usr/share/kibana/node_modules/redux-logger doesn\'t exist\n            .js\n              Field \'browser\' doesn\'t contain a valid alias configuration\n              /usr/share/kibana/node_modules/@elastic/charts/node_modules/redux-logger.js doesn\'t exist\n            .ts\n              Field \'browser\' doesn\'t contain a valid alias configuration\n              /usr/share/kibana/node_modules/redux-logger.js doesn\'t exist\n            .ts\n              Field \'browser\' doesn\'t contain a valid alias configuration\n              /usr/share/kibana/node_modules/@elastic/charts/node_modules/redux-logger.ts doesn\'t exist\n            .tsx\n              Field \'browser\' doesn\'t contain a valid alias configuration\n              /usr/share/kibana/node_modules/redux-logger.ts doesn\'t exist\n            .tsx\n              Field \'browser\' doesn\'t contain a valid alias configuration\n              /usr/share/kibana/node_modules/@elastic/charts/node_modules/redux-logger.tsx doesn\'t exist\n            .json\n              Field \'browser\' doesn\'t contain a valid alias configuration\n              /usr/share/kibana/node_modules/redux-logger.tsx doesn\'t exist\n            .json\n              Field \'browser\' doesn\'t contain a valid alias configuration\n              /usr/share/kibana/node_modules/@elastic/charts/node_modules/redux-logger.json doesn\'t exist\n              /usr/share/kibana/node_modules/redux-logger.json doesn\'t exist\n            as directory\n              /usr/share/kibana/node_modules/@elastic/charts/node_modules/redux-logger doesn\'t exist\n            as directory\n              /usr/share/kibana/node_modules/redux-logger doesn\'t exist\n      looking for modules in /usr/share/kibana/node_modules\n        using description file: /usr/share/kibana/package.json (relative path: ./node_modules)\n          Field \'browser\' doesn\'t contain a valid alias configuration\n          using description file: /usr/share/kibana/package.json (relative path: ./node_modules/redux-logger)\n            no extension\n              Field \'browser\' doesn\'t contain a valid alias configuration\n              /usr/share/kibana/node_modules/redux-logger doesn\'t exist\n            .js\n              Field \'browser\' doesn\'t contain a valid alias configuration\n              /usr/share/kibana/node_modules/redux-logger.js doesn\'t exist\n            .ts\n              Field \'browser\' doesn\'t contain a valid alias configuration\n              /usr/share/kibana/node_modules/redux-logger.ts doesn\'t exist\n            .tsx\n              Field \'browser\' doesn\'t contain a valid alias configuration\n              /usr/share/kibana/node_modules/redux-logger.tsx doesn\'t exist\n            .json\n              Field \'browser\' doesn\'t contain a valid alias configuration\n              /usr/share/kibana/node_modules/redux-logger.json doesn\'t exist\n            as directory\n              /usr/share/kibana/node_modules/redux-logger doesn\'t exist\n[/usr/share/kibana/node_modules/@elastic/charts/dist/components/webpackShims]\n[/usr/share/kibana/node_modules/@elastic/charts/dist/webpackShims]\n[/usr/share/kibana/node_modules/@elastic/charts/webpackShims]\n[/usr/share/kibana/node_modules/@elastic/webpackShims]\n[/usr/share/kibana/node_modules/webpackShims]\n[/usr/share/webpackShims]\n[/usr/webpackShims]\n[/webpackShims]\n[/usr/share/kibana/webpackShims/redux-logger]\n[/usr/share/kibana/webpackShims/redux-logger.js]\n[/usr/share/kibana/webpackShims/redux-logger.ts]\n[/usr/share/kibana/webpackShims/redux-logger.tsx]\n[/usr/share/kibana/webpackShims/redux-logger.json]\n[/usr/share/kibana/node_modules/@elastic/charts/dist/components/node_modules]\n[/usr/share/kibana/node_modules/@elastic/charts/dist/node_modules]\n[/usr/share/kibana/node_modules/@elastic/node_modules]\n[/usr/share/kibana/node_modules/node_modules]\n[/usr/share/node_modules]\n[/usr/node_modules]\n[/node_modules]\n[/usr/share/kibana/node_modules/@elastic/charts/node_modules/redux-logger]\n[/usr/share/kibana/node_modules/redux-logger]\n[/usr/share/kibana/node_modules/@elastic/charts/node_modules/redux-logger.js]\n[/usr/share/kibana/node_modules/redux-logger.js]\n[/usr/share/kibana/node_modules/@elastic/charts/node_modules/redux-logger.ts]\n[/usr/share/kibana/node_modules/redux-logger.ts]\n[/usr/share/kibana/node_modules/@elastic/charts/node_modules/redux-logger.tsx]\n[/usr/share/kibana/node_modules/redux-logger.tsx]\n[/usr/share/kibana/node_modules/@elastic/charts/node_modules/redux-logger.json]\n[/usr/share/kibana/node_modules/redux-logger.json]\n @ ./node_modules/@elastic/charts/dist/components/chart.js 68:23-46\n @ ./node_modules/@elastic/charts/dist/components/index.js\n @ ./node_modules/@elastic/charts/dist/index.js\n @ ./plugins/opendistro-anomaly-detection-kibana/public/pages/Dashboard/Components/AnomaliesDistribution.js\n @ ./plugins/opendistro-anomaly-detection-kibana/public/pages/Dashboard/Container/DashboardOverview.js\n @ ./plugins/opendistro-anomaly-detection-kibana/public/pages/main/Main.js\n @ ./plugins/opendistro-anomaly-detection-kibana/public/pages/main/index.js\n @ ./plugins/opendistro-anomaly-detection-kibana/public/app.js\n @ ./optimize/bundles/opendistro-anomaly-detection-kibana.entry.js',
+        './plugins/opendistro-alerting/public/app.js\nModule not found: Error: Can\'t resolve \'ui/autoload/styles\' in \'/usr/share/kibana/plugins/opendistro-alerting/public\'\nresolve \'ui/autoload/styles\' in \'/usr/share/kibana/plugins/opendistro-alerting/public\'\n  Parsed request is a module\n  using description file: /usr/share/kibana/plugins/opendistro-alerting/package.json (relative path: ./public)\n    aliased with mapping \'ui\': \'/usr/share/kibana/src/legacy/ui/public\' to \'/usr/share/kibana/src/legacy/ui/public/autoload/styles\'\n      using description file: /usr/share/kibana/plugins/opendistro-alerting/package.json (relative path: ./public)\n        Field \'browser\' doesn\'t contain a valid alias configuration\n        using description file: /usr/share/kibana/package.json (relative path: ./src/legacy/ui/public/autoload/styles)\n          no extension\n            Field \'browser\' doesn\'t contain a valid alias configuration\n            /usr/share/kibana/src/legacy/ui/public/autoload/styles doesn\'t exist\n          .js\n            Field \'browser\' doesn\'t contain a valid alias configuration\n            /usr/share/kibana/src/legacy/ui/public/autoload/styles.js doesn\'t exist\n          .ts\n            Field \'browser\' doesn\'t contain a valid alias configuration\n            /usr/share/kibana/src/legacy/ui/public/autoload/styles.ts doesn\'t exist\n          .tsx\n            Field \'browser\' doesn\'t contain a valid alias configuration\n            /usr/share/kibana/src/legacy/ui/public/autoload/styles.tsx doesn\'t exist\n          .json\n            Field \'browser\' doesn\'t contain a valid alias configuration\n            /usr/share/kibana/src/legacy/ui/public/autoload/styles.json doesn\'t exist\n          as directory\n            /usr/share/kibana/src/legacy/ui/public/autoload/styles doesn\'t exist\n[/usr/share/kibana/src/legacy/ui/public/autoload/styles]\n[/usr/share/kibana/src/legacy/ui/public/autoload/styles.js]\n[/usr/share/kibana/src/legacy/ui/public/autoload/styles.ts]\n[/usr/share/kibana/src/legacy/ui/public/autoload/styles.tsx]\n[/usr/share/kibana/src/legacy/ui/public/autoload/styles.json]\n @ ./plugins/opendistro-alerting/public/app.js 23:0-28\n @ ./optimize/bundles/opendistro-alerting.entry.js',
+        './plugins/opendistro-sql-workbench/public/app.js\nModule not found: Error: Can\'t resolve \'ui/autoload/styles\' in \'/usr/share/kibana/plugins/opendistro-sql-workbench/public\'\nresolve \'ui/autoload/styles\' in \'/usr/share/kibana/plugins/opendistro-sql-workbench/public\'\n  Parsed request is a module\n  using description file: /usr/share/kibana/plugins/opendistro-sql-workbench/package.json (relative path: ./public)\n    aliased with mapping \'ui\': \'/usr/share/kibana/src/legacy/ui/public\' to \'/usr/share/kibana/src/legacy/ui/public/autoload/styles\'\n      using description file: /usr/share/kibana/plugins/opendistro-sql-workbench/package.json (relative path: ./public)\n        Field \'browser\' doesn\'t contain a valid alias configuration\n        using description file: /usr/share/kibana/package.json (relative path: ./src/legacy/ui/public/autoload/styles)\n          no extension\n            Field \'browser\' doesn\'t contain a valid alias configuration\n            /usr/share/kibana/src/legacy/ui/public/autoload/styles doesn\'t exist\n          .js\n            Field \'browser\' doesn\'t contain a valid alias configuration\n            /usr/share/kibana/src/legacy/ui/public/autoload/styles.js doesn\'t exist\n          .ts\n            Field \'browser\' doesn\'t contain a valid alias configuration\n            /usr/share/kibana/src/legacy/ui/public/autoload/styles.ts doesn\'t exist\n          .tsx\n            Field \'browser\' doesn\'t contain a valid alias configuration\n            /usr/share/kibana/src/legacy/ui/public/autoload/styles.tsx doesn\'t exist\n          .json\n            Field \'browser\' doesn\'t contain a valid alias configuration\n            /usr/share/kibana/src/legacy/ui/public/autoload/styles.json doesn\'t exist\n          as directory\n            /usr/share/kibana/src/legacy/ui/public/autoload/styles doesn\'t exist\n[/usr/share/kibana/src/legacy/ui/public/autoload/styles]\n[/usr/share/kibana/src/legacy/ui/public/autoload/styles.js]\n[/usr/share/kibana/src/legacy/ui/public/autoload/styles.ts]\n[/usr/share/kibana/src/legacy/ui/public/autoload/styles.tsx]\n[/usr/share/kibana/src/legacy/ui/public/autoload/styles.json]\n @ ./plugins/opendistro-sql-workbench/public/app.js 19:0-28\n @ ./optimize/bundles/opendistro-sql-workbench.entry.js' ],
+     warnings: [],
+     version: '4.41.5',
+     hash: '06430794046fd1162cf9',
+     time: 74147,
+     builtAt: 1598567292149,
+     publicPath: '__REPLACE_WITH_PUBLIC_PATH__',
+     outputPath: '/usr/share/kibana/optimize/bundles',
+     assetsByChunkName:
+      { dark_theme: [Array],
+        light_theme: [Array],
+        'opendistro-alerting': [Array],
+        'opendistro-anomaly-detection-kibana': [Array],
+        'opendistro-sql-workbench': [Array],
+        opendistro_index_management_kibana: 'opendistro_index_management_kibana.bundle.js',
+        status_page: 'status_page.bundle.js',
+        timelion: 'timelion.bundle.js' },
+     assets:
+      [ [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object] ],
+     filteredAssets: 0,
+     entrypoints:
+      { 'opendistro-alerting': [Object],
+        'opendistro-sql-workbench': [Object],
+        opendistro_index_management_kibana: [Object],
+        'opendistro-anomaly-detection-kibana': [Object],
+        status_page: [Object],
+        timelion: [Object],
+        light_theme: [Object],
+        dark_theme: [Object] },
+     namedChunkGroups:
+      { 'opendistro-alerting': [Object],
+        'opendistro-sql-workbench': [Object],
+        opendistro_index_management_kibana: [Object],
+        'opendistro-anomaly-detection-kibana': [Object],
+        status_page: [Object],
+        timelion: [Object],
+        light_theme: [Object],
+        dark_theme: [Object] },
+     chunks:
+      [ [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object] ],
+     modules:
+      [ [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        ... 1411 more items ],
+     filteredModules: 0,
+     logging: { 'webpack.buildChunkGraph.visitModules': [Object] },
+     children:
+      [ [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object],
+        [Object] ] },
+  isBoom: true,
+  isServer: true,
+  output:
+   { statusCode: 500,
+     payload:
+      { statusCode: 500,
+        error: 'Internal Server Error',
+        message: 'An internal server error occurred' },
+     headers: {} },
+  reformat: [Function],
+  typeof: [Function: internal] }
+  log   [22:28:12.505] [info][plugins-system] Stopping all plugins.
+
+ FATAL  Error: Optimizations failure.
+   1511 modules
+
+    ERROR in ./node_modules/@elastic/charts/dist/components/chart.js
+    Module not found: Error: Can't resolve 'redux-immutable-state-invariant' in '/usr/share/kibana/node_modules/@elastic/charts/dist/components'
+
+    ERROR in ./node_modules/@elastic/charts/dist/components/chart.js
+    Module not found: Error: Can't resolve 'redux-logger' in '/usr/share/kibana/node_modules/@elastic/charts/dist/components'
+
+    ERROR in ./plugins/opendistro-alerting/public/app.js
+    Module not found: Error: Can't resolve 'ui/autoload/styles' in '/usr/share/kibana/plugins/opendistro-alerting/public'
+
+    ERROR in ./plugins/opendistro-sql-workbench/public/app.js
+    Module not found: Error: Can't resolve 'ui/autoload/styles' in '/usr/share/kibana/plugins/opendistro-sql-workbench/public'
