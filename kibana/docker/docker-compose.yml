@@ -31,7 +31,8 @@ services:
     # only be used for experimentation, never in production.
     #
     # environment:
-    #   - SERVER_SSL_CERT=/usr/share/kibana/config/opendistroforelasticsearch.example.org.crt
+    #   - SERVER_SSL_ENABLED=true
+    #   - SERVER_SSL_CERTIFICATE=/usr/share/kibana/config/opendistroforelasticsearch.example.org.cert
     #   - SERVER_SSL_KEY=/usr/share/kibana/config/opendistroforelasticsearch.example.org.key
 
   elasticsearch:
