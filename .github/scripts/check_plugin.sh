@@ -14,11 +14,14 @@
 #                GREEN:  plugin artifact is in S3
 #
 # Usage:         ./check_plugin.sh $PLUGIN_TYPES [$ODFE_VERSION]
-#                $PLUGIN_TYPES: zip,deb,rpm,kibana,clidvr,perftop (optional)
+#                $PLUGIN_TYPES: elasticsearch_zip | elasticsearch_rpm | elasticsearch_deb
+#                               kibana_zip
+#                               client_zip | perftop_zip
+#                               (optional, use "," to separate multiple entries in one run)
 #                $ODFE_VERSION: x.y.z (optional)
 #
 # Starting Date: 2020-05-29
-# Modified Date: 2020-08-19
+# Modified Date: 2020-08-31
 ###############################################################################################
 
 # Please leave it commented as aws s3 will fail if no plugin presents
@@ -28,12 +31,12 @@
 REPO_ROOT=`git rev-parse --show-toplevel`
 ROOT=`dirname $(realpath $0)`; echo $ROOT; cd $ROOT
 S3_BUCKET="artifacts.opendistroforelasticsearch.amazon.com"
-S3_DIR_zip="downloads/elasticsearch-plugins"
-S3_DIR_rpm="downloads/rpms"
-S3_DIR_deb="downloads/debs"
-S3_DIR_kibana="downloads/kibana-plugins"
-S3_DIR_clidvr="downloads/elasticsearch-clients"
-S3_DIR_perftop="downloads/perftop"
+S3_DIR_elasticsearch_zip="downloads/elasticsearch-plugins"
+S3_DIR_elasticsearch_rpm="downloads/rpms"
+S3_DIR_elasticsearch_deb="downloads/debs"
+S3_DIR_kibana_zip="downloads/kibana-plugins"
+S3_DIR_client_zip="downloads/elasticsearch-clients"
+S3_DIR_perftop_zip="downloads/perftop"
 TSCRIPT_NEWLINE="%0D%0A"
 RUN_STATUS=0 # 0 is success, 1 is failure
 PLUGIN_TYPES=$1
@@ -45,8 +48,8 @@ if [ "$#" -gt 2 ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]
 then
   echo "Please assign at most 2 parameters when running this script"
   echo "Example: $0 \$PLUGIN_TYPES [\$ODFE_VERSION]"
-  echo "Example: $0 \"tar\""
-  echo "Example: $0 \"rpm,kibana\" \"1.7.0\""
+  echo "Example: $0 \"elasticsearch_zip\""
+  echo "Example: $0 \"elasticsearch_zip,kibana_zip\" \"1.7.0\""
   exit 1
 fi
 
@@ -56,7 +59,7 @@ echo "PLUGIN_TYPES is: $PLUGIN_TYPES"
 if [ -z "$PLUGIN_TYPES" ]
 then
   # Kibana currently have the same plugins for all distros
-  PLUGIN_TYPES="zip,deb,rpm,kibana,clidvr,perftop" # separate the types by comma here
+  PLUGIN_TYPES="elasticsearch_zip,elasticsearch_deb,elasticsearch_rpm,kibana_zip,client_zip,perftop_zip" # separate the types by comma here
   echo "Use default PLUGIN_TYPES: $PLUGIN_TYPES"
 fi
 PLUGIN_TYPES=`echo $PLUGIN_TYPES | tr '[:upper:]' '[:lower:]'`
@@ -76,8 +79,9 @@ IFS=,
 for plugin_type in $PLUGIN_TYPES
 do
   # Try to dynamically assign the variables based on PLUGIN_TYPES
-  PLUGINS=`$REPO_ROOT/bin/plugins-info $plugin_type`
-  PLUGINS_GIT=`$REPO_ROOT/bin/plugins-info $plugin_type --git | tr '\n' ' '`
+  IFS='_' read -r -a plugin_type_array <<< $plugin_type
+  PLUGINS=`$REPO_ROOT/bin/plugins-info ${plugin_type_array[0]} ${plugin_type_array[1]} --require-install-true`
+  PLUGINS_GIT=`$REPO_ROOT/bin/plugins-info ${plugin_type_array[0]} git --require-install-true | tr '\n' ' '`
   eval S3_DIR='$'S3_DIR_${plugin_type}
   plugin_arr=()
   unavailable_plugin=()
@@ -168,14 +172,8 @@ do
   #cd /home/runner/work/opendistro-build/opendistro-build/
   cd $ROOT
 
-  if [ "$plugin_type" = "kibana" ]
-  then
-    echo "<h1><u>[KIBANA] Plugins ($ODFE_VERSION) Availability Checks for ( $plugin_type $tot_plugins/${#plugin_arr[*]} )</u></h1>" >> message.md
-    echo ":bar_chart: [KIBANA] Plugins ($ODFE_VERSION) for ( $plugin_type $tot_plugins/${#plugin_arr[*]} ): $TSCRIPT_NEWLINE" >> chime_message.md
-  else
-    echo "<h1><u>[ES] Plugins ($ODFE_VERSION) Availability Checks for ( $plugin_type $tot_plugins/${#plugin_arr[*]} )</u></h1>" >> message.md
-    echo ":mag_right: [ES] Plugins ($ODFE_VERSION) for ( $plugin_type $tot_plugins/${#plugin_arr[*]} ): $TSCRIPT_NEWLINE" >> chime_message.md
-  fi
+  echo "<h1><u>[$plugin_type] Plugins ($ODFE_VERSION) Availability Checks for ( $tot_plugins/${#plugin_arr[*]} )</u></h1>" >> message.md
+  echo "[$plugin_type] Plugins ($ODFE_VERSION) for ( $tot_plugins/${#plugin_arr[*]} ): $TSCRIPT_NEWLINE" >> chime_message.md
   
   echo "<h2><p style='color:red;'><b>NOT AVAILABLE</b></p></h2>" >> message.md
   if [ "${#unavailable_plugin[*]}" -gt 0 ]

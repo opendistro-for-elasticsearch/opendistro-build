@@ -9,7 +9,7 @@
 #                as defined in the 'plugins.json' file
 #
 # Usage:         ./plugins-info $PLUGINS_TYPE $RETURN_TYPE [$REQUIRE_INSTALL]
-#                $PLUGINS_TYPE: elasticsearch | kibana | client | perf-top  (required)
+#                $PLUGINS_TYPE: elasticsearch | kibana | client | perftop  (required)
 #                $RETURN_TYPE: zip | deb | rpm | windows | git | cutversion (required)
 #                $REQUIRE_INSTALL: <default to both> (optional)
 #                                  --require-install-true
