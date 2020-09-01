@@ -172,8 +172,8 @@ do
   #cd /home/runner/work/opendistro-build/opendistro-build/
   cd $ROOT
 
-  echo "<h1><u>[$plugin_type] Plugins ($ODFE_VERSION) Availability Checks for ( $plugin_type $tot_plugins/${#plugin_arr[*]} )</u></h1>" >> message.md
-  echo "[$plugin_type] Plugins ($ODFE_VERSION) for ( $plugin_type $tot_plugins/${#plugin_arr[*]} ): $TSCRIPT_NEWLINE" >> chime_message.md
+  echo "<h1><u>[$plugin_type] Plugins ($ODFE_VERSION) Availability Checks for ( $tot_plugins/${#plugin_arr[*]} )</u></h1>" >> message.md
+  echo "[$plugin_type] Plugins ($ODFE_VERSION) for ( $tot_plugins/${#plugin_arr[*]} ): $TSCRIPT_NEWLINE" >> chime_message.md
   
   echo "<h2><p style='color:red;'><b>NOT AVAILABLE</b></p></h2>" >> message.md
   if [ "${#unavailable_plugin[*]}" -gt 0 ]
