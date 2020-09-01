@@ -232,10 +232,10 @@ spec:
         - mountPath: {{ .Values.elasticsearch.securityConfig.path }}
           name: security-config
         {{- end }}
+        {{- end }}
 {{- if .Values.elasticsearch.extraVolumeMounts }}
 {{ toYaml .Values.elasticsearch.extraVolumeMounts | indent 8 }}
 {{- end }}
-      {{- end }}
       volumes:
       - name: config
         secret:
