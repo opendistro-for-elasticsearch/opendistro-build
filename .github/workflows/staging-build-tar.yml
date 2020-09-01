@@ -20,7 +20,7 @@ jobs:
           aws-region: us-east-1
 
       - name: Run check_plugin scripts
-        run: .github/scripts/check_plugin.sh "zip,kibana"; exit `cat /tmp/plugin_status.check`
+        run: .github/scripts/check_plugin.sh "elasticsearch_zip,kibana_zip"; exit `cat /tmp/plugin_status.check`
 
   build-es-artifacts:
     needs: [plugin-availability]

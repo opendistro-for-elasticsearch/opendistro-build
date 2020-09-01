@@ -189,7 +189,7 @@
     "require_install": "true",
     "category": "client"
   },
-  "perf-top": {
+  "perftop": {
     "git": "opendistro-for-elasticsearch/perftop",
     "zip": "perf-top",
     "deb": "none",
@@ -197,7 +197,7 @@
     "windows": "none",
     "cutversion": "1.9.0.0",
     "require_install": "true",
-    "category": "perf-top"
+    "category": "perftop"
   }
 }
 
