@@ -515,4 +515,3 @@ jobs:
           RUNNERS+="odfe-rpm-ad-kibana"
           .github/scripts/setup_runners.sh terminate $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
 
-

@@ -126,7 +126,6 @@ then
                          --parameters '{"commands": ["#!/bin/bash", "sudo su - '${SETUP_AMI_USER}' -c \"mkdir -p '${RUNNER_DIR}' && cd '${RUNNER_DIR}' && wget -q '${RUNNER_URL}' && tar -xzf *.tar.gz && rm *.tar.gz \""]}' \
                          --output text > /dev/null 2>&1; echo $?
 
-
     echo "[${instance_name2}]: Get runner token and bootstrap on Git"
     instance_runner_token=`curl --silent -H "Authorization: token ${SETUP_TOKEN}" --request POST "${GIT_URL_API}/${GIT_URL_REPO}/actions/runners/registration-token" | jq -r .token`
     aws ssm send-command --targets Key=tag:Name,Values=$instance_name2 --document-name "AWS-RunShellScript" \
