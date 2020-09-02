@@ -78,6 +78,7 @@ SETUP_IAM_NAME="odfe-release-runner"
 GIT_URL_API="https://api.github.com/repos"
 GIT_URL_BASE="https://github.com"
 GIT_URL_REPO="opendistro-for-elasticsearch/opendistro-build"
+GIT_URL_TARGET="${GIT_URL_BASE}/${GIT_URL_REPO}"
 RUNNER_URL=`curl -s https://api.github.com/repos/actions/runner/releases/latest | jq -r '.assets[].browser_download_url' | grep linux-x64`
 RUNNER_DIR="actions-runner"
 
@@ -124,12 +125,13 @@ then
     echo "[${instance_name2}]: Get latest runner binary to server ${RUNNER_URL}"
     aws ssm send-command --targets Key=tag:Name,Values=$instance_name2 --document-name "AWS-RunShellScript" \
                          --parameters '{"commands": ["#!/bin/bash", "sudo su - '${SETUP_AMI_USER}' -c \"mkdir -p '${RUNNER_DIR}' && cd '${RUNNER_DIR}' && wget -q '${RUNNER_URL}' \""]}' \
-                         --output text > /dev/null 2>&1; echo $?
+                         --output text > /dev/null 2>&1; echo $
 
     echo "[${instance_name2}]: Get runner token and bootstrap on Git"
-    instance_runner_token=`curl --silent -H "Authorization: token ${SETUP_TOKEN}" --request POST "${GIT_URL_API}/${GIT_URL_REPO}/actions/runners/registration-token" | jq -r .token`
+    runner_token=`curl --silent -H "Authorization: token ${SETUP_TOKEN}" --request POST "${GIT_URL_TARGET}/actions/runners/registration-token" | jq -r .token`
     aws ssm send-command --targets Key=tag:Name,Values=$instance_name2 --document-name "AWS-RunShellScript" \
-                         --parameters '{"commands": ["#!/bin/bash", "sudo su - '${SETUP_AMI_USER}' -c \"cd '${RUNNER_DIR}' && tar -xzvf *.tar.gz && ./config.sh --unattended --url '${GIT_URL_BASE}/${GIT_URL_REPO}' --labels '${instance_name2}' --token '${instance_runner_token}' && nohup ./run.sh &\""]}' \
+                         --parameters '{"commands": ["#!/bin/bash", "sudo su - '${SETUP_AMI_USER}' -c \"mkdir -p '${RUNNER_DIR}' && cd $_ && curl -Ls '${RUNNER_URL}' | tar -xzvf - ", \
+                                                     " ./config.sh --unattended --url '${GIT_URL_TARGET}' --labels '${instance_name2}' --token '${runner_token}' && nohup ./run.sh &\""]}' \
                          --output text > /dev/null 2>&1; echo $?
     sleep 5
   done
