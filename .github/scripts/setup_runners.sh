@@ -47,7 +47,7 @@
 #                }
 #
 # Starting Date: 2020-07-27
-# Modified Date: 2020-08-09
+# Modified Date: 2020-09-01
 ###############################################################################################
 
 set -e
@@ -68,7 +68,7 @@ fi
 SETUP_ACTION=$1
 SETUP_INSTANCE=`echo $2 | sed 's/,/ /g'`
 SETUP_TOKEN=$3
-SETUP_AMI_ID="ami-042f29d2ac35db697"
+SETUP_AMI_ID="ami-0d4131ed63328e32f"
 SETUP_AMI_USER="ec2-user"
 SETUP_INSTANCE_TYPE="m5.xlarge"
 SETUP_INSTANCE_SIZE=20 #GiB
@@ -78,6 +78,8 @@ SETUP_IAM_NAME="odfe-release-runner"
 GIT_URL_API="https://api.github.com/repos"
 GIT_URL_BASE="https://github.com"
 GIT_URL_REPO="opendistro-for-elasticsearch/opendistro-build"
+RUNNER_URL=`curl -s https://api.github.com/repos/actions/runner/releases/latest | jq -r '.assets[].browser_download_url' | grep linux-x64`
+RUNNER_DIR="actions-runner"
 
 echo "###############################################"
 echo "Start Running $0 $1 $2"
@@ -119,10 +121,16 @@ then
                          --parameters '{"commands": ["#!/bin/bash", "sudo hostnamectl set-hostname '${instance_name2}'"]}' \
                          --output text > /dev/null 2>&1; echo $?
 
+    echo "[${instance_name2}]: Get latest runner binary to server ${RUNNER_URL}"
+    aws ssm send-command --targets Key=tag:Name,Values=$instance_name2 --document-name "AWS-RunShellScript" \
+                         --parameters '{"commands": ["#!/bin/bash", "sudo su - '${SETUP_AMI_USER}' -c \"mkdir -p '${RUNNER_DIR}' && cd '${RUNNER_DIR}' && wget -q '${RUNNER_URL}' && tar -xzf *.tar.gz && rm *.tar.gz \""]}' \
+                         --output text > /dev/null 2>&1; echo $?
+
     echo "[${instance_name2}]: Get runner token and bootstrap on Git"
     instance_runner_token=`curl --silent -H "Authorization: token ${SETUP_TOKEN}" --request POST "${GIT_URL_API}/${GIT_URL_REPO}/actions/runners/registration-token" | jq -r .token`
+    # Wait 10 seconds for untar of runner binary to complete
     aws ssm send-command --targets Key=tag:Name,Values=$instance_name2 --document-name "AWS-RunShellScript" \
-                         --parameters '{"commands": ["#!/bin/bash", "sudo su - '${SETUP_AMI_USER}' -c \"cd actions-runner && ./config.sh --unattended --url '${GIT_URL_BASE}/${GIT_URL_REPO}' --labels '${instance_name2}' --token '${instance_runner_token}' && nohup ./run.sh &\""]}' \
+                         --parameters '{"commands": ["#!/bin/bash", "sudo su - '${SETUP_AMI_USER}' -c \"cd '${RUNNER_DIR}' && sleep 10 && ./config.sh --unattended --url '${GIT_URL_BASE}/${GIT_URL_REPO}' --labels '${instance_name2}' --token '${instance_runner_token}' && nohup ./run.sh &\""]}' \
                          --output text > /dev/null 2>&1; echo $?
     sleep 5
   done
@@ -167,5 +175,6 @@ then
 
   echo "All runners are offline on Git"
 fi
+
 
 
