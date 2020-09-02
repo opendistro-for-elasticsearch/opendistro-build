@@ -131,7 +131,7 @@ cat <<- EOF >> $REPO_ROOT/userdata_$1.sh
 sudo mkdir -p /home/repo
 sudo chmod 777 /home/repo
 sudo chmod 777 /etc/elasticsearch/elasticsearch.yml
-sudo sed -i "/path.logs/a path.repo: ["/home/repo"]" /etc/elasticsearch/elasticsearch.yml
+sudo sed -i '/path.logs/a path.repo: ["/home/repo"]' /etc/elasticsearch/elasticsearch.yml
 sudo sed -i /^node.max_local_storage_nodes/d /etc/elasticsearch/elasticsearch.yml
 # Increase the number of allowed script compilations. The SQL integ tests use a lot of scripts.
 sudo echo "script.context.field.max_compilations_rate: 1000/1m" >> /etc/elasticsearch/elasticsearch.yml
@@ -170,6 +170,7 @@ cat <<- EOF >> $REPO_ROOT/userdata_$1.sh
 sudo systemctl start elasticsearch.service
 sleep 30
 EOF
+fi
 
 #### Start Kibana ####
 if [[ "$1" = "TAR" ]]
