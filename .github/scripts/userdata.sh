@@ -52,9 +52,6 @@ echo "cluster.name: odfe-$ODFE_VER-rpm-auth" >> /etc/elasticsearch/elasticsearch
 echo "network.host: 0.0.0.0" >> /etc/elasticsearch/elasticsearch.yml
 echo "cluster.initial_master_nodes: [\"init-master\"]" >> /etc/elasticsearch/elasticsearch.yml
 
-# Start the service
-sudo systemctl start elasticsearch.service
-sleep 30
 
 # Installing kibana
 sudo yum install -y opendistroforelasticsearch-kibana-$ODFE_VER
@@ -82,10 +79,6 @@ echo "cluster.initial_master_nodes: [\"init-master\"]" >> /etc/elasticsearch/ela
 echo "cluster.name: odfe-$ODFE_VER-deb-auth" >> /etc/elasticsearch/elasticsearch.yml
 echo "network.host: 0.0.0.0" >> /etc/elasticsearch/elasticsearch.yml
 
-# Start the service
-sudo /etc/init.d/elasticsearch start
-sleep 30
-
 # Installing kibana
 sudo apt install opendistroforelasticsearch-kibana
 echo "server.host: 0.0.0.0" >> /etc/kibana/kibana.yml
@@ -112,7 +105,7 @@ echo "cluster.initial_master_nodes: [\"init-master\"]" >> config/elasticsearch.y
 echo "cluster.name: odfe-$ODFE_VER-tarball-auth" >> config/elasticsearch.yml
 echo "network.host: 0.0.0.0" >> config/elasticsearch.yml
 sudo sysctl -w vm.max_map_count=262144
-sudo -u ubuntu nohup ./opendistro-tar-install.sh 2>&1 > /dev/null &
+
 
 #Installing kibana
 cd /
@@ -121,6 +114,27 @@ tar zxvf opendistroforelasticsearch-kibana-$ODFE_VER.tar.gz
 chown -R ubuntu:ubuntu opendistroforelasticsearch-kibana
 cd opendistroforelasticsearch-kibana/
 echo "server.host: 0.0.0.0" >> config/kibana.yml
+EOF
+fi
+
+# Extra configurations required
+if [ "$1" = "TAR" ]
+then
+cat <<- EOF >> $REPO_ROOT/userdata_$1.sh
+mkdir -p snapshots
+echo "path.repo: [\"$PWD/snapshots\"]" >> $ES_ROOT/config/elasticsearch.yml
+# Increase the number of allowed script compilations. The SQL integ tests use a lot of scripts.
+echo "script.context.field.max_compilations_rate: 1000/1m" >> $ES_ROOT/config/elasticsearch.yml
+EOF
+else
+cat <<- EOF >> $REPO_ROOT/userdata_$1.sh
+sudo mkdir -p /home/repo
+sudo chmod 777 /home/repo
+sudo chmod 777 /etc/elasticsearch/elasticsearch.yml
+sudo sed -i "/path.logs/a path.repo: ["/home/repo"]" /etc/elasticsearch/elasticsearch.yml
+sudo sed -i /^node.max_local_storage_nodes/d /etc/elasticsearch/elasticsearch.yml
+# Increase the number of allowed script compilations. The SQL integ tests use a lot of scripts.
+sudo echo "script.context.field.max_compilations_rate: 1000/1m" >> /etc/elasticsearch/elasticsearch.yml
 EOF
 fi
 
@@ -147,10 +161,20 @@ EOF
 fi
 fi
 
-#Start Kibana
-if [[ "$1" = "RPM"  ||  "$1" = "DEB" ]]
+#### Start Elasticsearch ####
+if [[ "$1" = "TAR" ]]
 then
-echo "sudo systemctl start kibana.service" >> $REPO_ROOT/userdata_$1.sh
+echo "sudo -u ubuntu nohup ./opendistro-tar-install.sh 2>&1 > /dev/null &" >> $REPO_ROOT/userdata_$1.sh
 else
+cat <<- EOF >> $REPO_ROOT/userdata_$1.sh
+sudo systemctl start elasticsearch.service
+sleep 30
+EOF
+
+#### Start Kibana ####
+if [[ "$1" = "TAR" ]]
+then
 echo "sudo -u ubuntu nohup ./bin/kibana &" >> $REPO_ROOT/userdata_$1.sh
+else
+echo "sudo systemctl start kibana.service" >> $REPO_ROOT/userdata_$1.sh
 fi
