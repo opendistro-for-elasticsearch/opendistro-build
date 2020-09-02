@@ -123,15 +123,11 @@ then
                          --output text > /dev/null 2>&1; echo $?
 
     echo "[${instance_name2}]: Get latest runner binary to server ${RUNNER_URL}"
-    aws ssm send-command --targets Key=tag:Name,Values=$instance_name2 --document-name "AWS-RunShellScript" \
-                         --parameters '{"commands": ["#!/bin/bash", "sudo su - '${SETUP_AMI_USER}' -c \"mkdir -p '${RUNNER_DIR}' && cd '${RUNNER_DIR}' && wget -q '${RUNNER_URL}' \""]}' \
-                         --output text > /dev/null 2>&1; echo $
 
     echo "[${instance_name2}]: Get runner token and bootstrap on Git"
     runner_token=`curl --silent -H "Authorization: token ${SETUP_TOKEN}" --request POST "${GIT_URL_TARGET}/actions/runners/registration-token" | jq -r .token`
     aws ssm send-command --targets Key=tag:Name,Values=$instance_name2 --document-name "AWS-RunShellScript" \
-                         --parameters '{"commands": ["#!/bin/bash", "sudo su - '${SETUP_AMI_USER}' -c \"mkdir -p '${RUNNER_DIR}' && cd $_ && curl -Ls '${RUNNER_URL}' | tar -xzvf - ", \
-                                                     " ./config.sh --unattended --url '${GIT_URL_TARGET}' --labels '${instance_name2}' --token '${runner_token}' && nohup ./run.sh &\""]}' \
+                         --parameters '{"commands": ["#!/bin/bash", "sudo su - '${SETUP_AMI_USER}' -c \"mkdir -p '${RUNNER_DIR}' && cd $_ && wget -q '${RUNNER_URL}' && tar -xzvf *.tar.gz && ./config.sh --unattended --url '${GIT_URL_TARGET}' --labels '${instance_name2}' --token '${runner_token}' && nohup ./run.sh &\""]}' \
                          --output text > /dev/null 2>&1; echo $?
     sleep 5
   done
