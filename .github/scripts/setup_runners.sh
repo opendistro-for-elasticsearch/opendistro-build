@@ -124,9 +124,7 @@ then
     echo "[${instance_name2}]: Get latest runner binary to server ${RUNNER_URL}"
 
     instance_runner_token=`curl --silent -H "Authorization: token ${SETUP_TOKEN}" --request POST "${GIT_URL_API}/${GIT_URL_REPO}/actions/runners/registration-token" | jq -r .token`
-    instance_runner_cmd="mkdir -p '${RUNNER_DIR}' && cd '${RUNNER_DIR}' && wget -q '${RUNNER_URL}' && tar -xzf *.tar.gz \
-                         && ./config.sh --unattended --url '${GIT_URL_BASE}/${GIT_URL_REPO}' --labels '${instance_name2}' --token '${instance_runner_token}' \
-                         && nohup ./run.sh &"
+    instance_runner_cmd="mkdir -p '${RUNNER_DIR}' && cd '${RUNNER_DIR}' && wget -q '${RUNNER_URL}' && tar -xzf *.tar.gz && ./config.sh --unattended --url '${GIT_URL_BASE}/${GIT_URL_REPO}' --labels '${instance_name2}' --token '${instance_runner_token}' && nohup ./run.sh &"
 
     echo "[${instance_name2}]: Get runner token and bootstrap on Git"
     aws ssm send-command --targets Key=tag:Name,Values=$instance_name2 --document-name "AWS-RunShellScript" \
