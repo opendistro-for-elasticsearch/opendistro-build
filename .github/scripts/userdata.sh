@@ -164,7 +164,11 @@ fi
 #### Start Elasticsearch ####
 if [[ "$1" = "TAR" ]]
 then
-echo "sudo -u ubuntu nohup ./opendistro-tar-install.sh 2>&1 > /dev/null &" >> $REPO_ROOT/userdata_$1.sh
+cat <<- EOF >> $REPO_ROOT/userdata_$1.sh
+cd /
+cd opendistroforelasticsearch-$ODFE_VER/
+sudo -u ubuntu nohup ./opendistro-tar-install.sh 2>&1 > /dev/null &
+EOF
 else
 cat <<- EOF >> $REPO_ROOT/userdata_$1.sh
 sudo systemctl start elasticsearch.service
