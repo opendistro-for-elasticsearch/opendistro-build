@@ -9,10 +9,8 @@ name: Create testing cluster with static domain
 on:
   #schedule:
   #  - cron: '30 10 * * *'
-  # repository_dispatch:
-  #   types: [test-cluster-static-domain-set-up]
-  push:
-    branches: [testing-domain-patch]
+  repository_dispatch:
+    types: [test-cluster-static-domain-set-up]
 
 jobs:
   Create-Cluster:
@@ -82,7 +80,7 @@ jobs:
               stackName=ODFE-$distribution_type-SECURITY-$security
               echo $stackName
               stack_setup $distribution_type $security
-            elif ${{ github.event_name == 'schedule' }} || ${{ github.event_name == 'push' }}
+            elif ${{ github.event_name == 'schedule' }}
             then
               for distribution_type in RPM DEB TAR
               do
