@@ -169,6 +169,15 @@ cd /
 cd opendistroforelasticsearch-$ODFE_VER/
 sudo -u ubuntu nohup ./opendistro-tar-install.sh 2>&1 > /dev/null &
 EOF
+if [[ "$2" = "ENABLE" ]]
+then
+cat <<- EOF >> $REPO_ROOT/userdata_$1.sh
+sleep 30
+kill -9 `ps -ef | grep [e]lasticsearch | awk '{print $2}'`
+sed -i /^node.max_local_storage_nodes/d ./config/elasticsearch.yml
+nohup ./opendistro-tar-install.sh > /dev/null 2>&1 &
+EOF
+fi
 else
 cat <<- EOF >> $REPO_ROOT/userdata_$1.sh
 sudo systemctl start elasticsearch.service
