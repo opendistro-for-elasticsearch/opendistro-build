@@ -84,7 +84,7 @@ jobs:
               stack_setup $distribution_type $security
             elif ${{ github.event_name == 'schedule' }} || ${{ github.event_name == 'push' }}
             then
-              for distribution_type in RPM DEB TAR
+              for distribution_type in TAR
               do
                 for security in ENABLE DISABLE
                 do
