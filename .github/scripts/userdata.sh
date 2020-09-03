@@ -179,7 +179,11 @@ fi
 #### Start Kibana ####
 if [[ "$1" = "TAR" ]]
 then
-echo "sudo -u ubuntu nohup ./bin/kibana &" >> $REPO_ROOT/userdata_$1.sh
+cat <<- EOF >> $REPO_ROOT/userdata_$1.sh
+cd /
+cd opendistroforelasticsearch-kibana/
+sudo -u ubuntu nohup ./bin/kibana &
+EOF
 else
 echo "sudo systemctl start kibana.service" >> $REPO_ROOT/userdata_$1.sh
 fi
