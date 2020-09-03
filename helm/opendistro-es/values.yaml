@@ -124,6 +124,10 @@ global:
 
   rbac:
     enabled: true
+
+  # Optionally override the docker registry to use for images
+  registry: docker.io
+
   ## Optionally specify an array of imagePullSecrets.
   ## Secrets must be manually created in the namespace.
   # imagePullSecrets:
