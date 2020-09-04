@@ -1,0 +1,13 @@
+https://raw.githubusercontent.com/opendistro-for-elasticsearch/anomaly-detection/master/release-notes/opendistro-for-elasticsearch-anomaly-detection.release-notes-1.10.0.0.md
+https://raw.githubusercontent.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/master/release-notes/opendistro-for-elasticsearch-anomaly-detection-kibana.release-notes-1.10.0.0.md
+https://raw.githubusercontent.com/opendistro-for-elasticsearch/security-kibana-plugin/opendistro-1.10/release-notes/opendistro-for-elasticsearch-security-kibana.release-notes-1.10.0.0.md
+https://raw.githubusercontent.com/opendistro-for-elasticsearch/security/master/release-notes/opendistro-for-elasticsearch.security.release-notes-1.10.0.0.md
+https://raw.githubusercontent.com/opendistro-for-elasticsearch/performance-analyzer/opendistro-1.10/release-notes/opendistro-for-elasticsearch-performance-analyzer.release-notes-1.10.0.0.md
+https://raw.githubusercontent.com/opendistro-for-elasticsearch/perftop/opendistro-1.10/release-notes/opendistro-for-elasticsearch-perftop.release-notes-1.10.0.0.md
+https://raw.githubusercontent.com/opendistro-for-elasticsearch/k-NN/master/release-notes/opendistro-for-elasticsearch-knn.release-notes-1.10.0.0.md
+https://raw.githubusercontent.com/opendistro-for-elasticsearch/job-scheduler/master/release-notes/opendistro-for-elasticsearch-job-scheduler.release-notes-1.10.0.0.md
+https://raw.githubusercontent.com/opendistro-for-elasticsearch/index-management/master/release-notes/opendistro-for-elasticsearch-index-management.release-notes-1.10.0.0.md
+https://raw.githubusercontent.com/opendistro-for-elasticsearch/index-management-kibana-plugin/master/release-notes/opendistro-for-elasticsearch-index-management-kibana-plugin.release-notes-1.10.0.0.md
+https://raw.githubusercontent.com/opendistro-for-elasticsearch/alerting/master/release-notes/opendistro-for-elasticsearch-alerting.release-notes-1.10.0.1.md
+https://raw.githubusercontent.com/opendistro-for-elasticsearch/alerting-kibana-plugin/master/release-notes/opendistro-for-elasticsearch-alerting-kibana-plugin.release-notes-1.10.0.0.md
+https://raw.githubusercontent.com/opendistro-for-elasticsearch/sql/v1.10.0.0/release-notes/opendistro-for-elasticsearch-sql.release-notes-1.10.0.0.md
