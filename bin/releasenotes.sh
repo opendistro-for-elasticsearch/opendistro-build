@@ -75,7 +75,7 @@ do
     # Get upper-case category to match with the one in template 
     entry_upper=`echo $entry | tr '[:lower:]' '[:upper:]'`
 
-    # Resolve MacOS / BSD sed does not work as same as gnu sed commands
+    # Resolve MacOS / BSD sed does not work the same as gnu sed commands
     # Make pulled plugin release notes to also have upper-case category to retrieve release notes lines
     sed "s/$entry/$entry_upper/g" $RELEASENOTES_TEMPTXT > ${RELEASENOTES_TEMPTXT}1
     mv ${RELEASENOTES_TEMPTXT}1 $RELEASENOTES_TEMPTXT
