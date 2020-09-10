@@ -27,7 +27,7 @@ RELEASENOTES_ORIGURL="$ROOT/releasenotes-orig-urls.txt"
 RELEASENOTES_SORTURL="$ROOT/releasenotes-sort-urls.txt"
 RELEASENOTES_TEMPTXT="$ROOT/releasenotes-temp-text.tmp"
 RELEASENOTES_DISTROS="$ROOT/releasenotes-dist-draft.md"
-RELEASENOTES_CATEGORIES=`echo "Breaking Changes,Features,Enhancements,Bug Fixes,Infrastructure,Documentation,Maintenance,Refactoring" | tr '[:lower:]' '[:upper:]'`
+RELEASENOTES_CATEGORIES="BREAKING CHANGES,FEATURES,ENHANCEMENTS,BUG FIXES,INFRASTRUCTURE,DOCUMENTATION,MAINTENANCE,REFACTORING" # upper cases
 
 # Sort the urls in reverse order so they appear in normal order in distro release notes
 (cat $RELEASENOTES_ORIGURL | grep -v -E "^#" | sort -r) > $RELEASENOTES_SORTURL
