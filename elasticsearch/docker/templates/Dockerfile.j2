@@ -11,9 +11,9 @@
 # express or implied. See the License for the specific language governing
 # permissions and limitations under the License.
 
-# Description: 
+# Description:
 # Dockerfile for building the docker image for open distro for elasticsearch
-# 
+#
 # This file was generated from the template at templates/Dockerfile.j2
 
 ################################################################################
@@ -92,6 +92,8 @@ RUN set -ex; \
  \
     && cd /usr/share/elasticsearch/k-NN/jni \
  \
+    && sed -i 's/-march=native/-march=x86-64/g' external/nmslib/similarity_search/CMakeLists.txt \
+\
     && cmake . \
  \
     && make \
@@ -126,7 +128,7 @@ USER 0
 RUN chown -R elasticsearch:0 . && \
     chmod -R g=u /usr/share/elasticsearch
 
-RUN pfa=`ls /tmp/plugins/|grep opendistro_performance_analyzer|wc -l` && \ 
+RUN pfa=`ls /tmp/plugins/|grep opendistro_performance_analyzer|wc -l` && \
     if [ $pfa -gt 0 ]; then chmod 755 /usr/share/elasticsearch/plugins/opendistro_performance_analyzer/pa_bin/performance-analyzer-agent; \
     else echo "Performace Analyzer plugin is not yet installed"; fi
 
