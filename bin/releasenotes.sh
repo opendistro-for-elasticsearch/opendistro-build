@@ -76,19 +76,19 @@ do
     entry_upper=`echo $entry | tr '[:lower:]' '[:upper:]'`
 
     # Resolve MacOS / BSD sed does not work the same as gnu sed commands
-    # Make pulled plugin release notes to also have upper-case category to retrieve release notes lines
+    # Replace pulled plugin release notes category names to upper-case so that we can retrieve actual release notes lines
     sed "s/$entry/$entry_upper/g" $RELEASENOTES_TEMPTXT > ${RELEASENOTES_TEMPTXT}1
     mv ${RELEASENOTES_TEMPTXT}1 $RELEASENOTES_TEMPTXT
 
     # Get the actual release notes lines for the selected category, exclude category names
     entry_notes_array=( `sed -n "/$entry_upper/,/###/{//!p;}" $RELEASENOTES_TEMPTXT | sed '/^$/d'` )
-    # Plugin release notes use ## and distro release notes use ### for category
+    # Plugin release notes use ### and distro release notes use ## for category
     entry_upper=`echo $entry_upper | sed -E 's/[# ]*//g;s/^/## /g'`
 
     # Loop through the actual release notes lines in reverse order so they appear in normal order on distro release notes
     for index in `seq $(echo ${#entry_notes_array[@]}) 0`
     do
-      # As a limitation in BSD/MacOS version of sed, we can only insert one line at a time
+      # As a limitation in MacOS / BSD version of sed, we can only insert one line at a time
       # Ignore usage of in-place parameter as there are differences between BSD/MacOS sed and GNU sed commands
       sed "s@${entry_upper}@&\\"$'\n'"${entry_notes_array[$index]}@g" $RELEASENOTES_DISTROS > ${RELEASENOTES_DISTROS}1
       mv ${RELEASENOTES_DISTROS}1 $RELEASENOTES_DISTROS
