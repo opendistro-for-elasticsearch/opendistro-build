@@ -55,11 +55,11 @@ IFS=`echo -ne "\n\b"`
 cat $RELEASENOTES_SORTURL | while read github_temp_url
 do
   # Make sure we are pulling raw texts
-  if !(echo $github_temp_url | grep -qi "raw.githubusercontent.com")
+  if echo $github_temp_url | grep -qi "raw.githubusercontent.com"
   then
-    github_raw_url=`echo $github_temp_url | sed 's@github.com@raw.githubusercontent.com@g;s@blob/@@g'`
-  else
     github_raw_url=$github_temp_url
+  else
+    github_raw_url=`echo $github_temp_url | sed 's@github.com@raw.githubusercontent.com@g;s@blob/@@g'`
   fi
 
   # Get capitalized name for plugin based on github release notes url
