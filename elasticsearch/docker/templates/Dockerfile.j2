@@ -128,7 +128,7 @@ USER 0
 RUN chown -R elasticsearch:0 . && \
     chmod -R g=u /usr/share/elasticsearch
 
-RUN pfa=`ls /tmp/plugins/|grep opendistro_performance_analyzer|wc -l` && \
+RUN pfa=`ls /tmp/plugins/|grep opendistro_performance_analyzer|wc -l` && \ 
     if [ $pfa -gt 0 ]; then chmod 755 /usr/share/elasticsearch/plugins/opendistro_performance_analyzer/pa_bin/performance-analyzer-agent; \
     else echo "Performace Analyzer plugin is not yet installed"; fi
 
