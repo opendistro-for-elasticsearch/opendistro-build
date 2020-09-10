@@ -13,7 +13,7 @@
 # Platform:      This script works on both GNU/LINUX and MacOS
 #
 # Starting Date: 2020-09-03
-# Modified Date: 2020-09-04
+# Modified Date: 2020-09-08
 ###############################################################################################
 
 set -e
