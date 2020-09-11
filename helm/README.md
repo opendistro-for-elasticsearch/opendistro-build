@@ -337,7 +337,6 @@ elasticsearch:
 
   ssl:
     transport:
-      enabled: true
       existingCertSecret: elasticsearch-transport-certs
     rest:
       enabled: true
