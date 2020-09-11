@@ -193,7 +193,6 @@ data:
   elk-rest-crt.pem: base64value
   elk-rest-key.pem: base64value
   elk-rest-root-ca.pem: base64value
-
 ```
 
 ### Elasticsearch
@@ -206,7 +205,6 @@ to properly mount them to their corresponding `subPath`.
 ```
 ssl:
   transport:
-    enabled: true
     existingCertSecret: elasticsearch-transport-certs
   rest:
     enabled: true
