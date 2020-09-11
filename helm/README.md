@@ -193,7 +193,6 @@ data:
   elk-rest-crt.pem: base64value
   elk-rest-key.pem: base64value
   elk-rest-root-ca.pem: base64value
-
 ```
 
 ### Elasticsearch
@@ -206,7 +205,6 @@ to properly mount them to their corresponding `subPath`.
 ```
 ssl:
   transport:
-    enabled: true
     existingCertSecret: elasticsearch-transport-certs
   rest:
     enabled: true
@@ -339,7 +337,6 @@ elasticsearch:
 
   ssl:
     transport:
-      enabled: true
       existingCertSecret: elasticsearch-transport-certs
     rest:
       enabled: true
@@ -518,7 +515,6 @@ The following table lists the configurable parameters of the opendistro elastics
 | `elasticsearch.securityConfig.rolesSecret`                | Name of secret with [roles.yml](https://github.com/opendistro-for-elasticsearch/security/blob/master/securityconfig/roles.yml) defined                   | `""`                                                                    |
 | `elasticsearch.securityConfig.rolesMappingSecret`         | Name of secret with [roles_mapping.yml](https://github.com/opendistro-for-elasticsearch/security/blob/master/securityconfig/roles_mapping.yml) defined   | `""`                                                                    |
 | `elasticsearch.securityConfig.tenantsSecret`              | Name of secret with [tenants.yml](https://github.com/opendistro-for-elasticsearch/security/blob/master/securityconfig/tenants.yml) defined               | `""`                                                                    |
-| `elasticsearch.ssl.transport.enabled`                     | Enable Transport SSL for Elasticsearch                                                                                                                   | `false`                                                                 |
 | `elasticsearch.ssl.transport.existingCertSecret`          | Name of secret that contains the transport certs                                                                                                         | `""`                                                                    |
 | `elasticsearch.ssl.transport.existingCertSecretCertSubPath`  | Subpath of elastic transport cert secret                                                                                                              | `"elk-transport-crt.pem"`                                               |
 | `elasticsearch.ssl.transport.existingCertSecretKeySubPath`   | Subpath of elastic transport key secret                                                                                                               | `"elk-transport-key.pem"`                                               |
