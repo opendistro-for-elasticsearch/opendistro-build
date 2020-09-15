@@ -82,7 +82,7 @@ do
 
     # Get the actual release notes lines for the selected category, exclude category names
     entry_notes_array=( `sed -n "/$entry_upper/,/###/{//!p;}" $RELEASENOTES_TEMPTXT | sed '/^$/d'` )
-    # Plugin release notes use ### and distro release notes use ## for category
+    # Plugin release notes use ### and distro release notes use ## for category, so strip the leading # to achieve this behavior
     entry_upper=`echo $entry_upper | sed -E 's/^#//g'`
 
     # Loop through the actual release notes lines in reverse order so they appear in normal order on distro release notes
