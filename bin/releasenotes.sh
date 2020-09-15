@@ -8,7 +8,8 @@
 # About:         Create a distro release notes markdown file based on plugin release notes
 #
 # Usage:         ./releasenotes.sh
-#                URLs of plugin release notes are taken from $RELEASENOTES_ORIGURL
+#                URLs of plugin release notes are in $RELEASENOTES_ORIGURL 
+#                (default to releasenotes-orig-urls.txt)
 #
 # Platform:      This script works on both GNU/LINUX and MacOS
 #
