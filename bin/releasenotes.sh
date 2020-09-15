@@ -8,12 +8,12 @@
 # About:         Create a distro release notes markdown file based on plugin release notes
 #
 # Usage:         ./releasenotes.sh
-#                URLs of plugin release notes are taken from ./releasenotes.txt
+#                URLs of plugin release notes are taken from $RELEASENOTES_ORIGURL
 #
 # Platform:      This script works on both GNU/LINUX and MacOS
 #
 # Starting Date: 2020-09-03
-# Modified Date: 2020-09-08
+# Modified Date: 2020-09-15
 ###############################################################################################
 
 set -e
@@ -30,7 +30,7 @@ RELEASENOTES_DISTROS="$ROOT/releasenotes-dist-draft.md"
 RELEASENOTES_CATEGORIES="BREAKING CHANGES,FEATURES,ENHANCEMENTS,BUG FIXES,INFRASTRUCTURE,DOCUMENTATION,MAINTENANCE,REFACTORING" # upper cases
 
 # Sort the urls in reverse order so they appear in normal order in distro release notes
-(cat $RELEASENOTES_ORIGURL | grep -v -E "^#" | sort -r) > $RELEASENOTES_SORTURL
+(cat $RELEASENOTES_ORIGURL | grep -v -E "^#" | sort -rfd) > $RELEASENOTES_SORTURL
 
 # Prepare ODFE distro release notes template 
 IFS=,
@@ -83,7 +83,7 @@ do
     # Get the actual release notes lines for the selected category, exclude category names
     entry_notes_array=( `sed -n "/$entry_upper/,/###/{//!p;}" $RELEASENOTES_TEMPTXT | sed '/^$/d'` )
     # Plugin release notes use ### and distro release notes use ## for category
-    entry_upper=`echo $entry_upper | sed -E 's/[# ]*//g;s/^/## /g'`
+    entry_upper=`echo $entry_upper | sed -E 's/^#//g'`
 
     # Loop through the actual release notes lines in reverse order so they appear in normal order on distro release notes
     for index in `seq $(echo ${#entry_notes_array[@]}) 0`
