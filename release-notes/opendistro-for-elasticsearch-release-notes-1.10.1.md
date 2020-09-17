@@ -7,7 +7,9 @@ The release consists of Apache 2 licensed Elasticsearch version 7.9.1, and Kiban
 
 ## Release Highlights
 
-* AD Kibana: sample detectors
+* Introducing Sample Detectors in Anomaly Detection Kibana Plugin:
+  * Users can now load 3 different sample detectors (and corresponding indices) into their cluster to get familiar with detectors and detector configurations
+  * Users can detect sample anomalies using logs related to (1) HTTP response codes, (2) eCommerce orders, and (3) CPU and memory of a host
 
 ## Release Details
 
