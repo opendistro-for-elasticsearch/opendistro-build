@@ -1,7 +1,5 @@
 # Open Distro for Elasticsearch 1.10.1 Release Notes
 
-# _(WIP as of 09/15/2020 3:00pm, contact Infra if you have any new changes and additions to your plugin release notes before 09/18/2020, Thanks!)_
-
 Open Distro for Elasticsearch 1.10.1 is now available for [download](https://opendistro.github.io/for-elasticsearch/downloads.html).
 
 The release consists of Apache 2 licensed Elasticsearch version 7.9.1, and Kibana version 7.9.1. Plugins in the distribution include Alerting, Index Management, Performance Analyzer (with Root Cause Analysis Engine), Security, SQL, Machine Learning with k-NN, and Anomaly Detection. Also, SQL JDBC/ODBC driver, SQL CLI Client, and PerfTop (a client for Performance Analyzer) are available for download now.
