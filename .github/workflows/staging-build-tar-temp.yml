@@ -85,12 +85,11 @@ jobs:
       - name: Start ES and Kibana
         run: |
           .github/scripts/setup_runners_service.sh zip --kibana-nosec
-          echo "load the indices"
-          curl https://raw.githubusercontent.com/opendistro-for-elasticsearch/sql/master/integ-test/src/test/resources/accounts.json | curl -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/accounts/_bulk?pretty' --data-binary @- > /dev/null 2>&1
-          echo 123
+          curl https://raw.githubusercontent.com/opendistro-for-elasticsearch/sql/master/integ-test/src/test/resources/accounts.json | curl -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/accounts/_bulk?pretty' --data-binary @- 
+          echo "load indices 1"
           sleep 3
-          curl https://raw.githubusercontent.com/opendistro-for-elasticsearch/sql/master/integ-test/src/test/resources/employee_nested.json | curl -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/employee_nested/_bulk?pretty' --data-binary @-
-          echo 123123
+          curl https://raw.githubusercontent.com/opendistro-for-elasticsearch/sql/master/integ-test/src/test/resources/employee_nested.json | curl -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/employee_nested/_bulk?pretty' --data-binary @- 
+          echo "load indices 1"
  
       - name: run IT
         uses: cypress-io/github-action@v1
