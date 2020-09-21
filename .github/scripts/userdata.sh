@@ -139,7 +139,7 @@ sudo sed -i '/path.logs/a path.repo: ["/home/repo"]' /etc/elasticsearch/elastics
 sudo sed -i /^node.max_local_storage_nodes/d /etc/elasticsearch/elasticsearch.yml
 # Increase the number of allowed script compilations. The SQL integ tests use a lot of scripts.
 sudo echo "script.context.field.max_compilations_rate: 1000/1m" >> /etc/elasticsearch/elasticsearch.yml
-
+EOF
 fi
 
 #### Security disable feature ####
