@@ -471,7 +471,7 @@ jobs:
       - name: run IT
         uses: cypress-io/github-action@v1
         with:
-          working-directory: kibana/plugins/sql/sql-workbenchn
+          working-directory: kibana/plugins/sql-workbenchn
           command: npx cypress run
 
   Test-AD-KIBANA:
