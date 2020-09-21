@@ -106,7 +106,9 @@ echo "node.name: init-master" >> config/elasticsearch.yml
 echo "cluster.initial_master_nodes: [\"init-master\"]" >> config/elasticsearch.yml
 echo "cluster.name: odfe-$ODFE_VER-tarball-auth" >> config/elasticsearch.yml
 echo "network.host: 0.0.0.0" >> config/elasticsearch.yml
+echo "webservice-bind-host = 0.0.0.0" >> /opendistroforelasticsearch-$ODFE_VER/plugins/opendistro_performance_analyzer/pa_config/performance-analyzer.properties
 sudo sysctl -w vm.max_map_count=262144
+
 
 
 #Installing kibana
@@ -137,8 +139,7 @@ sudo sed -i '/path.logs/a path.repo: ["/home/repo"]' /etc/elasticsearch/elastics
 sudo sed -i /^node.max_local_storage_nodes/d /etc/elasticsearch/elasticsearch.yml
 # Increase the number of allowed script compilations. The SQL integ tests use a lot of scripts.
 sudo echo "script.context.field.max_compilations_rate: 1000/1m" >> /etc/elasticsearch/elasticsearch.yml
-sudo echo "webservice-bind-host = 0.0.0.0" >> /usr/share/elasticsearch/plugins/opendistro_performance_analyzer/pa_config/performance-analyzer.properties
-EOF
+
 fi
 
 #### Security disable feature ####
@@ -171,6 +172,10 @@ cat <<- EOF >> $REPO_ROOT/userdata_$1.sh
 cd /
 cd opendistroforelasticsearch-$ODFE_VER/
 sudo -u ubuntu nohup ./opendistro-tar-install.sh 2>&1 > /dev/null &
+ES_HOME="$PWD" 
+nohup ./bin/performance-analyzer-agent-cli 2>&1 > /dev/null &
+curl localhost:9200/_opendistro/_performanceanalyzer/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
+curl localhost:9200/_opendistro/_performanceanalyzer/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
 EOF
 if [[ "$2" = "ENABLE" ]]
 then
@@ -179,6 +184,10 @@ sleep 30
 kill -9 `ps -ef | grep [e]lasticsearch | awk '{print $2}'`
 sed -i /^node.max_local_storage_nodes/d ./config/elasticsearch.yml
 nohup ./opendistro-tar-install.sh > /dev/null 2>&1 &
+ES_HOME="$PWD" 
+nohup ./bin/performance-analyzer-agent-cli 2>&1 > /dev/null &
+curl localhost:9200/_opendistro/_performanceanalyzer/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
+curl localhost:9200/_opendistro/_performanceanalyzer/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
 EOF
 fi
 else
