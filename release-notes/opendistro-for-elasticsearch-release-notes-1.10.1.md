@@ -147,7 +147,7 @@ The release of Open Distro for Elasticsearch includes the following features, en
 
 ### SQL
 
-* Parse backtick strings (``) as identifiers instead of string literals ([#678](https://github.com/opendistro-for-elasticsearch/sql/pull/678))
+* Parse backtick strings (\`\`) as identifiers instead of string literals ([#678](https://github.com/opendistro-for-elasticsearch/sql/pull/678))
 * add error details for all server communication errors ([#645](https://github.com/opendistro-for-elasticsearch/sql/pull/645))
 
 
