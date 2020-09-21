@@ -95,6 +95,6 @@ jobs:
       - name: run IT
         uses: cypress-io/github-action@v1
         with:
-          working-directory: kibana/plugins/sql-workbenchn
+          working-directory: kibana/plugins/sql-workbench
           command: npx cypress run
 
