@@ -105,7 +105,7 @@ if ($SETUP_ACTION -eq "--kibana" -Or $SETUP_ACTION -eq "--kibana-nosec"){
   mkdir kibana-it-test
   cd kibana-it-test
   $S3_KIBANA_PACKAGE="odfe-"+$OD_VERSION+"-kibana.zip"
-  aws s3 cp --quiet s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/ode-windows-zip/$S3_KIBANA_PACKAGE . --quiet; echo $?\
+  aws s3 cp --quiet s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/odfe-windows/staging/odfe-window-zip/$S3_KIBANA_PACKAGE . --quiet; echo $?\
   unzip -qq .\$S3_KIBANA_PACKAGE
 }
 

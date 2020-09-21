@@ -1,8 +1,8 @@
 name: Build Windows Exe using tar artifacts
 
 on:
-  #schedule:
-  #  - cron: '30 10 * * *'
+  schedule:
+    - cron: '30 10 * * *'
   repository_dispatch:
     types: [staging-build-windows]
 
@@ -258,7 +258,7 @@ jobs:
 
       - uses: actions/checkout@v1
         with:
-            repository: opendistro-for-elasticsearch/sql
+            repository: opendistro-for-elasticsearch/alerting
             ref: ${{env.p_tag_alerting}}
 
       - name: Configure AWS Credentials

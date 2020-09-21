@@ -57,7 +57,7 @@ ext {
     new ByteArrayOutputStream().withStream { os3 ->
       def result3 = exec {
         executable = '../../bin/plugins-info'
-        args = ['rpm']
+        args = ['elasticsearch', 'rpm', '--require-install-true']
         standardOutput = os3
       }
       ext.plugin_names = os3.toString()
@@ -66,7 +66,7 @@ ext {
     new ByteArrayOutputStream().withStream { os4 ->
       def result4 = exec {
         executable = '../../bin/plugins-info'
-        args = ['rpm', '--git']
+        args = ['elasticsearch', 'git', '--require-install-true']
         standardOutput = os4
       }
       ext.plugin_git = os4.toString().replaceAll("\n", ",")
@@ -74,29 +74,49 @@ ext {
 
     new ByteArrayOutputStream().withStream { os5 ->
       def result5 = exec {
-        executable = '../../.github/scripts/plugin_tag.sh'
-        args = [ext.plugin_git, opendistroVersion]
+        executable = '../../bin/version-info'
+        args = ['--is-cut']
         standardOutput = os5
       }
-      ext.plugin_versions = os5.toString().replaceAll("v", "")
+      ext.is_cut = os5.toString().trim()
+    }
+    println("is_cut: " + ext.is_cut)
+
+   if (ext.is_cut.equals("true")) {
+      new ByteArrayOutputStream().withStream { os6 ->
+        def result6 = exec {
+          executable = '../../bin/plugins-info'
+          args = ['elasticsearch', 'cutversion', '--require-install-true']
+          standardOutput = os6
+        }
+        ext.plugin_versions = os6.toString()
+        println("Version is cut")
+      }
+    }
+    else {
+      new ByteArrayOutputStream().withStream { os7 ->
+        def result7 = exec {
+          executable = '../../.github/scripts/plugin_tag.sh'
+          args = [ext.plugin_git, opendistroVersion]
+          standardOutput = os7
+        }
+        ext.plugin_versions = os7.toString().replaceAll("v", "")
+        println("Version not cut")
+      }
     }
 
-    new ByteArrayOutputStream().withStream { os6 ->
-      def result6 = exec {
+    new ByteArrayOutputStream().withStream { os8 ->
+      def result8 = exec {
         executable = '../../bin/version-info'
         args = ['--od-next']
-        standardOutput = os6
+        standardOutput = os8
       }
-      ext.plugin_versions_next = os6.toString().trim() + ".0"
+      ext.plugin_versions_next = os8.toString().trim() + ".0"
     }
 
     pname_arr = ext.plugin_names.split("\n").toList()
     pver_arr = ext.plugin_versions.split("\n").toList()
     pver_next = ext.plugin_versions_next
-
-    // these are not direct dependencies to ODFE ES
-    // plugin owners handle these in their own build scripts
-    indirect_deps = ['opendistro-knnlib']
 
 }
 group 'com.amazon.opendistroforelasticsearch'
@@ -113,17 +133,16 @@ ospackage {
     // setup package requirements
     requires('elasticsearch-oss', elasticsearchVersion, EQUAL)
 
-    for (int i = 0; i < pname_arr.size; i++){
-      String pluginName = pname_arr[i].substring(pname_arr[i].lastIndexOf("/") + 1)
+    for (int i = 0; i < pname_arr.size; i++) {
+      String pluginName = pname_arr[i].substring(pname_arr[i].lastIndexOf("/") + 1).trim()
       String pluginVersion = pver_arr[i].trim()
       String pluginVersionNext = pver_next.trim()
 
-      for (int j = 0; j < indirect_deps.size; j++)
-        if (!pluginName.contains(indirect_deps[j])){
-          println(pluginName + ": >= " + pluginVersion + " | < " + pluginVersionNext)
-          requires(pluginName, pluginVersion, GREATER | EQUAL)
-          requires(pluginName, pluginVersionNext, LESS)
-        }
+      if (!pluginName.contains("none")) {
+        println(pluginName + ": >= " + pluginVersion + " | < " + pluginVersionNext)
+        requires(pluginName, pluginVersion, GREATER | EQUAL)
+        requires(pluginName, pluginVersionNext, LESS)
+      }
     } 
 
     packager = 'Amazon'

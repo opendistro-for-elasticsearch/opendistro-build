@@ -1,188 +1,203 @@
 {
-  "zip":[
-    {
-      "s3":"opendistro-sql/opendistro_sql",
-      "git":"opendistro-for-elasticsearch/sql"
-    },
-    {
-      "s3":"opendistro-alerting/opendistro_alerting",
-      "git":"opendistro-for-elasticsearch/alerting"
-    },
-    {
-      "s3":"opendistro-job-scheduler/opendistro-job-scheduler",
-      "git":"opendistro-for-elasticsearch/job-scheduler"
-    },
-    {
-      "s3":"opendistro-security/opendistro_security",
-      "git":"opendistro-for-elasticsearch/security"
-    },
-    {
-      "s3":"performance-analyzer/opendistro_performance_analyzer",
-      "git":"opendistro-for-elasticsearch/performance-analyzer"
-    },
-    {
-      "s3":"opendistro-index-management/opendistro_index_management",
-      "git":"opendistro-for-elasticsearch/index-management"
-    },
-    {
-      "s3":"opendistro-knn/opendistro-knn",
-      "git":"opendistro-for-elasticsearch/k-NN"
-    },
-    {
-      "s3":"opendistro-anomaly-detection/opendistro-anomaly-detection",
-      "git":"opendistro-for-elasticsearch/anomaly-detection"
-    }
-  ],
-  "windows":[
-    {
-      "s3":"opendistro-sql/opendistro_sql",
-      "git":"opendistro-for-elasticsearch/sql"
-    },
-    {
-      "s3":"opendistro-alerting/opendistro_alerting",
-      "git":"opendistro-for-elasticsearch/alerting"
-    },
-    {
-      "s3":"opendistro-job-scheduler/opendistro-job-scheduler",
-      "git":"opendistro-for-elasticsearch/job-scheduler"
-    },
-    {
-      "s3":"opendistro-security/opendistro_security",
-      "git":"opendistro-for-elasticsearch/security"
-    },
-    {
-      "s3":"opendistro-index-management/opendistro_index_management",
-      "git":"opendistro-for-elasticsearch/index-management"
-    },
-    {
-      "s3":"opendistro-anomaly-detection/opendistro-anomaly-detection",
-      "git":"opendistro-for-elasticsearch/anomaly-detection"
-    }
-  ],
-  "rpm":[
-    {
-      "s3":"opendistro-sql/opendistro-sql",
-      "git":"opendistro-for-elasticsearch/sql"
-    },
-    {
-      "s3":"opendistro-alerting/opendistro-alerting",
-      "git":"opendistro-for-elasticsearch/alerting"
-    },
-    {
-      "s3":"opendistro-job-scheduler/opendistro-job-scheduler",
-      "git":"opendistro-for-elasticsearch/job-scheduler"
-    },
-    {
-      "s3":"opendistro-security/opendistro-security",
-      "git":"opendistro-for-elasticsearch/security"
-    },
-    {
-      "s3":"opendistro-performance-analyzer/opendistro-performance-analyzer",
-      "git":"opendistro-for-elasticsearch/performance-analyzer"
-    },
-    {
-      "s3":"opendistro-index-management/opendistro-index-management",
-      "git":"opendistro-for-elasticsearch/index-management"
-    },
-    {
-      "s3":"opendistro-knn/opendistro-knn",
-      "git":"opendistro-for-elasticsearch/k-NN"
-    },
-    {
-      "s3":"opendistro-knnlib/opendistro-knnlib",
-      "git":"opendistro-for-elasticsearch/k-NN"
-    },
-    {
-      "s3":"opendistro-anomaly-detection/opendistro-anomaly-detection",
-      "git":"opendistro-for-elasticsearch/anomaly-detection"
-    }
-  ],
-  "deb":[
-    {
-      "s3":"opendistro-sql/opendistro-sql",
-      "git":"opendistro-for-elasticsearch/sql"
-    },
-    {
-      "s3":"opendistro-alerting/opendistro-alerting",
-      "git":"opendistro-for-elasticsearch/alerting"
-    },
-    {
-      "s3":"opendistro-job-scheduler/opendistro-job-scheduler",
-      "git":"opendistro-for-elasticsearch/job-scheduler"
-    },
-    {
-      "s3":"opendistro-security/opendistro-security",
-      "git":"opendistro-for-elasticsearch/security"
-    },
-    {
-      "s3":"opendistro-performance-analyzer/opendistro-performance-analyzer",
-      "git":"opendistro-for-elasticsearch/performance-analyzer"
-    },
-    {
-      "s3":"opendistro-index-management/opendistro-index-management",
-      "git":"opendistro-for-elasticsearch/index-management"
-    },
-    {
-      "s3":"opendistro-knn/opendistro-knn",
-      "git":"opendistro-for-elasticsearch/k-NN"
-    },
-    {
-      "s3":"opendistro-knnlib/opendistro-knnlib",
-      "git":"opendistro-for-elasticsearch/k-NN"
-    },
-    {
-      "s3":"opendistro-anomaly-detection/opendistro-anomaly-detection",
-      "git":"opendistro-for-elasticsearch/anomaly-detection"
-    }
-  ],
-  "kibana":[
-    {
-      "s3":"opendistro-sql-workbench/opendistro-sql-workbench",
-      "git":"opendistro-for-elasticsearch/sql"
-    },
-    {
-      "s3":"opendistro-anomaly-detection/opendistro-anomaly-detection-kibana",
-      "git":"opendistro-for-elasticsearch/anomaly-detection-kibana-plugin"
-    },
-    {
-      "s3":"opendistro-security/opendistro_security_kibana_plugin",
-      "git":"opendistro-for-elasticsearch/security-kibana-plugin"
-    },
-    {
-      "s3":"opendistro-alerting/opendistro-alerting",
-      "git":"opendistro-for-elasticsearch/alerting-kibana-plugin"
-    },
-    {
-      "s3":"opendistro-index-management/opendistro_index_management_kibana",
-      "git":"opendistro-for-elasticsearch/index-management-kibana-plugin"
-    }
-  ],
-  "clidvr":[
-    {
-      "s3":"opendistro-sql-cli/odfe-sql-cli",
-      "git":"opendistro-for-elasticsearch/sql"
-    },
-    {
-      "s3":"opendistro-sql-jdbc/opendistro-sql-jdbc",
-      "git":"opendistro-for-elasticsearch/sql"
-    },
-    {
-      "s3":"opendistro-sql-odbc/mac/Open Distro for Elasticsearch SQL ODBC Driver 64-bit",
-      "git":"opendistro-for-elasticsearch/sql"
-    },
-    {
-      "s3":"opendistro-sql-odbc/windows/Open Distro for Elasticsearch SQL ODBC Driver 64-bit",
-      "git":"opendistro-for-elasticsearch/sql"
-    },
-    {
-      "s3":"opendistro-sql-odbc/windows/Open Distro for Elasticsearch SQL ODBC Driver 32-bit",
-      "git":"opendistro-for-elasticsearch/sql"
-    }
-  ],
-  "perftop":[
-    {
-      "s3":"perf-top",
-      "git":"opendistro-for-elasticsearch/perftop"
-    }
-  ]
+  "sql": {
+    "git": "opendistro-for-elasticsearch/sql",
+    "zip": "opendistro-sql/opendistro_sql",
+    "deb": "opendistro-sql/opendistro-sql",
+    "rpm": "opendistro-sql/opendistro-sql",
+    "windows": "opendistro-sql/opendistro_sql",
+    "cutversion": "1.9.0.0",
+    "require_install": "true",
+    "category": "elasticsearch"
+  },
+  "alerting": {
+    "git": "opendistro-for-elasticsearch/alerting",
+    "zip": "opendistro-alerting/opendistro_alerting",
+    "deb": "opendistro-alerting/opendistro-alerting",
+    "rpm": "opendistro-alerting/opendistro-alerting",
+    "windows": "opendistro-alerting/opendistro_alerting",
+    "cutversion": "1.9.0.0",
+    "require_install": "true",
+    "category": "elasticsearch"
+  },
+  "job-scheduler": {
+    "git": "opendistro-for-elasticsearch/job-scheduler",
+    "zip": "opendistro-job-scheduler/opendistro-job-scheduler",
+    "deb": "opendistro-job-scheduler/opendistro-job-scheduler",
+    "rpm": "opendistro-job-scheduler/opendistro-job-scheduler",
+    "windows": "opendistro-job-scheduler/opendistro-job-scheduler",
+    "cutversion": "1.9.0.0",
+    "require_install": "true",
+    "category": "elasticsearch"
+  },
+  "security": {
+    "git": "opendistro-for-elasticsearch/security",
+    "zip": "opendistro-security/opendistro_security",
+    "deb": "opendistro-security/opendistro-security",
+    "rpm": "opendistro-security/opendistro-security",
+    "windows": "opendistro-security/opendistro_security",
+    "cutversion": "1.9.0.0",
+    "require_install": "true",
+    "category": "elasticsearch"
+  },
+  "performance-analyzer": {
+    "git": "opendistro-for-elasticsearch/performance-analyzer",
+    "zip": "performance-analyzer/opendistro_performance_analyzer",
+    "deb": "opendistro-performance-analyzer/opendistro-performance-analyzer",
+    "rpm": "opendistro-performance-analyzer/opendistro-performance-analyzer",
+    "windows": "none",
+    "cutversion": "1.9.0.1",
+    "require_install": "true",
+    "category": "elasticsearch"
+  },
+  "index-management": {
+    "git": "opendistro-for-elasticsearch/index-management",
+    "zip": "opendistro-index-management/opendistro_index_management",
+    "deb": "opendistro-index-management/opendistro-index-management",
+    "rpm": "opendistro-index-management/opendistro-index-management",
+    "windows": "opendistro-index-management/opendistro_index_management",
+    "cutversion": "1.9.0.0",
+    "require_install": "true",
+    "category": "elasticsearch"
+  },
+  "knn": {
+    "git": "opendistro-for-elasticsearch/k-NN",
+    "zip": "opendistro-knn/opendistro-knn",
+    "deb": "opendistro-knn/opendistro-knn",
+    "rpm": "opendistro-knn/opendistro-knn",
+    "windows": "none",
+    "cutversion": "1.9.0.0",
+    "require_install": "true",
+    "category": "elasticsearch"
+  },
+  "knnlib": {
+    "git": "opendistro-for-elasticsearch/k-NN",
+    "zip": "opendistro-libs/opendistro-knnlib/opendistro-knnlib",
+    "deb": "opendistro-knnlib/opendistro-knnlib",
+    "rpm": "opendistro-knnlib/opendistro-knnlib",
+    "windows": "none",
+    "cutversion": "1.9.0.0",
+    "require_install": "false",
+    "category": "elasticsearch"
+  },
+  "anomaly-detection": {
+    "git": "opendistro-for-elasticsearch/anomaly-detection",
+    "zip": "opendistro-anomaly-detection/opendistro-anomaly-detection",
+    "deb": "opendistro-anomaly-detection/opendistro-anomaly-detection",
+    "rpm": "opendistro-anomaly-detection/opendistro-anomaly-detection",
+    "windows": "opendistro-anomaly-detection/opendistro-anomaly-detection",
+    "cutversion": "1.9.0.0",
+    "require_install": "true",
+    "category": "elasticsearch"
+  },
+  "sql-workbench": {
+    "git": "opendistro-for-elasticsearch/sql",
+    "zip": "opendistro-sql-workbench/opendistro-sql-workbench",
+    "deb": "none",
+    "rpm": "none",
+    "windows": "none",
+    "cutversion": "1.9.0.0",
+    "require_install": "true",
+    "category": "kibana"
+  },
+  "anomaly-detection-kibana": {
+    "git": "opendistro-for-elasticsearch/anomaly-detection-kibana-plugin",
+    "zip": "opendistro-anomaly-detection/opendistro-anomaly-detection-kibana",
+    "deb": "none",
+    "rpm": "none",
+    "windows": "none",
+    "cutversion": "1.9.0.0",
+    "require_install": "true",
+    "category": "kibana"
+  },
+  "security-kibana": {
+    "git": "opendistro-for-elasticsearch/security-kibana-plugin",
+    "zip": "opendistro-security/opendistro_security_kibana_plugin",
+    "deb": "none",
+    "rpm": "none",
+    "windows": "none",
+    "cutversion": "1.9.0.0",
+    "require_install": "true",
+    "category": "kibana"
+  },
+  "alerting-kibana": {
+    "git": "opendistro-for-elasticsearch/alerting-kibana-plugin",
+    "zip": "opendistro-alerting/opendistro-alerting",
+    "deb": "none",
+    "rpm": "none",
+    "windows": "none",
+    "cutversion": "1.9.0.0",
+    "require_install": "true",
+    "category": "kibana"
+  },
+  "index-management-kibana": {
+    "git": "opendistro-for-elasticsearch/index-management-kibana-plugin",
+    "zip": "opendistro-index-management/opendistro_index_management_kibana",
+    "deb": "none",
+    "rpm": "none",
+    "windows": "none",
+    "cutversion": "1.9.0.0",
+    "require_install": "true",
+    "category": "kibana"
+  },
+  "sql-cli": {
+    "git": "opendistro-for-elasticsearch/sql",
+    "zip": "opendistro-sql-cli/odfe-sql-cli",
+    "deb": "none",
+    "rpm": "none",
+    "windows": "none",
+    "cutversion": "1.9.0.0",
+    "require_install": "true",
+    "category": "client"
+  },
+  "sql-jdbc": {
+    "git": "opendistro-for-elasticsearch/sql",
+    "zip": "opendistro-sql-jdbc/opendistro-sql-jdbc",
+    "deb": "none",
+    "rpm": "none",
+    "windows": "none",
+    "cutversion": "1.9.0.0",
+    "require_install": "true",
+    "category": "client"
+  },
+  "sql-odbc-macos-64bit": {
+    "git": "opendistro-for-elasticsearch/sql",
+    "zip": "opendistro-sql-odbc/mac/Open Distro for Elasticsearch SQL ODBC Driver 64-bit",
+    "deb": "none",
+    "rpm": "none",
+    "windows": "none",
+    "cutversion": "1.9.0.0",
+    "require_install": "true",
+    "category": "client"
+  },
+  "sql-odbc-windows-64bit": {
+    "git": "opendistro-for-elasticsearch/sql",
+    "zip": "opendistro-sql-odbc/windows/Open Distro for Elasticsearch SQL ODBC Driver 64-bit",
+    "deb": "none",
+    "rpm": "none",
+    "windows": "none",
+    "cutversion": "1.9.0.0",
+    "require_install": "true",
+    "category": "client"
+  },
+  "sql-odbc-windows-32bit": {
+    "git": "opendistro-for-elasticsearch/sql",
+    "zip": "opendistro-sql-odbc/windows/Open Distro for Elasticsearch SQL ODBC Driver 32-bit",
+    "deb": "none",
+    "rpm": "none",
+    "windows": "none",
+    "cutversion": "1.9.0.0",
+    "require_install": "true",
+    "category": "client"
+  },
+  "perftop": {
+    "git": "opendistro-for-elasticsearch/perftop",
+    "zip": "perf-top",
+    "deb": "none",
+    "rpm": "none",
+    "windows": "none",
+    "cutversion": "1.9.0.0",
+    "require_install": "true",
+    "category": "perftop"
+  }
 }
+

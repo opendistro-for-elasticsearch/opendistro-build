@@ -8,13 +8,15 @@
 # About:         Print the ES/KIBANA plugin names and git urls with correct dependency orders
 #                as defined in the 'plugins.json' file
 #
-# Usage:         ./plugins-info $PLUGINS_TYPE [$RETURN_TYPE] [$GITHUB_TOKEN_PAT]
-#                $PLUGINS_TYPE: <check plugins.json> (required)
-#                $RETURN_TYPE: <default to name> | --git (optional)
-#                $GITHUB_TOKEN_PAT: GitHub Personal Access Token for API Calls Here (optional)
+# Usage:         ./plugins-info $PLUGINS_TYPE $RETURN_TYPE [$REQUIRE_INSTALL]
+#                $PLUGINS_TYPE: elasticsearch | kibana | client | perftop  (required)
+#                $RETURN_TYPE: zip | deb | rpm | windows | git | cutversion (required)
+#                $REQUIRE_INSTALL: <default to both> (optional)
+#                                  --require-install-true
+#                                  --require-install-false
 #
 # Starting Date: 2020-06-24
-# Modified Date: 2020-08-07
+# Modified Date: 2020-08-27
 ###############################################################################################
 
 set -e
@@ -22,25 +24,23 @@ ROOT=`dirname $(realpath $0)`;
 PLUGINS_LIST="$ROOT/plugins.json"
 PLUGINS_TYPE=`echo $1 | tr '[:upper:]' '[:lower:]'`
 RETURN_TYPE=`echo $2 | tr '[:upper:]' '[:lower:]'`
-GITHUB_TOKEN_PAT=$3
+REQUIRE_INSTALL=`echo $3 | tr '[:upper:]' '[:lower:]'`
 
-if [ -z "$PLUGINS_TYPE" ]
+if [ -z "$PLUGINS_TYPE" ] || [ -z "$RETURN_TYPE" ]
 then
-  echo "Please enter \$PLUGINS_TYPE [\$RETURN_TYPE] as parameter(s)"
-  echo "Example: \"$0 rpm\" (Retrieve S3 Paths)"
-  echo "Example: \"$0 rpm --s3\" (Retrieve S3 Paths)"
-  echo "Example: \"$0 rpm --git\" (Retrieve Git URLs)"
+  echo "Please enter \$PLUGINS_TYPE \$RETURN_TYPE [\$REQUIRE_INSTALL] as parameter(s)"
+  echo "Example: \"$0 elasticsearch zip\" (Retrieve all es plugins s3 paths for zip formats)"
+  echo "Example: \"$0 elasticsearch zip --require-install-true\" (Retrieve es plugins s3 paths for zip formats that requires installation)"
+  echo "Example: \"$0 elasticsearch zip --require-install-false\" (Retrieve es plugins s3 paths for zip formats that DO NOT requires installation)"
   exit 1
 fi
 
-if [ "$RETURN_TYPE" = "--git" ]
+if [ "$REQUIRE_INSTALL" = "--require-install-true" ]
 then
-  jq -r ".${PLUGINS_TYPE}[].git" "${PLUGINS_LIST}"
-
-elif [ -z "$RETURN_TYPE" ] || [ "$RETURN_TYPE" = "--s3" ]
+    jq -r ".[] | select(.category == \"${PLUGINS_TYPE}\") | select(.require_install == \"true\") |  .$RETURN_TYPE" $PLUGINS_LIST
+elif [ "$REQUIRE_INSTALL" = "--require-install-false" ]
 then
-  jq -r ".${PLUGINS_TYPE}[].s3" "${PLUGINS_LIST}"
-
+    jq -r ".[] | select(.category == \"${PLUGINS_TYPE}\") | select(.require_install == \"false\") |  .$RETURN_TYPE" $PLUGINS_LIST
+else
+    jq -r ".[] | select(.category == \"${PLUGINS_TYPE}\") |  .$RETURN_TYPE" $PLUGINS_LIST
 fi
-
-

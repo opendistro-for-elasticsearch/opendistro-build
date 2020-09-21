@@ -19,14 +19,16 @@
 # Maintainer:    ODFE Infra Team
 # Language:      Python
 #
-# About:         Print the ES/ODFE version for the current/previous branches
+# About:         Print the ES/ODFE/VersionCut related information and values
 #                as defined in the 'version.json' file
 #
 # Usage:         [python] ./version-info $VERSION_TYPE
-#                $VERSION_TYPE: --od | --od-prev | --es | --es-prev (required)
+#                $VERSION_TYPE (required): --od | --od-prev | --od-next
+#                                          --es | --es-prev | --es-next
+#                                          --is-cut
 #
 # Starting Date: 2019-05-15
-# Modified Date: 2020-07-30
+# Modified Date: 2020-08-24
 ###############################################################################################
 
 import sys
@@ -64,6 +66,10 @@ def get_od_version(user_param):
         else:
           return(get_hard_coded_version('odVersion', 'current'))
 
+def get_version_cut(user_param):
+    if user_param == '--is-cut':
+      return(get_hard_coded_version('versionCut', 'is_cut'))
+
 if __name__ == '__main__':
     # Provide a shell compatible interface, defaults to OD version
     if len(sys.argv) == 2 :
@@ -72,8 +78,16 @@ if __name__ == '__main__':
             print(get_es_version(arg_value))
         elif (arg_value == '--od') or (arg_value == '--od-prev') or (arg_value == '--od-next'):
             print(get_od_version(arg_value))
+        elif (arg_value == '--is-cut'):
+            print(get_version_cut(arg_value))
         else:
-            raise Exception('invalid argument, use --es OR --od OR --es-prev OR --od-prev OR --es-next OR --od-next')
+          raise Exception('invalid argument, use --es OR --od ',
+                          'OR --es-prev OR --od-prev ',
+                          'OR --es-next OR --od-next ',
+                          'OR --is-cut')
     else:
-      raise Exception('invalid argument, use --es OR --od OR --es-prev OR --od-prev OR --es-next OR --od-next')
+      raise Exception('invalid argument, use --es OR --od ',
+                      'OR --es-prev OR --od-prev ',
+                      'OR --es-next OR --od-next ',
+                      'OR --is-cut')
 
