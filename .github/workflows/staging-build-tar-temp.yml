@@ -48,51 +48,49 @@ jobs:
         with:
           java-version: ${{ matrix.java }}
       
-#      - name: Get node and yarn versions
-#        id: node_yarn_versions
-#        run: |
-#          echo ::set-env name=kibana_node_version::$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")
-#          echo ::set-env name=kibana_yarn_version::$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")   
-#      
-#      - name: Setup node
-#        uses: actions/setup-node@v1
-#        with:
-#          node-version: ${{env.kibana_node_version}}
-#          registry-url: 'https://registry.npmjs.org'
-#      
-#      - name: Install correct yarn version for Kibana
-#        run: |
-#          npm uninstall -g yarn
-#          echo "Installing yarn ${{ env.kibana_yarn_version }}"
-#          npm i -g yarn@${{ env.kibana_yarn_version }}
-#      
-#      - name: Bootstrap the plugin
-#        run: |
-#          cd ./kibana/plugins
-#          cp -rp sql/sql-workbench .
-#          rm -rf sql/
-#          cd sql-workbench
-#
-#      - name: Retry the bootstraps
-#        # sql repo has a bug that you have to bootstrap at least twice to success
-#        # this is a temp solution and they will try to fix it later
-#        uses: nick-invision/retry@v1
-#        with:
-#          timeout_minutes: 60
-#          max_attempts: 3
-#          command: cd ./kibana/plugins/sql-workbench; pwd; yarn kbn bootstrap
-#
+      - name: Get node and yarn versions
+        id: node_yarn_versions
+        run: |
+          echo ::set-env name=kibana_node_version::$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")
+          echo ::set-env name=kibana_yarn_version::$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")   
+      
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{env.kibana_node_version}}
+          registry-url: 'https://registry.npmjs.org'
+      
+      - name: Install correct yarn version for Kibana
+        run: |
+          npm uninstall -g yarn
+          echo "Installing yarn ${{ env.kibana_yarn_version }}"
+          npm i -g yarn@${{ env.kibana_yarn_version }}
+      
+      - name: Bootstrap the plugin
+        run: |
+          cd ./kibana/plugins
+          cp -rp sql/sql-workbench .
+          rm -rf sql/
+          cd sql-workbench
+
+      - name: Retry the bootstraps
+        # sql repo has a bug that you have to bootstrap at least twice to success
+        # this is a temp solution and they will try to fix it later
+        uses: nick-invision/retry@v1
+        with:
+          timeout_minutes: 60
+          max_attempts: 3
+          command: cd ./kibana/plugins/sql-workbench; pwd; yarn kbn bootstrap
+
       - name: Start ES and Kibana
         run: |
           .github/scripts/setup_runners_service.sh zip --kibana-nosec
           echo version ${{env.p_tag_sql_kibana}}
           curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/sql/${{env.p_tag_sql_kibana}}/integ-test/src/test/resources/accounts.json | curl -s -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/accounts/_bulk?pretty' --data-binary @- > /dev/null 2>&1
-          echo "load indices 1"
           curl http://localhost:9200/_cluster/health?pretty
           sleep 3
           curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/sql/${{env.p_tag_sql_kibana}}/integ-test/src/test/resources/employee_nested.json | curl -s -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/employee_nested/_bulk?pretty' --data-binary @- > /dev/null 2>&1
           curl http://localhost:9200/_cluster/health?pretty
-          echo "load indices 2"
  
       - name: run IT
         uses: cypress-io/github-action@v1
