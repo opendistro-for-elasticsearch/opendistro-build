@@ -51,6 +51,7 @@ echo "node.name: init-master" >> /etc/elasticsearch/elasticsearch.yml
 echo "cluster.name: odfe-$ODFE_VER-rpm-auth" >> /etc/elasticsearch/elasticsearch.yml
 echo "network.host: 0.0.0.0" >> /etc/elasticsearch/elasticsearch.yml
 echo "cluster.initial_master_nodes: [\"init-master\"]" >> /etc/elasticsearch/elasticsearch.yml
+echo "webservice-bind-host = 0.0.0.0" >> /usr/share/elasticsearch/plugins/opendistro_performance_analyzer/pa_config/performance-analyzer.properties
 
 
 # Installing kibana
@@ -136,6 +137,7 @@ sudo sed -i '/path.logs/a path.repo: ["/home/repo"]' /etc/elasticsearch/elastics
 sudo sed -i /^node.max_local_storage_nodes/d /etc/elasticsearch/elasticsearch.yml
 # Increase the number of allowed script compilations. The SQL integ tests use a lot of scripts.
 sudo echo "script.context.field.max_compilations_rate: 1000/1m" >> /etc/elasticsearch/elasticsearch.yml
+sudo echo "webservice-bind-host = 0.0.0.0" >> /usr/share/elasticsearch/plugins/opendistro_performance_analyzer/pa_config/performance-analyzer.properties
 EOF
 fi
 

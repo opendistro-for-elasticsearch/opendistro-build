@@ -87,7 +87,7 @@ jobs:
               stack_setup $distribution_type $security
             elif ${{ github.event_name == 'schedule' }} || ${{ github.event_name == 'push' }}
             then
-              for distribution_type in DEB
+              for distribution_type in RPM
               do
                 for security in DISABLE
                 do
