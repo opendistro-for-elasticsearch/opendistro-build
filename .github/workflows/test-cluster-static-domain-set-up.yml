@@ -11,6 +11,8 @@ on:
     - cron: '0 11 * * *'
   repository_dispatch:
     types: [test-cluster-static-domain-set-up]
+  push:
+    branches: [testing-domain-pa-fix]
 
 jobs:
   Create-Cluster:
@@ -56,6 +58,7 @@ jobs:
               # Getting target groups for ELB mapping
               esTargetGroup=`aws elbv2 describe-target-groups --names ES-$distribution_type-SECURITY-$security --query TargetGroups[*].TargetGroupArn --output text`
               kibanaTargetGroup=`aws elbv2 describe-target-groups --names KIBANA-$distribution_type-SECURITY-$security --query TargetGroups[*].TargetGroupArn --output text`
+              paTargetGroup=`aws elbv2 describe-target-groups --names PA-$distribution_type-SECURITY-$security --query TargetGroups[*].TargetGroupArn --output text`
   
               echo "Creating $stackName stack"
   
@@ -67,7 +70,9 @@ jobs:
               ParameterKey=ODFESecurityGroup,ParameterValue=${{secrets.ODFESECURITYGROUP}} \
               ParameterKey=keypair,ParameterValue=${{secrets.AWS_ODFE_TESTING_CLUSTER_KEYPAIR}} \
               ParameterKey=esTargetGroup,ParameterValue=$esTargetGroup \
-              ParameterKey=kibanaTargetGroup,ParameterValue=$kibanaTargetGroup
+              ParameterKey=kibanaTargetGroup,ParameterValue=$kibanaTargetGroup \
+              ParameterKey=paTargetGroup,ParameterValue=$paTargetGroup
+
   
               aws cloudformation wait stack-create-complete --stack-name $stackName
               sleep 60
@@ -80,11 +85,11 @@ jobs:
               stackName=ODFE-$distribution_type-SECURITY-$security
               echo $stackName
               stack_setup $distribution_type $security
-            elif ${{ github.event_name == 'schedule' }}
+            elif ${{ github.event_name == 'schedule' }} || ${{ github.event_name == 'push' }}
             then
-              for distribution_type in RPM DEB TAR
+              for distribution_type in DEB
               do
-                for security in ENABLE DISABLE
+                for security in ENABLE
                 do
                   stackName=ODFE-$distribution_type-SECURITY-$security
                   echo $stackName

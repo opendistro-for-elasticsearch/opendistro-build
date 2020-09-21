@@ -42,6 +42,10 @@
         "kibanaTargetGroup":{
             "Type" : "String",
             "Description": "Kibana Target Group ARN"
+        },
+        "paTargetGroup":{
+            "Type" : "String",
+            "Description": "PA Target Group ARN"
         }
   
     },
@@ -64,7 +68,7 @@
                 "MinSize" : "1",
                 "MaxSize" : "1",
                 "DesiredCapacity" : "1",
-                "TargetGroupARNs": [{"Ref" : "esTargetGroup"}, {"Ref":"kibanaTargetGroup"}],
+                "TargetGroupARNs": [{"Ref" : "esTargetGroup"}, {"Ref":"kibanaTargetGroup"}, {"Ref":"paTargetGroup"}],
                 "Tags":[{
                     "Key" : "Name", 
                     "Value" : {

@@ -78,6 +78,7 @@ echo "node.name: init-master" >> /etc/elasticsearch/elasticsearch.yml
 echo "cluster.initial_master_nodes: [\"init-master\"]" >> /etc/elasticsearch/elasticsearch.yml
 echo "cluster.name: odfe-$ODFE_VER-deb-auth" >> /etc/elasticsearch/elasticsearch.yml
 echo "network.host: 0.0.0.0" >> /etc/elasticsearch/elasticsearch.yml
+echo "webservice-bind-host = 0.0.0.0" >> /usr/share/elasticsearch/plugins/opendistro_performance_analyzer/pa_config/performance-analyzer.properties
 
 # Installing kibana
 sudo apt install opendistroforelasticsearch-kibana
