@@ -89,7 +89,7 @@ jobs:
             then
               for distribution_type in DEB
               do
-                for security in ENABLE
+                for security in DISABLE
                 do
                   stackName=ODFE-$distribution_type-SECURITY-$security
                   echo $stackName
