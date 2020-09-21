@@ -91,7 +91,8 @@ jobs:
           curl http://localhost:9200/_cluster/health?pretty
           sleep 3
           curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/sql/${{env.p_tag_sql_kibana}}/integ-test/src/test/resources/employee_nested.json | curl -s -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/employee_nested/_bulk?pretty' --data-binary @- > /dev/null 2>&1
-          echo "load indices 1"
+          curl http://localhost:9200/_cluster/health?pretty
+          echo "load indices 2"
  
       - name: run IT
         uses: cypress-io/github-action@v1
