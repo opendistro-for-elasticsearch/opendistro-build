@@ -161,6 +161,7 @@ sed -i "s/^echo \"cluster.name.*/echo \"cluster.name \: odfe-$ODFE_VER-$1-noauth
 sed -i "/echo \"network.host/a echo \"opendistro_security.disabled: true\" \>\> config\/elasticsearch.yml" $REPO_ROOT/userdata_$1.sh
 cat <<- EOF >> userdata_$1.sh
 sudo rm -rf plugins/opendistro_security
+cd /opendistroforelasticsearch-kibana/
 sed -i /^opendistro_security/d config/kibana.yml
 sed -i 's/https/http/' config/kibana.yml
 EOF
@@ -171,8 +172,7 @@ fi
 if [[ "$1" = "TAR" ]]
 then
 cat <<- EOF >> $REPO_ROOT/userdata_$1.sh
-cd /
-cd opendistroforelasticsearch-$ODFE_VER/
+cd /opendistroforelasticsearch-$ODFE_VER/
 sudo -u ubuntu nohup ./opendistro-tar-install.sh 2>&1 > /dev/null &
 EOF
 if [[ "$2" = "ENABLE" ]]
