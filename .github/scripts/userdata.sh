@@ -98,7 +98,7 @@ echo "*   soft  nofile  65535" | tee --append /etc/security/limits.conf
 sudo apt-get install -y zip
 ulimit -n 65535
 wget https://d3g5vo6xdbdb9a.cloudfront.net/downloads/tarball/opendistro-elasticsearch/opendistroforelasticsearch-$ODFE_VER.tar.gz
-tar zxvf opendistroforelasticsearch-$ODFE_VER.tar.gz
+tar zxf opendistroforelasticsearch-$ODFE_VER.tar.gz
 chown -R ubuntu:ubuntu opendistroforelasticsearch-$ODFE_VER
 cd opendistroforelasticsearch-$ODFE_VER/
 
@@ -114,7 +114,7 @@ sudo sysctl -w vm.max_map_count=262144
 #Installing kibana
 cd /
 wget https://d3g5vo6xdbdb9a.cloudfront.net/downloads/tarball/opendistroforelasticsearch-kibana/opendistroforelasticsearch-kibana-$ODFE_VER.tar.gz
-tar zxvf opendistroforelasticsearch-kibana-$ODFE_VER.tar.gz
+tar zxf opendistroforelasticsearch-kibana-$ODFE_VER.tar.gz
 chown -R ubuntu:ubuntu opendistroforelasticsearch-kibana
 cd opendistroforelasticsearch-kibana/
 echo "server.host: 0.0.0.0" >> config/kibana.yml
@@ -125,10 +125,12 @@ fi
 if [ "$1" = "TAR" ]
 then
 cat <<- EOF >> $REPO_ROOT/userdata_$1.sh
+cd /
+cd opendistroforelasticsearch-$ODFE_VER/
 mkdir -p snapshots
-echo "path.repo: [\"$PWD/snapshots\"]" >> $ES_ROOT/config/elasticsearch.yml
+echo "path.repo: [\"$PWD/snapshots\"]" >> config/elasticsearch.yml
 # Increase the number of allowed script compilations. The SQL integ tests use a lot of scripts.
-echo "script.context.field.max_compilations_rate: 1000/1m" >> $ES_ROOT/config/elasticsearch.yml
+echo "script.context.field.max_compilations_rate: 1000/1m" >> config/elasticsearch.yml
 EOF
 else
 cat <<- EOF >> $REPO_ROOT/userdata_$1.sh
@@ -175,7 +177,7 @@ sudo -u ubuntu nohup ./opendistro-tar-install.sh 2>&1 > /dev/null &
 export ES_HOME=$PWD
 nohup ./bin/performance-analyzer-agent-cli  > /dev/null 2>&1 &
 curl localhost:9200/_opendistro/_performanceanalyzer/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
-curl localhost:9200/_opendistro/_performanceanalyzer/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
+curl localhost:9200/_opendistro/_performanceanalyzer/rca/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
 EOF
 if [[ "$2" = "ENABLE" ]]
 then
@@ -186,8 +188,10 @@ sed -i /^node.max_local_storage_nodes/d ./config/elasticsearch.yml
 nohup ./opendistro-tar-install.sh > /dev/null 2>&1 &
 export ES_HOME=$PWD
 nohup ./bin/performance-analyzer-agent-cli  > /dev/null 2>&1 &
+curl -k --cert ./config/kirk.pem --key ./config/kirk-key.pem https://localhost:9200/_opendistro/_performanceanalyzer/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
 curl localhost:9200/_opendistro/_performanceanalyzer/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
-curl localhost:9200/_opendistro/_performanceanalyzer/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
+curl -k --cert ./config/kirk.pem --key ./config/kirk-key.pem https://localhost:9200/_opendistro/_performanceanalyzer/rca/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
+curl localhost:9200/_opendistro/_performanceanalyzer/rca/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
 EOF
 fi
 else
