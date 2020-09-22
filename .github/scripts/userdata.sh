@@ -192,6 +192,7 @@ curl -k --cert ./config/kirk.pem --key ./config/kirk-key.pem https://localhost:9
 curl localhost:9200/_opendistro/_performanceanalyzer/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
 curl -k --cert ./config/kirk.pem --key ./config/kirk-key.pem https://localhost:9200/_opendistro/_performanceanalyzer/rca/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
 curl localhost:9200/_opendistro/_performanceanalyzer/rca/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
+
 EOF
 fi
 else
