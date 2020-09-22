@@ -10,7 +10,6 @@ on:
 
 jobs:
   Test-KNN-NoSec:
-    needs: [build-es-artifacts]
     runs-on: ubuntu-18.04
     name: Test-KNN-NoSec
     strategy:
