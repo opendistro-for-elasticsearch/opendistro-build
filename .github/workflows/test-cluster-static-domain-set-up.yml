@@ -87,9 +87,9 @@ jobs:
               stack_setup $distribution_type $security
             elif ${{ github.event_name == 'schedule' }} || ${{ github.event_name == 'push' }}
             then
-              for distribution_type in TAR
+              for distribution_type in RPM DEB TAR
               do
-                for security in ENABLE
+                for security in ENABLE DISABLE
                 do
                   stackName=ODFE-$distribution_type-SECURITY-$security
                   echo $stackName
