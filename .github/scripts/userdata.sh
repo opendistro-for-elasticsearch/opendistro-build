@@ -1,4 +1,25 @@
 #!/bin/bash
+
+###### Information ############################################################################
+# Name:          userdata.sh
+# Maintainer:    ODFE Infra Team
+# Language:      Shell
+#
+# About:         This script is related to testing-domains set-up.
+#                See https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/283
+#
+#                In order to set-up domains, EC2 needs to have ES and Kibana running, 
+#                hence this script will act as userdata input to install and configure 
+#                the necessary services while installing the EC2 via AutoScaling Groups
+#
+# Usage:         ./userdata.sh $distribution $security
+#                $distribution: TAR | DEB | RPM (required)
+#                $security: ENABLE | DISABLE (required)
+#
+# Starting Date: 2020-06-24
+# Modified Date: 2020-07-30
+###############################################################################################
+
 set -e
 REPO_ROOT=`git rev-parse --show-toplevel`
 ES_VER=`$REPO_ROOT/bin/version-info --es`
@@ -153,10 +174,6 @@ cat <<- EOF >> $REPO_ROOT/userdata_$1.sh
 cd /
 cd opendistroforelasticsearch-$ODFE_VER/
 sudo -u ubuntu nohup ./opendistro-tar-install.sh 2>&1 > /dev/null &
-export ES_HOME=$PWD
-nohup ./bin/performance-analyzer-agent-cli  > /dev/null 2>&1 &
-curl localhost:9200/_opendistro/_performanceanalyzer/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
-curl localhost:9200/_opendistro/_performanceanalyzer/rca/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
 EOF
 if [[ "$2" = "ENABLE" ]]
 then
@@ -165,13 +182,6 @@ sleep 30
 kill -9 `ps -ef | grep [e]lasticsearch | awk '{print $2}'`
 sed -i /^node.max_local_storage_nodes/d ./config/elasticsearch.yml
 nohup ./opendistro-tar-install.sh > /dev/null 2>&1 &
-export ES_HOME=$PWD
-nohup ./bin/performance-analyzer-agent-cli  > /dev/null 2>&1 &
-curl -k --cert ./config/kirk.pem --key ./config/kirk-key.pem https://localhost:9200/_opendistro/_performanceanalyzer/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
-curl localhost:9200/_opendistro/_performanceanalyzer/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
-curl -k --cert ./config/kirk.pem --key ./config/kirk-key.pem https://localhost:9200/_opendistro/_performanceanalyzer/rca/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
-curl localhost:9200/_opendistro/_performanceanalyzer/rca/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
-
 EOF
 fi
 else
