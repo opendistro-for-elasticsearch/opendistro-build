@@ -53,8 +53,8 @@
     "Mappings" : {
         "DistributionMap" : {
           "RPM" : { "amiId" : "ami-0e34e7b9ca0ace12d" },
-          "TAR" : { "amiId" : "ami-003634241a8fcdec0" },
-          "DEB" : { "amiId" : "ami-003634241a8fcdec0" }
+          "TAR" : { "amiId" : "ami-07a29e5e945228fa1" },
+          "DEB" : { "amiId" : "ami-07a29e5e945228fa1" }
         }
       },
 
