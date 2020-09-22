@@ -63,7 +63,7 @@ export PATH=$JAVA_HOME:$PATH
 which java
 java -version
 sudo sysctl -w vm.max_map_count=262144
-sudo chmod 777 /dev/shm
+sudo chmod -R 777 /dev/shm
 
 if [ "$SETUP_DISTRO" = "zip" ]
 then
