@@ -1,0 +1,42 @@
+name: Process TAR Artifacts
+
+on:
+  schedule:
+    - cron: '0 10 * * *'
+  repository_dispatch:
+    types: [staging-build-tar]
+  push:
+    branches: [opendistro-infra-issues-251-19]
+
+jobs:
+  Test-KNN-NoSec:
+    needs: [build-es-artifacts]
+    runs-on: ubuntu-18.04
+    name: Test-KNN-NoSec
+    strategy:
+      matrix:
+        java: [14]
+    steps:
+      - name: Set up AWS Cred
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+      - uses: actions/checkout@v1
+      - name: Retrieve plugin tags
+        run:  echo ::set-env name=p_tag_knn::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/k-NN)
+      - name: Checkout k-NN
+        uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/k-NN
+          ref: ${{env.p_tag_knn}}
+      - name: IT
+        run: |
+          .github/scripts/setup_runners_service.sh zip --es-nosec
+          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../k-NN; pwd
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
