@@ -172,8 +172,8 @@ cat <<- EOF >> $REPO_ROOT/userdata_$1.sh
 cd /
 cd opendistroforelasticsearch-$ODFE_VER/
 sudo -u ubuntu nohup ./opendistro-tar-install.sh 2>&1 > /dev/null &
-ES_HOME="$PWD" 
-nohup ./bin/performance-analyzer-agent-cli 2>&1 > /dev/null &
+export ES_HOME=$PWD
+nohup ./bin/performance-analyzer-agent-cli  > /dev/null 2>&1 &
 curl localhost:9200/_opendistro/_performanceanalyzer/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
 curl localhost:9200/_opendistro/_performanceanalyzer/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
 EOF
@@ -184,8 +184,8 @@ sleep 30
 kill -9 `ps -ef | grep [e]lasticsearch | awk '{print $2}'`
 sed -i /^node.max_local_storage_nodes/d ./config/elasticsearch.yml
 nohup ./opendistro-tar-install.sh > /dev/null 2>&1 &
-ES_HOME="$PWD" 
-nohup ./bin/performance-analyzer-agent-cli 2>&1 > /dev/null &
+export ES_HOME=$PWD
+nohup ./bin/performance-analyzer-agent-cli  > /dev/null 2>&1 &
 curl localhost:9200/_opendistro/_performanceanalyzer/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
 curl localhost:9200/_opendistro/_performanceanalyzer/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
 EOF
