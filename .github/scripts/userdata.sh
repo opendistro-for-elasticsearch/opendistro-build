@@ -164,8 +164,8 @@ sed -i "s/^echo \"cluster.name.*/echo \"cluster.name \: odfe-$ODFE_VER-$1-noauth
 cat <<- EOF >> userdata_$1.sh
 sudo rm -rf plugins/opendistro_security
 sed -i /^opendistro_security.disabled/d config/elasticsearch.yml
-sudo rm -rf plugins/opendistro_security
 cd /opendistroforelasticsearch-kibana/
+sudo rm -rf plugins/opendistro_security
 sed -i /^opendistro_security/d config/kibana.yml
 sed -i 's/https/http/' config/kibana.yml
 EOF
