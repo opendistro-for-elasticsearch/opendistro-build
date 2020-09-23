@@ -93,7 +93,6 @@ jobs:
                   echo $stackName
                   stack_setup $distribution_type $security
                   rm userdata_$distribution_type.sh
-                  ls -ltr
                 done
               done
             fi
