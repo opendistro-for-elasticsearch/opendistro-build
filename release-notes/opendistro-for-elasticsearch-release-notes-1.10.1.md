@@ -415,6 +415,10 @@ The release of Open Distro for Elasticsearch includes the following features, en
 * Build against elasticsearch 7.9 ([#56](https://github.com/opendistro-for-elasticsearch/perftop/pull/56))
 * Build against elasticsearch 7.9.1 ([#59](https://github.com/opendistro-for-elasticsearch/perftop/pull/59))
 
+### Release Engineering
+
+* Kibana has new cookie settings for security kibana plugin 2.0 framework (#397 (https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/397))
+
 ### Security
 
 * Support ES 7.9.1 ([#706](https://github.com/opendistro-for-elasticsearch/security/pull/706))
