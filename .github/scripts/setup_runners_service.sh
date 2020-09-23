@@ -63,6 +63,7 @@ export PATH=$JAVA_HOME:$PATH
 which java
 java -version
 sudo sysctl -w vm.max_map_count=262144
+sudo chmod -R 777 /dev/shm
 
 if [ "$SETUP_DISTRO" = "zip" ]
 then
@@ -109,6 +110,7 @@ then
   echo "path.repo: [\"$PWD/snapshots\"]" >> $ES_ROOT/config/elasticsearch.yml
   # Increase the number of allowed script compilations. The SQL integ tests use a lot of scripts.
   echo "script.context.field.max_compilations_rate: 1000/1m" >> $ES_ROOT/config/elasticsearch.yml
+  sudo echo "script.context.field.max_compilations_rate: 1000/1m" >> /etc/elasticsearch/elasticsearch.yml
 elif [ "$SETUP_DISTRO" = "docker" ]
 then
   echo "FROM opendistroforelasticsearch/opendistroforelasticsearch:$OD_VERSION" >> Dockerfile
@@ -123,6 +125,7 @@ then
   echo "Temp Solution to remove the wrong configuration. need be fixed in building stage"
   docker exec -t $DOCKER_NAME /bin/bash -c "sed -i /^node.max_local_storage_nodes/d /usr/share/elasticsearch/config/elasticsearch.yml"
   docker stop $DOCKER_NAME
+  sudo echo "script.context.field.max_compilations_rate: 1000/1m" >> /etc/elasticsearch/elasticsearch.yml
 else
   sudo mkdir -p /home/repo
   sudo chmod 777 /home/repo
@@ -155,6 +158,7 @@ then
   curl -XGET https://localhost:9200 -u admin:admin --insecure
   curl -XGET https://localhost:9200/_cluster/health?pretty -u admin:admin --insecure
   echo "es start"
+  netstat -ntlp
   cd $REPO_ROOT
   exit 0
 fi
@@ -203,6 +207,7 @@ then
   curl -XGET http://localhost:9200
   curl -XGET http://localhost:9200/_cluster/health?pretty
   echo "es-nosec start"
+  netstat -ntlp
   cd $REPO_ROOT
   exit 0
 fi
@@ -258,6 +263,7 @@ then
   curl -v -XGET http://localhost:5601
   curl -v -XGET http://localhost:5601/api/status
   echo "es & kibana start"
+  netstat -ntlp
   cd $REPO_ROOT
   exit 0
 fi
@@ -303,6 +309,7 @@ then
   curl -v -XGET http://localhost:5601
   curl -v -XGET http://localhost:5601/api/status
   echo "es & kibana-nosec start"
+  netstat -ntlp
   cd $REPO_ROOT
   exit 0
 fi
