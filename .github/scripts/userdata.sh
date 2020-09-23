@@ -57,6 +57,7 @@ echo "webservice-bind-host = 0.0.0.0" >> /usr/share/elasticsearch/plugins/opendi
 # Installing kibana
 sudo yum install -y opendistroforelasticsearch-kibana-$ODFE_VER
 echo "server.host: 0.0.0.0" >> /etc/kibana/kibana.yml
+echo "opendistro_security.cookie.secure: false" >> /etc/kibana/kibana.yml
 EOF
 fi
 
@@ -84,6 +85,7 @@ echo "webservice-bind-host = 0.0.0.0" >> /usr/share/elasticsearch/plugins/opendi
 # Installing kibana
 sudo apt install opendistroforelasticsearch-kibana
 echo "server.host: 0.0.0.0" >> /etc/kibana/kibana.yml
+echo "opendistro_security.cookie.secure: false" >> /etc/kibana/kibana.yml
 
 EOF
 fi
@@ -118,6 +120,7 @@ tar zxf opendistroforelasticsearch-kibana-$ODFE_VER.tar.gz
 chown -R ubuntu:ubuntu opendistroforelasticsearch-kibana
 cd opendistroforelasticsearch-kibana/
 echo "server.host: 0.0.0.0" >> config/kibana.yml
+echo "opendistro_security.cookie.secure: false" >> /config/kibana.yml
 EOF
 fi
 
@@ -125,8 +128,7 @@ fi
 if [ "$1" = "TAR" ]
 then
 cat <<- EOF >> $REPO_ROOT/userdata_$1.sh
-cd /
-cd opendistroforelasticsearch-$ODFE_VER/
+cd /opendistroforelasticsearch-$ODFE_VER/
 mkdir -p snapshots
 echo "path.repo: [\"/opendistroforelasticsearch-$ODFE_VER/snapshots\"]" >> config/elasticsearch.yml
 # Increase the number of allowed script compilations. The SQL integ tests use a lot of scripts.
