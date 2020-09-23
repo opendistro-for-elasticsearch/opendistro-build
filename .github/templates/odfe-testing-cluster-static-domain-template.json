@@ -36,16 +36,16 @@
 
         "esTargetGroup":{
             "Type" : "String",
-            "Description": "ES Target Group ARN"
+            "Description": "ES Target Group ARN with port 9200"
         },
         
         "kibanaTargetGroup":{
             "Type" : "String",
-            "Description": "Kibana Target Group ARN"
+            "Description": "Kibana Target Group ARN with port 5601"
         },
         "paTargetGroup":{
             "Type" : "String",
-            "Description": "PA Target Group ARN"
+            "Description": "PA Target Group ARN with port 9600"
         }
   
     },
