@@ -120,7 +120,7 @@ tar zxf opendistroforelasticsearch-kibana-$ODFE_VER.tar.gz
 chown -R ubuntu:ubuntu opendistroforelasticsearch-kibana
 cd opendistroforelasticsearch-kibana/
 echo "server.host: 0.0.0.0" >> config/kibana.yml
-echo "opendistro_security.cookie.secure: false" >> /config/kibana.yml
+echo "opendistro_security.cookie.secure: false" >> config/kibana.yml
 EOF
 fi
 
