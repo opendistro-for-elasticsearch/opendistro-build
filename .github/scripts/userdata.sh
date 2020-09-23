@@ -128,7 +128,7 @@ cat <<- EOF >> $REPO_ROOT/userdata_$1.sh
 cd /
 cd opendistroforelasticsearch-$ODFE_VER/
 mkdir -p snapshots
-echo "path.repo: [\"$PWD/snapshots\"]" >> config/elasticsearch.yml
+echo "path.repo: [\"/opendistroforelasticsearch-$ODFE_VER/snapshots\"]" >> config/elasticsearch.yml
 # Increase the number of allowed script compilations. The SQL integ tests use a lot of scripts.
 echo "script.context.field.max_compilations_rate: 1000/1m" >> config/elasticsearch.yml
 EOF
