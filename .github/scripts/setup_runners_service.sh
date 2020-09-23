@@ -220,16 +220,13 @@ then
     mkdir -p $KIBANA_ROOT
     aws s3 cp s3://$S3_BUCKET/downloads/tarball/$KIBANA_PACKAGE_NAME/$KIBANA_PACKAGE_NAME-$OD_VERSION.tar.gz . --quiet; echo $?
     tar -zxf $KIBANA_PACKAGE_NAME-$OD_VERSION.tar.gz -C $KIBANA_ROOT --strip-components 1
-    echo "opendistro_security.cookie.secure: false" >> $KIBANA_ROOT/config/kibana.yml
   elif [ "$SETUP_DISTRO" = "docker" ]
   then
     echo "FROM opendistroforelasticsearch/opendistroforelasticsearch-kibana:$OD_VERSION" >> Dockerfile.kibana
-    echo "RUN echo 'opendistro_security.cookie.secure: false' >> /usr/share/kibana/config/kibana.yml" >> Dockerfile.kibana
     docker build -t odfe-kibana-http:security -f Dockerfile.kibana .
     sleep 5
   else
     sudo apt install $KIBANA_PACKAGE_NAME=$OD_VERSION* -y || sudo yum install $KIBANA_PACKAGE_NAME-$OD_VERSION -y
-    sudo echo "opendistro_security.cookie.secure: false" >> /etc/kibana/kibana.yml
   fi
 fi
 
