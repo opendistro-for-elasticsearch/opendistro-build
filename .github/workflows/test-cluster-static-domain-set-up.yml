@@ -94,6 +94,7 @@ jobs:
                   stackName=ODFE-$distribution_type-SECURITY-$security
                   echo $stackName
                   stack_setup $distribution_type $security
+                  rm userdata_$distribution_type.sh
                 done
               done
             fi
