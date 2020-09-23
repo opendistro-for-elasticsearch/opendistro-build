@@ -57,7 +57,7 @@ echo "webservice-bind-host = 0.0.0.0" >> /usr/share/elasticsearch/plugins/opendi
 # Installing kibana
 sudo yum install -y opendistroforelasticsearch-kibana-$ODFE_VER
 echo "server.host: 0.0.0.0" >> /etc/kibana/kibana.yml
-echo "opendistro_security.cookie.secure: false" >> /etc/kibana/kibana.yml
+
 EOF
 fi
 
@@ -85,7 +85,7 @@ echo "webservice-bind-host = 0.0.0.0" >> /usr/share/elasticsearch/plugins/opendi
 # Installing kibana
 sudo apt install opendistroforelasticsearch-kibana
 echo "server.host: 0.0.0.0" >> /etc/kibana/kibana.yml
-echo "opendistro_security.cookie.secure: false" >> /etc/kibana/kibana.yml
+
 
 EOF
 fi
@@ -120,7 +120,7 @@ tar zxf opendistroforelasticsearch-kibana-$ODFE_VER.tar.gz
 chown -R ubuntu:ubuntu opendistroforelasticsearch-kibana
 cd opendistroforelasticsearch-kibana/
 echo "server.host: 0.0.0.0" >> config/kibana.yml
-echo "opendistro_security.cookie.secure: false" >> config/kibana.yml
+
 EOF
 fi
 
