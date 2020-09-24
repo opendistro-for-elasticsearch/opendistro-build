@@ -63,6 +63,7 @@ export PATH=$JAVA_HOME:$PATH
 which java
 java -version
 sudo sysctl -w vm.max_map_count=262144
+sudo chmod -R 777 /dev/shm
 
 if [ "$SETUP_DISTRO" = "zip" ]
 then
@@ -107,11 +108,15 @@ if [ "$SETUP_DISTRO" = "zip" ]
 then
   mkdir -p snapshots
   echo "path.repo: [\"$PWD/snapshots\"]" >> $ES_ROOT/config/elasticsearch.yml
+  # Increase the number of allowed script compilations. The SQL integ tests use a lot of scripts.
+  echo "script.context.field.max_compilations_rate: 1000/1m" >> $ES_ROOT/config/elasticsearch.yml
 elif [ "$SETUP_DISTRO" = "docker" ]
 then
   echo "FROM opendistroforelasticsearch/opendistroforelasticsearch:$OD_VERSION" >> Dockerfile
   echo "RUN echo ''  >> /usr/share/elasticsearch/config/elasticsearch.yml" >> Dockerfile
   echo "RUN echo \"path.repo: [\\\"/usr/share/elasticsearch\\\"]\" >> /usr/share/elasticsearch/config/elasticsearch.yml" >> Dockerfile
+  # Increase the number of allowed script compilations. The SQL integ tests use a lot of scripts.
+  echo "RUN echo \"script.context.field.max_compilations_rate: 1000/1m\" >> /usr/share/elasticsearch/config/elasticsearch.yml" >> Dockerfile
   docker build -t odfe-http:security -f Dockerfile .
   sleep 5
   docker run -d -p 9200:9200 -d -p 9600:9600 -e "discovery.type=single-node" --name $DOCKER_NAME odfe-http:security
@@ -125,6 +130,8 @@ else
   sudo chmod 777 /etc/elasticsearch/elasticsearch.yml
   sudo sed -i '/path.logs/a path.repo: ["/home/repo"]' /etc/elasticsearch/elasticsearch.yml
   sudo sed -i /^node.max_local_storage_nodes/d /etc/elasticsearch/elasticsearch.yml
+  # Increase the number of allowed script compilations. The SQL integ tests use a lot of scripts.
+  sudo echo "script.context.field.max_compilations_rate: 1000/1m" >> /etc/elasticsearch/elasticsearch.yml
 fi
 
 if [ "$SETUP_ACTION" = "--es" ]

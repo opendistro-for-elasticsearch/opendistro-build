@@ -1,0 +1,4 @@
+# Add the plugin release notes github url here
+# Sample here:
+https://github.com/opendistro-for-elasticsearch/anomaly-detection/blob/master/release-notes/opendistro-for-elasticsearch-anomaly-detection.release-notes-1.10.0.0.md
+https://github.com/opendistro-for-elasticsearch/sql/blob/v1.10.0.0/release-notes/opendistro-for-elasticsearch-sql.release-notes-1.10.0.0.md
