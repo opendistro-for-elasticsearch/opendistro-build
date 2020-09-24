@@ -36,21 +36,25 @@
 
         "esTargetGroup":{
             "Type" : "String",
-            "Description": "ES Target Group ARN"
+            "Description": "ES Target Group ARN with port 9200"
         },
         
         "kibanaTargetGroup":{
             "Type" : "String",
-            "Description": "Kibana Target Group ARN"
+            "Description": "Kibana Target Group ARN with port 5601"
+        },
+        "paTargetGroup":{
+            "Type" : "String",
+            "Description": "PA Target Group ARN with port 9600"
         }
   
     },
 
     "Mappings" : {
         "DistributionMap" : {
-          "RPM" : { "amiId" : "ami-0e34e7b9ca0ace12d" },
-          "TAR" : { "amiId" : "ami-003634241a8fcdec0" },
-          "DEB" : { "amiId" : "ami-003634241a8fcdec0" }
+          "RPM" : { "amiId" : "ami-01ce4793a2f45922e" },
+          "TAR" : { "amiId" : "ami-07a29e5e945228fa1" },
+          "DEB" : { "amiId" : "ami-07a29e5e945228fa1" }
         }
       },
 
@@ -64,7 +68,7 @@
                 "MinSize" : "1",
                 "MaxSize" : "1",
                 "DesiredCapacity" : "1",
-                "TargetGroupARNs": [{"Ref" : "esTargetGroup"}, {"Ref":"kibanaTargetGroup"}],
+                "TargetGroupARNs": [{"Ref" : "esTargetGroup"}, {"Ref":"kibanaTargetGroup"}, {"Ref":"paTargetGroup"}],
                 "Tags":[{
                     "Key" : "Name", 
                     "Value" : {
