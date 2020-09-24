@@ -24,6 +24,14 @@ The release of Open Distro for Elasticsearch includes the following features, en
 
 ## FEATURES
 
+### Alerting
+
+* Adds support for Email Destination ([#244](https://github.com/opendistro-for-elasticsearch/alerting/pull/244))
+
+### Alerting Kibana Plugin
+
+* Adds support for Email Destination for Kibana ([#176](https://github.com/opendistro-for-elasticsearch/alerting-kibana-plugin/pull/176))
+
 ### Anomaly Detection
 
 * AD CLI ([#196](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/196))
