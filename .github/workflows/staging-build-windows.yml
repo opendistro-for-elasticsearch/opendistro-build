@@ -280,7 +280,7 @@ jobs:
           echo "running tests"
           cd ..\alerting\alerting
           dir
-          ..\gradlew.bat integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin
+          ..\gradlew.bat integTest -D tests.rest.cluster=localhost:9200 -D tests.cluster=localhost:9200 -D tests.clustername=es-integrationtest -D https=true -D user=admin -D password=admin
         
 
   Test-AD-KIBANA-NoSec:
