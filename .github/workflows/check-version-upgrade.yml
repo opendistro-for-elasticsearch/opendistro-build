@@ -3,6 +3,8 @@ name: Test version upgrades
 on: 
   repository_dispatch:
     types: [check-version-upgrade]
+  push:
+    branches: [version-upgrade-patch]
 
 jobs:
     Provision-Runners-RPM:
@@ -54,6 +56,10 @@ jobs:
             echo "####### Running ODFE-$prev_od_version ##############"
             curl -XGET https://localhost:9200 -u admin:admin --insecure
             curl -XGET https://localhost:9200/_cat/plugins?v -u admin:admin --insecure
+            if !(curl --silent https://localhost:9200/_cluster/health?pretty -u admin:admin --insecure | grep -q -E "green|yellow")
+            then
+              exit 1
+            fi
 
         - name: Upgrading to upcoming version
           if: ${{ success() }}
@@ -74,7 +80,10 @@ jobs:
             sleep 30
             echo "########## Upgrade successful ##########"
             curl -XGET https://localhost:9200 -u admin:admin --insecure
-            curl -XGET https://localhost:9200/_cat/plugins?v -u admin:admin --insecure
+            if !(curl --silent https://localhost:9200/_cluster/health?pretty -u admin:admin --insecure | grep -q -E "green|yellow")
+            then
+              exit 1
+            fi
 
     Test-RPM:
       needs: [Provision-Runners-RPM]
@@ -105,6 +114,10 @@ jobs:
             echo "####### Running ODFE-$prev_od_version ##############"
             curl -XGET https://localhost:9200 -u admin:admin --insecure
             curl -XGET https://localhost:9200/_cat/plugins?v -u admin:admin --insecure
+            if !(curl --silent https://localhost:9200/_cluster/health?pretty -u admin:admin --insecure | grep -q -E "green|yellow")
+            then
+              exit 1
+            fi
           
 
         - name: Upgrading to upcoming version
@@ -122,6 +135,10 @@ jobs:
             echo "########## Upgrade successful ##########"
             curl -XGET https://localhost:9200 -u admin:admin --insecure
             curl -XGET https://localhost:9200/_cat/plugins?v -u admin:admin --insecure
+            if !(curl --silent https://localhost:9200/_cluster/health?pretty -u admin:admin --insecure | grep -q -E "green|yellow")
+            then
+              exit 1
+            fi
 
     CleanUp-Runners-RPM:
       needs: [Test-RPM]
