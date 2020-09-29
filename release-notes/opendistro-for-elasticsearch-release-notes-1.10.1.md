@@ -18,7 +18,7 @@ The release consists of Apache 2 licensed Elasticsearch version 7.9.1, and Kiban
   * Support SMTP SSL/TLS and authentication
   * Store `email_accounts` in `opendistro-alerting-config` index like other Alerting configurations. This allows configuration of multiple sender emails for use in Destinations
   * A single configured `email_account` can be used in multiple Destinations and is referred to by its `id` in Destination configuration. Therefore, changing the `email_account` would reflect the changes in all Destinations that reference it
-* Re-design and re-implmement Security Kibana Plugin based on the new Kibana API, which enables streamlined workflows, improved usability, and audit logging
+* Re-design and re-implement Security Kibana Plugin based on the new Kibana API, which enables streamlined workflows, improved usability, and audit logging
 * The k-NN Plugin has introduced a [new warmup API](https://github.com/opendistro-for-elasticsearch/k-NN#warmup-api) that allows users to explicitly load indices’ graphs used for approximate k-NN search into memory before performing their search workload. With this API, users no longer need to run random queries to prevent initial latency penalties for loading graphs into the cache
 
 
