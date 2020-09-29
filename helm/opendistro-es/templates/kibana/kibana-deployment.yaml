@@ -37,6 +37,9 @@ spec:
         {{- if .Values.kibana.config }}
         checksum/config: {{ include (print .Template.BasePath "/kibana/kibana-config-secret.yaml") . | sha256sum | trunc 63 }}
         {{- end }}
+{{- if .Values.kibana.podAnnotations }}
+{{ toYaml .Values.kibana.podAnnotations | indent 8 }}
+{{- end }}
     spec:
 {{- include "opendistro-es.imagePullSecrets" . | indent 6 }}
       containers:
