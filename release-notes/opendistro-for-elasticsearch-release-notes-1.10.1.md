@@ -24,16 +24,7 @@ The release consists of Apache 2 licensed Elasticsearch version 7.9.1, and Kiban
 
 ## Release Details
 
-The release of Open Distro for Elasticsearch includes the following breaking changes, features, enhancements, bug fixes, infrastructure, documentation, maintenance, and refactoring updates. 
-
-
-## BREAKING CHANGES
-
-### Security Kibana Plugin
-
-* Renamed `backend role` to `external entity` on UI and move the role mapping function to role page. Now you can map roles to backend_role or users on role edit page
-* Combined `security_authentication` and `security_preferences` cookie into one, because Kibana new plugin platform only support one session cookie
-
+The release of Open Distro for Elasticsearch includes the following features, enhancements, bug fixes, infrastructure, documentation, maintenance, and refactoring updates. 
 
 
 ## FEATURES
@@ -91,9 +82,9 @@ The release of Open Distro for Elasticsearch includes the following breaking cha
 
 ### Security Kibana Plugin
 
-* Introduction and Tutorial page to help users get up and running quickly.
-* Added audit logging configuration function into Kibana security plugin
-* Created account drop down menu to replace the logout button. Moved `account info` and `switching tenant` function to the account drop down menu.
+* Added `Introduction and Tutorial` page to help users with plugin usages.
+* Added audit logging configuration function into Kibana security plugin.
+* Replace the logout button with account drop down menu. Moved `account info` and `switching tenant` function to the account drop down menu.
 
 ### SQL 
 
@@ -316,7 +307,7 @@ The release of Open Distro for Elasticsearch includes the following breaking cha
 
 ### Security Kibana Plugin
 
-* Plugin built using Kibana new plugin platform.
+* Kibana security plugin is now implementated on top of Kibana's new plugin platform.
 
 ### SQL
 
@@ -488,6 +479,11 @@ The release of Open Distro for Elasticsearch includes the following breaking cha
 * Refactor ModifyCacheCapacityAction to follow builder pattern ([#385](https://github.com/opendistro-for-elasticsearch/performance-analyzer-rca/pull/385))
 * Refactoring the persistence layer to be able to persist any Java Object ([#407](https://github.com/opendistro-for-elasticsearch/performance-analyzer-rca/pull/407))
 
+### Security Kibana Plugin
+
+* Renamed `backend role` to `external entity` on UI.
+* Moved the role mapping function to role editing page.
+* Combined `security_authentication` and `security_preferences` cookies into one, as Kibana new plugin platform only support one session cookie.
 
 
 You can also track upcoming features in Open Distro for Elasticsearch by watching the code repositories or checking the [project website](https://opendistro.github.io/for-elasticsearch/features/comingsoon.html).
