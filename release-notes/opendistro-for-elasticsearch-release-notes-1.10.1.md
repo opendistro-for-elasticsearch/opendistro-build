@@ -31,7 +31,7 @@ The release of Open Distro for Elasticsearch includes the following features, en
 
 ### Security Kibana Plugin
 
-* Renamed `backend_role` to `external entity` on UI and move the role mapping function to role page. Now you can map roles to backend_role or users on role edit page
+* Renamed `backend role` to `external entity` on UI and move the role mapping function to role page. Now you can map roles to backend_role or users on role edit page
 * Combined `security_authentication` and `security_preferences` cookie into one, because Kibana new plugin platform only support one session cookie
 
 
