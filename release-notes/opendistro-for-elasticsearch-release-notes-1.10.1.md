@@ -7,15 +7,19 @@ The release consists of Apache 2 licensed Elasticsearch version 7.9.1, and Kiban
 
 ## Release Highlights
 
-* Re-design and re-implmement Security Kibana Plugin based on the new Kibana API, which enables streamlined workflows, improved usability, and audit logging.
 * Introducing Sample Detectors in Anomaly Detection Kibana Plugin:
   * Users can now load 3 different sample detectors (and corresponding indices) into their cluster to get familiar with detectors and detector configurations
   * Users can detect sample anomalies using logs related to (1) HTTP response codes, (2) eCommerce orders, and (3) CPU and memory of a host
+* Introducing [ESAD CLI](https://github.com/opendistro-for-elasticsearch/anomaly-detection/tree/master/cli):
+  * Anomaly Detection users can now perform admin operations like create, start, stop, delete detectors from command line
+  * Users can also work with multiple clusters by creating individual profiles and perform operations from command line at one place by specifying profile name and use the credentials / settings stored under that name
 * Introducing Email Destination support in Alerting/Alerting Kibana Plugin:
   * Provide a pre-built destination type for email in Alerting to easily send notifications without using a webhook
   * Support SMTP SSL/TLS and authentication
   * Store `email_accounts` in `opendistro-alerting-config` index like other Alerting configurations. This allows configuration of multiple sender emails for use in Destinations
-  * A single configured `email_account` can be used in multiple Destinations and is referred to by its `id` in Destination configuration. Therefore, changing the `email_account` would reflect the changes in all Destinations that reference it.
+  * A single configured `email_account` can be used in multiple Destinations and is referred to by its `id` in Destination configuration. Therefore, changing the `email_account` would reflect the changes in all Destinations that reference it
+* Re-design and re-implmement Security Kibana Plugin based on the new Kibana API, which enables streamlined workflows, improved usability, and audit logging
+* The k-NN Plugin has introduced a [new warmup API](https://github.com/opendistro-for-elasticsearch/k-NN#warmup-api) that allows users to explicitly load indices’ graphs used for approximate k-NN search into memory before performing their search workload. With this API, users no longer need to run random queries to prevent initial latency penalties for loading graphs into the cache
 
 
 ## Release Details
