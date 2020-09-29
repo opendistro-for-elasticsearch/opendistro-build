@@ -7,33 +7,16 @@ The release consists of Apache 2 licensed Elasticsearch version 7.9.1, and Kiban
 
 ## Release Highlights
 
-* Introducing Sample Detectors in Anomaly Detection Kibana Plugin:
-  * Users can now load 3 different sample detectors (and corresponding indices) into their cluster to get familiar with detectors and detector configurations
-  * Users can detect sample anomalies using logs related to (1) HTTP response codes, (2) eCommerce orders, and (3) CPU and memory of a host
-* Introducing [ESAD CLI](https://github.com/opendistro-for-elasticsearch/anomaly-detection/tree/master/cli):
-  * Anomaly Detection users can now perform admin operations like create, start, stop, delete detectors from command line
-  * Users can also work with multiple clusters by creating individual profiles and perform operations from command line at one place by specifying profile name and use the credentials / settings stored under that name
-* Introducing Email Destination support in Alerting/Alerting Kibana Plugin:
-  * Provide a pre-built destination type for email in Alerting to easily send notifications without using a webhook
-  * Support SMTP SSL/TLS and authentication
-  * Store `email_accounts` in `opendistro-alerting-config` index like other Alerting configurations. This allows configuration of multiple sender emails for use in Destinations
-  * A single configured `email_account` can be used in multiple Destinations and is referred to by its `id` in Destination configuration. Therefore, changing the `email_account` would reflect the changes in all Destinations that reference it
-* Re-design and re-implmement Security Kibana Plugin based on the new Kibana API, which enables streamlined workflows, improved usability, and audit logging
-* The k-NN Plugin has introduced a [new warmup API](https://github.com/opendistro-for-elasticsearch/k-NN#warmup-api) that allows users to explicitly load indices’ graphs used for approximate k-NN search into memory before performing their search workload. With this API, users no longer need to run random queries to prevent initial latency penalties for loading graphs into the cache
+* Anomaly Detection supports three different types [sample detectors and corresponding indices](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/272) that allow users to detect sample anomalies using logs related to HTTP response codes, eCommerce orders, and CPU and memory of a host.
+* The Alerting feature supports [email destinations](https://github.com/opendistro-for-elasticsearch/alerting/pull/244) to send notifications without using a web hook. 
+* The updated Kibana Security Plugin streamlines security workflows, improves usability and adds audit and compliance logging configuration. 
+* Anomaly Detection supports a [command line interface](https://github.com/opendistro-for-elasticsearch/anomaly-detection/tree/master/cli) that allows users to create, start, stop and delete detectors, and work with multiple clusters using named profiles.
+* k-NN supports [warmup API](https://github.com/opendistro-for-elasticsearch/k-NN#warmup-api) that allows users to explicitly load indices’ graphs used for approximate k-NN search into memory before performing their search workload. With this API, users no longer need to run random queries to prevent initial latency penalties for loading graphs into the cache.
 
 
 ## Release Details
 
-The release of Open Distro for Elasticsearch includes the following features, enhancements, bug fixes, infrastructure, documentation, maintenance, and refactoring updates. 
-
-
-## BREAKING CHANGES
-
-### Security Kibana Plugin
-
-* Renamed `backend role` to `external entity` on UI and move the role mapping function to role page. Now you can map roles to backend_role or users on role edit page
-* Combined `security_authentication` and `security_preferences` cookie into one, because Kibana new plugin platform only support one session cookie
-
+Open Distro for Elasticsearch 1.10.1 includes the following features, enhancements, bug fixes, infrastructure, documentation, maintenance, and refactoring updates. 
 
 
 ## FEATURES
@@ -61,7 +44,7 @@ The release of Open Distro for Elasticsearch includes the following features, en
 * Implemented allocation action which can be used in index state management ([#106](https://github.com/opendistro-for-elasticsearch/index-management/pull/106))
 * Adds `_refresh_search_analyzers` API to allow updating synonym list for dynamically updatable synonym analyzers ([#290](https://github.com/opendistro-for-elasticsearch/index-management/pull/290))
 
-### Knn
+### k-NN
 
 * Add Warmup API to load indices graphs into memory ([#162](https://github.com/opendistro-for-elasticsearch/k-NN/pull/162))
 
@@ -91,9 +74,9 @@ The release of Open Distro for Elasticsearch includes the following features, en
 
 ### Security Kibana Plugin
 
-* Introduction and Tutorial page to help users get up and running quickly.
-* Added audit logging configuration function into Kibana security plugin
-* Created account drop down menu to replace the logout button. Moved `account info` and `switching tenant` function to the account drop down menu.
+* Added `Introduction and Tutorial` page to help users with plugin usages.
+* Added audit logging configuration function into Kibana security plugin.
+* Replace the logout button with account drop down menu. Moved `account info` and `switching tenant` function to the account drop down menu.
 
 ### SQL 
 
@@ -152,7 +135,7 @@ The release of Open Distro for Elasticsearch includes the following features, en
 
 * Changes implementation of ChangePolicy REST API to use MultiGet inste… ([#253](https://github.com/opendistro-for-elasticsearch/index-management/pull/253))
 
-### Knn
+### k-NN
 
 * Upgrade nmslib to v2.0.6 ([#160](https://github.com/opendistro-for-elasticsearch/k-NN/pull/160))
 
@@ -203,7 +186,7 @@ The release of Open Distro for Elasticsearch includes the following features, en
 * Fixes missing actions on table, unused query parameter ?, and some ae… ([#103](https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/pull/103))
 * add brace dep for binary kibana not starting problem ([#96](https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/pull/96))
 
-### Knn
+### k-NN
 
 * Update guava version to 29.0 ([#182](https://github.com/opendistro-for-elasticsearch/k-NN/pull/182))
 * Add default index settings when parsing index ([#205](https://github.com/opendistro-for-elasticsearch/k-NN/pull/205))
@@ -296,7 +279,7 @@ The release of Open Distro for Elasticsearch includes the following features, en
 
 * Fix download and doc links in package description ([#70](https://github.com/opendistro-for-elasticsearch/job-scheduler/pull/70))
 
-### Knn
+### k-NN
 
 * Reset state for uTs so tests run independently ([#159](https://github.com/opendistro-for-elasticsearch/k-NN/pull/159))
 * Pass -march=x86-64 to build JNI library ([#164](https://github.com/opendistro-for-elasticsearch/k-NN/pull/164))
@@ -316,7 +299,7 @@ The release of Open Distro for Elasticsearch includes the following features, en
 
 ### Security Kibana Plugin
 
-* Plugin built using Kibana new plugin platform.
+* Kibana security plugin is now implementated on top of Kibana's new plugin platform.
 
 ### SQL
 
@@ -359,7 +342,7 @@ The release of Open Distro for Elasticsearch includes the following features, en
 
 * Add workflow to generate draft release notes and reformat old release notes ([#68](https://github.com/opendistro-for-elasticsearch/job-scheduler/pull/68))
 
-### Knn
+### k-NN
 
 * Performance tuning/Recommendations ([#177](https://github.com/opendistro-for-elasticsearch/k-NN/pull/177))
 * Fix cluster setting example in README.md ([#186](https://github.com/opendistro-for-elasticsearch/k-NN/pull/186))
@@ -430,7 +413,7 @@ The release of Open Distro for Elasticsearch includes the following features, en
 * Update JobSchedulerPlugin to conform with changes to ExtensiblePlugin interface in Elasticsearch 7.9.0 ([#67](https://github.com/opendistro-for-elasticsearch/job-scheduler/pull/67))
 * Add supports to Elasticsearch 7.9.1 ([#71](https://github.com/opendistro-for-elasticsearch/job-scheduler/pull/71))
 
-### Knn
+### k-NN
 
 * ODFE 1.10 support for k-NN plugin ([#199](https://github.com/opendistro-for-elasticsearch/k-NN/pull/199))
 * Upgrade Elasticsearch to 7.9.1 and ODFE to 1.10.1 ([#217](https://github.com/opendistro-for-elasticsearch/k-NN/pull/217))
@@ -477,7 +460,7 @@ The release of Open Distro for Elasticsearch includes the following features, en
 
 ## REFACTORING
 
-### Knn
+### k-NN
 
 * Update default variable settings name ([#209](https://github.com/opendistro-for-elasticsearch/k-NN/pull/209))
 
@@ -488,6 +471,11 @@ The release of Open Distro for Elasticsearch includes the following features, en
 * Refactor ModifyCacheCapacityAction to follow builder pattern ([#385](https://github.com/opendistro-for-elasticsearch/performance-analyzer-rca/pull/385))
 * Refactoring the persistence layer to be able to persist any Java Object ([#407](https://github.com/opendistro-for-elasticsearch/performance-analyzer-rca/pull/407))
 
+### Security Kibana Plugin
+
+* Renamed `backend role` to `external entity` on UI.
+* Moved the role mapping function to role editing page.
+* Combined `security_authentication` and `security_preferences` cookies into one, as Kibana new plugin platform only support one session cookie.
 
 
 You can also track upcoming features in Open Distro for Elasticsearch by watching the code repositories or checking the [project website](https://opendistro.github.io/for-elasticsearch/features/comingsoon.html).
