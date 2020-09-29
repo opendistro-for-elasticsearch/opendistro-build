@@ -16,7 +16,7 @@ The release consists of Apache 2 licensed Elasticsearch version 7.9.1, and Kiban
 
 ## Release Details
 
-The release of Open Distro for Elasticsearch includes the following features, enhancements, bug fixes, infrastructure, documentation, maintenance, and refactoring updates. 
+Open Distro for Elasticsearch 1.10.1 includes the following features, enhancements, bug fixes, infrastructure, documentation, maintenance, and refactoring updates. 
 
 
 ## FEATURES
