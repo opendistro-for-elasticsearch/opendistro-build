@@ -7,11 +7,11 @@ The release consists of Apache 2 licensed Elasticsearch version 7.9.1, and Kiban
 
 ## Release Highlights
 
-* Anomaly Detection supports three different types sample detectors and corresponding indices (https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/272) that allow users to detect sample anomalies using logs related to HTTP response codes, eCommerce orders, and CPU and memory of a host.
-* Alerting feature supports setting email destination (https://github.com/opendistro-for-elasticsearch/alerting/pull/244) that allows sending notifications without using a web hook. 
+* Anomaly Detection supports three different types [sample detectors and corresponding indices](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/272) that allow users to detect sample anomalies using logs related to HTTP response codes, eCommerce orders, and CPU and memory of a host.
+* Alerting feature supports setting [email destination](https://github.com/opendistro-for-elasticsearch/alerting/pull/244) that allows sending notifications without using a web hook. 
 * The enhanced Kibana Security Plugin has streamlined security workflows, improved usability and adds audit and compliance logging configuration to the plug-in.
-* Anomaly Detection supports a command line interface (https://github.com/opendistro-for-elasticsearch/anomaly-detection/tree/master/cli) that allows users to use command line to perform admin operations like create detectors, start, stop and delete detectors, and work with multiple clusters by enabling users to create named profiles to connect to Elasticsearch clusters.
-* k-NN supportswarmup API (https://github.com/opendistro-for-elasticsearch/k-NN#warmup-api) that allows users to explicitly load indices’ graphs used for approximate k-NN search into memory before performing their search workload. With this API, users no longer need to run random queries to prevent initial latency penalties for loading graphs into the cache.
+* Anomaly Detection supports a [command line interface](https://github.com/opendistro-for-elasticsearch/anomaly-detection/tree/master/cli) that allows users to use command line to perform admin operations like create detectors, start, stop and delete detectors, and work with multiple clusters by enabling users to create named profiles to connect to Elasticsearch clusters.
+* k-NN supports [warmup API] (https://github.com/opendistro-for-elasticsearch/k-NN#warmup-api) that allows users to explicitly load indices’ graphs used for approximate k-NN search into memory before performing their search workload. With this API, users no longer need to run random queries to prevent initial latency penalties for loading graphs into the cache.
 
 
 ## Release Details
