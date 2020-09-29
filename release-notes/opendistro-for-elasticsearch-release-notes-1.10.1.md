@@ -7,7 +7,7 @@ The release consists of Apache 2 licensed Elasticsearch version 7.9.1, and Kiban
 
 ## Release Highlights
 
-* Re-design and re-implmement Security Kibana Plugin based on the new Kibana API, which enables streamline workflows, improve usability, and audit logging.
+* Re-design and re-implmement Security Kibana Plugin based on the new Kibana API, which enables streamline workflows, improved usability, and audit logging.
 * Introducing Sample Detectors in Anomaly Detection Kibana Plugin:
   * Users can now load 3 different sample detectors (and corresponding indices) into their cluster to get familiar with detectors and detector configurations
   * Users can detect sample anomalies using logs related to (1) HTTP response codes, (2) eCommerce orders, and (3) CPU and memory of a host
@@ -21,11 +21,6 @@ The release consists of Apache 2 licensed Elasticsearch version 7.9.1, and Kiban
 ## Release Details
 
 The release of Open Distro for Elasticsearch includes the following features, enhancements, bug fixes, infrastructure, documentation, maintenance, and refactoring updates. 
-
-
-## Note
-
-* Elasticsearch version 7.9.0 uses Lucene 8.6.0 and 8.6.1 search libraries. This introduced a [memory leak issue](https://github.com/elastic/elasticsearch/issues/61512) in Elasticsearch version 7.9.0. In Elasticsearch version 7.9.1, the issue is fixed as it uses Lucene 8.6.2 search library. Therefore, we skipped the Open Distro for Elasticsearch version 1.10.0 and are releasing Open Distro for Elasticsearch version 1.10.1, based on Elasticsearch version 7.9.1.
 
 
 ## BREAKING CHANGES
