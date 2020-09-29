@@ -8,9 +8,9 @@ The release consists of Apache 2 licensed Elasticsearch version 7.9.1, and Kiban
 ## Release Highlights
 
 * Anomaly Detection supports three different types [sample detectors and corresponding indices](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/272) that allow users to detect sample anomalies using logs related to HTTP response codes, eCommerce orders, and CPU and memory of a host.
-* The Alerting feature supports email destinations to send notifications without using a web hook.
-* The updated Kibana Security Plugin streamlines security workflows, improves usability and adds audit and compliance logging configuration.
-* Anomaly Detection supports a command line interface that allows users to create detectors, start, stop and delete detectors, and work with multiple clusters using named profiles.
+* The Alerting feature supports [email destinations](https://github.com/opendistro-for-elasticsearch/alerting/pull/244) to send notifications without using a web hook. 
+* The updated Kibana Security Plugin streamlines security workflows, improves usability and adds audit and compliance logging configuration. 
+* Anomaly Detection supports a [command line interface](https://github.com/opendistro-for-elasticsearch/anomaly-detection/tree/master/cli) that allows users to create, start, stop and delete detectors, and work with multiple clusters using named profiles.
 * k-NN supports [warmup API](https://github.com/opendistro-for-elasticsearch/k-NN#warmup-api) that allows users to explicitly load indices’ graphs used for approximate k-NN search into memory before performing their search workload. With this API, users no longer need to run random queries to prevent initial latency penalties for loading graphs into the cache.
 
 
