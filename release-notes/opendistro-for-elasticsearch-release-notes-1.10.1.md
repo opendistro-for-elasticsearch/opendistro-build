@@ -27,6 +27,14 @@ The release of Open Distro for Elasticsearch includes the following features, en
 * Elasticsearch version 7.9.0 uses Lucene 8.6.0 and 8.6.1 search libraries. This introduced a [memory leak issue](https://github.com/elastic/elasticsearch/issues/61512) in Elasticsearch version 7.9.0. In Elasticsearch version 7.9.1, the issue is fixed as it uses Lucene 8.6.2 search library. Therefore, we skipped the Open Distro for Elasticsearch version 1.10.0 and are releasing Open Distro for Elasticsearch version 1.10.1, based on Elasticsearch version 7.9.1.
 
 
+## BREAKING CHANGES
+
+### Security Kibana Plugin
+
+* Renamed `backend_role` to `External entity` on UI and move the role mapping function to role page. Now you can map roles to backend_role or users on role edit page.
+* Combined `security_authentication` and `security_preferences` cookie into one, because Kibana new plugin platform only support one session cookie.
+
+
 
 ## FEATURES
 
@@ -80,6 +88,12 @@ The release of Open Distro for Elasticsearch includes the following features, en
 ### Perftop
 
 * Add github badges ([#47](https://github.com/opendistro-for-elasticsearch/perftop/pull/47))
+
+### Security Kibana Plugin
+
+* Introduction and Tutorial page to help users get up and running quickly.
+* Added audit logging configuration function into Kibana security plugin
+* Created account drop down menu to replace the logout button. Moved `account info` and `switching tenant` function to the account drop down menu.
 
 ### SQL 
 
@@ -299,6 +313,10 @@ The release of Open Distro for Elasticsearch includes the following features, en
 ### Performance Analyzer
 
 * Integration test framework to test RCAs and decision Makers ([#301](https://github.com/opendistro-for-elasticsearch/performance-analyzer-rca/pull/301)
+
+### Security Kibana Plugin
+
+* Plugin built using Kibana new plugin platform.
 
 ### SQL
 
