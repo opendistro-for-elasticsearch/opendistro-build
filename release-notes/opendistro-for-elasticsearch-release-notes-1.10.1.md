@@ -61,7 +61,7 @@ The release of Open Distro for Elasticsearch includes the following breaking cha
 * Implemented allocation action which can be used in index state management ([#106](https://github.com/opendistro-for-elasticsearch/index-management/pull/106))
 * Adds `_refresh_search_analyzers` API to allow updating synonym list for dynamically updatable synonym analyzers ([#290](https://github.com/opendistro-for-elasticsearch/index-management/pull/290))
 
-### Knn
+### k-NN
 
 * Add Warmup API to load indices graphs into memory ([#162](https://github.com/opendistro-for-elasticsearch/k-NN/pull/162))
 
@@ -152,7 +152,7 @@ The release of Open Distro for Elasticsearch includes the following breaking cha
 
 * Changes implementation of ChangePolicy REST API to use MultiGet inste… ([#253](https://github.com/opendistro-for-elasticsearch/index-management/pull/253))
 
-### Knn
+### k-NN
 
 * Upgrade nmslib to v2.0.6 ([#160](https://github.com/opendistro-for-elasticsearch/k-NN/pull/160))
 
@@ -203,7 +203,7 @@ The release of Open Distro for Elasticsearch includes the following breaking cha
 * Fixes missing actions on table, unused query parameter ?, and some ae… ([#103](https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/pull/103))
 * add brace dep for binary kibana not starting problem ([#96](https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/pull/96))
 
-### Knn
+### k-NN
 
 * Update guava version to 29.0 ([#182](https://github.com/opendistro-for-elasticsearch/k-NN/pull/182))
 * Add default index settings when parsing index ([#205](https://github.com/opendistro-for-elasticsearch/k-NN/pull/205))
@@ -296,7 +296,7 @@ The release of Open Distro for Elasticsearch includes the following breaking cha
 
 * Fix download and doc links in package description ([#70](https://github.com/opendistro-for-elasticsearch/job-scheduler/pull/70))
 
-### Knn
+### k-NN
 
 * Reset state for uTs so tests run independently ([#159](https://github.com/opendistro-for-elasticsearch/k-NN/pull/159))
 * Pass -march=x86-64 to build JNI library ([#164](https://github.com/opendistro-for-elasticsearch/k-NN/pull/164))
@@ -359,7 +359,7 @@ The release of Open Distro for Elasticsearch includes the following breaking cha
 
 * Add workflow to generate draft release notes and reformat old release notes ([#68](https://github.com/opendistro-for-elasticsearch/job-scheduler/pull/68))
 
-### Knn
+### k-NN
 
 * Performance tuning/Recommendations ([#177](https://github.com/opendistro-for-elasticsearch/k-NN/pull/177))
 * Fix cluster setting example in README.md ([#186](https://github.com/opendistro-for-elasticsearch/k-NN/pull/186))
@@ -430,7 +430,7 @@ The release of Open Distro for Elasticsearch includes the following breaking cha
 * Update JobSchedulerPlugin to conform with changes to ExtensiblePlugin interface in Elasticsearch 7.9.0 ([#67](https://github.com/opendistro-for-elasticsearch/job-scheduler/pull/67))
 * Add supports to Elasticsearch 7.9.1 ([#71](https://github.com/opendistro-for-elasticsearch/job-scheduler/pull/71))
 
-### Knn
+### k-NN
 
 * ODFE 1.10 support for k-NN plugin ([#199](https://github.com/opendistro-for-elasticsearch/k-NN/pull/199))
 * Upgrade Elasticsearch to 7.9.1 and ODFE to 1.10.1 ([#217](https://github.com/opendistro-for-elasticsearch/k-NN/pull/217))
@@ -477,7 +477,7 @@ The release of Open Distro for Elasticsearch includes the following breaking cha
 
 ## REFACTORING
 
-### Knn
+### k-NN
 
 * Update default variable settings name ([#209](https://github.com/opendistro-for-elasticsearch/k-NN/pull/209))
 
