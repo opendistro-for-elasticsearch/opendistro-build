@@ -3,8 +3,6 @@ name: Test version upgrades
 on: 
   repository_dispatch:
     types: [check-version-upgrade]
-  push:
-    branches: [version-upgrade-patch]
 
 jobs:
     Provision-Runners-RPM:
