@@ -7,6 +7,7 @@ The release consists of Apache 2 licensed Elasticsearch version 7.9.1, and Kiban
 
 ## Release Highlights
 
+* Re-design and re-implmement Security Kibana Plugin based on the new Kibana API, which enables streamline workflows, improve usability, and audit logging.ß
 * Introducing Sample Detectors in Anomaly Detection Kibana Plugin:
   * Users can now load 3 different sample detectors (and corresponding indices) into their cluster to get familiar with detectors and detector configurations
   * Users can detect sample anomalies using logs related to (1) HTTP response codes, (2) eCommerce orders, and (3) CPU and memory of a host
@@ -15,7 +16,6 @@ The release consists of Apache 2 licensed Elasticsearch version 7.9.1, and Kiban
   * Support SMTP SSL/TLS and authentication
   * Store `email_accounts` in `opendistro-alerting-config` index like other Alerting configurations. This allows configuration of multiple sender emails for use in Destinations
   * A single configured `email_account` can be used in multiple Destinations and is referred to by its `id` in Destination configuration. Therefore, changing the `email_account` would reflect the changes in all Destinations that reference it.
-* Re-design and re-implmement Security Kibana Plugin based on the new Kibana API, which enables streamline workflows, improve usability, and audit logging.
 
 
 ## Release Details
