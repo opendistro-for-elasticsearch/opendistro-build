@@ -7,27 +7,27 @@ The release consists of Apache 2 licensed Elasticsearch version 7.9.1, and Kiban
 
 ## Release Highlights
 
-* Anomaly Detection supports three different types [sample detectors and corresponding indices](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/272) that allow users to detect sample anomalies using logs related to HTTP response codes, eCommerce orders, and CPU and memory of a host.
-* The Alerting feature supports [email destinations](https://github.com/opendistro-for-elasticsearch/alerting/pull/244) to send notifications without using a web hook. 
-* The updated Kibana Security Plugin streamlines security workflows, improves usability and adds audit and compliance logging configuration. 
-* Anomaly Detection supports a [command line interface](https://github.com/opendistro-for-elasticsearch/anomaly-detection/tree/master/cli) that allows users to create, start, stop and delete detectors, and work with multiple clusters using named profiles.
-* k-NN supports [warmup API](https://github.com/opendistro-for-elasticsearch/k-NN#warmup-api) that allows users to explicitly load indices’ graphs used for approximate k-NN search into memory before performing their search workload. With this API, users no longer need to run random queries to prevent initial latency penalties for loading graphs into the cache.
+* Anomaly Detection supports three different types of [sample detectors and corresponding indices](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/272) that allow users to detect sample anomalies using logs related to HTTP response codes, eCommerce orders, and CPU and memory of a host.
+* The Alerting feature supports [email destinations](https://github.com/opendistro-for-elasticsearch/alerting/pull/244) to send notifications without using a web hook.
+* The updated Kibana Security Plugin streamlines security workflows, improves usability, and adds audit and compliance logging configuration.
+* Anomaly Detection supports a [command line interface](https://github.com/opendistro-for-elasticsearch/anomaly-detection/tree/master/cli) that allows users to create, start, stop, and delete detectors, and work with multiple clusters using named profiles.
+* k-NN supports a [warmup API](https://github.com/opendistro-for-elasticsearch/k-NN#warmup-api) that allows users to explicitly load indices’ graphs used for approximate k-NN search into memory before performing their search workload. With this API, users no longer need to run random queries to prevent initial latency penalties for loading graphs into the cache.
 
 
 ## Release Details
 
-Open Distro for Elasticsearch 1.10.1 includes the following features, enhancements, bug fixes, infrastructure, documentation, maintenance, and refactoring updates. 
+Open Distro for Elasticsearch 1.10.1 includes the following features, enhancements, bug fixes, infrastructure, documentation, maintenance, and refactoring updates.
 
 
 ## FEATURES
 
 ### Alerting
 
-* Adds support for Email Destination ([#244](https://github.com/opendistro-for-elasticsearch/alerting/pull/244))
+* Add support for email destination ([#244](https://github.com/opendistro-for-elasticsearch/alerting/pull/244))
 
 ### Alerting Kibana Plugin
 
-* Adds support for Email Destination for Kibana ([#176](https://github.com/opendistro-for-elasticsearch/alerting-kibana-plugin/pull/176))
+* Add support for email destination for Kibana ([#176](https://github.com/opendistro-for-elasticsearch/alerting-kibana-plugin/pull/176))
 
 ### Anomaly Detection
 
@@ -37,30 +37,30 @@ Open Distro for Elasticsearch 1.10.1 includes the following features, enhancemen
 ### Anomaly Detection Kibana Plugin
 
 * Add sample detectors and indices ([#272](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/272))
-* Adds window size as advanced setting in model configuration. ([#287](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/287))
+* Add window size as advanced setting in model configuration ([#287](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/287))
 
 ### Index Management
 
-* Implemented allocation action which can be used in index state management ([#106](https://github.com/opendistro-for-elasticsearch/index-management/pull/106))
-* Adds `_refresh_search_analyzers` API to allow updating synonym list for dynamically updatable synonym analyzers ([#290](https://github.com/opendistro-for-elasticsearch/index-management/pull/290))
+* Implement allocation action which can be used in index state management ([#106](https://github.com/opendistro-for-elasticsearch/index-management/pull/106))
+* Add `_refresh_search_analyzers` API to allow updating synonym list for dynamically updatable synonym analyzers ([#290](https://github.com/opendistro-for-elasticsearch/index-management/pull/290))
 
 ### k-NN
 
-* Add Warmup API to load indices graphs into memory ([#162](https://github.com/opendistro-for-elasticsearch/k-NN/pull/162))
+* Add warmup API to load index graphs into memory ([#162](https://github.com/opendistro-for-elasticsearch/k-NN/pull/162))
 
 ### Performance Analyzer
 
-* cache max size metric collector ([#145](https://github.com/opendistro-for-elasticsearch/performance-analyzer/pull/145))
+* Add cache max size metric collector ([#145](https://github.com/opendistro-for-elasticsearch/performance-analyzer/pull/145))
 * Add initial support for dynamic config overriding ([#148](https://github.com/opendistro-for-elasticsearch/performance-analyzer/pull/148))
 * Node collector split ([#162](https://github.com/opendistro-for-elasticsearch/performance-analyzer/pull/162))
 * Add required mutual auth to gRPC Server/Client ([#254](https://github.com/opendistro-for-elasticsearch/performance-analyzer-rca/pull/254))
-* Add NodeConfigCollector to collect node configs(threadpool capacity etc.) from ES ([#252](https://github.com/opendistro-for-elasticsearch/performance-analyzer-rca/pull/252))
-* cache max size metrics ([#297](https://github.com/opendistro-for-elasticsearch/performance-analyzer-rca/pull/297))
-* Implement cool off handling for the Publisher ([#272](https://github.com/opendistro-for-elasticsearch/performance-analyzer-rca/pull/272))
-* FieldData and Shard Request Cache RCA ([#265](https://github.com/opendistro-for-elasticsearch/performance-analyzer-rca/pull/265))
+* Add NodeConfigCollector to collect node configs (threadpool capacity etc.) from ES ([#252](https://github.com/opendistro-for-elasticsearch/performance-analyzer-rca/pull/252))
+* Cache max size metrics ([#297](https://github.com/opendistro-for-elasticsearch/performance-analyzer-rca/pull/297))
+* Implement cool off handling for the publisher ([#272](https://github.com/opendistro-for-elasticsearch/performance-analyzer-rca/pull/272))
+* FieldData and shard request cache RCA ([#265](https://github.com/opendistro-for-elasticsearch/performance-analyzer-rca/pull/265))
 * Add a cluster level collector for node config settings ([#298](https://github.com/opendistro-for-elasticsearch/performance-analyzer-rca/pull/298))
 * Add cache decider and modify cache action ([#303](https://github.com/opendistro-for-elasticsearch/performance-analyzer-rca/pull/303))
-* Implement Action Flip Flop Detection in the Publisher ([#287](https://github.com/opendistro-for-elasticsearch/performance-analyzer-rca/pull/287))
+* Implement action flip flop detection in the publisher ([#287](https://github.com/opendistro-for-elasticsearch/performance-analyzer-rca/pull/287))
 * Add listeners for publisher actions ([#295](https://github.com/opendistro-for-elasticsearch/performance-analyzer-rca/pull/295))
 * Reader changes for dynamic enable/disable of RCA graph components ([#325](https://github.com/opendistro-for-elasticsearch/performance-analyzer-rca/pull/325))
 * Populate default workload type and cache priority for the decider to base default actions ([#340](https://github.com/opendistro-for-elasticsearch/performance-analyzer-rca/pull/340))
@@ -74,14 +74,15 @@ Open Distro for Elasticsearch 1.10.1 includes the following features, enhancemen
 
 ### Security Kibana Plugin
 
-* Added `Introduction and Tutorial` page to help users with plugin usages.
-* Added audit logging configuration function into Kibana security plugin.
-* Replace the logout button with account drop down menu. Moved `account info` and `switching tenant` function to the account drop down menu.
+* Add `Introduction and Tutorial` page to help users with plugin usage
+* Add audit logging configuration function into Kibana security plugin
+* Replace the logout button with account drop down menu
+* Move `account info` and `switching tenant` function to the account drop down menu
 
 ### SQL 
 
-* support Elasticsearch geo_point and ip data type ([#719](https://github.com/opendistro-for-elasticsearch/sql/pull/719))
-* add serialization support for expression ([#712](https://github.com/opendistro-for-elasticsearch/sql/pull/712))
+* Support Elasticsearch geo_point and ip data type ([#719](https://github.com/opendistro-for-elasticsearch/sql/pull/719))
+* Add serialization support for expression ([#712](https://github.com/opendistro-for-elasticsearch/sql/pull/712))
 * Optimize filter expression script ([#707](https://github.com/opendistro-for-elasticsearch/sql/pull/707))
 * Support WHERE clause in new SQL parser ([#682](https://github.com/opendistro-for-elasticsearch/sql/pull/682))
 * Add Cypress testing for SQL Workbench ([#562](https://github.com/opendistro-for-elasticsearch/sql/pull/562))
@@ -89,7 +90,7 @@ Open Distro for Elasticsearch 1.10.1 includes the following features, enhancemen
 * ODBC: Add PBIDS support ([#676](https://github.com/opendistro-for-elasticsearch/sql/pull/676))
 * Add query size limit ([#679](https://github.com/opendistro-for-elasticsearch/sql/pull/679))
 * Expression pushdown optimization ([#663](https://github.com/opendistro-for-elasticsearch/sql/pull/663))
-* changes required for using to Power BI Service with Open Distro For Elasticsearch ([#669](https://github.com/opendistro-for-elasticsearch/sql/pull/669))
+* Changes required for using Power BI Service with Open Distro For Elasticsearch ([#669](https://github.com/opendistro-for-elasticsearch/sql/pull/669))
 * Support NULL and MISSING value in response ([#667](https://github.com/opendistro-for-elasticsearch/sql/pull/667))
 * ODBC: Use literals instead of parameters in Power BI data connector ([#652](https://github.com/opendistro-for-elasticsearch/sql/pull/652))
 * Support select fields and alias in new query engine ([#636](https://github.com/opendistro-for-elasticsearch/sql/pull/636))
@@ -106,34 +107,34 @@ Open Distro for Elasticsearch 1.10.1 includes the following features, enhancemen
 * Add action to 'CREATE /_alerting/destinations/' ([#235](https://github.com/opendistro-for-elasticsearch/alerting/pull/235))
 * Add action to /_acknowledge/alerts api ([#236](https://github.com/opendistro-for-elasticsearch/alerting/pull/236))
 * Add actions to create, execute, get monitors api ([#240](https://github.com/opendistro-for-elasticsearch/alerting/pull/240))
-* Fix- IllegalStateException warn messages, Location header in destination response, Handle null in GetMonitorRequest ([#252](https://github.com/opendistro-for-elasticsearch/alerting/pull/252))
+* Fix IllegalStateException warning messages, location header in destination response, and handle nulls in GetMonitorRequest ([#252](https://github.com/opendistro-for-elasticsearch/alerting/pull/252))
 
 ### Anomaly Detection
 
-* change to exhausive search for training data ([#184](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/184))
-* Adds initialization progress to profile API ([#164](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/164))
-* Queries data from the index when insufficient data in buffer to form a full shingle ([#176](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/176))
-* Adding multinode integration test support ([#201](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/201))
-* Change Profile List Format ([#206](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/206))
-* Improve ux ([#209](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/209))
-* Allows window size to be set per detector. ([#203](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/203))
-* not return estimated minutes remaining until cold start is finished ([#210](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/210))
-* minor edits to the short and long text strings ([#211](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/211))
+* Change to exhausive search for training data ([#184](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/184))
+* Add initialization progress to profile API ([#164](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/164))
+* Query data from the index when insufficient data in buffer to form a full shingle ([#176](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/176))
+* Add multinode integration test support ([#201](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/201))
+* Change profile list format ([#206](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/206))
+* Improve UX ([#209](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/209))
+* Allow window size to be set per detector ([#203](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/203))
+* Do not return estimated minutes remaining until cold start is finished ([#210](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/210))
+* Minor edits to the short and long text strings ([#211](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/211))
 * Change to use callbacks in cold start ([#208](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/208))
-* fix job index mapping ([#212](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/212))
+* Fix job index mapping ([#212](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/212))
 
 ### Anomaly Detection Kibana Plugin
 
 * Add missing feature alert if recent feature data is missing ([#248](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/248))
 * Add progress bar for initialization ([#253](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/253))
 * Improve error handling when retrieving all detectors ([#267](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/267))
-* support field search for detector simple filter ([#278](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/278))
+* Support field search for detector simple filter ([#278](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/278))
 * Handle index not found error ([#273](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/273))
-* Add action item and message for init failue case due to invalid search query.  ([#285](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/285))
+* Add action item and message for initialization failure case due to invalid search query ([#285](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/285))
 
 ### Index Management
 
-* Changes implementation of ChangePolicy REST API to use MultiGet inste… ([#253](https://github.com/opendistro-for-elasticsearch/index-management/pull/253))
+* Change implementation of ChangePolicy REST API to use MultiGet instead of Search ([#253](https://github.com/opendistro-for-elasticsearch/index-management/pull/253))
 
 ### k-NN
 
@@ -141,14 +142,14 @@ Open Distro for Elasticsearch 1.10.1 includes the following features, enhancemen
 
 ### Performance Analyzer
 
-* IT improvements ([#143](https://github.com/opendistro-for-elasticsearch/performance-analyzer/pull/143))
-* Add an IT which verifies that the RCA REST endpoint can be queried ([#157](https://github.com/opendistro-for-elasticsearch/performance-analyzer/pull/157))
+* Integration test improvements ([#143](https://github.com/opendistro-for-elasticsearch/performance-analyzer/pull/143))
+* Add an integration test which verifies that the RCA REST endpoint can be queried ([#157](https://github.com/opendistro-for-elasticsearch/performance-analyzer/pull/157))
 * Use absolute path for configFilePath ([#389](https://github.com/opendistro-for-elasticsearch/performance-analyzer/pull/389))
 
 ### Release Engineering
 
-* Implement Version Cuts for consistent distribution release builds ([#357](https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/357))
-* HELM allows customizing docker registry, thanks @tareqhs ([#358](https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/358))
+* Implement version cuts for consistent distribution release builds ([#357](https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/357))
+* Helm allows customizing docker registry, thanks @tareqhs ([#358](https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/358))
 
 ### Security
 
@@ -159,7 +160,7 @@ Open Distro for Elasticsearch 1.10.1 includes the following features, enhancemen
 ### SQL
 
 * Parse backtick strings (\`\`) as identifiers instead of string literals ([#678](https://github.com/opendistro-for-elasticsearch/sql/pull/678))
-* add error details for all server communication errors ([#645](https://github.com/opendistro-for-elasticsearch/sql/pull/645))
+* Add error details for all server communication errors ([#645](https://github.com/opendistro-for-elasticsearch/sql/pull/645))
 
 
 
@@ -167,41 +168,41 @@ Open Distro for Elasticsearch 1.10.1 includes the following features, enhancemen
 
 ### Anomaly Detection Kibana Plugin
 
-* upgrade elastic chart; fix zoom in bug ([#260](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/260))
-* fix wrong field name when preview ([#277](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/277))
-* parse types in fielddata ([#284](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/284))
+* Upgrade elastic chart; fix zoom in bug ([#260](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/260))
+* Fix wrong field name when previewing ([#277](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/277))
+* Parse types in fielddata ([#284](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/284))
 * Add intermediate callout message during cold start ([#283](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/283))
 * Make elastic/charts imports more generic ([#297](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/297))
-* Fix initialization callouts to properly show when first loading anomaly results page ([#300](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/300))
+* Fix initialization callouts to show correctly when first loading anomaly results page ([#300](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/300))
 * Fix bug where undefined is shown on UI for estimatedMins in case of ingestion data missing ([#301](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/301))
-* Fix 2 issues on Dashboard ([#305](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/305))
+* Fix 2 issues on dashboard ([#305](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/305))
 
 ### Index Management
 
-* Fixes snapshot issues, adds history mapping update workflow, adds tests ([#255](https://github.com/opendistro-for-elasticsearch/index-management/pull/255))
-* Fixes force merge failing on long executions, changes some action mes… ([#267](https://github.com/opendistro-for-elasticsearch/index-management/pull/267))
+* Fix snapshot issues, add history mapping update workflow, add tests ([#255](https://github.com/opendistro-for-elasticsearch/index-management/pull/255))
+* Fix force merge failing on long executions, change some action messaging, add better try/catch on actions to deal with remote transport exceptions ([#267](https://github.com/opendistro-for-elasticsearch/index-management/pull/267))
 
 ### Index Management Kibana Plugin
 
-* Fixes missing actions on table, unused query parameter ?, and some ae… ([#103](https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/pull/103))
-* add brace dep for binary kibana not starting problem ([#96](https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/pull/96))
+* Fix missing actions on table, unused query parameter ?, and some aesthetics ([#103](https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/pull/103))
+* Add brace dependency for binary Kibana not starting problem ([#96](https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/pull/96))
 
 ### k-NN
 
-* Update guava version to 29.0 ([#182](https://github.com/opendistro-for-elasticsearch/k-NN/pull/182))
+* Update Guava version to 29.0 ([#182](https://github.com/opendistro-for-elasticsearch/k-NN/pull/182))
 * Add default index settings when parsing index ([#205](https://github.com/opendistro-for-elasticsearch/k-NN/pull/205))
-* NPE in force merge when non knn doc gets updated to knn doc across segments ([#212](https://github.com/opendistro-for-elasticsearch/k-NN/pull/212))
+* Fix NullPointerException in force merge when non k-NN doc gets updated to k-NN doc across segments ([#212](https://github.com/opendistro-for-elasticsearch/k-NN/pull/212))
 * Fix casting issue with cache expiration ([#215](https://github.com/opendistro-for-elasticsearch/k-NN/pull/215))
 
 ### Performance Analyzer
 
-* Use the correct ctor for NodeDetailsCollector ([#166](https://github.com/opendistro-for-elasticsearch/performance-analyzer/pull/166))
+* Use the correct constructor for NodeDetailsCollector ([#166](https://github.com/opendistro-for-elasticsearch/performance-analyzer/pull/166))
 * Fix invalid cluster state ([#177](https://github.com/opendistro-for-elasticsearch/performance-analyzer/pull/177))
 * Fix performance-analyzer-agent configFilePath ([#268](https://github.com/opendistro-for-elasticsearch/performance-analyzer-rca/pull/268))
-* Rest mutual auth fix ([#279](https://github.com/opendistro-for-elasticsearch/performance-analyzer-rca/pull/279))
+* Rest mutual authentication fix ([#279](https://github.com/opendistro-for-elasticsearch/performance-analyzer-rca/pull/279))
 * Persistance concurrency bug ([#323](https://github.com/opendistro-for-elasticsearch/performance-analyzer-rca/pull/323))
 * Fix rca.conf structure error ([#338](https://github.com/opendistro-for-elasticsearch/performance-analyzer-rca/pull/338))
-* Fixing the summary serialization issue for cache RCAs ([#348](https://github.com/opendistro-for-elasticsearch/performance-analyzer-rca/pull/348))
+* Fix the summary serialization issue for cache RCAs ([#348](https://github.com/opendistro-for-elasticsearch/performance-analyzer-rca/pull/348))
 * Fix bug in NodeConfigFlowUnit to add resource summary into protobuf ([#349](https://github.com/opendistro-for-elasticsearch/performance-analyzer-rca/pull/349))
 * Fix bug in publisher to support cool off period on a per node basis ([#351](https://github.com/opendistro-for-elasticsearch/performance-analyzer-rca/pull/351))
 
@@ -215,24 +216,24 @@ Open Distro for Elasticsearch 1.10.1 includes the following features, enhancemen
 * KNNLib will now use wildcard to resolve hardcoded version issues ([#359](https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/359))
 * Docker allows elasticsearch user to access logs under supervisord folder ([#271](https://github.com/opendistro-for-elasticsearch/performance-analyzer-rca/pull/271), [#146](https://github.com/opendistro-for-elasticsearch/performance-analyzer/pull/146), [#320](https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/320))
 * Disable optimizations for KNNLib compilation in docker image creation ([#384](https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/384))
-* HELM Kibana ingress path fix, thanks @Hokwang ([#340](https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/340))
-*  Helm master nodes allows extraVolumeMounts when securityconfig disabled, thanks @aplhk ([#366](https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/366))
+* Helm Kibana ingress path fix, thanks @Hokwang ([#340](https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/340))
+* Helm master nodes allows extraVolumeMounts when securityconfig disabled, thanks @aplhk ([#366](https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/366))
 
 ### Security
 
 * Remove exception details from responses ([#667](https://github.com/opendistro-for-elasticsearch/security/pull/667))
-* Adding onelogin loadXML util helper to prevent XXE attacks ([#659](https://github.com/opendistro-for-elasticsearch/security/pull/659))
+* Add onelogin loadXML util helper to prevent XXE attacks ([#659](https://github.com/opendistro-for-elasticsearch/security/pull/659))
 * Add non-null to store even non-default values in serialization ([#652](https://github.com/opendistro-for-elasticsearch/security/pull/652))
 * Refactor opendistro_security_action_trace logger ([#609](https://github.com/opendistro-for-elasticsearch/security/pull/609))
 * Fail on invalid rest and transport categories ([#638](https://github.com/opendistro-for-elasticsearch/security/pull/638))
-* Correct a typo in the Readme file. ([#607](https://github.com/opendistro-for-elasticsearch/security/pull/607))
-* Fix AccessControlException during HTTPSamlAuthenticator initialization. ([#626](https://github.com/opendistro-for-elasticsearch/security/pull/626))
+* Correct a typo in the Readme file ([#607](https://github.com/opendistro-for-elasticsearch/security/pull/607))
+* Fix AccessControlException during HTTPSamlAuthenticator initialization ([#626](https://github.com/opendistro-for-elasticsearch/security/pull/626))
 * Remove unnecessary check of remote address for null ([#616](https://github.com/opendistro-for-elasticsearch/security/pull/616))
 * Prevent hidden roles from being added via rolesmapping and internalusers API ([#614](https://github.com/opendistro-for-elasticsearch/security/pull/614))
 
 ### SQL
 
-* Fixed sql workbench loading issue ([#723](https://github.com/opendistro-for-elasticsearch/sql/pull/723))
+* Fixed SQL workbench loading issue ([#723](https://github.com/opendistro-for-elasticsearch/sql/pull/723))
 * ODBC: Fix Windows 64-bit workflows ([#703](https://github.com/opendistro-for-elasticsearch/sql/pull/703))
 * Fix for query folding issue while applying filter in PBID ([#666](https://github.com/opendistro-for-elasticsearch/sql/pull/666))
 * Fix for query folding issue with direct query mode in Power BI data connector ([#640](https://github.com/opendistro-for-elasticsearch/sql/pull/640))
@@ -250,17 +251,17 @@ Open Distro for Elasticsearch 1.10.1 includes the following features, enhancemen
 ### Anomaly Detection
 
 * Use goimports instead of gofmt ([#214](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/214))
-* Install go get outside cli directory ([#216](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/216))
+* Install go get outside CLI directory ([#216](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/216))
 
 ### Anomaly Detection Kibana Plugin
 
-* Fix e2e test caused by new EuiComboBox added on CreateDetector page ([#252](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/252))
+* Fix end-to-end test caused by new EuiComboBox added on CreateDetector page ([#252](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/252))
 * Update lodash dependency ([#259](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/259))
 * Add support for running CI with security ([#263](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/263))
 * Upgrade Cypress and elliptic dependencies ([#266](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/266))
 * Remove elastic charts dependency ([#269](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/269))
-* Add UT for Detector List page ([#279](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/279))
-* Fix UT and remove lower EUI version dependency ([#293](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/293))
+* Add unit tests for Detector List page ([#279](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/279))
+* Fix unit tests and remove lower EUI version dependency ([#293](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/293))
 * Fix broken cypress test related to new empty dashboard buttons ([#298](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/298))
 
 ### Index Management
@@ -268,12 +269,12 @@ Open Distro for Elasticsearch 1.10.1 includes the following features, enhancemen
 * Adds codecov yml file to reduce flakiness in coverage check ([#251](https://github.com/opendistro-for-elasticsearch/index-management/pull/251))
 * Adds support for multi-node run/testing and updates tests ([#254](https://github.com/opendistro-for-elasticsearch/index-management/pull/254))
 * Adds multi node test workflow ([#256](https://github.com/opendistro-for-elasticsearch/index-management/pull/256))
-* release notes automation ([#258](https://github.com/opendistro-for-elasticsearch/index-management/pull/258))
-* Fixes download and doc links in gradle package ([#287](https://github.com/opendistro-for-elasticsearch/index-management/pull/287))
+* Release notes automation ([#258](https://github.com/opendistro-for-elasticsearch/index-management/pull/258))
+* Fix download and doc links in gradle package ([#287](https://github.com/opendistro-for-elasticsearch/index-management/pull/287))
 
 ### Index Management Kibana Plugin
 
-* Adds cypress e2e tests and github action cypress workflow ([#80](https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/pull/80))
+* Add Cypress end-to-end tests and Github action Cypress workflow ([#80](https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/pull/80))
 
 ### Job Scheduler
 
@@ -281,7 +282,7 @@ Open Distro for Elasticsearch 1.10.1 includes the following features, enhancemen
 
 ### k-NN
 
-* Reset state for uTs so tests run independently ([#159](https://github.com/opendistro-for-elasticsearch/k-NN/pull/159))
+* Reset state for unit tests so tests run independently ([#159](https://github.com/opendistro-for-elasticsearch/k-NN/pull/159))
 * Pass -march=x86-64 to build JNI library ([#164](https://github.com/opendistro-for-elasticsearch/k-NN/pull/164))
 * Fix versioning for lib artifacts ([#166](https://github.com/opendistro-for-elasticsearch/k-NN/pull/166))
 * Add release notes automation ([#168](https://github.com/opendistro-for-elasticsearch/k-NN/pull/168))
@@ -295,28 +296,29 @@ Open Distro for Elasticsearch 1.10.1 includes the following features, enhancemen
 
 ### Performance Analyzer
 
-* Integration test framework to test RCAs and decision Makers ([#301](https://github.com/opendistro-for-elasticsearch/performance-analyzer-rca/pull/301)
+* Integration test framework to test RCAs and decision makers ([#301](https://github.com/opendistro-for-elasticsearch/performance-analyzer-rca/pull/301)
 
 ### Security Kibana Plugin
 
-* Kibana security plugin is now implementated on top of Kibana's new plugin platform.
+* Kibana security plugin is now implemented on top of Kibana's new plugin platform.
 
 ### SQL
 
-* Changed rpm and deb artifact name ([#705](https://github.com/opendistro-for-elasticsearch/sql/pull/705))
+* Change rpm and deb artifact name ([#705](https://github.com/opendistro-for-elasticsearch/sql/pull/705))
 * Adjust release drafter to follow ODFE standards ([#700](https://github.com/opendistro-for-elasticsearch/sql/pull/700))
 * ODBC: improve Windows build process ([#661](https://github.com/opendistro-for-elasticsearch/sql/pull/661))
-* Skip doctest in github release actions ([#648](https://github.com/opendistro-for-elasticsearch/sql/pull/648))
+* Skip doctest in Github release actions ([#648](https://github.com/opendistro-for-elasticsearch/sql/pull/648))
 * Support security plugin ([#760](https://github.com/opendistro-for-elasticsearch/sql/pull/760))
 * Bump to ODFE 1.10.1.1 for integration test fixes ([#759](https://github.com/opendistro-for-elasticsearch/sql/pull/759))
-* Bug Fix, Clean all the indices, included hidden indices ([#758](https://github.com/opendistro-for-elasticsearch/sql/pull/758))
+* Bug fix: clean all the indices, including hidden indices ([#758](https://github.com/opendistro-for-elasticsearch/sql/pull/758))
+
 
 
 ## DOCUMENTATION
 
 ### Alerting
 
-* Adds workflow to generate draft release notes and reformat old release notes ([#241](https://github.com/opendistro-for-elasticsearch/alerting/pull/241))
+* Add workflow to generate draft release notes and reformat old release notes ([#241](https://github.com/opendistro-for-elasticsearch/alerting/pull/241))
 
 ### Anomaly Detection
 
@@ -330,13 +332,13 @@ Open Distro for Elasticsearch 1.10.1 includes the following features, enhancemen
 
 * Automate release notes to unified standard ([#255](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/255))
 * Add a few badges ([#262](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/262))
-* Updating the release notes to have 4th digit ([#291](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/291))
+* Update the release notes to have 4th digit ([#291](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/291))
 * Update 1.10.0.0 release notes ([#296](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/296))
 * Add release note for PR 301 ([#302](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/302))
 
 ### Index Management
 
-* Adds rollup-rfc to docs ([#248](https://github.com/opendistro-for-elasticsearch/index-management/pull/248))
+* Add rollup-rfc to docs ([#248](https://github.com/opendistro-for-elasticsearch/index-management/pull/248))
 
 ### Job Scheduler
 
@@ -344,7 +346,7 @@ Open Distro for Elasticsearch 1.10.1 includes the following features, enhancemen
 
 ### k-NN
 
-* Performance tuning/Recommendations ([#177](https://github.com/opendistro-for-elasticsearch/k-NN/pull/177))
+* Performance tuning/recommendations ([#177](https://github.com/opendistro-for-elasticsearch/k-NN/pull/177))
 * Fix cluster setting example in README.md ([#186](https://github.com/opendistro-for-elasticsearch/k-NN/pull/186))
 * Add scoring documentation ([#193](https://github.com/opendistro-for-elasticsearch/k-NN/pull/193))
 * Add 1.10.0.0 release notes ([#201](https://github.com/opendistro-for-elasticsearch/k-NN/pull/201))
@@ -362,15 +364,15 @@ Open Distro for Elasticsearch 1.10.1 includes the following features, enhancemen
 
 ### Release Engineering
 
-* Add descriptions for several scripts with usage documentations ([#334](https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/334))
+* Add descriptions for several scripts with usage documentation ([#334](https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/334))
 * Update opendistro-build github repo issues link ([#382](https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/382))
-* HELM Readme Update, thanks @dmpe  ([#380](https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/380) [#385](https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/385))
+* Helm readme update, thanks @dmpe  ([#380](https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/380) [#385](https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/385))
 
 ### SQL
 
-* Update user documentation for testing ODBC driver connection on Windows ([#722](https://github.com/opendistro-for-elasticsearch/sql/pull/722))
+* Update user documentation for testing ODBC driver connections on Windows ([#722](https://github.com/opendistro-for-elasticsearch/sql/pull/722))
 * Add workaround for identifiers with special characters in troubleshooting page ([#718](https://github.com/opendistro-for-elasticsearch/sql/pull/718))
-* Update release notes for OD 1.10 release ([#699](https://github.com/opendistro-for-elasticsearch/sql/pull/699))
+* Update release notes for ODFE 1.10 release ([#699](https://github.com/opendistro-for-elasticsearch/sql/pull/699))
 
 
 
@@ -378,14 +380,14 @@ Open Distro for Elasticsearch 1.10.1 includes the following features, enhancemen
 
 ### Alerting
 
-* Upgrade the vulnerable dependencies versions of Kotlin and 'commons-codec' ([#230](https://github.com/opendistro-for-elasticsearch/alerting/pull/230))
-* Adds support for Elasticsearch 7.9.0 ([#238](https://github.com/opendistro-for-elasticsearch/alerting/pull/238))
-* Adds support for Elasticsearch 7.9.1 ([#251](https://github.com/opendistro-for-elasticsearch/alerting/pull/251))
+* Upgrade the versions of Kotlin and 'commons-codec' ([#230](https://github.com/opendistro-for-elasticsearch/alerting/pull/230))
+* Add support for Elasticsearch 7.9.0 ([#238](https://github.com/opendistro-for-elasticsearch/alerting/pull/238))
+* Add support for Elasticsearch 7.9.1 ([#251](https://github.com/opendistro-for-elasticsearch/alerting/pull/251))
 
 ### Alerting Kibana Plugin
 
-* Adds support for Kibana 7.9 ([#171](https://github.com/opendistro-for-elasticsearch/alerting-kibana-plugin/pull/171))
-* Adds support for Kibana 7.9.1 ([#181](https://github.com/opendistro-for-elasticsearch/alerting-kibana-plugin/pull/181))
+* Add support for Kibana 7.9 ([#171](https://github.com/opendistro-for-elasticsearch/alerting-kibana-plugin/pull/171))
+* Add support for Kibana 7.9.1 ([#181](https://github.com/opendistro-for-elasticsearch/alerting-kibana-plugin/pull/181))
 
 ### Anomaly Detection
 
@@ -394,19 +396,19 @@ Open Distro for Elasticsearch 1.10.1 includes the following features, enhancemen
 
 ### Anomaly Detection Kibana Plugin
 
-* Adding support for Kibana 7.9.0 ([#286](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/286))
-* Updating plugin to use Kibana 7.9.1 ([#306](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/306))
+* Add support for Kibana 7.9.0 ([#286](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/286))
+* Update plugin to use Kibana 7.9.1 ([#306](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/306))
 
 ### Index Management
 
-* Adds support for Elasticsearch 7.9 ([#283](https://github.com/opendistro-for-elasticsearch/index-management/pull/283))
-* Adds support for Elasticsearch 7.9.1 ([#288](https://github.com/opendistro-for-elasticsearch/index-management/pull/288))
-* Refactors internal architecture/files to prepare for support of transforms/rollups ([#285](https://github.com/opendistro-for-elasticsearch/index-management/pull/285))
+* Add support for Elasticsearch 7.9 ([#283](https://github.com/opendistro-for-elasticsearch/index-management/pull/283))
+* Add support for Elasticsearch 7.9.1 ([#288](https://github.com/opendistro-for-elasticsearch/index-management/pull/288))
+* Refactor internal architecture/files to prepare for support of transforms/rollups ([#285](https://github.com/opendistro-for-elasticsearch/index-management/pull/285))
 
 ### Index Management Kibana Plugin
 
-* Adds support for Kibana 7.9 ([#118](https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/pull/118))
-* Adds support for Kibana 7.9.1 ([#120](https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/pull/120))
+* Add support for Kibana 7.9 ([#118](https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/pull/118))
+* Add support for Kibana 7.9.1 ([#120](https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/pull/120))
 
 ### Job Scheduler
 
@@ -422,25 +424,25 @@ Open Distro for Elasticsearch 1.10.1 includes the following features, enhancemen
 
 * Build against elasticsearch 7.9 and resolve dependency conflicts ([#179](https://github.com/opendistro-for-elasticsearch/performance-analyzer/pull/179))
 * Update jackson and bouncycastle artifacts ([#307](https://github.com/opendistro-for-elasticsearch/performance-analyzer-rca/pull/307))
-* Add integ test for queue rejection cluster RCA ([#370](https://github.com/opendistro-for-elasticsearch/performance-analyzer-rca/pull/370))
-* Add IT for cache tuning ([#382](https://github.com/opendistro-for-elasticsearch/performance-analyzer-rca/pull/382))
+* Add integration test for queue rejection cluster RCA ([#370](https://github.com/opendistro-for-elasticsearch/performance-analyzer-rca/pull/370))
+* Add integration test for cache tuning ([#382](https://github.com/opendistro-for-elasticsearch/performance-analyzer-rca/pull/382))
 * Match dependencies with writer ([#393](https://github.com/opendistro-for-elasticsearch/performance-analyzer-rca/pull/393))
-* Build against elasticsearch 7.9.1 ([#197](https://github.com/opendistro-for-elasticsearch/performance-analyzer/pull/197))
+* Build against Elasticsearch 7.9.1 ([#197](https://github.com/opendistro-for-elasticsearch/performance-analyzer/pull/197))
 
 ### Perftop
 
-* Build against elasticsearch 7.9 ([#56](https://github.com/opendistro-for-elasticsearch/perftop/pull/56))
-* Build against elasticsearch 7.9.1 ([#59](https://github.com/opendistro-for-elasticsearch/perftop/pull/59))
+* Build against Elasticsearch 7.9 ([#56](https://github.com/opendistro-for-elasticsearch/perftop/pull/56))
+* Build against Elasticsearch 7.9.1 ([#59](https://github.com/opendistro-for-elasticsearch/perftop/pull/59))
 
 ### Release Engineering
 
-* Kibana has new cookie settings for security kibana plugin 2.0 framework ([#397](https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/397))
+* Kibana has new cookie settings for security Kibana plugin 2.0 framework ([#397](https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/397))
 
 ### Security
 
 * Support ES 7.9.1 ([#706](https://github.com/opendistro-for-elasticsearch/security/pull/706))
 * Support ES 7.9.0 ([#661](https://github.com/opendistro-for-elasticsearch/security/pull/661))
-* Close AuditLog while closing OpenDistroSecurityPlugin and unregister shutdown hook when closing AuditLogImpl. ([#663](https://github.com/opendistro-for-elasticsearch/security/pull/663))
+* Close AuditLog while closing OpenDistroSecurityPlugin and unregister shutdown hook when closing AuditLogImpl ([#663](https://github.com/opendistro-for-elasticsearch/security/pull/663))
 * Fix unit tests failures in HTTPSamlAuthenticatorTest ([#664](https://github.com/opendistro-for-elasticsearch/security/pull/664))
 * Add copyright headers for audit classes ([#644](https://github.com/opendistro-for-elasticsearch/security/pull/644))
 * Clean up rest and transport header filtering ([#637](https://github.com/opendistro-for-elasticsearch/security/pull/637))
@@ -448,12 +450,12 @@ Open Distro for Elasticsearch 1.10.1 includes the following features, enhancemen
 
 ### Security Kibana
 
-* Adds support for Kibana 7.9 ([#401](https://github.com/opendistro-for-elasticsearch/security-kibana-plugin/pull/401))
-* Adds support for Kibana 7.9.1 ([#452](https://github.com/opendistro-for-elasticsearch/security-kibana-plugin/pull/452))
+* Add support for Kibana 7.9 ([#401](https://github.com/opendistro-for-elasticsearch/security-kibana-plugin/pull/401))
+* Add support for Kibana 7.9.1 ([#452](https://github.com/opendistro-for-elasticsearch/security-kibana-plugin/pull/452))
 
 ### SQL
 
-* Bumped ES and Kibana versions to v7.9.0 ([#697](https://github.com/opendistro-for-elasticsearch/sql/pull/697))
+* Bump ES and Kibana versions to v7.9.0 ([#697](https://github.com/opendistro-for-elasticsearch/sql/pull/697))
 * Bump ES and Kibana to 7.9.1 and release ODFE 1.10.1.0 ([#732](https://github.com/opendistro-for-elasticsearch/sql/pull/732))
 
 
@@ -466,18 +468,16 @@ Open Distro for Elasticsearch 1.10.1 includes the following features, enhancemen
 
 ### Performance Analyzer
 
-* Make RCA framework NOT use ClusterDetailsEventProcessor ([#274](https://github.com/opendistro-for-elasticsearch/performance-analyzer-rca/pull/274))
+* Make RCA framework not use ClusterDetailsEventProcessor ([#274](https://github.com/opendistro-for-elasticsearch/performance-analyzer-rca/pull/274))
 * Refactor ModifyQueueCapacityAction to follow builder pattern ([#365](https://github.com/opendistro-for-elasticsearch/performance-analyzer-rca/pull/365))
 * Refactor ModifyCacheCapacityAction to follow builder pattern ([#385](https://github.com/opendistro-for-elasticsearch/performance-analyzer-rca/pull/385))
-* Refactoring the persistence layer to be able to persist any Java Object ([#407](https://github.com/opendistro-for-elasticsearch/performance-analyzer-rca/pull/407))
+* Refactor the persistence layer to be able to persist any Java object ([#407](https://github.com/opendistro-for-elasticsearch/performance-analyzer-rca/pull/407))
 
 ### Security Kibana Plugin
 
-* Renamed `backend role` to `external entity` on UI.
-* Moved the role mapping function to role editing page.
-* Combined `security_authentication` and `security_preferences` cookies into one, as Kibana new plugin platform only support one session cookie.
+* Rename `backend role` to `external entity` on UI
+* Move the role mapping function to role editing page
+* Combine `security_authentication` and `security_preferences` cookies into one, as Kibana new plugin platform only supports one session cookie
 
 
 You can also track upcoming features in Open Distro for Elasticsearch by watching the code repositories or checking the [project website](https://opendistro.github.io/for-elasticsearch/features/comingsoon.html).
-
-
