@@ -368,9 +368,9 @@ Open Distro for Elasticsearch 1.10.1 includes the following features, enhancemen
 
 ### SQL
 
-* update user documentation for testing odbc driver connection on windows([#722](https://github.com/opendistro-for-elasticsearch/sql/pull/722))
-* Added workaround for identifiers with special characters in troubleshooting page([#718](https://github.com/opendistro-for-elasticsearch/sql/pull/718))
-* Update release notes for OD 1.10 release([#699](https://github.com/opendistro-for-elasticsearch/sql/pull/699))
+* Update user documentation for testing ODBC driver connection on Windows ([#722](https://github.com/opendistro-for-elasticsearch/sql/pull/722))
+* Add workaround for identifiers with special characters in troubleshooting page ([#718](https://github.com/opendistro-for-elasticsearch/sql/pull/718))
+* Update release notes for OD 1.10 release ([#699](https://github.com/opendistro-for-elasticsearch/sql/pull/699))
 
 
 
@@ -434,7 +434,7 @@ Open Distro for Elasticsearch 1.10.1 includes the following features, enhancemen
 
 ### Release Engineering
 
-* Kibana has new cookie settings for security kibana plugin 2.0 framework (#397 (https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/397))
+* Kibana has new cookie settings for security kibana plugin 2.0 framework ([#397](https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/397))
 
 ### Security
 
