@@ -20,7 +20,7 @@ Due to the uniqueness of different users environments, this chart aims to cater 
 ## TL;DR
 ```
 ❯ helm package .
-❯ helm install opendistro-es-1.9.0.tgz --name opendistro-es
+❯ helm install opendistro-es-1.10.1.tgz --name opendistro-es
 ```
 
 ## Installing the Chart
