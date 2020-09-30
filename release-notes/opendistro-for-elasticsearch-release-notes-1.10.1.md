@@ -434,7 +434,7 @@ Open Distro for Elasticsearch 1.10.1 includes the following features, enhancemen
 
 ### Release Engineering
 
-* Kibana has new cookie settings for security kibana plugin 2.0 framework (#397 (https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/397))
+* Kibana has new cookie settings for security kibana plugin 2.0 framework ([#397](https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/397))
 
 ### Security
 
