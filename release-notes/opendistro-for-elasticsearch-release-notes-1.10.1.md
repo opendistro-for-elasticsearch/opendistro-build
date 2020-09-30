@@ -368,8 +368,8 @@ Open Distro for Elasticsearch 1.10.1 includes the following features, enhancemen
 
 ### SQL
 
-* update user documentation for testing odbc driver connection on windows ([#722](https://github.com/opendistro-for-elasticsearch/sql/pull/722))
-* Added workaround for identifiers with special characters in troubleshooting page ([#718](https://github.com/opendistro-for-elasticsearch/sql/pull/718))
+* Update user documentation for testing ODBC driver connection on Windows ([#722](https://github.com/opendistro-for-elasticsearch/sql/pull/722))
+* Add workaround for identifiers with special characters in troubleshooting page ([#718](https://github.com/opendistro-for-elasticsearch/sql/pull/718))
 * Update release notes for OD 1.10 release ([#699](https://github.com/opendistro-for-elasticsearch/sql/pull/699))
 
 
