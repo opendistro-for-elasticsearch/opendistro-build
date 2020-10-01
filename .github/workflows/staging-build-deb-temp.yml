@@ -1,10 +1,10 @@
-name: Process TAR Artifacts
+name: Process DEB Artifacts
 
 on:
   schedule:
     - cron: '0 10 * * *'
   repository_dispatch:
-    types: [staging-build-tar]
+    types: [staging-build-deb]
   push:
     branches: [opendistro-infra-issues-259-1]
 
