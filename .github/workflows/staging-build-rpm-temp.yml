@@ -1,16 +1,35 @@
-name: Process DEB Artifacts
+name: Process RPM Artifacts
 
 on:
   schedule:
     - cron: '0 10 * * *'
   repository_dispatch:
-    types: [staging-build-deb]
-  #push:
-  #  branches: [opendistro-infra-issues-259-1]
+    types: [staging-build-rpm]
+  push:
+    branches: [opendistro-infra-issues-259-1]
 
 jobs:
+  Provision-Runners:
+    name: Provision-Runners
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v1
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_EC2_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_EC2_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
+      - name: AWS Cli Processing
+        run: |
+          #!/bin/bash
+          # Please add comma at the end of the RUNNERS strings
+          RUNNERS="odfe-rpm-sql-kibana-nosec"
+          .github/scripts/setup_runners.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
+
   Test-SQL-KIBANA-NoSec:
-    runs-on: [ubuntu-16.04]
+    needs: [Provision-Runners]
+    runs-on: [self-hosted, Linux, X64, odfe-rpm-sql-kibana-nosec]
     name: Test-SQL-KIBANA-NoSec
     strategy:
       matrix:
@@ -83,7 +102,7 @@ jobs:
 
       - name: Start ES and Kibana
         run: |
-          .github/scripts/setup_runners_service.sh deb --kibana-nosec
+          .github/scripts/setup_runners_service.sh rpm --kibana-nosec
           echo "load the indices"
           curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/sql/master/integ-test/src/test/resources/accounts.json | curl -s -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/accounts/_bulk?pretty' --data-binary @- > /dev/null 2>&1
           curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/sql/master/integ-test/src/test/resources/employee_nested.json | curl -s -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/employee_nested/_bulk?pretty' --data-binary @- > /dev/null 2>&1
@@ -93,4 +112,25 @@ jobs:
         with:
           working-directory: kibana/plugins/sql-workbench
           command: npx cypress run
+          
+
+  CleanUp-Runners:
+    needs: [Test-SQL-KIBANA-NoSec]
+    if: always()
+    name: CleanUp-Runners
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v1
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_EC2_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_EC2_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
+      - name: AWS Cli Processing
+        run: |
+          #!/bin/bash
+          # Please add comma at the end of the RUNNERS strings
+          RUNNERS="odfe-rpm-sql-kibana-nosec"
+          .github/scripts/setup_runners.sh terminate $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
 
