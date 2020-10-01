@@ -117,6 +117,9 @@ spec:
             name: elasticsearch-certs
             subPath: {{ .Values.kibana.ssl.elasticsearch.existingCertSecretRootCASubPath }}
          {{- end }}
+{{- if .Values.kibana.extraVolumeMounts }}
+{{ toYaml .Values.kibana.extraVolumeMounts | indent 10 }}
+{{- end }}
         ports:
         - containerPort: {{ .Values.kibana.port }}
       serviceAccountName: {{ template "opendistro-es.kibana.serviceAccountName" . }}
@@ -136,6 +139,9 @@ spec:
           secret:
             secretName: {{ .Values.kibana.ssl.elasticsearch.existingCertSecret }}
         {{- end }}
+{{- if .Values.kibana.extraVolumes }}
+{{ toYaml .Values.kibana.extraVolumes | indent 8 }}
+{{- end }}
     {{- with .Values.kibana.nodeSelector }}
       nodeSelector:
 {{ toYaml . | indent 8 }}
