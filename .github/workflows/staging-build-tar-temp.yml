@@ -1,8 +1,8 @@
 name: Process TAR Artifacts
 
 on:
-  #schedule:
-  #  - cron: '0 10 * * *'
+  schedule:
+    - cron: '0 10 * * *'
   repository_dispatch:
     types: [staging-build-tar]
   push:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   Test-SQL-KIBANA-NoSec:
-#    needs: [build-es-artifacts, build-kibana-artifacts]
+    needs: [build-es-artifacts, build-kibana-artifacts]
     runs-on: [ubuntu-16.04]
     name: Test-SQL-KIBANA-NoSec
     strategy:
@@ -85,12 +85,9 @@ jobs:
       - name: Start ES and Kibana
         run: |
           .github/scripts/setup_runners_service.sh zip --kibana-nosec
-          echo version ${{env.p_tag_sql_kibana}}
-          curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/sql/${{env.p_tag_sql_kibana}}/integ-test/src/test/resources/accounts.json | curl -s -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/accounts/_bulk?pretty' --data-binary @- > /dev/null 2>&1
-          curl http://localhost:9200/_cluster/health?pretty
-          sleep 3
-          curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/sql/${{env.p_tag_sql_kibana}}/integ-test/src/test/resources/employee_nested.json | curl -s -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/employee_nested/_bulk?pretty' --data-binary @- > /dev/null 2>&1
-          curl http://localhost:9200/_cluster/health?pretty
+          echo "load the indices"
+          curl https://raw.githubusercontent.com/opendistro-for-elasticsearch/sql/master/integ-test/src/test/resources/accounts.json | curl -s -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/accounts/_bulk?pretty' --data-binary @-
+          curl https://raw.githubusercontent.com/opendistro-for-elasticsearch/sql/master/integ-test/src/test/resources/employee_nested.json | curl -s -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/employee_nested/_bulk?pretty' --data-binary @-
  
       - name: run IT
         uses: cypress-io/github-action@v1
