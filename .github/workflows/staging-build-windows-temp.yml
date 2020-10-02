@@ -74,6 +74,7 @@ jobs:
           cp -rp sql/sql-workbench .
           rm -rf sql/
           cd sql-workbench
+        shell: bash
 
       - name: Retry the bootstraps
         # sql repo has a bug that you have to bootstrap at least twice to success
@@ -83,6 +84,7 @@ jobs:
           timeout_minutes: 60
           max_attempts: 3
           command: cd ./kibana/plugins/sql-workbench; pwd; yarn kbn bootstrap
+        shell: bash
 
       - name: run ES and kibana and IT (RUN IN ONE STEP OR WINDOWS BREAK)
         run: |
@@ -90,6 +92,6 @@ jobs:
           echo "load the indices"
           curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/sql/master/integ-test/src/test/resources/accounts.json | curl -s -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/accounts/_bulk?pretty' --data-binary @- > /dev/null 2>&1
           curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/sql/master/integ-test/src/test/resources/employee_nested.json | curl -s -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/employee_nested/_bulk?pretty' --data-binary @- > /dev/null 2>&1
-          pwd
+          dir
           cd ./kibana/plugins/sql-workbench
           npx cypress run

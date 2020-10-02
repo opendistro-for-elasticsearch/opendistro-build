@@ -421,6 +421,7 @@ jobs:
           cp -rp sql/sql-workbench .
           rm -rf sql/
           cd sql-workbench
+        shell: bash
 
       - name: Retry the bootstraps
         # sql repo has a bug that you have to bootstrap at least twice to success
@@ -430,6 +431,7 @@ jobs:
           timeout_minutes: 60
           max_attempts: 3
           command: cd ./kibana/plugins/sql-workbench; pwd; yarn kbn bootstrap
+        shell: bash
 
       - name: run ES and kibana and IT (RUN IN ONE STEP OR WINDOWS BREAK)
         run: |
