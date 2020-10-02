@@ -132,6 +132,10 @@ spec:
         livenessProbe:
 {{ toYaml . | indent 10 }}
     {{- end }}
+    {{- with .Values.elasticsearch.data.startupProbe}}
+        startupProbe:
+{{ toYaml . | indent 10 }}
+    {{- end }}
         volumeMounts:
         - mountPath: /usr/share/elasticsearch/data
           name: data

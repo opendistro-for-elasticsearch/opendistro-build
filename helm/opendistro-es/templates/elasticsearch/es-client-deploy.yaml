@@ -127,6 +127,10 @@ spec:
         livenessProbe:
 {{ toYaml . | indent 10 }}
     {{- end }}
+    {{- with .Values.elasticsearch.client.startupProbe}}
+        startupProbe:
+{{ toYaml . | indent 10 }}
+    {{- end }}
         volumeMounts:
         {{- if .Values.elasticsearch.config }}
         - mountPath: {{ .Values.elasticsearch.configDirectory }}/elasticsearch.yml
