@@ -1,17 +1,16 @@
-name: Build ES Docker
+name: Build Windows Exe using tar artifacts
 
-on: 
+on:
   schedule:
     - cron: '30 10 * * *'
   repository_dispatch:
-    types: [staging-build-docker]
+    types: [staging-build-windows]
   push:
     branches: [opendistro-infra-issues-259-1]
 
 jobs:
   Test-SQL-KIBANA-NoSec:
-    #needs: [build-es-docker, build-kibana-docker]
-    runs-on: [ubuntu-16.04]
+    runs-on: windows-latest
     name: Test-SQL-KIBANA-NoSec
     strategy:
       matrix:
@@ -26,8 +25,10 @@ jobs:
           aws-region: us-east-1
       - name: Retrieve plugin tags 
         run: |
+          echo ::set-env name=od_version::$(python ./bin/version-info --od)
+          echo ::set-env name=es_version::$(python ./bin/version-info --es)
           echo ::set-env name=p_tag_sql_kibana::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)
-          echo ::set-env name=es_version::$(./bin/version-info --es)
+        shell: bash
           
       - name: Checkout Kibana
         uses: actions/checkout@v2
@@ -52,7 +53,8 @@ jobs:
         id: node_yarn_versions
         run: |
           echo ::set-env name=kibana_node_version::$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")
-          echo ::set-env name=kibana_yarn_version::$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")   
+          echo ::set-env name=kibana_yarn_version::$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")
+        shell: bash
       
       - name: Setup node
         uses: actions/setup-node@v1
@@ -82,16 +84,12 @@ jobs:
           max_attempts: 3
           command: cd ./kibana/plugins/sql-workbench; pwd; yarn kbn bootstrap
 
-      - name: Start ES and Kibana
+      - name: run ES and kibana and IT (RUN IN ONE STEP OR WINDOWS BREAK)
         run: |
-          .github/scripts/setup_runners_service.sh docker --kibana-nosec
+          .github\scripts\setup_runners_service_windows.ps1 --kibana-nosec
           echo "load the indices"
           curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/sql/master/integ-test/src/test/resources/accounts.json | curl -s -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/accounts/_bulk?pretty' --data-binary @- > /dev/null 2>&1
           curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/sql/master/integ-test/src/test/resources/employee_nested.json | curl -s -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/employee_nested/_bulk?pretty' --data-binary @- > /dev/null 2>&1
- 
-      - name: run IT
-        uses: cypress-io/github-action@v1
-        with:
-          working-directory: kibana/plugins/sql-workbench
-          command: npx cypress run
-
+          pwd
+          cd ./kibana/plugins/sql-workbench
+          npx cypress run
