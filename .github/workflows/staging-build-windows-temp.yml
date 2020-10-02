@@ -44,38 +44,38 @@ jobs:
           ref: ${{env.p_tag_sql_kibana}}
           path: kibana/plugins/sql
       
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.java }}
-      
-      - name: Get node and yarn versions
-        id: node_yarn_versions
-        run: |
-          echo ::set-env name=kibana_node_version::$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")
-          echo ::set-env name=kibana_yarn_version::$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")
-        shell: bash
-      
-      - name: Setup node
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{env.kibana_node_version}}
-          registry-url: 'https://registry.npmjs.org'
-      
-      - name: Install correct yarn version for Kibana
-        run: |
-          npm uninstall -g yarn
-          echo "Installing yarn ${{ env.kibana_yarn_version }}"
-          npm i -g yarn@${{ env.kibana_yarn_version }}
-      
-      - name: Bootstrap the plugin
-        run: |
-          cd ./kibana/plugins
-          cp -rp sql/sql-workbench .
-          rm -rf sql/
-          cd sql-workbench
-        shell: bash
-
+#      - name: Setup Java
+#        uses: actions/setup-java@v1
+#        with:
+#          java-version: ${{ matrix.java }}
+#      
+#      - name: Get node and yarn versions
+#        id: node_yarn_versions
+#        run: |
+#          echo ::set-env name=kibana_node_version::$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")
+#          echo ::set-env name=kibana_yarn_version::$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")
+#        shell: bash
+#      
+#      - name: Setup node
+#        uses: actions/setup-node@v1
+#        with:
+#          node-version: ${{env.kibana_node_version}}
+#          registry-url: 'https://registry.npmjs.org'
+#      
+#      - name: Install correct yarn version for Kibana
+#        run: |
+#          npm uninstall -g yarn
+#          echo "Installing yarn ${{ env.kibana_yarn_version }}"
+#          npm i -g yarn@${{ env.kibana_yarn_version }}
+#      
+#      - name: Bootstrap the plugin
+#        run: |
+#          cd ./kibana/plugins
+#          cp -rp sql/sql-workbench .
+#          rm -rf sql/
+#          cd sql-workbench
+#        shell: bash
+#
       - name: Retry the bootstraps
         # sql repo has a bug that you have to bootstrap at least twice to success
         # this is a temp solution and they will try to fix it later
@@ -84,7 +84,7 @@ jobs:
           timeout_minutes: 60
           max_attempts: 3
           #command: cd ./kibana/plugins/sql-workbench; dir; yarn kbn bootstrap
-          command: dir
+          command: cd kibana/plugins; dir
 
       - name: run ES and kibana and IT (RUN IN ONE STEP OR WINDOWS BREAK)
         run: |
