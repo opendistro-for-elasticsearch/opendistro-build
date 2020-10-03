@@ -22,7 +22,7 @@ Open Distro for Elasticsearch 1.10.1 includes the following features, enhancemen
 ### Release Engineering
 
 * Kibana has new cookie settings for security Kibana plugin 2.0 framework ([#397](https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/397))
-  Please follow the instructions [here](https://opendistro.github.io/for-elasticsearch-docs/docs/upgrade/1-10-1/) if you are upgrading from previous Kibana versions to 1.10.1.
+  Please follow the instructions [to upgrade Open Distro Kibana to 1.10.1](https://opendistro.github.io/for-elasticsearch-docs/docs/upgrade/1-10-1/) if you are upgrading from previous Kibana versions to 1.10.1.
 
 ## FEATURES
 
