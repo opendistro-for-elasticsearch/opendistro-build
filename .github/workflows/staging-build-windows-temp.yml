@@ -93,7 +93,7 @@ jobs:
           echo "load the indices"
           curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/sql/master/integ-test/src/test/resources/accounts.json | curl -s -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/accounts/_bulk?pretty' --data-binary @- > /dev/null 2>&1
           curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/sql/master/integ-test/src/test/resources/employee_nested.json | curl -s -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/employee_nested/_bulk?pretty' --data-binary @- > /dev/null 2>&1
-          pwd
+          dir
           cd ./kibana/plugins/sql-workbench
           npx cypress run
  
