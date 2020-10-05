@@ -20,7 +20,7 @@ Due to the uniqueness of different users environments, this chart aims to cater 
 ## TL;DR
 ```
 ❯ helm package .
-❯ helm install opendistro-es-1.9.0.tgz --name opendistro-es
+❯ helm install opendistro-es-1.10.1.tgz --name opendistro-es
 ```
 
 ## Installing the Chart
@@ -193,7 +193,6 @@ data:
   elk-rest-crt.pem: base64value
   elk-rest-key.pem: base64value
   elk-rest-root-ca.pem: base64value
-
 ```
 
 ### Elasticsearch
@@ -206,7 +205,6 @@ to properly mount them to their corresponding `subPath`.
 ```
 ssl:
   transport:
-    enabled: true
     existingCertSecret: elasticsearch-transport-certs
   rest:
     enabled: true
@@ -339,7 +337,6 @@ elasticsearch:
 
   ssl:
     transport:
-      enabled: true
       existingCertSecret: elasticsearch-transport-certs
     rest:
       enabled: true
@@ -473,6 +470,7 @@ The following table lists the configurable parameters of the opendistro elastics
 | `global.psp.create`                                       | Create and use `podsecuritypolicy`  resources                                                                                                            | `"true"`                                                                |
 | `global.rbac.enabled`                                     | Create and use `rbac` resources                                                                                                                          | `"true"`                                                                |
 | `global.imagePullSecrets`                                 | Global Docker registry secret names as an array                                                                                                          | `[]` (does not add image pull secrets to deployed pods)                 |
+| `global.registry`                                         | Global Docker registry endpoint to allow customizing an alternative registry other than docker.io                                                        | `"docker.io"`                                                           |
 | `kibana.enabled`                                          | Enable the installation of kibana                                                                                                                        | `true`                                                                  |
 | `kibana.image`                                            | Kibana container image                                                                                                                                   | `amazon/opendistro-for-elasticsearch-kibana`                            |
 | `kibana.imageTag`                                         | Kibana container image  tag                                                                                                                              | `1.2.0`                                                                 |
@@ -484,8 +482,14 @@ The following table lists the configurable parameters of the opendistro elastics
 | `kibana.elasticsearchAccount.keyPassphrase.enabled`       | Enable mounting in keypassphrase for the `elasticsearchAccount`                                                                                          | `false`                                                                 |
 | `kibana.ssl.kibana.enabled`                               | Enabled SSL for kibana                                                                                                                                   | `false`                                                                 |
 | `kibana.ssl.kibana.existingCertSecret`                    | Name of secret that contains the Kibana certs                                                                                                            | `""`                                                                    |
+| `kibana.ssl.kibana.existingCertSecretCertSubPath`         | Subpath of Kibana cert secret                                                                                                                            | `"kibana-crt.pem"`                                                      |
+| `kibana.ssl.kibana.existingCertSecretKeySubPath`          | Subpath of Kibana key secret                                                                                                                             | `"kibana-key.pem"`                                                      |
+| `kibana.ssl.kibana.existingCertSecretRootCASubPath`       | Subpath of Kibana root ca secret                                                                                                                         | `"kibana-root-ca.pem"`                                                  |
 | `kibana.ssl.elasticsearch.enabled`                        | Enable SSL for interactions between Kibana and Elasticsearch REST clients                                                                                | `false`                                                                 |
 | `kibana.ssl.elasticsearch.existingCertSecret`             | Name of secret that contains the Elasticsearch REST certs                                                                                                | `""`                                                                    |
+| `kibana.ssl.elasticsearch.existingCertSecretCertSubPath`  | Subpath of Elasticsearch cert secret                                                                                                                     | `"elk-rest-crt.pem"`                                                    |
+| `kibana.ssl.elasticsearch.existingCertSecretKeySubPath`   | Subpath of Elasticsearch key secret                                                                                                                      | `"elk-rest-key.pem"`                                                    |
+| `kibana.ssl.elasticsearch.existingCertSecretRootCASubPath`| Subpath of Elasticsearch root ca secret                                                                                                                  | `"elk-rest-root-ca.pem"`                                                |
 | `kibana.configDirectory`                                  | Location of where to mount in kibana specific configuration                                                                                              | `"/usr/share/kibana/config"`                                            |
 | `kibana.certsDirectory`                                   | Location of where to mount in kibana certs configuration                                                                                                 | `"/usr/share/kibana/certs"`                                             |
 | `kibana.ingress.enabled`                                  | Enable Kibana Ingress                                                                                                                                    | `false`                                                                 |
@@ -511,12 +515,20 @@ The following table lists the configurable parameters of the opendistro elastics
 | `elasticsearch.securityConfig.rolesSecret`                | Name of secret with [roles.yml](https://github.com/opendistro-for-elasticsearch/security/blob/master/securityconfig/roles.yml) defined                   | `""`                                                                    |
 | `elasticsearch.securityConfig.rolesMappingSecret`         | Name of secret with [roles_mapping.yml](https://github.com/opendistro-for-elasticsearch/security/blob/master/securityconfig/roles_mapping.yml) defined   | `""`                                                                    |
 | `elasticsearch.securityConfig.tenantsSecret`              | Name of secret with [tenants.yml](https://github.com/opendistro-for-elasticsearch/security/blob/master/securityconfig/tenants.yml) defined               | `""`                                                                    |
-| `elasticsearch.ssl.transport.enabled`                     | Enable Transport SSL for Elasticsearch                                                                                                                   | `false`                                                                 |
 | `elasticsearch.ssl.transport.existingCertSecret`          | Name of secret that contains the transport certs                                                                                                         | `""`                                                                    |
+| `elasticsearch.ssl.transport.existingCertSecretCertSubPath`  | Subpath of elastic transport cert secret                                                                                                              | `"elk-transport-crt.pem"`                                               |
+| `elasticsearch.ssl.transport.existingCertSecretKeySubPath`   | Subpath of elastic transport key secret                                                                                                               | `"elk-transport-key.pem"`                                               |
+| `elasticsearch.ssl.transport.existingCertSecretRootCASubPath`| Subpath of elastic transport root ca secret                                                                                                           | `"elk-transport-root-ca.pem"`                                           |
 | `elasticsearch.ssl.rest.enabled`                          | Enable REST SSL for Elasticsearch                                                                                                                        | `false`                                                                 |
 | `elasticsearch.ssl.rest.existingCertSecret`               | Name of secret that contains the Elasticsearch REST certs                                                                                                | `""`                                                                    |
+| `elasticsearch.ssl.rest.existingCertSecretCertSubPath`    | Subpath of elastic rest cert secret                                                                                                                      | `"elk-rest-crt.pem"`                                                    |
+| `elasticsearch.ssl.rest.existingCertSecretKeySubPath`     | Subpath of elastic rest key secret                                                                                                                       | `"elk-rest-key.pem"`                                                    |
+| `elasticsearch.ssl.rest.existingCertSecretRootCASubPath`  | Subpath of elastic rest root ca secret                                                                                                                   | `"elk-rest-root-ca.pem"`                                                |
 | `elasticsearch.ssl.admin.enabled`                         | Enable Admin SSL cert usage for Elasticsearch                                                                                                            | `false`                                                                 |
 | `elasticsearch.ssl.admin.existingCertSecret`              | Name of secret that contains the admin users Elasticsearch certs                                                                                         | `""`                                                                    |
+| `elasticsearch.ssl.admin.existingCertSecretCertSubPath`   | Subpath of elastic admin cert secret                                                                                                                     | `"admin-crt.pem"`                                                       |
+| `elasticsearch.ssl.admin.existingCertSecretKeySubPath`    | Subpath of elastic admin key secret                                                                                                                      | `"admin-key.pem"`                                                       |
+| `elasticsearch.ssl.admin.existingCertSecretRootCASubPath` | Subpath of elastic admin root ca secret                                                                                                                  | `"admin-root-ca.pem"`                                                   |
 | `elasticsearch.master.enabled`                            | Enables the Elasticsearch Master                                                                                                                         | `true`                                                                  |
 | `elasticsearch.master.replicas`                           | Number of Elasticsearch masters to spin up                                                                                                               | `3`                                                                     |
 | `elasticsearch.master.nodeAffinity`                       | Elasticsearch masters nodeAffinity                                                                                                                       | `{}`                                                                    |

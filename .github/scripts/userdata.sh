@@ -1,12 +1,32 @@
 #!/bin/bash
 
+###### Information ############################################################################
+# Name:          userdata.sh
+# Maintainer:    ODFE Infra Team
+# Language:      Shell
+#
+# About:         This script is related to testing-domains set-up.
+#                See https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/283
+#
+#                In order to set-up domains, EC2 needs to have ES and Kibana running, 
+#                hence this script will act as userdata input to install and configure 
+#                the necessary services while installing the EC2 via AutoScaling Groups
+#
+# Usage:         ./userdata.sh $distribution $security
+#                $distribution: TAR | DEB | RPM (required)
+#                $security: ENABLE | DISABLE (required)
+#
+# Starting Date: 2020-06-24
+# Modified Date: 2020-07-30
+###############################################################################################
+
 set -e
 REPO_ROOT=`git rev-parse --show-toplevel`
 ES_VER=`$REPO_ROOT/bin/version-info --es`
 ODFE_VER=`$REPO_ROOT/bin/version-info --od`
 echo $ES_VER $ODFE_VER
 
-if [ "$#" -eq 0 ] || [ "$#" -gt 2 ] || [ -z "$1" ] || [ -z "$2" ]
+if [ "$#" -ne 2 ] || [ -z "$1" ] || [ -z "$2" ]
 then
     echo "Please assign 2 parameters when running this script"
     echo "Format for dispatch event: \"client_payload\": {
@@ -31,14 +51,13 @@ echo "node.name: init-master" >> /etc/elasticsearch/elasticsearch.yml
 echo "cluster.name: odfe-$ODFE_VER-rpm-auth" >> /etc/elasticsearch/elasticsearch.yml
 echo "network.host: 0.0.0.0" >> /etc/elasticsearch/elasticsearch.yml
 echo "cluster.initial_master_nodes: [\"init-master\"]" >> /etc/elasticsearch/elasticsearch.yml
+echo "webservice-bind-host = 0.0.0.0" >> /usr/share/elasticsearch/plugins/opendistro_performance_analyzer/pa_config/performance-analyzer.properties
 
-# Start the service
-sudo systemctl start elasticsearch.service
-sleep 30
 
 # Installing kibana
 sudo yum install -y opendistroforelasticsearch-kibana-$ODFE_VER
 echo "server.host: 0.0.0.0" >> /etc/kibana/kibana.yml
+
 EOF
 fi
 
@@ -61,14 +80,12 @@ echo "node.name: init-master" >> /etc/elasticsearch/elasticsearch.yml
 echo "cluster.initial_master_nodes: [\"init-master\"]" >> /etc/elasticsearch/elasticsearch.yml
 echo "cluster.name: odfe-$ODFE_VER-deb-auth" >> /etc/elasticsearch/elasticsearch.yml
 echo "network.host: 0.0.0.0" >> /etc/elasticsearch/elasticsearch.yml
-
-# Start the service
-sudo /etc/init.d/elasticsearch start
-sleep 30
+echo "webservice-bind-host = 0.0.0.0" >> /usr/share/elasticsearch/plugins/opendistro_performance_analyzer/pa_config/performance-analyzer.properties
 
 # Installing kibana
 sudo apt install opendistroforelasticsearch-kibana
 echo "server.host: 0.0.0.0" >> /etc/kibana/kibana.yml
+
 
 EOF
 fi
@@ -83,7 +100,7 @@ echo "*   soft  nofile  65535" | tee --append /etc/security/limits.conf
 sudo apt-get install -y zip
 ulimit -n 65535
 wget https://d3g5vo6xdbdb9a.cloudfront.net/downloads/tarball/opendistro-elasticsearch/opendistroforelasticsearch-$ODFE_VER.tar.gz
-tar zxvf opendistroforelasticsearch-$ODFE_VER.tar.gz
+tar zxf opendistroforelasticsearch-$ODFE_VER.tar.gz
 chown -R ubuntu:ubuntu opendistroforelasticsearch-$ODFE_VER
 cd opendistroforelasticsearch-$ODFE_VER/
 
@@ -91,16 +108,41 @@ echo "node.name: init-master" >> config/elasticsearch.yml
 echo "cluster.initial_master_nodes: [\"init-master\"]" >> config/elasticsearch.yml
 echo "cluster.name: odfe-$ODFE_VER-tarball-auth" >> config/elasticsearch.yml
 echo "network.host: 0.0.0.0" >> config/elasticsearch.yml
+echo "webservice-bind-host = 0.0.0.0" >> /opendistroforelasticsearch-$ODFE_VER/plugins/opendistro_performance_analyzer/pa_config/performance-analyzer.properties
 sudo sysctl -w vm.max_map_count=262144
-sudo -u ubuntu nohup ./opendistro-tar-install.sh 2>&1 > /dev/null &
+
+
 
 #Installing kibana
 cd /
 wget https://d3g5vo6xdbdb9a.cloudfront.net/downloads/tarball/opendistroforelasticsearch-kibana/opendistroforelasticsearch-kibana-$ODFE_VER.tar.gz
-tar zxvf opendistroforelasticsearch-kibana-$ODFE_VER.tar.gz
+tar zxf opendistroforelasticsearch-kibana-$ODFE_VER.tar.gz
 chown -R ubuntu:ubuntu opendistroforelasticsearch-kibana
 cd opendistroforelasticsearch-kibana/
 echo "server.host: 0.0.0.0" >> config/kibana.yml
+
+EOF
+fi
+
+# Extra configurations required
+if [ "$1" = "TAR" ]
+then
+cat <<- EOF >> $REPO_ROOT/userdata_$1.sh
+cd /opendistroforelasticsearch-$ODFE_VER/
+mkdir -p snapshots
+echo "path.repo: [\"/opendistroforelasticsearch-$ODFE_VER/snapshots\"]" >> config/elasticsearch.yml
+# Increase the number of allowed script compilations. The SQL integ tests use a lot of scripts.
+echo "script.context.field.max_compilations_rate: 1000/1m" >> config/elasticsearch.yml
+EOF
+else
+cat <<- EOF >> $REPO_ROOT/userdata_$1.sh
+sudo mkdir -p /home/repo
+sudo chmod 777 /home/repo
+sudo chmod 777 /etc/elasticsearch/elasticsearch.yml
+sudo sed -i '/path.logs/a path.repo: ["/home/repo"]' /etc/elasticsearch/elasticsearch.yml
+sudo sed -i /^node.max_local_storage_nodes/d /etc/elasticsearch/elasticsearch.yml
+# Increase the number of allowed script compilations. The SQL integ tests use a lot of scripts.
+sudo echo "script.context.field.max_compilations_rate: 1000/1m" >> /etc/elasticsearch/elasticsearch.yml
 EOF
 fi
 
@@ -118,8 +160,10 @@ sudo sed -i 's/https/http/' /etc/kibana/kibana.yml
 EOF
 else
 sed -i "s/^echo \"cluster.name.*/echo \"cluster.name \: odfe-$ODFE_VER-$1-noauth\" \>\> config\/elasticsearch.yml/g" $REPO_ROOT/userdata_$1.sh
-sed -i "/echo \"network.host/a echo \"opendistro_security.disabled: true\" \>\> config\/elasticsearch.yml" $REPO_ROOT/userdata_$1.sh
 cat <<- EOF >> userdata_$1.sh
+sudo rm -rf plugins/opendistro_security
+sed -i /^opendistro_security/d config/elasticsearch.yml
+cd /opendistroforelasticsearch-kibana/
 sudo rm -rf plugins/opendistro_security
 sed -i /^opendistro_security/d config/kibana.yml
 sed -i 's/https/http/' config/kibana.yml
@@ -127,10 +171,37 @@ EOF
 fi
 fi
 
-#Start Kibana
-if [[ "$1" = "RPM"  ||  "$1" = "DEB" ]]
+#### Start Elasticsearch ####
+if [[ "$1" = "TAR" ]]
 then
-echo "sudo systemctl start kibana.service" >> $REPO_ROOT/userdata_$1.sh
+cat <<- EOF >> $REPO_ROOT/userdata_$1.sh
+cd /opendistroforelasticsearch-$ODFE_VER/
+sudo -u ubuntu nohup ./opendistro-tar-install.sh 2>&1 > /dev/null &
+EOF
+if [[ "$2" = "ENABLE" ]]
+then
+cat <<- EOF >> $REPO_ROOT/userdata_$1.sh
+sleep 30
+kill -9 `ps -ef | grep [e]lasticsearch | awk '{print $2}'`
+sed -i /^node.max_local_storage_nodes/d ./config/elasticsearch.yml
+nohup ./opendistro-tar-install.sh > /dev/null 2>&1 &
+EOF
+fi
 else
-echo "sudo -u ubuntu nohup ./bin/kibana &" >> $REPO_ROOT/userdata_$1.sh
+cat <<- EOF >> $REPO_ROOT/userdata_$1.sh
+sudo systemctl start elasticsearch.service
+sleep 30
+EOF
+fi
+
+#### Start Kibana ####
+if [[ "$1" = "TAR" ]]
+then
+cat <<- EOF >> $REPO_ROOT/userdata_$1.sh
+cd /
+cd opendistroforelasticsearch-kibana/
+sudo -u ubuntu nohup ./bin/kibana &
+EOF
+else
+echo "sudo systemctl start kibana.service" >> $REPO_ROOT/userdata_$1.sh
 fi

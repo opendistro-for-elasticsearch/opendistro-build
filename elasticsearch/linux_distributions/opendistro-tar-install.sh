@@ -43,7 +43,7 @@ echo "done plugins"
 
 ##Check KNN lib existence in ES TAR distribution
 echo "Checking kNN library"
-FILE=$ES_KNN_LIB_DIR/libKNNIndexV1_7_3_6.so
+FILE=`ls $ES_KNN_LIB_DIR/libKNNIndex*.so`
 if test -f "$FILE"; then
     echo "FILE EXISTS $FILE"
 else

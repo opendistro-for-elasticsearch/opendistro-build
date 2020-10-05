@@ -8,14 +8,14 @@ name: Create testing cluster with static domain
 
 on:
   #schedule:
-  #  - cron: '30 10 * * *'
+  #  - cron: '0 11 * * *'
   repository_dispatch:
     types: [test-cluster-static-domain-set-up]
 
 jobs:
   Create-Cluster:
     name: Create Testing cluster
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
 
     steps:
       - uses: actions/checkout@v1
@@ -56,6 +56,7 @@ jobs:
               # Getting target groups for ELB mapping
               esTargetGroup=`aws elbv2 describe-target-groups --names ES-$distribution_type-SECURITY-$security --query TargetGroups[*].TargetGroupArn --output text`
               kibanaTargetGroup=`aws elbv2 describe-target-groups --names KIBANA-$distribution_type-SECURITY-$security --query TargetGroups[*].TargetGroupArn --output text`
+              paTargetGroup=`aws elbv2 describe-target-groups --names PA-$distribution_type-SECURITY-$security --query TargetGroups[*].TargetGroupArn --output text`
   
               echo "Creating $stackName stack"
   
@@ -67,7 +68,9 @@ jobs:
               ParameterKey=ODFESecurityGroup,ParameterValue=${{secrets.ODFESECURITYGROUP}} \
               ParameterKey=keypair,ParameterValue=${{secrets.AWS_ODFE_TESTING_CLUSTER_KEYPAIR}} \
               ParameterKey=esTargetGroup,ParameterValue=$esTargetGroup \
-              ParameterKey=kibanaTargetGroup,ParameterValue=$kibanaTargetGroup
+              ParameterKey=kibanaTargetGroup,ParameterValue=$kibanaTargetGroup \
+              ParameterKey=paTargetGroup,ParameterValue=$paTargetGroup
+
   
               aws cloudformation wait stack-create-complete --stack-name $stackName
               sleep 60
@@ -89,6 +92,7 @@ jobs:
                   stackName=ODFE-$distribution_type-SECURITY-$security
                   echo $stackName
                   stack_setup $distribution_type $security
+                  rm userdata_$distribution_type.sh
                 done
               done
             fi

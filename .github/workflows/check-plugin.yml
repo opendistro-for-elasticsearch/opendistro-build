@@ -9,7 +9,7 @@ on:
 jobs:
   plugin-availability-main:
     name: Check Plugin Availability Main
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v1
       - name: Configure AWS Credentials
@@ -26,12 +26,12 @@ jobs:
           echo ::set-env name=CHIME_MESSAGE::$(cat /tmp/chime_message.md)
           exit `cat /tmp/plugin_status.check`
 
-      - name: Send Chime Message
+      - name: Send Slack Message
         if: ${{ always() }}
-        uses: ros-tooling/action-amazon-chime@master
+        uses: peterzhuamazon/github-slack-action@master
         with:
-          message: ${{ env.CHIME_MESSAGE }} 
-          webhook: ${{ secrets.CHIME_ODFE_RELEASE }}
+          text: ${{ env.CHIME_MESSAGE }}
+          webhook: ${{ secrets.SLACK_ODFE_RELEASE }}
 
       - name: Send mail
         if: ${{ always() }}
@@ -45,7 +45,7 @@ jobs:
           subject: ODFE Plugin Status
           # Read file contents as body:
           body: file:///tmp/message.md
-          to: odfe-distribution-build@amazon.com
+          to: odfe-release-process@amazon.com
           from: Opendistro Elasticsearch
           # Optional content type:
           content_type: text/html

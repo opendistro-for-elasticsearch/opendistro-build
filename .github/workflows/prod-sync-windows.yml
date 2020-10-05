@@ -2,11 +2,11 @@ name: Sync windows artifacts to Prod
 
 on: 
   repository_dispatch:
-    types: [release-sync-windows]
+    types: [prod-sync-windows]
 
 jobs:
   Sync-Windows-Prod:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v1
 
