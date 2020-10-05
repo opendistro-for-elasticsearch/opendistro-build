@@ -89,8 +89,8 @@ jobs:
 
       - name: run ES and kibana and IT (RUN IN ONE STEP OR WINDOWS BREAK)
         run: |
-          #.github\scripts\setup_runners_service_windows.ps1 --kibana-nosec
-          .github/scripts/setup_runners_service_windows.ps1 --kibana-nosec
+          .github\scripts\setup_runners_service_windows.ps1 --kibana-nosec
+          #.github/scripts/setup_runners_service_windows.ps1 --kibana-nosec
           echo "load the indices"
           netstat -anp tcp | grep LISTEN
           curl https://localhost:9200 -u admin:admin --insecure
@@ -100,5 +100,5 @@ jobs:
           #dir
           cd ./kibana/plugins/sql-workbench
           npx cypress run
-        shell: bash
+        #shell: bash
  
