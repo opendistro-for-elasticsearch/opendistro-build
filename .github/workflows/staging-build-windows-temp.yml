@@ -68,14 +68,14 @@ jobs:
 #          echo "Installing yarn ${{ env.kibana_yarn_version }}"
 #          npm i -g yarn@${{ env.kibana_yarn_version }}
 #      
-#      - name: Bootstrap the plugin
-#        run: |
-#          cd ./kibana/plugins
-#          cp -rp sql/sql-workbench .
-#          rm -rf sql/
-#          cd sql-workbench
-#        shell: bash
-#
+      - name: Bootstrap the plugin
+        run: |
+          cd ./kibana/plugins
+          cp -rp sql/sql-workbench .
+          rm -rf sql/
+          cd sql-workbench
+        shell: bash
+
       - name: Retry the bootstraps
         # sql repo has a bug that you have to bootstrap at least twice to success
         # this is a temp solution and they will try to fix it later
