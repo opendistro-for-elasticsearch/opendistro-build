@@ -430,7 +430,8 @@ jobs:
         with:
           timeout_minutes: 60
           max_attempts: 3
-          command: cd ./kibana/plugins/sql-workbench; dir; yarn kbn bootstrap
+          # We have to use "&&" in pwsh as ";" does not work here
+          command: cd ./kibana/plugins/sql-workbench && dir && yarn kbn bootstrap
 
       - name: run ES and kibana and IT (RUN IN ONE STEP OR WINDOWS BREAK)
         run: |
