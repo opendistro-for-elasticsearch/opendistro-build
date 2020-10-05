@@ -74,6 +74,9 @@ jobs:
           cp -rp sql/sql-workbench .
           rm -rf sql/
           cd sql-workbench
+          echo 123
+          pwd
+          echo 123
         shell: bash
 
       - name: Retry the bootstraps
