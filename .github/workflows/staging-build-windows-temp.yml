@@ -84,7 +84,7 @@ jobs:
           timeout_minutes: 60
           max_attempts: 3
           #command: cd ./kibana/plugins/sql-workbench; dir; yarn kbn bootstrap
-          command: pushd kibana/plugins; dir
+          command: dir
 
       - name: run ES and kibana and IT (RUN IN ONE STEP OR WINDOWS BREAK)
         run: |
