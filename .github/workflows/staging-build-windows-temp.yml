@@ -31,61 +31,61 @@ jobs:
           echo ::set-env name=p_tag_sql_kibana::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)
         shell: bash
           
-#      - name: Checkout Kibana
-#        uses: actions/checkout@v2
-#        with:
-#          repository: opendistro-for-elasticsearch/kibana-oss
-#          ref: ${{env.es_version}}
-#          token: ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
-#          path: kibana
-#           
-#      - uses: actions/checkout@v2
-#        with:
-#          repository: opendistro-for-elasticsearch/sql
-#          ref: ${{env.p_tag_sql_kibana}}
-#          path: kibana/plugins/sql
-#      
-#      - name: Setup Java
-#        uses: actions/setup-java@v1
-#        with:
-#          java-version: ${{ matrix.java }}
-#      
-#      - name: Get node and yarn versions
-#        id: node_yarn_versions
-#        run: |
-#          echo ::set-env name=kibana_node_version::$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")
-#          echo ::set-env name=kibana_yarn_version::$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")
-#        shell: bash
-#      
-#      - name: Setup node
-#        uses: actions/setup-node@v1
-#        with:
-#          node-version: ${{env.kibana_node_version}}
-#          registry-url: 'https://registry.npmjs.org'
-#      
-#      - name: Install correct yarn version for Kibana
-#        run: |
-#          npm uninstall -g yarn
-#          echo "Installing yarn ${{ env.kibana_yarn_version }}"
-#          npm i -g yarn@${{ env.kibana_yarn_version }}
-#      
-#      - name: Bootstrap the plugin
-#        run: |
-#          cd ./kibana/plugins
-#          cp -rp sql/sql-workbench .
-#          rm -rf sql/
-#          cd sql-workbench
-#        shell: bash
-#
-#      - name: Retry the bootstraps
-#        # sql repo has a bug that you have to bootstrap at least twice to success
-#        # this is a temp solution and they will try to fix it later
-#        uses: nick-invision/retry@v1
-#        with:
-#          timeout_minutes: 60
-#          max_attempts: 3
-#          # We have to use "&&" in pwsh as ";" does not work here
-#          command: cd ./kibana/plugins/sql-workbench && dir && yarn kbn bootstrap
+      - name: Checkout Kibana
+        uses: actions/checkout@v2
+        with:
+          repository: opendistro-for-elasticsearch/kibana-oss
+          ref: ${{env.es_version}}
+          token: ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
+          path: kibana
+           
+      - uses: actions/checkout@v2
+        with:
+          repository: opendistro-for-elasticsearch/sql
+          ref: ${{env.p_tag_sql_kibana}}
+          path: kibana/plugins/sql
+      
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+      
+      - name: Get node and yarn versions
+        id: node_yarn_versions
+        run: |
+          echo ::set-env name=kibana_node_version::$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")
+          echo ::set-env name=kibana_yarn_version::$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")
+        shell: bash
+      
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{env.kibana_node_version}}
+          registry-url: 'https://registry.npmjs.org'
+      
+      - name: Install correct yarn version for Kibana
+        run: |
+          npm uninstall -g yarn
+          echo "Installing yarn ${{ env.kibana_yarn_version }}"
+          npm i -g yarn@${{ env.kibana_yarn_version }}
+      
+      - name: Bootstrap the plugin
+        run: |
+          cd ./kibana/plugins
+          cp -rp sql/sql-workbench .
+          rm -rf sql/
+          cd sql-workbench
+        shell: bash
+
+      - name: Retry the bootstraps
+        # sql repo has a bug that you have to bootstrap at least twice to success
+        # this is a temp solution and they will try to fix it later
+        uses: nick-invision/retry@v1
+        with:
+          timeout_minutes: 60
+          max_attempts: 3
+          # We have to use "&&" in pwsh as ";" does not work here
+          command: cd ./kibana/plugins/sql-workbench && dir && yarn kbn bootstrap
 
       - name: run ES and kibana and IT (RUN IN ONE STEP OR WINDOWS BREAK)
         run: |
