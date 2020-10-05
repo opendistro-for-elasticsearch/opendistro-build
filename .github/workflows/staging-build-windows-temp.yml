@@ -93,7 +93,8 @@ jobs:
           #.github/scripts/setup_runners_service_windows.ps1 --kibana-nosec
           echo "load the indices"
           netstat -anp tcp | grep LISTEN
-          curl https://localhost:9200 -u admin:admin --insecure
+          #curl https://localhost:9200 -u admin:admin --insecure
+          curl http://localhost:9200
           #curl https://raw.githubusercontent.com/opendistro-for-elasticsearch/sql/master/integ-test/src/test/resources/accounts.json | curl -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/accounts/_bulk?pretty' --data-binary @-
           #curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/sql/master/integ-test/src/test/resources/accounts.json | curl -s -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/accounts/_bulk?pretty' --data-binary @- > /dev/null 2>&1
           #curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/sql/master/integ-test/src/test/resources/employee_nested.json | curl -s -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/employee_nested/_bulk?pretty' --data-binary @- > /dev/null 2>&1
