@@ -62,7 +62,7 @@ spec:
       initContainers:
 {{- if .Values.elasticsearch.sysctl.enabled }}
       - name: init-sysctl
-        image: {{ .Values.elasticsearch.initContainer.image }}:{{ .Values.elasticsearch.initContainer.imageTag }}
+        image: {{ .Values.global.registry }}/{{ .Values.elasticsearch.initContainer.image }}:{{ .Values.elasticsearch.initContainer.imageTag }}
         command:
         - sysctl
         - -w
@@ -72,7 +72,7 @@ spec:
 {{- end }}
       - name: fixmount
         command: [ 'sh', '-c', 'chown -R 1000:1000 /usr/share/elasticsearch/data' ]
-        image: {{ .Values.elasticsearch.initContainer.image }}:{{ .Values.elasticsearch.initContainer.imageTag }}
+        image: {{ .Values.global.registry }}/{{ .Values.elasticsearch.initContainer.image }}:{{ .Values.elasticsearch.initContainer.imageTag }}
         volumeMounts:
           - mountPath: /usr/share/elasticsearch/data
             name: data
@@ -136,7 +136,7 @@ spec:
 {{ toYaml . | indent 10 }}
     {{- end }}
         # Official Image from Open Distro Team
-        image: {{ .Values.elasticsearch.image }}:{{ .Values.elasticsearch.imageTag }}
+        image: {{ .Values.global.registry }}/{{ .Values.elasticsearch.image }}:{{ .Values.elasticsearch.imageTag }}
         imagePullPolicy: {{ .Values.elasticsearch.imagePullPolicy | default "Always" | quote }}
         ports:
         - containerPort: 9300
@@ -232,10 +232,10 @@ spec:
         - mountPath: {{ .Values.elasticsearch.securityConfig.path }}
           name: security-config
         {{- end }}
+        {{- end }}
 {{- if .Values.elasticsearch.extraVolumeMounts }}
 {{ toYaml .Values.elasticsearch.extraVolumeMounts | indent 8 }}
 {{- end }}
-      {{- end }}
       volumes:
       - name: config
         secret:

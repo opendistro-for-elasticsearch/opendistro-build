@@ -2,11 +2,11 @@ name: Build ODFE AMI
 
 on:
   repository_dispatch:
-    types: [test-build-ami]
+    types: [staging-build-ami]
     
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python 3.8

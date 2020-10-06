@@ -2,11 +2,11 @@ name: Sync tar artifacts to Prod
 
 on: 
   repository_dispatch:
-    types: [release-sync-tar]
+    types: [prod-sync-tar]
 
 jobs:
   Sync-Tarball-Prod:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v1
 

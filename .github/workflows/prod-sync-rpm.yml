@@ -2,7 +2,7 @@ name: Sync RPM artifacts to Production
 
 on:
   repository_dispatch:
-    types: [release-sync-rpm]
+    types: [prod-sync-rpm]
   
 jobs:
   signing-artifacts:   

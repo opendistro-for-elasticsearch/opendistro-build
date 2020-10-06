@@ -4,7 +4,7 @@ on:
   #schedule:
   #  - cron: '0 0,15 * * *'
   repository_dispatch:
-    types: [test-build-docker-ci]
+    types: [staging-build-docker-ci]
 
 jobs:
   build-es-docker:
@@ -12,7 +12,7 @@ jobs:
       matrix:
         java: [14]
     name: Build ES Docker
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
     - uses: actions/checkout@v1
 

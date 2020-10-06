@@ -26,13 +26,98 @@ plugins {
 }
 
 ext {
-    // Remember to increment both of these when rolling out a new version
-    es_version = System.getProperty("es.version", "7.8.0")
-    opendistroVersion = "1.9.0"
-    baseODPluginsVersion = "1.9.0"
-    nextODPluginsVersion = "1.9.1"
+    println("get dependencies names and corresponding versions")
+
+    new ByteArrayOutputStream().withStream { os1 ->
+      def result1 = exec {
+        executable = '../../bin/version-info'
+        args = ['--es']
+        standardOutput = os1
+      }
+      ext.es_version = os1.toString().trim()
+    }
+    elasticsearchVersion = System.getProperty("es.version", ext.es_version)
+    println("es_version: " + elasticsearchVersion)
+
+    new ByteArrayOutputStream().withStream { os2 ->
+      def result2 = exec {
+        executable = '../../bin/version-info'
+        args = ['--od']
+        standardOutput = os2
+      }
+      ext.od_version = os2.toString().trim()
+    }
+    opendistroVersion = ext.od_version
+    println("od_version: " + opendistroVersion)
 
     isSnapshot = "true" == System.getProperty("build.snapshot", "true")
+
+    ///////////////////////////////////////////////////////////////////
+
+    new ByteArrayOutputStream().withStream { os3 ->
+      def result3 = exec {
+        executable = '../../bin/plugins-info'
+        args = ['elasticsearch', 'rpm', '--require-install-true']
+        standardOutput = os3
+      }
+      ext.plugin_names = os3.toString()
+    }
+
+    new ByteArrayOutputStream().withStream { os4 ->
+      def result4 = exec {
+        executable = '../../bin/plugins-info'
+        args = ['elasticsearch', 'git', '--require-install-true']
+        standardOutput = os4
+      }
+      ext.plugin_git = os4.toString().replaceAll("\n", ",")
+    }
+
+    new ByteArrayOutputStream().withStream { os5 ->
+      def result5 = exec {
+        executable = '../../bin/version-info'
+        args = ['--is-cut']
+        standardOutput = os5
+      }
+      ext.is_cut = os5.toString().trim()
+    }
+    println("is_cut: " + ext.is_cut)
+
+   if (ext.is_cut.equals("true")) {
+      new ByteArrayOutputStream().withStream { os6 ->
+        def result6 = exec {
+          executable = '../../bin/plugins-info'
+          args = ['elasticsearch', 'cutversion', '--require-install-true']
+          standardOutput = os6
+        }
+        ext.plugin_versions = os6.toString()
+        println("Version is cut")
+      }
+    }
+    else {
+      new ByteArrayOutputStream().withStream { os7 ->
+        def result7 = exec {
+          executable = '../../.github/scripts/plugin_tag.sh'
+          args = [ext.plugin_git, opendistroVersion]
+          standardOutput = os7
+        }
+        ext.plugin_versions = os7.toString().replaceAll("v", "")
+        println("Version not cut")
+      }
+    }
+
+    new ByteArrayOutputStream().withStream { os8 ->
+      def result8 = exec {
+        executable = '../../bin/version-info'
+        args = ['--od-next']
+        standardOutput = os8
+      }
+      ext.plugin_versions_next = os8.toString().trim() + ".0"
+    }
+
+    pname_arr = ext.plugin_names.split("\n").toList()
+    pver_arr = ext.plugin_versions.split("\n").toList()
+    pver_next = ext.plugin_versions_next
+
 }
 group 'com.amazon.opendistroforelasticsearch'
 version = opendistroVersion + (isSnapshot ? "-SNAPSHOT" : "")
@@ -41,26 +126,25 @@ ospackage {
     packageName = "opendistroforelasticsearch"
     release = isSnapshot ? "0.1" : '1'
     version = "${project.version}" - "-SNAPSHOT"
+    
+    println("setup these dependencies: \n##################")
+    println("elasticsearch-oss" + ": = " + elasticsearchVersion)
 
-    requires('elasticsearch-oss', es_version, EQUAL)
-    requires('opendistro-alerting', baseODPluginsVersion, GREATER | EQUAL)
-    requires('opendistro-sql', baseODPluginsVersion, GREATER | EQUAL)
-    requires('opendistro-security', baseODPluginsVersion, GREATER | EQUAL)
-    requires('opendistro-performance-analyzer', baseODPluginsVersion, GREATER | EQUAL)
-    requires('opendistro-job-scheduler', baseODPluginsVersion, GREATER | EQUAL)
-    requires('opendistro-index-management', baseODPluginsVersion, GREATER | EQUAL)
-    requires('opendistro-knn', baseODPluginsVersion, GREATER | EQUAL)
-    requires('opendistro-anomaly-detection', baseODPluginsVersion, GREATER | EQUAL)
+    // setup package requirements
+    requires('elasticsearch-oss', elasticsearchVersion, EQUAL)
 
-    requires('opendistro-alerting', nextODPluginsVersion, LESS)
-    requires('opendistro-sql', nextODPluginsVersion, LESS)
-    requires('opendistro-security', nextODPluginsVersion, LESS)
-    requires('opendistro-performance-analyzer', nextODPluginsVersion, LESS)
-    requires('opendistro-job-scheduler', nextODPluginsVersion, LESS)
-    requires('opendistro-index-management', nextODPluginsVersion, LESS)
-    requires('opendistro-knn', nextODPluginsVersion, LESS)
-    requires('opendistro-anomaly-detection', nextODPluginsVersion, LESS)
- 
+    for (int i = 0; i < pname_arr.size; i++) {
+      String pluginName = pname_arr[i].substring(pname_arr[i].lastIndexOf("/") + 1).trim()
+      String pluginVersion = pver_arr[i].trim()
+      String pluginVersionNext = pver_next.trim()
+
+      if (!pluginName.contains("none")) {
+        println(pluginName + ": >= " + pluginVersion + " | < " + pluginVersionNext)
+        requires(pluginName, pluginVersion, GREATER | EQUAL)
+        requires(pluginName, pluginVersionNext, LESS)
+      }
+    } 
+
     packager = 'Amazon'
     vendor = 'Amazon'
     os = 'LINUX'
