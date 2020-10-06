@@ -563,7 +563,6 @@ jobs:
           working-directory: kibana/plugins/sql-workbench
           command: npx cypress run
 
-
   Test-AD-KIBANA:
     needs: [sign-deb-artifacts]
     runs-on: [ubuntu-18.04]
