@@ -437,12 +437,13 @@ jobs:
         run: |
           .github\scripts\setup_runners_service_windows.ps1 --kibana-nosec
           echo "load the indices"
-          curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/sql/master/integ-test/src/test/resources/accounts.json | curl -s -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/accounts/_bulk?pretty' --data-binary @- > /dev/null 2>&1
-          curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/sql/master/integ-test/src/test/resources/employee_nested.json | curl -s -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/employee_nested/_bulk?pretty' --data-binary @- > /dev/null 2>&1
+          # Use "" (double quotes) around @ and $null (replace /dev/null) in pwsh to get the curl commands work
+          curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/sql/master/integ-test/src/test/resources/accounts.json | curl -s -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/accounts/_bulk?pretty' --data-binary "@-" > $null 2>&1
+          curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/sql/master/integ-test/src/test/resources/employee_nested.json | curl -s -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/employee_nested/_bulk?pretty' --data-binary "@-" > $null 2>&1
           dir
           cd ./kibana/plugins/sql-workbench
           npx cypress run
- 
+  
   Test-AD-KIBANA:
     needs: [build-es-artifacts, build-kibana-artifacts]
     runs-on: windows-latest
