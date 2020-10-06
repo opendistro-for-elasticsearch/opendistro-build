@@ -42,6 +42,10 @@ spec:
 {{- end }}
     spec:
 {{- include "opendistro-es.imagePullSecrets" . | indent 6 }}
+{{- if .Values.kibana.extraInitContainers }}
+      initContainers:
+{{ toYaml .Values.kibana.extraInitContainers | indent 8 }}
+{{- end }}
       containers:
       - env:
         - name: CLUSTER_NAME
@@ -125,6 +129,9 @@ spec:
 {{- end }}
         ports:
         - containerPort: {{ .Values.kibana.port }}
+{{- if .Values.kibana.extraContainers }}
+{{ toYaml .Values.kibana.extraContainers | indent 6 }}
+{{- end }}
       serviceAccountName: {{ template "opendistro-es.kibana.serviceAccountName" . }}
       volumes:
         {{- if .Values.kibana.config }}
