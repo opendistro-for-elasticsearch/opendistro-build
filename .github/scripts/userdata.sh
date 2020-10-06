@@ -51,11 +51,13 @@ echo "node.name: init-master" >> /etc/elasticsearch/elasticsearch.yml
 echo "cluster.name: odfe-$ODFE_VER-rpm-auth" >> /etc/elasticsearch/elasticsearch.yml
 echo "network.host: 0.0.0.0" >> /etc/elasticsearch/elasticsearch.yml
 echo "cluster.initial_master_nodes: [\"init-master\"]" >> /etc/elasticsearch/elasticsearch.yml
+echo "webservice-bind-host = 0.0.0.0" >> /usr/share/elasticsearch/plugins/opendistro_performance_analyzer/pa_config/performance-analyzer.properties
 
 
 # Installing kibana
 sudo yum install -y opendistroforelasticsearch-kibana-$ODFE_VER
 echo "server.host: 0.0.0.0" >> /etc/kibana/kibana.yml
+
 EOF
 fi
 
@@ -78,10 +80,12 @@ echo "node.name: init-master" >> /etc/elasticsearch/elasticsearch.yml
 echo "cluster.initial_master_nodes: [\"init-master\"]" >> /etc/elasticsearch/elasticsearch.yml
 echo "cluster.name: odfe-$ODFE_VER-deb-auth" >> /etc/elasticsearch/elasticsearch.yml
 echo "network.host: 0.0.0.0" >> /etc/elasticsearch/elasticsearch.yml
+echo "webservice-bind-host = 0.0.0.0" >> /usr/share/elasticsearch/plugins/opendistro_performance_analyzer/pa_config/performance-analyzer.properties
 
 # Installing kibana
 sudo apt install opendistroforelasticsearch-kibana
 echo "server.host: 0.0.0.0" >> /etc/kibana/kibana.yml
+
 
 EOF
 fi
@@ -96,7 +100,7 @@ echo "*   soft  nofile  65535" | tee --append /etc/security/limits.conf
 sudo apt-get install -y zip
 ulimit -n 65535
 wget https://d3g5vo6xdbdb9a.cloudfront.net/downloads/tarball/opendistro-elasticsearch/opendistroforelasticsearch-$ODFE_VER.tar.gz
-tar zxvf opendistroforelasticsearch-$ODFE_VER.tar.gz
+tar zxf opendistroforelasticsearch-$ODFE_VER.tar.gz
 chown -R ubuntu:ubuntu opendistroforelasticsearch-$ODFE_VER
 cd opendistroforelasticsearch-$ODFE_VER/
 
@@ -104,16 +108,19 @@ echo "node.name: init-master" >> config/elasticsearch.yml
 echo "cluster.initial_master_nodes: [\"init-master\"]" >> config/elasticsearch.yml
 echo "cluster.name: odfe-$ODFE_VER-tarball-auth" >> config/elasticsearch.yml
 echo "network.host: 0.0.0.0" >> config/elasticsearch.yml
+echo "webservice-bind-host = 0.0.0.0" >> /opendistroforelasticsearch-$ODFE_VER/plugins/opendistro_performance_analyzer/pa_config/performance-analyzer.properties
 sudo sysctl -w vm.max_map_count=262144
+
 
 
 #Installing kibana
 cd /
 wget https://d3g5vo6xdbdb9a.cloudfront.net/downloads/tarball/opendistroforelasticsearch-kibana/opendistroforelasticsearch-kibana-$ODFE_VER.tar.gz
-tar zxvf opendistroforelasticsearch-kibana-$ODFE_VER.tar.gz
+tar zxf opendistroforelasticsearch-kibana-$ODFE_VER.tar.gz
 chown -R ubuntu:ubuntu opendistroforelasticsearch-kibana
 cd opendistroforelasticsearch-kibana/
 echo "server.host: 0.0.0.0" >> config/kibana.yml
+
 EOF
 fi
 
@@ -121,10 +128,11 @@ fi
 if [ "$1" = "TAR" ]
 then
 cat <<- EOF >> $REPO_ROOT/userdata_$1.sh
+cd /opendistroforelasticsearch-$ODFE_VER/
 mkdir -p snapshots
-echo "path.repo: [\"$PWD/snapshots\"]" >> $ES_ROOT/config/elasticsearch.yml
+echo "path.repo: [\"/opendistroforelasticsearch-$ODFE_VER/snapshots\"]" >> config/elasticsearch.yml
 # Increase the number of allowed script compilations. The SQL integ tests use a lot of scripts.
-echo "script.context.field.max_compilations_rate: 1000/1m" >> $ES_ROOT/config/elasticsearch.yml
+echo "script.context.field.max_compilations_rate: 1000/1m" >> config/elasticsearch.yml
 EOF
 else
 cat <<- EOF >> $REPO_ROOT/userdata_$1.sh
@@ -152,8 +160,10 @@ sudo sed -i 's/https/http/' /etc/kibana/kibana.yml
 EOF
 else
 sed -i "s/^echo \"cluster.name.*/echo \"cluster.name \: odfe-$ODFE_VER-$1-noauth\" \>\> config\/elasticsearch.yml/g" $REPO_ROOT/userdata_$1.sh
-sed -i "/echo \"network.host/a echo \"opendistro_security.disabled: true\" \>\> config\/elasticsearch.yml" $REPO_ROOT/userdata_$1.sh
 cat <<- EOF >> userdata_$1.sh
+sudo rm -rf plugins/opendistro_security
+sed -i /^opendistro_security/d config/elasticsearch.yml
+cd /opendistroforelasticsearch-kibana/
 sudo rm -rf plugins/opendistro_security
 sed -i /^opendistro_security/d config/kibana.yml
 sed -i 's/https/http/' config/kibana.yml
@@ -165,8 +175,7 @@ fi
 if [[ "$1" = "TAR" ]]
 then
 cat <<- EOF >> $REPO_ROOT/userdata_$1.sh
-cd /
-cd opendistroforelasticsearch-$ODFE_VER/
+cd /opendistroforelasticsearch-$ODFE_VER/
 sudo -u ubuntu nohup ./opendistro-tar-install.sh 2>&1 > /dev/null &
 EOF
 if [[ "$2" = "ENABLE" ]]

@@ -63,6 +63,7 @@ export PATH=$JAVA_HOME:$PATH
 which java
 java -version
 sudo sysctl -w vm.max_map_count=262144
+sudo chmod -R 777 /dev/shm
 
 if [ "$SETUP_DISTRO" = "zip" ]
 then
@@ -155,6 +156,7 @@ then
   curl -XGET https://localhost:9200 -u admin:admin --insecure
   curl -XGET https://localhost:9200/_cluster/health?pretty -u admin:admin --insecure
   echo "es start"
+  netstat -ntlp
   cd $REPO_ROOT
   exit 0
 fi
@@ -203,6 +205,7 @@ then
   curl -XGET http://localhost:9200
   curl -XGET http://localhost:9200/_cluster/health?pretty
   echo "es-nosec start"
+  netstat -ntlp
   cd $REPO_ROOT
   exit 0
 fi
@@ -258,6 +261,7 @@ then
   curl -v -XGET http://localhost:5601
   curl -v -XGET http://localhost:5601/api/status
   echo "es & kibana start"
+  netstat -ntlp
   cd $REPO_ROOT
   exit 0
 fi
@@ -303,6 +307,7 @@ then
   curl -v -XGET http://localhost:5601
   curl -v -XGET http://localhost:5601/api/status
   echo "es & kibana-nosec start"
+  netstat -ntlp
   cd $REPO_ROOT
   exit 0
 fi
