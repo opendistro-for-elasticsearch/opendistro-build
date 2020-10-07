@@ -14,6 +14,7 @@ jobs:
     runs-on: ubuntu-18.04
     name: Test-KNN-NoSec
     strategy:
+      fail-fast: false
       matrix:
         java: [14, 15]
     steps:
