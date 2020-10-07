@@ -428,6 +428,7 @@ jobs:
         # this is a temp solution and they will try to fix it later
         uses: nick-invision/retry@v1
         with:
+          # 60 min timeouts as certain runners like windows may take 30+ min just to complete one bootstrap
           timeout_minutes: 60
           max_attempts: 3
           # We have to use "&&" in pwsh as ";" does not work here
