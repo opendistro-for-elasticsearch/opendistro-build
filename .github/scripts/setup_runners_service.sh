@@ -155,16 +155,8 @@ then
   sleep 120
   curl -XGET https://localhost:9200 -u admin:admin --insecure
   curl -XGET https://localhost:9200/_cluster/health?pretty -u admin:admin --insecure
-  echo "es started"
-  echo "Starting performance analyzer cli"
-  ES_HOME="$PWD" nohup ./bin/performance-analyzer-agent-cli > /dev/null 2>&1 &
-  sleep 10
-  echo "Enabling performance analyzer and RCA"
-  curl localhost:9200/_opendistro/_performanceanalyzer/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
-  sleep 10
-  echo "Enabling RCA"
-  curl localhost:9200/_opendistro/_performanceanalyzer/rca/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
-  sleep 10
+  echo "es start"
+  netstat -ntlp
   cd $REPO_ROOT
   exit 0
 fi
@@ -213,15 +205,7 @@ then
   curl -XGET http://localhost:9200
   curl -XGET http://localhost:9200/_cluster/health?pretty
   echo "es-nosec start"
-  echo "Starting performance analyzer cli"
-  ES_HOME="$PWD" nohup ./bin/performance-analyzer-agent-cli > /dev/null 2>&1 &
-  sleep 10
-  echo "Enabling performance analyzer and RCA"
-  curl localhost:9200/_opendistro/_performanceanalyzer/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
-  sleep 10
-  echo "Enabling RCA"
-  curl localhost:9200/_opendistro/_performanceanalyzer/rca/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
-  sleep 10
+  netstat -ntlp
   cd $REPO_ROOT
   exit 0
 fi
@@ -277,6 +261,7 @@ then
   curl -v -XGET http://localhost:5601
   curl -v -XGET http://localhost:5601/api/status
   echo "es & kibana start"
+  netstat -ntlp
   cd $REPO_ROOT
   exit 0
 fi
@@ -322,6 +307,7 @@ then
   curl -v -XGET http://localhost:5601
   curl -v -XGET http://localhost:5601/api/status
   echo "es & kibana-nosec start"
+  netstat -ntlp
   cd $REPO_ROOT
   exit 0
 fi
