@@ -62,8 +62,9 @@ jobs:
     runs-on: ubuntu-18.04
     name: Test-ISM-NoSec
     strategy:
+      fail-fast: false
       matrix:
-        java: [14]
+        java: [14, 15]
     steps:
       - name: Set up AWS Cred
         uses: aws-actions/configure-aws-credentials@v1
@@ -94,8 +95,9 @@ jobs:
     runs-on: ubuntu-18.04
     name: Test-Alerting-NoSec
     strategy:
+      fail-fast: false
       matrix:
-        java: [14]
+        java: [14, 15]
     steps:
       - name: Set up AWS Cred
         uses: aws-actions/configure-aws-credentials@v1
@@ -126,8 +128,9 @@ jobs:
     runs-on: ubuntu-18.04
     name: Test-SQL-NoSec
     strategy:
+      fail-fast: false
       matrix:
-        java: [14]
+        java: [14, 15]
     steps:
       - name: Set up AWS Cred
         uses: aws-actions/configure-aws-credentials@v1
@@ -158,8 +161,9 @@ jobs:
     runs-on: ubuntu-18.04
     name: Test-KNN-NoSec
     strategy:
+      fail-fast: false
       matrix:
-        java: [14]
+        java: [14, 15]
     steps:
       - name: Set up AWS Cred
         uses: aws-actions/configure-aws-credentials@v1
@@ -190,8 +194,9 @@ jobs:
     runs-on: ubuntu-18.04
     name: Test-AD-NoSec
     strategy:
+      fail-fast: false
       matrix:
-        java: [14]
+        java: [14, 15]
     steps:
       - name: Set up AWS Cred
         uses: aws-actions/configure-aws-credentials@v1
@@ -222,8 +227,9 @@ jobs:
     runs-on: ubuntu-18.04
     name: Test-SQL
     strategy:
+      fail-fast: false
       matrix:
-        java: [14]
+        java: [14, 15]
     steps:
       - name: Set up AWS Cred
         uses: aws-actions/configure-aws-credentials@v1
@@ -254,8 +260,9 @@ jobs:
     runs-on: ubuntu-18.04
     name: Test-AD
     strategy:
+      fail-fast: false
       matrix:
-        java: [14]
+        java: [14, 15]
     steps:
       - name: Set up AWS Cred
         uses: aws-actions/configure-aws-credentials@v1
@@ -286,8 +293,9 @@ jobs:
     runs-on: [ubuntu-18.04]
     name: Test-ALERTING
     strategy:
+      fail-fast: false
       matrix:
-        java: [14]
+        java: [14, 15]
     steps:
       - uses: actions/checkout@v1
       - name: Set up AWS Cred
@@ -322,8 +330,9 @@ jobs:
     runs-on: [ubuntu-16.04]
     name: Test-AD-KIBANA-NoSec
     strategy:
+      fail-fast: false
       matrix:
-        java: [14]
+        java: [14, 15]
     steps:
       - uses: actions/checkout@v1
       - name: Set up AWS Cred
@@ -393,8 +402,9 @@ jobs:
     runs-on: [ubuntu-16.04]
     name: Test-AD-KIBANA
     strategy:
+      fail-fast: false
       matrix:
-        java: [14]
+        java: [14, 15]
     steps:
       - uses: actions/checkout@v1
       - name: Set up AWS Cred
