@@ -8,7 +8,7 @@ on:
 jobs:
   Test-PA-NoSec:
     runs-on: [ubuntu-18.04]
-    name: Test performance-analyzer without security
+    name: Test-PA-NoSec
     strategy:
       matrix:
         # perf-analyzer uses gradle 6.0.1 which does not work with java 14, hence we run this job with java 12.
@@ -30,20 +30,20 @@ jobs:
         run: |
           echo ::set-env name=pa_tag::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/performance-analyzer)
           echo ::set-env name=rca_tag::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/performance-analyzer-rca)
-      - name: Checkout perf analyzer RCA package
-        uses: actions/checkout@v1
-        with:
-          repository: opendistro-for-elasticsearch/performance-analyzer-rca
-          ref: ${{env.rca_tag}}
-      - name: Checkout perf analyzer package
-        uses: actions/checkout@v1
-        with:
-          repository: opendistro-for-elasticsearch/performance-analyzer
-          ref: ${{env.pa_tag}}
-      - name: Build RCA into MavenLocal
-        run: |
-          cd ${GITHUB_WORKSPACE}/../performance-analyzer-rca
-          ./gradlew publishToMavenLocal
+#      - name: Checkout perf analyzer RCA package
+#        uses: actions/checkout@v1
+#        with:
+#          repository: opendistro-for-elasticsearch/performance-analyzer-rca
+#          ref: ${{env.rca_tag}}
+#      - name: Checkout perf analyzer package
+#        uses: actions/checkout@v1
+#        with:
+#          repository: opendistro-for-elasticsearch/performance-analyzer
+#          ref: ${{env.pa_tag}}
+#      - name: Build RCA into MavenLocal
+#        run: |
+#          cd ${GITHUB_WORKSPACE}/../performance-analyzer-rca
+#          ./gradlew publishToMavenLocal
 #      - name: Update SHA
 #        run: |
 #          cd ${GITHUB_WORKSPACE}/../performance-analyzer
@@ -52,11 +52,10 @@ jobs:
       - name: Run integration tests
         run: |
           .github/scripts/setup_runners_service.sh zip --es-nosec
-          export PATH=$JAVA_HOME:$PATH
-          cd ${GITHUB_WORKSPACE}/../performance-analyzer
-          echo "Checking PA"
-          curl localhost:9200/_opendistro/_performanceanalyzer/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
-          echo "Checking RCA"
-          curl localhost:9200/_opendistro/_performanceanalyzer/rca/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
+          export PATH=$JAVA_HOME:$PATH; cd ${GITHUB_WORKSPACE}/../performance-analyzer
+          #echo "Checking PA"
+          #curl localhost:9200/_opendistro/_performanceanalyzer/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
+          #echo "Checking RCA"
+          #curl localhost:9200/_opendistro/_performanceanalyzer/rca/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
           echo "Starting tests"
           ./gradlew integTest -Dtests.enableIT=true -Dtests.useDockerCluster=false -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9300
