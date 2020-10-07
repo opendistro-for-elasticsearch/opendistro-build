@@ -555,4 +555,3 @@ jobs:
         with:
           working-directory: kibana/plugins/anomaly-detection-kibana-plugin
           command: yarn cy:run-with-security --config baseurl=http://localhost:5601
-    
