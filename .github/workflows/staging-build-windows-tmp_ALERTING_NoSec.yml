@@ -1,0 +1,46 @@
+name: Build Windows Exe using tar artifacts
+
+on:
+  #schedule:
+  #  - cron: '30 10 * * *'
+  #repository_dispatch:
+  #  types: [staging-build-windows]
+   push: 
+     branches: [sreekarj_jdk15]
+
+jobs:
+  Test-ALERTING-NoSec:
+   #needs: [build-es-artifacts, build-kibana-artifacts]
+    runs-on: windows-latest
+    name: Test-ALERTING-NoSec
+    strategy:
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v1
+      - name: Retrieve plugin tags
+        run: echo ::set-env name=p_tag_alerting::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)
+        shell: bash
+      - uses: actions/checkout@v1
+        with:
+           repository: opendistro-for-elasticsearch/alerting
+           ref: ${{env.p_tag_alerting}}  
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Set Up JDK 
+        uses: actions/setup-java@v1
+        with:
+          java-version: 14, 15
+        
+      - name: RUN ES and Alerting IntegTest
+        run: |
+          .github\scripts\setup_runners_service_windows.ps1 --es-nosec
+          $ErrorActionPreference = 'SilentlyContinue'
+          echo running tests
+          cd ..\alerting\alerting
+          dir
+          ..\gradlew.bat integTest -D tests.rest.cluster=localhost:9200 -D tests.cluster=localhost:9200 -D tests.clustername=es-integrationtest --stacktrace
+
