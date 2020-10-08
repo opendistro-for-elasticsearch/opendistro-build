@@ -1,9 +1,9 @@
 name: Process TAR Artifacts
 
 on:
-  push:
-    branch:
-      - issue236
+  #push:
+  #  branch:
+  #    - issue236
 
 jobs:
   Test-PA-NoSec:
