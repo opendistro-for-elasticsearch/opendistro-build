@@ -30,16 +30,16 @@ jobs:
         run: |
           echo ::set-env name=pa_tag::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/performance-analyzer)
           echo ::set-env name=rca_tag::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/performance-analyzer-rca)
-#      - name: Checkout perf analyzer RCA package
-#        uses: actions/checkout@v1
-#        with:
-#          repository: opendistro-for-elasticsearch/performance-analyzer-rca
-#          ref: ${{env.rca_tag}}
-#      - name: Checkout perf analyzer package
-#        uses: actions/checkout@v1
-#        with:
-#          repository: opendistro-for-elasticsearch/performance-analyzer
-#          ref: ${{env.pa_tag}}
+      - name: Checkout perf analyzer RCA package
+        uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/performance-analyzer-rca
+          ref: ${{env.rca_tag}}
+      - name: Checkout perf analyzer package
+        uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/performance-analyzer
+          ref: ${{env.pa_tag}}
 #      - name: Build RCA into MavenLocal
 #        run: |
 #          cd ${GITHUB_WORKSPACE}/../performance-analyzer-rca

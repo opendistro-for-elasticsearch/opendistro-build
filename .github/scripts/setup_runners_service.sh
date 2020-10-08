@@ -144,6 +144,8 @@ then
     kill -9 `ps -ef | grep [e]lasticsearch | awk '{print $2}'`
     sed -i /^node.max_local_storage_nodes/d ./config/elasticsearch.yml
     nohup ./opendistro-tar-install.sh > /dev/null 2>&1 &
+    # Start PA agent on port 9600
+    nohup ./bin/performance-analyzer-agent-cli > /dev/null 2>&1 &
   elif [ "$SETUP_DISTRO" = "docker" ]
   then
     docker restart $DOCKER_NAME
