@@ -21,7 +21,7 @@
 #                2. Create EC2 keypairs with name "odfe-release-runner"
 #
 #                3. Create EC2 Security Group with name "odfe-release-runner"
-#                   It has inbound rules of 22/9200/9600/5601 from Anywhere
+#                   with inbound rules of 22/9200/9600/5601 from IP ranges that need access to the runner
 #
 #                4. Create IAM resources:
 #
