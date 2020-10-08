@@ -5,6 +5,8 @@ on:
   #  - cron: '0 0,15 * * *'
   repository_dispatch:
     types: [check-plugin]
+  push:
+    branches: [peterzhuamazon-patch-1]
 
 jobs:
   plugin-availability-main:
@@ -31,22 +33,23 @@ jobs:
         uses: peterzhuamazon/github-slack-action@master
         with:
           text: ${{ env.CHIME_MESSAGE }}
-          webhook: ${{ secrets.SLACK_ODFE_RELEASE }}
+          #webhook: ${{ secrets.SLACK_ODFE_RELEASE }}
+          webhook: ${{ secrets.SLACK_TEST_MESSAGE }}
 
-      - name: Send mail
-        if: ${{ always() }}
-        uses: dawidd6/action-send-mail@master
-        with:
-          server_address: smtp.gmail.com
-          server_port: 465
-          username: ${{secrets.MAIL_USERNAME}}
-          password: ${{secrets.MAIL_PASSWORD}}
-          #subject: Opendistro for Elasticsearch Build - Daily Run (Plugin Status)
-          subject: ODFE Plugin Status
-          # Read file contents as body:
-          body: file:///tmp/message.md
-          to: odfe-release-process@amazon.com
-          from: Opendistro Elasticsearch
-          # Optional content type:
-          content_type: text/html
+#      - name: Send mail
+#        if: ${{ always() }}
+#        uses: dawidd6/action-send-mail@master
+#        with:
+#          server_address: smtp.gmail.com
+#          server_port: 465
+#          username: ${{secrets.MAIL_USERNAME}}
+#          password: ${{secrets.MAIL_PASSWORD}}
+#          #subject: Opendistro for Elasticsearch Build - Daily Run (Plugin Status)
+#          subject: ODFE Plugin Status
+#          # Read file contents as body:
+#          body: file:///tmp/message.md
+#          to: odfe-release-process@amazon.com
+#          from: Opendistro Elasticsearch
+#          # Optional content type:
+#          content_type: text/html
 
