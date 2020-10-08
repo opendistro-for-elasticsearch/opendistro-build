@@ -146,7 +146,7 @@
     "rpm": "none",
     "windows": "none",
     "cutversion": "1.10.1.1",
-    "require_install": "true",
+    "require_install": "false",
     "category": "client"
   },
   "sql-jdbc": {
@@ -156,7 +156,7 @@
     "rpm": "none",
     "windows": "none",
     "cutversion": "1.10.1.1",
-    "require_install": "true",
+    "require_install": "false",
     "category": "client"
   },
   "sql-odbc-macos-64bit": {
@@ -166,7 +166,7 @@
     "rpm": "none",
     "windows": "none",
     "cutversion": "1.10.1.1",
-    "require_install": "true",
+    "require_install": "false",
     "category": "client"
   },
   "sql-odbc-windows-64bit": {
@@ -176,7 +176,7 @@
     "rpm": "none",
     "windows": "none",
     "cutversion": "1.10.1.1",
-    "require_install": "true",
+    "require_install": "false",
     "category": "client"
   },
   "sql-odbc-windows-32bit": {
@@ -186,7 +186,7 @@
     "rpm": "none",
     "windows": "none",
     "cutversion": "1.10.1.1",
-    "require_install": "true",
+    "require_install": "false",
     "category": "client"
   },
   "perftop": {
@@ -196,7 +196,7 @@
     "rpm": "none",
     "windows": "none",
     "cutversion": "1.10.1.0",
-    "require_install": "true",
+    "require_install": "false",
     "category": "perftop"
   }
 }
