@@ -40,7 +40,6 @@ ES_VERSION=`python $REPO_ROOT/bin/version-info --es`
 
 ES_PACKAGE_NAME="opendistroforelasticsearch-${OD_VERSION}"
 ES_ROOT="${ROOT}/odfe-testing/${ES_PACKAGE_NAME}"
-ES_HOME=$ES_ROOT # This is for odfe scripts that needs $ES_HOME variable
 KIBANA_PACKAGE_NAME="opendistroforelasticsearch-kibana"
 KIBANA_ROOT="${ROOT}/kibana-testing/${KIBANA_PACKAGE_NAME}"
 
@@ -61,6 +60,7 @@ echo "############################################################"
 echo "setup parameters"
 echo $JAVA_HOME
 export PATH=$JAVA_HOME:$PATH
+export ES_HOME=$ES_ROOT # This is for odfe scripts that needs $ES_HOME variable
 which java
 java -version
 sudo sysctl -w vm.max_map_count=262144
