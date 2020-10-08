@@ -5,8 +5,8 @@ on:
   #  - cron: '0 10 * * *'
   #repository_dispatch:
   #  types: [staging-build-deb]
-   push:
-     branches: [sreekarj_jdk15]
+  #push:
+  #  branches: [sreekarj_jdk15]
 
 jobs:
   Test-KNN-NoSec:

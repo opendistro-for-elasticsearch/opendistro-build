@@ -5,7 +5,7 @@ on:
   #  - cron: '30 10 * * *'
   #repository_dispatch:
   #  types: [staging-build-docker]
-  # push:
+  #push:
   #   branches: [sreekarj_jdk15]
 
 jobs:
