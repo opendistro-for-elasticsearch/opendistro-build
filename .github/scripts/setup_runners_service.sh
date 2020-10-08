@@ -111,6 +111,8 @@ then
   echo "path.repo: [\"$PWD/snapshots\"]" >> $ES_ROOT/config/elasticsearch.yml
   # Increase the number of allowed script compilations. The SQL integ tests use a lot of scripts.
   echo "script.context.field.max_compilations_rate: 1000/1m" >> $ES_ROOT/config/elasticsearch.yml
+  # Make PA agent to bind to 0.0.0.0 instead of 127.0.0.1
+  echo "webservice-bind-host = 0.0.0.0" >> $ES_ROOT/plugins/opendistro_performance_analyzer/pa_config/performance-analyzer.properties
 elif [ "$SETUP_DISTRO" = "docker" ]
 then
   echo "FROM opendistroforelasticsearch/opendistroforelasticsearch:$OD_VERSION" >> Dockerfile
