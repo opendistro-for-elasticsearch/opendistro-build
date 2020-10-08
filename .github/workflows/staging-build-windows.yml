@@ -52,6 +52,10 @@ jobs:
     needs: [build-es-artifacts, build-kibana-artifacts]
     runs-on: windows-latest
     name: Test-ISM-NoSec
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [14, 15]
     steps:
       - uses: actions/checkout@v1
       - name: Retrieve plugin tags
@@ -71,7 +75,7 @@ jobs:
       - name: Set Up JDK ${{ matrix.java }}
         uses: actions/setup-java@v1
         with:
-          java-version: 14
+          java-version: ${{ matrix.java }}
        
       - name: RUN ES and ISM IntegTest
         run: |
@@ -86,6 +90,10 @@ jobs:
     needs: [build-es-artifacts, build-kibana-artifacts]
     runs-on: windows-latest
     name: Test-ALERTING-NoSec
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [14, 15]
     steps:
       - uses: actions/checkout@v1
       - name: Retrieve plugin tags
@@ -104,7 +112,7 @@ jobs:
       - name: Set Up JDK 
         uses: actions/setup-java@v1
         with:
-          java-version: 14
+          java-version: ${{ matrix.java }}
         
       - name: RUN ES and Alerting IntegTest
         run: |
@@ -119,6 +127,10 @@ jobs:
     needs: [build-es-artifacts, build-kibana-artifacts]
     runs-on: windows-latest
     name: Test-SQL-NoSec
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [14, 15]
     steps:
       - uses: actions/checkout@v1
       - name: Retrieve plugin tags
@@ -137,7 +149,7 @@ jobs:
       - name: Set Up JDK 
         uses: actions/setup-java@v1
         with:
-          java-version: 14
+          java-version: ${{ matrix.java }}
         
       - name: RUN ES and SQL IntegTest
         run: |
@@ -152,6 +164,10 @@ jobs:
     needs: [build-es-artifacts, build-kibana-artifacts]
     runs-on: windows-latest
     name: Test-AD-NoSec
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [14, 15]
     steps:
       - uses: actions/checkout@v1
       - name: Retrieve plugin tags
@@ -170,7 +186,7 @@ jobs:
       - name: Set Up JDK 
         uses: actions/setup-java@v1
         with:
-          java-version: 14
+          java-version: ${{ matrix.java }}
         
       - name: RUN ES and AD IntegTest
         run: |
@@ -185,6 +201,10 @@ jobs:
     needs: [build-es-artifacts, build-kibana-artifacts]
     runs-on: windows-latest
     name: Test-SQL
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [14, 15]
     steps:
       - uses: actions/checkout@v1
       - name: Retrieve plugin tags
@@ -203,7 +223,7 @@ jobs:
       - name: Set Up JDK 
         uses: actions/setup-java@v1
         with:
-          java-version: 14
+          java-version: ${{ matrix.java }}
         
       - name: RUN ES and SQL IntegTest
         run: |
@@ -218,6 +238,10 @@ jobs:
     needs: [build-es-artifacts, build-kibana-artifacts]
     runs-on: windows-latest
     name: Test-AD
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [14, 15]
     steps:
       - uses: actions/checkout@v1
       - name: Retrieve plugin tags
@@ -236,7 +260,7 @@ jobs:
       - name: Set Up JDK 
         uses: actions/setup-java@v1
         with:
-          java-version: 14
+          java-version: ${{ matrix.java }}
       - name: RUN ES and AD IntegTest
         run: |
           .github\scripts\setup_runners_service_windows.ps1 --es
@@ -250,6 +274,10 @@ jobs:
     needs: [build-es-artifacts, build-kibana-artifacts]
     runs-on: windows-latest
     name: Test-ALERTING
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [14, 15]
     steps:
       - uses: actions/checkout@v1
       - name: Retrieve plugin tags
@@ -271,7 +299,7 @@ jobs:
       - name: Set Up JDK 
         uses: actions/setup-java@v1
         with:
-          java-version: 14
+          java-version: ${{ matrix.java }}
         
       - name: Run alerting IT
         run: |
@@ -287,6 +315,10 @@ jobs:
     needs: [build-es-artifacts, build-kibana-artifacts]
     runs-on: windows-latest
     name: Test-AD-KIBANA-NoSec
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [14, 15]
     steps:
       - uses: actions/checkout@v1
       - name: Configure AWS Credentials
@@ -298,7 +330,7 @@ jobs:
       - name: Set Up JDK 
         uses: actions/setup-java@v1
         with:
-          java-version: 14
+          java-version: ${{ matrix.java }}
 
       - name: Retrieve plugin tags and odfe versions
         run: |
@@ -360,8 +392,9 @@ jobs:
     runs-on: windows-latest
     name: Test-SQL-KIBANA-NoSec
     strategy:
+      fail-fast: false
       matrix:
-        java: [14]
+        java: [14, 15]
     steps:
       - uses: actions/checkout@v1
       - name: Set up AWS Cred
@@ -449,6 +482,10 @@ jobs:
     needs: [build-es-artifacts, build-kibana-artifacts]
     runs-on: windows-latest
     name: Test-AD-KIBANA
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [14, 15]
     steps:
       - uses: actions/checkout@v1
       - name: Configure AWS Credentials
@@ -460,7 +497,7 @@ jobs:
       - name: Set Up JDK 
         uses: actions/setup-java@v1
         with:
-          java-version: 14
+          java-version: ${{ matrix.java }}
 
       - name: Retrieve plugin tags and odfe versions
         run: |
