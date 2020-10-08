@@ -40,15 +40,15 @@ jobs:
         with:
           repository: opendistro-for-elasticsearch/performance-analyzer
           ref: ${{env.pa_tag}}
-#      - name: Build RCA into MavenLocal
-#        run: |
-#          cd ${GITHUB_WORKSPACE}/../performance-analyzer-rca
-#          ./gradlew publishToMavenLocal
-#      - name: Update SHA
-#        run: |
-#          cd ${GITHUB_WORKSPACE}/../performance-analyzer
-#          rm licenses/performanceanalyzer-rca-1.3.jar.sha1
-#          ./gradlew updateShas
+      - name: Build RCA into MavenLocal
+        run: |
+          cd ${GITHUB_WORKSPACE}/../performance-analyzer-rca
+          ./gradlew publishToMavenLocal
+      - name: Update SHA
+        run: |
+          cd ${GITHUB_WORKSPACE}/../performance-analyzer
+          rm licenses/performanceanalyzer-rca-1.3.jar.sha1
+          ./gradlew updateShas
       - name: Run integration tests
         run: |
           .github/scripts/setup_runners_service.sh zip --es-nosec
