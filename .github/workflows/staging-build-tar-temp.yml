@@ -1,9 +1,9 @@
 name: Process TAR Artifacts
 
 on:
-  #push:
-  #  branch:
-  #    - issue236
+  push:
+    branch:
+      - issue236
 
 jobs:
   Test-PA-NoSec:
@@ -40,14 +40,19 @@ jobs:
         with:
           repository: opendistro-for-elasticsearch/performance-analyzer
           ref: ${{env.pa_tag}}
-      - name: Build RCA into MavenLocal
+      - name: Build RCA with Gradle
+        run: |
+          cd ${GITHUB_WORKSPACE}/../performance-analyzer-rca
+          /gradlew build -x test
+      - name: Publish RCA into MavenLocal
         run: |
           cd ${GITHUB_WORKSPACE}/../performance-analyzer-rca
           ./gradlew publishToMavenLocal
       - name: Update SHA
         run: |
           cd ${GITHUB_WORKSPACE}/../performance-analyzer
-          rm licenses/performanceanalyzer-rca-1.3.jar.sha1
+          ls -l
+          rm licenses/performanceanalyzer-rca-*.jar.sha1
           ./gradlew updateShas
       - name: Run integration tests
         run: |
