@@ -195,6 +195,8 @@ then
   then
     cd $ES_ROOT
     nohup ./opendistro-tar-install.sh > /dev/null 2>&1 &
+    # Start PA agent on port 9600
+    nohup ./bin/performance-analyzer-agent-cli > /dev/null 2>&1 &
   elif [ "$SETUP_DISTRO" = "docker" ]
   then
     docker run -d -p 9200:9200 -d -p 9600:9600 -e "discovery.type=single-node" --name $DOCKER_NAME_NoSec odfe-http:no-security
