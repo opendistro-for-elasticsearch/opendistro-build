@@ -186,8 +186,9 @@ jobs:
     runs-on: [ubuntu-18.04]
     name: Test-ISM-NoSec
     strategy:
+      fail-fast: false
       matrix:
-        java: [14]
+        java: [14, 15]
     steps:
       - uses: actions/checkout@v1
 
@@ -216,8 +217,9 @@ jobs:
     runs-on: [ubuntu-18.04]
     name: Test-ALERTING-NoSec
     strategy:
+      fail-fast: false
       matrix:
-        java: [14]
+        java: [14, 15]
     steps:
       - uses: actions/checkout@v1
 
@@ -245,8 +247,9 @@ jobs:
     runs-on: [ubuntu-18.04]
     name: Test-SQL-NoSec
     strategy:
+      fail-fast: false
       matrix:
-        java: [14]
+        java: [14, 15]
     steps:
       - uses: actions/checkout@v1
 
@@ -274,8 +277,9 @@ jobs:
     runs-on: [ubuntu-18.04]
     name: Test-KNN-NoSec
     strategy:
+      fail-fast: false
       matrix:
-        java: [14]
+        java: [14, 15]
     steps:
       - uses: actions/checkout@v1
       - name: Retrieve plugin tags 
@@ -299,8 +303,9 @@ jobs:
     runs-on: [ubuntu-18.04]
     name: Test-AD-NoSec
     strategy:
+      fail-fast: false
       matrix:
-        java: [14]
+        java: [14, 15]
     steps:
       - uses: actions/checkout@v1
 
@@ -328,8 +333,9 @@ jobs:
     runs-on: [ubuntu-18.04]
     name: Test-SQL
     strategy:
+      fail-fast: false
       matrix:
-        java: [14]
+        java: [14, 15]
     steps:
       - uses: actions/checkout@v1
 
@@ -357,8 +363,9 @@ jobs:
     runs-on: [ubuntu-18.04]
     name: Test-AD
     strategy:
+      fail-fast: false
       matrix:
-        java: [14]
+        java: [14, 15]
     steps:
       - uses: actions/checkout@v1
 
@@ -387,8 +394,9 @@ jobs:
     runs-on: [ubuntu-18.04]
     name: Test-ALERTING
     strategy:
+      fail-fast: false
       matrix:
-        java: [14]
+        java: [14, 15]
     steps:
       - uses: actions/checkout@v1
 
@@ -416,8 +424,9 @@ jobs:
     runs-on: [ubuntu-18.04]
     name: Test-AD-KIBANA-NoSec
     strategy:
+      fail-fast: false
       matrix:
-        java: [14]
+        java: [14, 15]
     steps:
       - uses: actions/checkout@v1
 
@@ -482,8 +491,9 @@ jobs:
     runs-on: [ubuntu-18.04]
     name: Test-SQL-KIBANA-NoSec
     strategy:
+      fail-fast: false
       matrix:
-        java: [14]
+        java: [14, 15]
     steps:
       - uses: actions/checkout@v1
       - name: Set up AWS Cred
@@ -569,8 +579,9 @@ jobs:
     runs-on: [ubuntu-18.04]
     name: Test-AD-KIBANA
     strategy:
+      fail-fast: false
       matrix:
-        java: [14]
+        java: [14, 15]
     steps:
       - uses: actions/checkout@v1
 
@@ -629,4 +640,3 @@ jobs:
         with:
           working-directory: kibana/plugins/anomaly-detection-kibana-plugin
           command: yarn cy:run-with-security --config baseurl=http://localhost:5601
-          
