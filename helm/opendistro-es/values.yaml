@@ -38,6 +38,15 @@ kibana:
 
   extraEnvs: []
 
+  extraVolumes: []
+  # - name: extras
+  #   emptyDir: {}
+
+  extraVolumeMounts: []
+  # - name: extras
+  #   mountPath: /usr/share/extras
+  #   readOnly: true
+
   ssl:
     kibana:
       enabled: false
