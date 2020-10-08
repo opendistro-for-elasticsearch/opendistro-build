@@ -10,7 +10,7 @@ on:
 
 jobs:
   Test-KNN-NoSec:
-    needs: [build-es-docker]
+   #needs: [build-es-docker]
     runs-on: [ubuntu-18.04]
     name: Test-KNN-NoSec
     strategy:
