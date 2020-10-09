@@ -47,6 +47,16 @@ kibana:
   #   mountPath: /usr/share/extras
   #   readOnly: true
 
+  extraInitContainers: []
+  # - name: do-something
+  #   image: busybox
+  #   command: ['do', 'something']
+
+  extraContainers: []
+  # - name: do-something
+  #   image: busybox
+  #   command: ['do', 'something']
+
   ssl:
     kibana:
       enabled: false
