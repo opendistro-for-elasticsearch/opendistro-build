@@ -623,6 +623,7 @@ jobs:
           working-directory: kibana/plugins/anomaly-detection-kibana-plugin
           command: yarn cy:run-with-security --config baseurl=http://localhost:5601
 
+
   CleanUp-Runners:
     needs: [Test-ISM-NoSec, Test-ALERTING-NoSec, Test-SQL-NoSec, Test-KNN-NoSec, Test-AD-NoSec, Test-SQL, Test-AD, Test-ALERTING, Test-AD-KIBANA-NoSec, Test-SQL-KIBANA-NoSec, Test-AD-KIBANA]
     if: always()
