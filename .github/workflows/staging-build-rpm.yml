@@ -185,12 +185,16 @@ jobs:
     needs: [Provision-Runners]
     name: Test-ISM-NoSec
     runs-on: [self-hosted, Linux, X64, odfe-rpm-ism-nosec]
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [14, 15]
     steps:
       - uses: actions/checkout@v1
       - name: Setup Java
         uses: actions/setup-java@v1
         with:
-          java-version: 14
+          java-version: ${{ matrix.java }}
       - name: Retrieve plugin tags
         run: echo ::set-env name=p_tag_ism::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)
       - uses: actions/checkout@v1
@@ -207,12 +211,16 @@ jobs:
     needs: [Provision-Runners]
     name: Test-ALERTING-NoSec
     runs-on: [self-hosted, Linux, X64, odfe-rpm-alerting-nosec]
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [14, 15]
     steps:
       - uses: actions/checkout@v1
       - name: Setup Java
         uses: actions/setup-java@v1
         with:
-          java-version: 14
+          java-version: ${{ matrix.java }}
       - name: Retrieve plugin tags
         run: echo ::set-env name=p_tag_alerting::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)
       - uses: actions/checkout@v1
@@ -229,12 +237,16 @@ jobs:
     needs: [Provision-Runners]
     name: Test-SQL-NoSec
     runs-on: [self-hosted, Linux, X64, odfe-rpm-sql-nosec]
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [14, 15]
     steps:
       - uses: actions/checkout@v1
       - name: Setup Java
         uses: actions/setup-java@v1
         with:
-          java-version: 14
+          java-version: ${{ matrix.java }}
       - name: Retrieve plugin tags
         run: echo ::set-env name=p_tag_sql::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)
       - uses: actions/checkout@v1
@@ -251,12 +263,16 @@ jobs:
     needs: [Provision-Runners]
     name: Test-KNN-NoSec
     runs-on: [self-hosted, Linux, X64, odfe-rpm-knn-nosec]
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [14, 15]
     steps:
       - uses: actions/checkout@v1
       - name: Setup Java
         uses: actions/setup-java@v1
         with:
-          java-version: 14
+          java-version: ${{ matrix.java }}
       - name: Retrieve plugin tags
         run: echo ::set-env name=p_tag_knn::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/k-NN)
       - uses: actions/checkout@v1
@@ -273,12 +289,16 @@ jobs:
     needs: [Provision-Runners]
     name: Test-AD-NoSec
     runs-on: [self-hosted, Linux, X64, odfe-rpm-ad-nosec]
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [14, 15]
     steps:
       - uses: actions/checkout@v1
       - name: Setup Java
         uses: actions/setup-java@v1
         with:
-          java-version: 14
+          java-version: ${{ matrix.java }}
       - name: Retrieve plugin tags
         run: echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)
       - uses: actions/checkout@v1
@@ -295,12 +315,16 @@ jobs:
     needs: [Provision-Runners]
     name: Test-SQL
     runs-on: [self-hosted, Linux, X64, odfe-rpm-sql]
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [14, 15]
     steps:
       - uses: actions/checkout@v1
       - name: Setup Java
         uses: actions/setup-java@v1
         with:
-          java-version: 14
+          java-version: ${{ matrix.java }}
       - name: Retrieve plugin tags
         run: echo ::set-env name=p_tag_sql::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)
       - uses: actions/checkout@v1
@@ -317,12 +341,16 @@ jobs:
     needs: [Provision-Runners]
     name: Test-AD
     runs-on: [self-hosted, Linux, X64, odfe-rpm-ad]
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [14, 15]
     steps:
       - uses: actions/checkout@v1
       - name: Setup Java
         uses: actions/setup-java@v1
         with:
-          java-version: 14
+          java-version: ${{ matrix.java }}
       - name: Retrieve plugin tags
         run: echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)
       - uses: actions/checkout@v1
@@ -339,12 +367,16 @@ jobs:
     needs: [Provision-Runners]
     name: Test-ALERTING
     runs-on: [self-hosted, Linux, X64, odfe-rpm-alerting]
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [14, 15]
     steps:
       - uses: actions/checkout@v1
       - name: Setup Java
         uses: actions/setup-java@v1
         with:
-          java-version: 14
+          java-version: ${{ matrix.java }}
       - name: Retrieve plugin tags
         run: echo ::set-env name=p_tag_alerting::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)
       - uses: actions/checkout@v1
@@ -360,13 +392,17 @@ jobs:
   Test-AD-KIBANA-NoSec:
     needs: [Provision-Runners]
     runs-on: [self-hosted, Linux, X64, odfe-rpm-ad-kibana-nosec]
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [14, 15]
     name: Test-AD-KIBANA-NoSec
     steps:
       - uses: actions/checkout@v1
       - name: Setup Java
         uses: actions/setup-java@v1
         with:
-          java-version: 14
+          java-version: ${{ matrix.java }}
 
       - name: Retrieve plugin tags
         run: |
@@ -429,8 +465,9 @@ jobs:
     runs-on: [self-hosted, Linux, X64, odfe-rpm-sql-kibana-nosec]
     name: Test-SQL-KIBANA-NoSec
     strategy:
+      fail-fast: false
       matrix:
-        java: [14]
+        java: [14, 15]
     steps:
       - uses: actions/checkout@v1
       - name: Set up AWS Cred
@@ -519,12 +556,16 @@ jobs:
     needs: [Provision-Runners]
     runs-on: [self-hosted, Linux, X64, odfe-rpm-ad-kibana]
     name: Test-AD-KIBANA
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [14, 15]
     steps:
       - uses: actions/checkout@v1
       - name: Setup Java
         uses: actions/setup-java@v1
         with:
-          java-version: 14
+          java-version: ${{ matrix.java }}
 
       - name: Retrieve plugin tags
         run: |
@@ -604,4 +645,3 @@ jobs:
           RUNNERS+="odfe-rpm-ad-kibana-nosec,odfe-rpm-sql-kibana-nosec,"
           RUNNERS+="odfe-rpm-ad-kibana"
           .github/scripts/setup_runners.sh terminate $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
-
