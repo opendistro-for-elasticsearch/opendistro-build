@@ -27,6 +27,8 @@ jobs:
           # Please add comma at the end of the RUNNERS strings
           RUNNERS="odfe-rpm-knn-nosec"
           .github/scripts/setup_runners.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
+
+
   Test-KNN-NoSec:
     needs: [Provision-Runners]
     name: Test-KNN-NoSec
@@ -52,6 +54,8 @@ jobs:
           .github/scripts/setup_runners_service.sh rpm --es-nosec
           export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../k-NN; pwd
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
+
+
   CleanUp-Runners:
     needs: [Test-KNN-NoSec]
     if: always()
