@@ -30,6 +30,7 @@ kibana:
   #    memory: 512Mi
   readinessProbe: []
   livenessProbe: []
+  startupProbe: []
 
   elasticsearchAccount:
     secret: ""
@@ -275,6 +276,7 @@ elasticsearch:
         port: transport
       initialDelaySeconds: 60
       periodSeconds: 10
+    startupProbe: []
     nodeSelector: {}
     tolerations: []
     ## Anti-affinity to disallow deploying client and master nodes on the same worker node
@@ -338,6 +340,7 @@ elasticsearch:
         port: transport
       initialDelaySeconds: 60
       periodSeconds: 10
+    startupProbe: []
     nodeSelector: {}
     tolerations: []
     ## Anti-affinity to disallow deploying client and master nodes on the same worker node
@@ -403,6 +406,7 @@ elasticsearch:
         port: transport
       initialDelaySeconds: 60
       periodSeconds: 10
+    startupProbe: []
     nodeSelector: {}
     tolerations: []
     ## Weighted anti-affinity to disallow deploying client node to the same worker node as master node

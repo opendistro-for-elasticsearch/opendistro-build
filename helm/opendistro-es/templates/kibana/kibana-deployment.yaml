@@ -93,6 +93,10 @@ spec:
         livenessProbe:
 {{ toYaml . | indent 10 }}
     {{- end }}
+    {{- with .Values.kibana.startupProbe}}
+        startupProbe:
+{{ toYaml . | indent 10 }}
+    {{- end }}
         resources:
 {{ toYaml .Values.kibana.resources | indent 12 }}
         name: {{ template "opendistro-es.fullname" . }}-kibana
