@@ -1,0 +1,46 @@
+name: WhiteSource Vulnerability Scan
+
+on:
+#  schedule:
+#    - cron: '30 3 * * *'
+  repository_dispatch:
+    types: [wss-scan]
+  push:
+    branches: [sreekarj_ws]
+
+jobs:
+  whitesource-vulnerability-scan:
+    name: WhiteSource Vulnerability Scan
+    runs-on: ubuntu-18.04
+    timeout-minutes: 80
+    steps:
+      - uses: actions/checkout@v1
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 14
+
+      - name: Vulnerability Scan
+        env:
+          wss_apikey: ${{ secrets.WSS_API_KEY }}
+        run: |
+          cd standalone-tools
+          ./wss-scan.sh
+          pwd
+
+      - name: Send mail
+        if: ${{ always() }}
+        uses: dawidd6/action-send-mail@master
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{secrets.MAIL_USERNAME}}
+          password: ${{secrets.MAIL_PASSWORD}}
+          subject: ODFE Vulnerability and License Scan - Daily Run 
+          #          subject: ODFE Vulnerability Scan Details
+          # Read file contents as body:
+          body: file://standalone-tools/tmp.md
+          to: sreekarj@amazon.com
+          from: Opendistro Elasticsearch
+          # Optional content type:
+          content_type: text/html
