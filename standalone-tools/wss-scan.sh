@@ -69,10 +69,10 @@ do
 done
 echo "scanning has completed"
 
-#ls -ltr
+ls -ltr
 
 #Output of the Scan logs
-cat whitesource/Fri*/*
+cat whitesource/*/*
 
 
 #Mail function to send the scan details to the desired recepient 
