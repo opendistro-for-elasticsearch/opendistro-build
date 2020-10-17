@@ -1,12 +1,12 @@
 name: WhiteSource Vulnerability Scan
 
 on:
-#  schedule:
-#    - cron: '30 3 * * *'
+  schedule:
+    - cron: '30 3 * * *'
   repository_dispatch:
     types: [wss-scan]
-  push:
-    branches: [sreekarj_ws]
+#  push:
+#    branches: [sreekarj_ws]
 
 jobs:
   whitesource-vulnerability-scan:
