@@ -43,7 +43,7 @@ jobs:
       - name: Build RCA with Gradle
         run: |
           cd ${GITHUB_WORKSPACE}/../performance-analyzer-rca
-          /gradlew build -x test
+          ./gradlew build -x test
       - name: Publish RCA into MavenLocal
         run: |
           cd ${GITHUB_WORKSPACE}/../performance-analyzer-rca
