@@ -24,7 +24,7 @@ set -e
 java -version
 if [ $? != 0 ] ; then echo "Java has not been setup" ; exit ; fi
 
-# Download the WhiteSource Agent 
+# download the WhiteSource Agent 
 curl -LJO -sS https://github.com/whitesource/unified-agent-distribution/releases/latest/download/wss-unified-agent.jar
 
 # The version 20.9.2.1 has been tested and can be used if a specific version is required
@@ -33,11 +33,11 @@ curl -LJO -sS https://github.com/whitesource/unified-agent-distribution/releases
 
 echo "wss-unified-agent jar download has been completed"
 
-# Scanning the config file for the user configurations
+# scan the config file for the user configurations
 # wss-scan.config has to be present in the same working directory as the script
 source wss-scan.config
 
-# Change comma to whitespace
+# change comma to whitespace
 gitRepos=${gitRepos//,/$'\n'} 
 
 basepath=$baseDirPath"/repos"
@@ -51,16 +51,16 @@ echo "Cleaning up scan directories if already present"
 rm -rf $basepath/*
 
 
-# Cloning the desired Repos for scanning 
+# clone the desired Repos for scanning 
 for repo in $gitRepos
 do
 echo "Cloning repo "$gitBasePath$repo
 git clone "$gitBasePath$repo".git $basepath"/"$repo
 done
 
-cp /dev/null info.txt
+echo -n > info.txt
 
-# Scanning the Repos using the WhiteSource Unified Agent
+# scan the Repos using the WhiteSource Unified Agent
 for repo in $gitRepos
 do
 if [ -d "$basepath"/"$repo" ]
@@ -75,23 +75,19 @@ done
 
 
 i=0
-# Waiting for the scannings to complete
+# wait for the scannings to complete
 while ps ax | grep -vw grep| grep -w "wss-unified-agent.jar" > /dev/null
 do
 echo "scanning is still in progress"
 sleep 60
 ((i=i+1))
-#break the loop after 70 mins
+# break the loop after 70 mins
 if [ $i -gt 70 ]; then break; fi
 done
 echo "scanning has completed"
 
 
-# Output of the Scan logs
-cat whitesource/*/*
-
-
-# Mail function to send the scan details to the desired recepient 
+# mail function to send the scan details to the desired recepient 
 mail_format_func()
 {
 
@@ -115,7 +111,7 @@ echo "</table></body></html>" >> tmp.md
 
 mail_format_func
 
-# Removed the functionality for local mail 
+# remove the functionality for local mail 
 
 #if [ "${emailid}" != "" ]; then
 #{
@@ -126,5 +122,5 @@ mail_format_func
 
 
 
-# Removing the WhiteSource unified Jar 
+# remove the WhiteSource unified Jar 
 rm "wss-unified-agent.jar" 

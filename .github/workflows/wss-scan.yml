@@ -1,24 +1,26 @@
 name: WhiteSource Vulnerability Scan
 
 on:
-#  schedule:
-#   - cron: '30 10 * * *'
+  schedule:
+    - cron: '30 10 * * *'
   repository_dispatch:
     types: [check-vulnerability-whitesource]
-  push: 
-    branches: [sreekarj_ws]
 
 jobs:
   whitesource-vulnerability-scan:
     name: WhiteSource Vulnerability Scan
     runs-on: ubuntu-18.04
     timeout-minutes: 80
+    strategy:
+      fail-fast: false
+      matrix:
+      java: [14]
     steps:
       - uses: actions/checkout@v1
       - name: Setup Java
         uses: actions/setup-java@v1
         with:
-          java-version: 14
+          java-version: ${{ matrix.java }}
 
       - name: Vulnerability Scan
         env:
@@ -38,6 +40,6 @@ jobs:
           password: ${{secrets.MAIL_PASSWORD}}
           subject: ODFE Vulnerability and License Scan - Daily Run 
           body: file://standalone-tools/tmp.md
-          to: sreekarj@amazon.com
+          to: odfe-infra-team@amazon.com
           from: Opendistro Elasticsearch
           content_type: text/html
