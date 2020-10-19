@@ -7,8 +7,11 @@
 #                It will scan the repositories and send the WhiteSource link to the mail 
 #                of the user. 
 #
-# Prerequisites: Need to set the Java Path
-#                Need to set the recepient mail in wss-scan.config
+# Prerequisites: Need to install Java 14
+#                Export JAVA_HOME env variable to the JDK path
+#		 Add JAVA_HOME to PATH variable
+#                Need to set the recepient mail in wss-scan.config for local run
+#                API token is needed for local run
 #
 # Usage:         ./wss-scan.sh
 #
@@ -16,19 +19,31 @@
 # Modified Date: 10-15-2020
 ###############################################################################################
 
-#Download the WhiteSource Agent 
-curl -LJO -sS https://github.com/whitesource/unified-agent-distribution/releases/latest/download/wss-unified-agent.jar > /dev/null
+set -e
 
-echo "Download completed"
+java -version
+if [ $? != 0 ] ; then echo "Java has not been setup" ; exit ; fi
 
-#Scanning the config file for the user configurations
+# Download the WhiteSource Agent 
+curl -LJO -sS https://github.com/whitesource/unified-agent-distribution/releases/latest/download/wss-unified-agent.jar
+
+# The version 20.9.2.1 has been tested and can be used if a specific version is required
+#curl -LJO -sS https://github.com/whitesource/unified-agent-distribution/releases/download/v20.9.2.1/wss-unified-agent.jar
+
+
+echo "wss-unified-agent jar download has been completed"
+
+# Scanning the config file for the user configurations
+# wss-scan.config has to be present in the same working directory as the script
 source wss-scan.config
-gitRepos=${gitRepos//,/$'\n'}  # change the semicolons to white space
+
+# Change comma to whitespace
+gitRepos=${gitRepos//,/$'\n'} 
 
 basepath=$baseDirPath"/repos"
 
 if [[ ! -e $basepath ]]; then
-    mkdir -p $basepath
+ mkdir -p $basepath
 fi
  
 
@@ -36,86 +51,80 @@ echo "Cleaning up scan directories if already present"
 rm -rf $basepath/*
 
 
-#Cloning the desired Repos for scanning 
+# Cloning the desired Repos for scanning 
 for repo in $gitRepos
 do
-        echo "Cloning repo "$gitBasePath$repo
-    git clone "$gitBasePath$repo".git $basepath"/"$repo
+echo "Cloning repo "$gitBasePath$repo
+git clone "$gitBasePath$repo".git $basepath"/"$repo
 done
 
 cp /dev/null info.txt
 
-#Scanning the Repos using the WhiteSource Unified Agent
+# Scanning the Repos using the WhiteSource Unified Agent
 for repo in $gitRepos
 do
-	if [ -d "$basepath"/"$repo" ]
-        then
-           echo "Scanning repo :"$gitBasePath$repo " Project:" $repo 
-	   repo_path=$basepath"/"$repo
-	   java -jar wss-unified-agent.jar -c wss-unified-agent.config -d $repo_path -apiKey $wss_apikey -product ODFE -project $repo | grep "Project name" | sed 's/^.\{,41\}//' >> info.txt 2>&1 &
-	else
-	   echo "Scanning failed for repo :"$gitBasePath$repo " Project:" $repo
-        fi
+if [ -d "$basepath"/"$repo" ]
+then
+echo "Scanning repo : "$gitBasePath$repo " Project:" $repo 
+repo_path=$basepath"/"$repo
+java -jar wss-unified-agent.jar -c wss-unified-agent.config -d $repo_path -apiKey $wss_apikey -product ODFE -project $repo | grep "Project name" | sed 's/^.\{,41\}//' >> info.txt 2>&1 &
+else
+echo "Scanning failed for repo : "$gitBasePath$repo " Project:" $repo
+fi
 done
 
 
-
-#Waiting for the scannings to complete
+i=0
+# Waiting for the scannings to complete
 while ps ax | grep -vw grep| grep -w "wss-unified-agent.jar" > /dev/null
 do
-        echo "scanning is still in progress"
-        sleep 20
-
+echo "scanning is still in progress"
+sleep 60
+((i=i+1))
+#break the loop after 70 mins
+if [ $i -gt 70 ]; then break; fi
 done
 echo "scanning has completed"
 
-ls -ltr
 
-#Output of the Scan logs
+# Output of the Scan logs
 cat whitesource/*/*
 
 
-#Mail function to send the scan details to the desired recepient 
-mail_func()
+# Mail function to send the scan details to the desired recepient 
+mail_format_func()
 {
 
-#echo "Sending mail"
-#cp /dev/null /tmp/tmp.html
-
-cp /dev/null tmp.md
-
-echo "<html><body><table border=1 cellspacing=0 cellpadding=3>" >> tmp.md
-
+echo "<html><body><table border=1 cellspacing=0 cellpadding=3>" > tmp.md
 while IFS= read -r line
 do
-  #echo "$line"
-  #setting comma as the delimiter
+# setting comma as the delimiter
 
-  IFS=','
-  read -ra val <<< "$line"
-        echo "<tr>" >> tmp.md
-        for ln in "${val[@]}"; do
-            echo "${ln//[[:space:]]/}"
-            echo "<td>"${ln//[[:space:]]/}"</td>" >> tmp.md
-        done
-        echo "</tr>" >> tmp.md
+IFS=','
+read -ra val <<< "$line"
+echo "<tr>" >> tmp.md
+for ln in "${val[@]}"; do
+echo "${ln//[[:space:]]/}"
+echo "<td>"${ln//[[:space:]]/}"</td>" >> tmp.md
+done
+echo "</tr>" >> tmp.md
 done < info.txt
 echo "</table></body></html>" >> tmp.md
 
-#echo -e "Content-Type: text/html; charset='utf-8'\r\nSubject: ODFE Vulnerability Scan details" |cat - tmp.html |sendmail -t ${emailid}
 }
 
-mail_func
+mail_format_func
 
-if [ "${emailid}" != "" ]; then
-	{
-		echo "Sending mail"
-		echo -e "Content-Type: text/html; charset='utf-8'\r\nSubject: ODFE Vulnerability Scan details" |cat - tmp.md |sendmail -t ${emailid}
-	}
-fi
+# Removed the functionality for local mail 
 
-#ls -ltr
+#if [ "${emailid}" != "" ]; then
+#{
+#echo "Sending mail"
+#echo -e "Content-Type: text/html; charset='utf-8'\r\nSubject: ODFE Vulnerability Scan details" |cat - tmp.md |sendmail -t ${emailid}
+#}
+#fi
 
 
-#Removing the WhiteSource unified Jar and the the temporary mail file
+
+# Removing the WhiteSource unified Jar 
 rm "wss-unified-agent.jar" 
