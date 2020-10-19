@@ -30,6 +30,7 @@ kibana:
   #    memory: 512Mi
   readinessProbe: []
   livenessProbe: []
+  startupProbe: []
 
   elasticsearchAccount:
     secret: ""
@@ -37,6 +38,25 @@ kibana:
       enabled: false
 
   extraEnvs: []
+
+  extraVolumes: []
+  # - name: extras
+  #   emptyDir: {}
+
+  extraVolumeMounts: []
+  # - name: extras
+  #   mountPath: /usr/share/extras
+  #   readOnly: true
+
+  extraInitContainers: []
+  # - name: do-something
+  #   image: busybox
+  #   command: ['do', 'something']
+
+  extraContainers: []
+  # - name: do-something
+  #   image: busybox
+  #   command: ['do', 'something']
 
   ssl:
     kibana:
@@ -114,6 +134,8 @@ kibana:
     ## The name of the ServiceAccount to use.
     ## If not set and create is true, a name is generated using the fullname template
     name:
+
+  podAnnotations: {}
 
 
 global:
@@ -254,6 +276,7 @@ elasticsearch:
         port: transport
       initialDelaySeconds: 60
       periodSeconds: 10
+    startupProbe: []
     nodeSelector: {}
     tolerations: []
     ## Anti-affinity to disallow deploying client and master nodes on the same worker node
@@ -317,6 +340,7 @@ elasticsearch:
         port: transport
       initialDelaySeconds: 60
       periodSeconds: 10
+    startupProbe: []
     nodeSelector: {}
     tolerations: []
     ## Anti-affinity to disallow deploying client and master nodes on the same worker node
@@ -382,6 +406,7 @@ elasticsearch:
         port: transport
       initialDelaySeconds: 60
       periodSeconds: 10
+    startupProbe: []
     nodeSelector: {}
     tolerations: []
     ## Weighted anti-affinity to disallow deploying client node to the same worker node as master node

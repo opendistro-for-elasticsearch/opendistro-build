@@ -135,6 +135,10 @@ spec:
         livenessProbe:
 {{ toYaml . | indent 10 }}
     {{- end }}
+    {{- with .Values.elasticsearch.master.startupProbe}}
+        startupProbe:
+{{ toYaml . | indent 10 }}
+    {{- end }}
         # Official Image from Open Distro Team
         image: {{ .Values.global.registry }}/{{ .Values.elasticsearch.image }}:{{ .Values.elasticsearch.imageTag }}
         imagePullPolicy: {{ .Values.elasticsearch.imagePullPolicy | default "Always" | quote }}
