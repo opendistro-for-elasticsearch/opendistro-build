@@ -55,7 +55,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [14, 15]
+        java: [14]
     steps:
       - uses: actions/checkout@v1
       - name: Retrieve plugin tags
@@ -93,7 +93,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [14, 15]
+        java: [14]
     steps:
       - uses: actions/checkout@v1
       - name: Retrieve plugin tags
@@ -130,7 +130,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [14, 15]
+        java: [14]
     steps:
       - uses: actions/checkout@v1
       - name: Retrieve plugin tags
@@ -167,7 +167,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [14, 15]
+        java: [14]
     steps:
       - uses: actions/checkout@v1
       - name: Retrieve plugin tags
@@ -204,7 +204,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [14, 15]
+        java: [14]
     steps:
       - uses: actions/checkout@v1
       - name: Retrieve plugin tags
@@ -241,7 +241,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [14, 15]
+        java: [14]
     steps:
       - uses: actions/checkout@v1
       - name: Retrieve plugin tags
@@ -277,7 +277,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [14, 15]
+        java: [14]
     steps:
       - uses: actions/checkout@v1
       - name: Retrieve plugin tags
@@ -318,7 +318,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [14, 15]
+        java: [14]
     steps:
       - uses: actions/checkout@v1
       - name: Configure AWS Credentials
@@ -394,7 +394,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [14, 15]
+        java: [14]
     steps:
       - uses: actions/checkout@v1
       - name: Set up AWS Cred
@@ -485,7 +485,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [14, 15]
+        java: [14]
     steps:
       - uses: actions/checkout@v1
       - name: Configure AWS Credentials
