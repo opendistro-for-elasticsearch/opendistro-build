@@ -20,6 +20,8 @@ REPO_ROOT=`git rev-parse --show-toplevel`
 ROOT=`dirname $(realpath $0)`; echo $ROOT; cd $ROOT
 ES_VERSION=`$REPO_ROOT/bin/version-info --es`; echo ES_VERSION: $ES_VERSION
 OD_VERSION=`$REPO_ROOT/bin/version-info --od`; echo OD_VERSION: $OD_VERSION
+#OD_ARCH="x86-64"
+OD_ARCH="arm64"
 IS_CUT=`$REPO_ROOT/bin/version-info --is-cut`; echo IS_CUT: $IS_CUT
 S3_BUCKET="artifacts.opendistroforelasticsearch.amazon.com"
 ARTIFACTS_URL="https://d3g5vo6xdbdb9a.cloudfront.net"
@@ -114,7 +116,7 @@ mv -v opendistro-knnlib*/libKNNIndex*.so $PACKAGE_NAME-$OD_VERSION/plugins/opend
 
 # Tar generation
 echo "generating tar"
-tar -czf $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz $PACKAGE_NAME-$OD_VERSION
+tar -czf $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION-$OD_ARCH.tar.gz $PACKAGE_NAME-$OD_VERSION
 #tar -tavf $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz
 cd $TARGET_DIR
 shasum -a 512 $PACKAGE_NAME-$OD_VERSION.tar.gz > $PACKAGE_NAME-$OD_VERSION.tar.gz.sha512
