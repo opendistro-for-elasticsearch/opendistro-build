@@ -64,7 +64,7 @@ jobs:
     - name: Build tar
       run: |
         set -u
-        apt install -y jq unzip
+        sudo apt install -y jq unzip
         hostname
         pwd
         lscpu
