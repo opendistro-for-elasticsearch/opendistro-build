@@ -451,9 +451,9 @@ jobs:
       - name: Bootstrap the plugin
         run: |
           cd ./kibana/plugins
-          cp -rp sql/sql-workbench .
+          cp -rp sql/workbench .
           rm -rf sql/
-          cd sql-workbench
+          cd workbench
         shell: bash
 
       - name: Retry the bootstraps
@@ -465,7 +465,7 @@ jobs:
           timeout_minutes: 60
           max_attempts: 3
           # We have to use "&&" in pwsh as ";" does not work here
-          command: cd ./kibana/plugins/sql-workbench && dir && yarn kbn bootstrap
+          command: cd ./kibana/plugins/workbench && dir && yarn kbn bootstrap
 
       - name: run ES and kibana and IT (RUN IN ONE STEP OR WINDOWS BREAK)
         run: |
@@ -475,7 +475,7 @@ jobs:
           curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/sql/master/integ-test/src/test/resources/accounts.json | curl -s -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/accounts/_bulk?pretty' --data-binary "@-" > $null 2>&1
           curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/sql/master/integ-test/src/test/resources/employee_nested.json | curl -s -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/employee_nested/_bulk?pretty' --data-binary "@-" > $null 2>&1
           dir
-          cd ./kibana/plugins/sql-workbench
+          cd ./kibana/plugins/workbench
           npx cypress run
   
   Test-AD-KIBANA:
