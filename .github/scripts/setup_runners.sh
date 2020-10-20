@@ -86,9 +86,11 @@ fi
 SETUP_ACTION=$1
 SETUP_RUNNER=`echo $2 | sed 's/,/ /g'`
 SETUP_GIT_TOKEN=$3
-EC2_AMI_ID="ami-0dd5d17deb78eff42"
+#EC2_AMI_ID="ami-0dd5d17deb78eff42"
+EC2_AMI_ID="ami-0eddd5d08379980d8"
 EC2_AMI_USER="ec2-user"
-EC2_INSTANCE_TYPE="m5.xlarge"
+#EC2_INSTANCE_TYPE="m5.xlarge"
+EC2_INSTANCE_TYPE="m6g.xlarge" # ARM64 based instances
 EC2_INSTANCE_SIZE=20 #GiB
 EC2_KEYPAIR="odfe-release-runner"
 EC2_SECURITYGROUP="odfe-release-runner"
@@ -96,7 +98,7 @@ IAM_ROLE="odfe-release-runner"
 GIT_URL_API="https://api.github.com/repos"
 GIT_URL_BASE="https://github.com"
 GIT_URL_REPO="opendistro-for-elasticsearch/opendistro-build"
-RUNNER_URL=`curl -s https://api.github.com/repos/actions/runner/releases/latest | jq -r '.assets[].browser_download_url' | grep linux-x64`
+RUNNER_URL=`curl -s https://api.github.com/repos/actions/runner/releases/latest | jq -r '.assets[].browser_download_url' | grep -i linux-arm64`
 RUNNER_DIR="actions-runner"
 
 echo "###############################################"
