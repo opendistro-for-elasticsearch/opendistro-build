@@ -289,6 +289,16 @@ elasticsearch:
     #            role: master
     podAnnotations: {}
 
+    extraInitContainers: []
+    # - name: do-something
+    #   image: busybox
+    #   command: ['do', 'something']
+
+    extraContainers: []
+    # - name: do-something
+    #   image: busybox
+    #   command: ['do', 'something']
+
   data:
     enabled: true
     replicas: 1
