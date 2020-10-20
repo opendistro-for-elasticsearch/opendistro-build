@@ -1,10 +1,10 @@
-name: Process RPM Artifacts
+name: Process TAR ARM64 Artifacts
 
 on:
   #schedule:
   #  - cron: '0 10 * * *'
   repository_dispatch:
-    types: [staging-build-rpm]
+    types: [staging-build-tar-arm64]
   push:
     branches: [opendistro-infra-issues-P40904739]
 
