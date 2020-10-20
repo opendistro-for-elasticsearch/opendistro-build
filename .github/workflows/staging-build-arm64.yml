@@ -574,24 +574,24 @@ jobs:
 #          working-directory: kibana/plugins/anomaly-detection-kibana-plugin
 #          command: yarn cy:run-with-security --config baseurl=http://localhost:5601
 #
-  CleanUp-Runners:
-    #needs: [Test-ISM-NoSec, Test-ALERTING-NoSec, Test-SQL-NoSec, Test-KNN-NoSec, Test-AD-NoSec, Test-SQL, Test-AD, Test-ALERTING, Test-AD-KIBANA-NoSec, Test-SQL-KIBANA-NoSec, Test-AD-KIBANA]
-    needs: [build-es-artifacts]
-    if: always()
-    name: CleanUp-Runners
-    runs-on: ubuntu-18.04
-    steps:
-      - uses: actions/checkout@v1
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_EC2_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_EC2_SECRET_ACCESS_KEY }}
-          aws-region: us-west-2
-      - name: AWS Cli Processing
-        run: |
-          #!/bin/bash
-          # Please add comma at the end of the RUNNERS strings
-          RUNNERS="arm64-tar-test"
-          .github/scripts/setup_runners.sh terminate $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
+#  CleanUp-Runners:
+#    #needs: [Test-ISM-NoSec, Test-ALERTING-NoSec, Test-SQL-NoSec, Test-KNN-NoSec, Test-AD-NoSec, Test-SQL, Test-AD, Test-ALERTING, Test-AD-KIBANA-NoSec, Test-SQL-KIBANA-NoSec, Test-AD-KIBANA]
+#    needs: [build-es-artifacts]
+#    if: always()
+#    name: CleanUp-Runners
+#    runs-on: ubuntu-18.04
+#    steps:
+#      - uses: actions/checkout@v1
+#      - name: Configure AWS Credentials
+#        uses: aws-actions/configure-aws-credentials@v1
+#        with:
+#          aws-access-key-id: ${{ secrets.AWS_EC2_ACCESS_KEY_ID }}
+#          aws-secret-access-key: ${{ secrets.AWS_EC2_SECRET_ACCESS_KEY }}
+#          aws-region: us-west-2
+#      - name: AWS Cli Processing
+#        run: |
+#          #!/bin/bash
+#          # Please add comma at the end of the RUNNERS strings
+#          RUNNERS="arm64-tar-test"
+#          .github/scripts/setup_runners.sh terminate $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
 
