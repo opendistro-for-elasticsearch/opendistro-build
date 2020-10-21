@@ -40,7 +40,7 @@ jobs:
         run: |
           #!/bin/bash
           # Please add comma at the end of the RUNNERS strings
-          RUNNERS="aarch64-tar-build-es, aarch64-tar-build-kibana"
+          RUNNERS="aarch64-tar-build-es,aarch64-tar-build-kibana"
           #RUNNERS="aarch64-tar-ism-nosec,aarch64-tar-alerting-nosec,aarch64-tar-sql-nosec,aarch64-tar-knn-nosec,aarch64-tar-ad-nosec,"
           #RUNNERS+="aarch64-tar-sql,aarch64-tar-ad,aarch64-tar-alerting,"
           #RUNNERS+="aarch64-tar-ad-kibana-nosec,aarch64-tar-sql-kibana-nosec,"
@@ -504,7 +504,7 @@ jobs:
         run: |
           #!/bin/bash
           # Please add comma at the end of the RUNNERS strings
-          RUNNERS="aarch64-tar-build-es, aarch64-tar-build-kibana,"
+          RUNNERS="aarch64-tar-build-es,aarch64-tar-build-kibana,"
           #RUNNERS+="aarch64-tar-ism-nosec,aarch64-tar-alerting-nosec,aarch64-tar-sql-nosec,aarch64-tar-knn-nosec,aarch64-tar-ad-nosec,"
           #RUNNERS+="aarch64-tar-sql,aarch64-tar-ad,aarch64-tar-alerting,"
           #RUNNERS+="aarch64-tar-ad-kibana-nosec,aarch64-tar-sql-kibana-nosec,"
