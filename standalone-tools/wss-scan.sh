@@ -75,21 +75,8 @@ do
 done
 
 
-i=0
 # wait for the scannings to complete
-while ps ax | grep -wq [w]ss-unified-agent.jar
-do
-  echo "Scanning is still in progress"
-  sleep 60
-  ((i=i+1))
-  # break the loop after 70 mins
-  if [ "$i" -gt 70 ] 
-  then
-    break 
-  fi
-done
-echo "Scanning has completed"
-
+wait
 
 # mail function to send the scan details to the desired recepient 
 mail_format_func()
