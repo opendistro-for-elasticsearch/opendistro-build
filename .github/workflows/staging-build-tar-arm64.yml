@@ -65,7 +65,6 @@ jobs:
         sudo apt update
         sudo apt install -y jq unzip awscli openjdk-12-jdk
         hostname
-        pwd
         lscpu
         ./elasticsearch/linux_distributions/opendistro-tar-build-arm64.sh
 
