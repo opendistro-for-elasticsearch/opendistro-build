@@ -17,6 +17,29 @@
 set -e
 set -u
 
+# Prepare required packages
+if echo $OSTYPE | grep -i linux
+then
+  if which apt # Debian based linux
+  then
+    sudo add-apt-repository -y ppa:openjdk-r/ppa
+    # Need to update twice as ARM image seems not working correctly sometimes with only one update
+    sudo apt update; sudo apt update
+    sudo apt install -y jq unzip awscli openjdk-8-jdk
+  elif which yum # RedHat based linux
+  then
+    # Need to update twice as ARM image seems not working correctly sometimes with only one update
+    sudo yum repolist; sudo yum repolist
+    sudo yum install -y jq unzip awscli java-1.8.0-openjdk
+  else
+    echo "This script does not support your current os"
+    exit 1
+  fi
+else
+  echo "This script only support linux os now"
+  exit 1
+fi
+
 REPO_ROOT=`git rev-parse --show-toplevel`
 ROOT=`dirname $(realpath $0)`; echo $ROOT; cd $ROOT
 ES_VERSION=`$REPO_ROOT/bin/version-info --es`; echo ES_VERSION: $ES_VERSION
@@ -46,15 +69,6 @@ if [ -z "$PLUGINS" ]; then
   exit 1
 fi
 
-# Prepare required packages
-sudo add-apt-repository -y ppa:openjdk-r/ppa
-# Need to update twice as ARM image seems not working correctly sometimes with only one update
-sudo apt update
-sudo apt update
-sudo apt install -y jq unzip awscli openjdk-12-jdk
-hostname
-echo $OSTYPE
-
 # Prepare target directories
 mkdir ${PACKAGE_NAME}-${OD_VERSION}
 mkdir $TARGET_DIR
@@ -63,9 +77,9 @@ mkdir $TARGET_DIR
 echo "Downloading ES oss"
 #wget -nv https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$ES_VERSION-linux-x86_64.tar.gz ; echo $?
 # aws s3 cp aarch64 es binary to local
-aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/temp/aarch64-test/elasticsearch-oss-${ES_VERSION}-linux-aarch64.tar.gz . --quiet; echo $?
+aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/temp/aarch64-test/elasticsearch-oss-${ES_VERSION}-linux-${OD_ARCH}.tar.gz . --quiet; echo $?
 #tar -xzf elasticsearch-oss-$ES_VERSION-linux-x86_64.tar.gz --strip-components=1 --directory "${PACKAGE_NAME}-${OD_VERSION}" && rm -rf elasticsearch-oss-$ES_VERSION-linux-x86_64.tar.gz
-tar -xzf elasticsearch-oss-${ES_VERSION}-linux-aarch64.tar.gz --strip-components=1 --directory "${PACKAGE_NAME}-${OD_VERSION}" && rm -rf elasticsearch-oss-${ES_VERSION}-linux-aarch64.tar.gz
+tar -xzf elasticsearch-oss-${ES_VERSION}-linux-${OD_ARCH}.tar.gz --strip-components=1 --directory "${PACKAGE_NAME}-${OD_VERSION}" && rm -rf elasticsearch-oss-${ES_VERSION}-linux-${OD_ARCH}.tar.gz
 cp -v opendistro-tar-install.sh $PACKAGE_NAME-$OD_VERSION
 
 # Install Plugin
