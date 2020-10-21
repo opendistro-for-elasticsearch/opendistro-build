@@ -10,7 +10,7 @@
 #
 # Prerequisites: Need to install Java 11
 #                Export JAVA_HOME env variable to the JDK path
-#		 Add JAVA_HOME to PATH variable
+#                Add JAVA_HOME to PATH variable
 #                Need to set the recepient mail in wss-scan.config for local run
 #                WhiteSource API key is needed for local run, The API Key can be retrieved from the
 #                WhiteSource Admin Console of your account. Use the below command to export the API key
@@ -18,8 +18,6 @@
 #
 # Usage:         ./wss-scan.sh
 #
-# Starting Date: 10-13-2020
-# Modified Date: 10-21-2020
 ###############################################################################################
 
 set -e
@@ -36,7 +34,7 @@ then
   # Download the WhiteSource Agent 
   wget -q https://github.com/whitesource/unified-agent-distribution/releases/latest/download/wss-unified-agent.jar
   # The version 20.9.2.1 has been tested and can be used if a specific version is required
-  #curl -LJO -sS https://github.com/whitesource/unified-agent-distribution/releases/download/v20.9.2.1/wss-unified-agent.jar
+  #wget -q  https://github.com/whitesource/unified-agent-distribution/releases/download/v20.9.2.1/wss-unified-agent.jar
 fi
 
 # scan the config file for the user configurations
@@ -117,17 +115,6 @@ echo "</table></body></html>" >> output.md
 }
 
 mail_format_func
-
-# remove the functionality for local mail 
-
-#if [ "${emailid}" != "" ]; then
-#{
-#echo "Sending mail"
-#echo -e "Content-Type: text/html; charset='utf-8'\r\nSubject: ODFE Vulnerability Scan details" |cat - output.md |sendmail -t ${emailid}
-#}
-#fi
-
-
 
 # remove the WhiteSource unified Jar 
 rm "wss-unified-agent.jar" 
