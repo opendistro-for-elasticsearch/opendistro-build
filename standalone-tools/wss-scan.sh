@@ -13,7 +13,7 @@
 #                Add JAVA_HOME to PATH variable
 #                Need to set the recepient mail in wss-scan.config for local run
 #                WhiteSource API key is needed for local run, The API Key can be retrieved from the
-#                WhiteSource Admin Console of your account. Use the below command to export the API key
+#                WhiteSource Admin Console of your account.Use the below command to export the API key
 #                export wss_apikey=$(APIKEY)
 #
 # Usage:         ./wss-scan.sh
