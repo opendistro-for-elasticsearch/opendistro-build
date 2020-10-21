@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 ###### Information ############################################################################
 # Name:          setup_runners_service.sh
 # Maintainer:    ODFE Infra Team
@@ -50,6 +52,50 @@ DOCKER_NAME_KIBANA_NoSec="Test-Docker-Kibana-${OD_VERSION}-NoSec"
 
 S3_BUCKET="artifacts.opendistroforelasticsearch.amazon.com"
 
+# Backoff in seconds, and number of attempts before assuming that Elasticsearch/Kibana failed to start
+BACKOFF=10
+MAX_ATTEMPTS=12
+
+function wait_for_elasticsearch() {
+    # Turn off fail-on-error because we expect curl to fail the first few attempts
+    set +e
+    echo "Waiting for Elasticsearch"
+    for (( i = 1 ; i <= $MAX_ATTEMPTS ; i++ )); do
+        echo "Waiting for Elasticsearch to start: attempt ${i}"
+        if [ "$1" == "secure" ]; then
+            output=`curl -XGET https://localhost:9200 -u admin:admin --insecure | grep -q "cluster_name"`
+        else
+            output=`curl -XGET http://localhost:9200 | grep -q "cluster_name"`
+        fi
+        if [ -n "$output" ]; then
+            echo "Elasticsearch is running";
+            set -e
+            return
+        fi
+        sleep $BACKOFF
+    done
+    echo "Elasticsearch failed to start after $MAX_ATTEMPTS attempts"
+    exit 1
+}
+
+function wait_for_kibana() {
+    # Turn off fail-on-error because we expect curl to fail the first few attempts
+    set +e
+    echo "Waiting for Kibana"
+    for (( i = 1 ; i <= $MAX_ATTEMPTS ; i++ )); do
+        echo "Waiting for Kibana to start: attempt ${i}"
+        output=`curl -XGET http://localhost:5601/api/status | grep "\"state\":\"green\""`
+        if [ -n "$output" ]; then
+            echo "Kibana is running";
+            set -e
+            return
+        fi
+        sleep $BACKOFF
+    done
+    echo "Kibana failed to start after $MAX_ATTEMPTS attempts"
+    exit 1
+}
+
 #####################################################################################################
 
 echo "############################################################"
@@ -67,8 +113,9 @@ sudo chmod -R 777 /dev/shm
 
 if [ "$SETUP_DISTRO" = "zip" ]
 then
+  echo "Fetching $ES_PACKAGE_NAME.tar.gz from S3"
   mkdir -p $ES_ROOT
-  aws s3 cp s3://$S3_BUCKET/downloads/tarball/opendistro-elasticsearch/$ES_PACKAGE_NAME.tar.gz . --quiet; echo $?
+  aws s3 cp s3://$S3_BUCKET/downloads/tarball/opendistro-elasticsearch/$ES_PACKAGE_NAME.tar.gz . --quiet
   tar -zxf $ES_PACKAGE_NAME.tar.gz -C $ES_ROOT --strip-components 1
 fi
 
@@ -101,7 +148,7 @@ fi
 
 #####################################################################################################
 
-echo "setup es"
+echo "Installing Elasticsearch"
 
 # everything needs es
 if [ "$SETUP_DISTRO" = "zip" ]
@@ -131,7 +178,7 @@ else
   sudo sed -i '/path.logs/a path.repo: ["/home/repo"]' /etc/elasticsearch/elasticsearch.yml
   sudo sed -i /^node.max_local_storage_nodes/d /etc/elasticsearch/elasticsearch.yml
   # Increase the number of allowed script compilations. The SQL integ tests use a lot of scripts.
-  sudo echo "script.context.field.max_compilations_rate: 1000/1m" | sudo tee -a /etc/elasticsearch/elasticsearch.yml > /dev/null
+  echo "script.context.field.max_compilations_rate: 1000/1m" | sudo tee -a /etc/elasticsearch/elasticsearch.yml > /dev/null
 fi
 
 if [ "$SETUP_ACTION" = "--es" ]
@@ -139,10 +186,12 @@ then
   if [ "$SETUP_DISTRO" = "zip" ]
   then
     cd $ES_ROOT
+    echo "Running opendistro-tar-install"
     nohup ./opendistro-tar-install.sh > /dev/null 2>&1 &
     sleep 30
     kill -9 `ps -ef | grep [e]lasticsearch | awk '{print $2}'`
     sed -i /^node.max_local_storage_nodes/d ./config/elasticsearch.yml
+    echo "Running opendistro-tar-install again"
     nohup ./opendistro-tar-install.sh > /dev/null 2>&1 &
   elif [ "$SETUP_DISTRO" = "docker" ]
   then
@@ -151,12 +200,7 @@ then
   else
     sudo systemctl restart elasticsearch.service
   fi
-  echo "Sleep 120 seconds"
-  sleep 120
-  curl -XGET https://localhost:9200 -u admin:admin --insecure
-  curl -XGET https://localhost:9200/_cluster/health?pretty -u admin:admin --insecure
-  echo "es start"
-  netstat -ntlp
+  wait_for_elasticsearch secure
   cd $REPO_ROOT
   exit 0
 fi
@@ -200,12 +244,7 @@ then
   else
     sudo systemctl restart elasticsearch.service
   fi
-  echo "Sleep 120 seconds"
-  sleep 120
-  curl -XGET http://localhost:9200
-  curl -XGET http://localhost:9200/_cluster/health?pretty
-  echo "es-nosec start"
-  netstat -ntlp
+  wait_for_elasticsearch
   cd $REPO_ROOT
   exit 0
 fi
@@ -253,15 +292,8 @@ then
     sudo systemctl restart elasticsearch.service
     sudo systemctl restart kibana.service
   fi
-  echo "Sleep 120 seconds"
-  sleep 120
-  curl -XGET https://localhost:9200 -u admin:admin --insecure
-  curl -XGET https://localhost:9200/_cluster/health?pretty -u admin:admin --insecure
-  # kibana can still use http to check status
-  curl -v -XGET http://localhost:5601
-  curl -v -XGET http://localhost:5601/api/status
-  echo "es & kibana start"
-  netstat -ntlp
+  wait_for_elasticsearch secure
+  wait_for_kibana
   cd $REPO_ROOT
   exit 0
 fi
@@ -300,14 +332,8 @@ then
     sudo systemctl restart elasticsearch.service
     sudo systemctl restart kibana.service
   fi
-  echo "Sleep 120 seconds"
-  sleep 120
-  curl -XGET http://localhost:9200
-  curl -XGET http://localhost:9200/_cluster/health?pretty
-  curl -v -XGET http://localhost:5601
-  curl -v -XGET http://localhost:5601/api/status
-  echo "es & kibana-nosec start"
-  netstat -ntlp
+  wait_for_elasticsearch
+  wait_for_kibana
   cd $REPO_ROOT
   exit 0
 fi

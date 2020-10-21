@@ -1,0 +1,153 @@
+name: Process TAR Artifacts
+
+on:
+  push:
+    branches:
+      - camerski
+
+jobs:
+  plugin-availability:
+    name: Check Plugin Availability
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v1
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Run check_plugin scripts
+        run: .github/scripts/check_plugin.sh "elasticsearch_zip,kibana_zip"; exit `cat /tmp/plugin_status.check`
+
+  build-es-artifacts:
+    needs: [plugin-availability]
+    name: Build ES Artifacts
+    runs-on: ubuntu-18.04
+    container:
+      image: opendistroforelasticsearch/multijava08101112-git:v1
+    steps:
+    - uses: actions/checkout@v1
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+    - name: Build tar
+      run: apt install -y jq unzip; set -u; export JAVA_HOME=/openjdk12; export PATH=$JAVA_HOME:$PATH; ./elasticsearch/linux_distributions/opendistro-tar-build.sh
+
+
+  build-kibana-artifacts:
+    needs: [plugin-availability]
+    name: Build Kibana Artifacts
+    runs-on: [ubuntu-18.04]
+    container:
+        image: opendistroforelasticsearch/jsenv:v1
+    steps:
+      - uses: actions/checkout@v1
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Build Kibana
+        run: apt install -y jq; ./kibana/linux_distributions/opendistro-kibana-build.sh tar
+
+  ElasticsearchRunner:
+    needs: [build-es-artifacts]
+    runs-on: ubuntu-18.04
+    name: ElasticsearchRunner
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [14]
+    steps:
+      - name: Set up AWS Cred
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+      - uses: actions/checkout@v1
+      - name: Start instance
+        run: |
+          .github/scripts/setup_runners_service.sh zip --es
+
+  ElasticsearchRunner-NoSec:
+    needs: [build-es-artifacts]
+    runs-on: ubuntu-18.04
+    name: ElasticsearchRunner-NoSec
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [14]
+    steps:
+      - name: Set up AWS Cred
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+      - uses: actions/checkout@v1
+      - name: Start instance
+        run: |
+          .github/scripts/setup_runners_service.sh zip --es-nosec
+
+  KibanaRunner:
+    needs: [build-es-artifacts, build-kibana-artifacts]
+    runs-on: ubuntu-18.04
+    name: KibanaRunner
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [14]
+    steps:
+      - name: Set up AWS Cred
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+      - uses: actions/checkout@v1
+      - name: Start instance
+        run: |
+          .github/scripts/setup_runners_service.sh zip --kibana
+
+  KibanaRunner-NoSec:
+    needs: [build-es-artifacts, build-kibana-artifacts]
+    runs-on: ubuntu-18.04
+    name: KibanaRunner-NoSec
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [14]
+    steps:
+      - name: Set up AWS Cred
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+      - uses: actions/checkout@v1
+      - name: Start instance
+        run: |
+          .github/scripts/setup_runners_service.sh zip --kibana-nosec
