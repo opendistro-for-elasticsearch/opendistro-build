@@ -117,12 +117,12 @@ mv -v opendistro-knnlib*/libKNNIndex*.so $PACKAGE_NAME-$OD_VERSION/plugins/opend
 # Tar generation
 echo "generating tar"
 tar -czf $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION-$OD_ARCH.tar.gz $PACKAGE_NAME-$OD_VERSION
-#tar -tavf $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz
+#tar -tavf $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION-$OD_ARCH.tar.gz
 cd $TARGET_DIR
-shasum -a 512 $PACKAGE_NAME-$OD_VERSION.tar.gz > $PACKAGE_NAME-$OD_VERSION.tar.gz.sha512
-shasum -a 512 -c $PACKAGE_NAME-$OD_VERSION.tar.gz.sha512
+shasum -a 512 $PACKAGE_NAME-$OD_VERSION-$OD_ARCH.tar.gz > $PACKAGE_NAME-$OD_VERSION-$OD_ARCH.tar.gz.sha512
+shasum -a 512 -c $PACKAGE_NAME-$OD_VERSION-$OD_ARCH.tar.gz.sha512
 echo " CHECKSUM FILE: "
-echo "$(cat $PACKAGE_NAME-$OD_VERSION.tar.gz.sha512)"
+echo "$(cat $PACKAGE_NAME-$OD_VERSION-$OD_ARCH.tar.gz.sha512)"
 cd $ROOT
 rm -rf $PACKAGE_NAME-$OD_VERSION
 
