@@ -15,6 +15,7 @@
 #Download opensourceversion
 
 set -e
+set -u
 
 REPO_ROOT=`git rev-parse --show-toplevel`
 ROOT=`dirname $(realpath $0)`; echo $ROOT; cd $ROOT
@@ -44,6 +45,15 @@ if [ -z "$PLUGINS" ]; then
   echo "Provide plugin list to install (separated by space)"
   exit 1
 fi
+
+# Prepare required packages
+sudo add-apt-repository -y ppa:openjdk-r/ppa
+# Need to update twice as ARM image seems not working correctly sometimes with only one update
+sudo apt update
+sudo apt update
+sudo apt install -y jq unzip awscli openjdk-12-jdk
+hostname
+echo $OSTYPE
 
 # Prepare target directories
 mkdir ${PACKAGE_NAME}-${OD_VERSION}
