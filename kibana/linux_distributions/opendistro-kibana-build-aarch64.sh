@@ -1,0 +1,232 @@
+#!/bin/bash
+
+# Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License").
+# You may not use this file except in compliance with the License.
+# A copy of the License is located at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# or in the "license" file accompanying this file. This file is distributed
+# on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+# express or implied. See the License for the specific language governing
+# permissions and limitations under the License.
+
+# Description:
+# This script generates packages for opendistro-for-elasticsearch-kibana.
+
+# Node-JS binaries under kibana/node which is being used while installing / removing plugin
+
+# if [[ "$OSTYPE" == "darwin"* ]]; then
+#   echo "Run this script in Linux machine as node binary shipped in Kibana is for Linux platform"
+#   exit 1
+# fi
+
+set -e
+
+# Prepare required packages
+if echo $OSTYPE | grep -i linux
+then
+  if which apt # Debian based linux
+  then
+    sudo add-apt-repository -y ppa:openjdk-r/ppa
+    # Need to update twice as ARM image seems not working correctly sometimes with only one update
+    sudo apt update; sudo apt update
+    sudo apt install -y jq unzip awscli openjdk-8-jdk
+  elif which yum # RedHat based linux
+  then
+    # Need to update twice as ARM image seems not working correctly sometimes with only one update
+    sudo yum repolist; sudo yum repolist
+    sudo yum install -y jq unzip awscli java-1.8.0-openjdk
+  else
+    echo "This script does not support your current os"
+    exit 1
+  fi
+else
+  echo "This script only support linux os now"
+  exit 1
+fi
+
+# Initialize directories
+REPO_ROOT=`git rev-parse --show-toplevel`
+ROOT=`dirname $(realpath $0)`; echo $ROOT; cd $ROOT
+ES_VERSION=`$REPO_ROOT/bin/version-info --es`; echo ES_VERSION: $ES_VERSION
+OD_VERSION=`$REPO_ROOT/bin/version-info --od`; echo OD_VERSION: $OD_VERSION
+OD_ARCH="aarch64"
+IS_CUT=`$REPO_ROOT/bin/version-info --is-cut`; echo IS_CUT: $IS_CUT
+PACKAGE_TYPE=$1
+S3_BUCKET="artifacts.opendistroforelasticsearch.amazon.com"
+ARTIFACTS_URL="https://d3g5vo6xdbdb9a.cloudfront.net"
+PACKAGE_NAME="opendistroforelasticsearch-kibana"
+TARGET_DIR="$ROOT/target"
+plugin_version=$OD_VERSION
+
+# Please DO NOT change the orders, they have dependencies
+PLUGINS=`$REPO_ROOT/bin/plugins-info kibana zip --require-install-true`
+PLUGINS_ARRAY=($PLUGINS )
+CUT_VERSIONS=`$REPO_ROOT/bin/plugins-info kibana cutversion --require-install-true`
+CUT_VERSIONS_ARRAY=( $CUT_VERSIONS )
+
+basedir="${ROOT}/${PACKAGE_NAME}/plugins"
+
+echo $ROOT
+
+if [ -z "$PLUGINS" ]; then
+  echo "Provide plugin list to install (separated by space)"
+  exit 1
+fi
+
+# If the input is set, but it's set to neither rpm nor deb, then exit.
+if [ -n $PACKAGE_TYPE ] && [ "$PACKAGE_TYPE" != "rpm" ] && [ "$PACKAGE_TYPE" != "deb" ] && [ "$PACKAGE_TYPE" != "tar" ]; then
+  printf "You entered %s. Please enter 'rpm' to build rpm or 'deb' or 'tar' to build deb or nothing to build both.\n" "$PACKAGE_TYPE"
+  exit 1
+fi
+
+# Prepare target directories
+mkdir $TARGET_DIR
+mkdir $PACKAGE_NAME
+
+# Downloading Kibana oss
+echo "Downloading kibana oss"
+#curl -Ls "https://artifacts.elastic.co/downloads/kibana/kibana-oss-$ES_VERSION-linux-x86_64.tar.gz" | tar --strip-components=1 -zxf - --directory $PACKAGE_NAME
+aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/temp/aarch64-test/kibana-${ES_VERSION}-linux-${OD_ARCH}.tar.gz . --quiet; echo $?
+tar --strip-components=1 -zxf kibana-${ES_VERSION}-linux-${OD_ARCH}.tar.gz --directory $PACKAGE_NAME
+
+# Install required plugins
+echo "installing open distro plugins"
+for index in ${!PLUGINS_ARRAY[@]}
+do
+  if [ "$IS_CUT" = "true" ]
+  then
+    plugin_version=${CUT_VERSIONS_ARRAY[$index]}
+  fi
+  plugin_path=${PLUGINS_ARRAY[$index]}
+  plugin_latest=`aws s3api list-objects --bucket $S3_BUCKET --prefix "downloads/kibana-plugins/${plugin_path}-${plugin_version}" --query 'Contents[].[Key]' --output text | sort | tail -n 1`
+
+  if [ "$plugin_path" != "none" ]
+  then
+    echo "installing $plugin_latest"
+    $PACKAGE_NAME/bin/kibana-plugin --allow-root install "${ARTIFACTS_URL}/${plugin_latest}"
+  fi
+done
+
+# List Plugins
+echo "List available plugins"
+ls -lrt $basedir
+
+# Replace kibana.yml with default opendistro yml
+cp config/kibana.yml $PACKAGE_NAME/config
+
+echo "building artifact: ${PACKAGE_TYPE}"
+
+#if [ $# -eq 0 ] || [ "$PACKAGE_TYPE" = "rpm" ]; then
+#  echo "generating rpm"
+#  fpm --force \
+#      -t rpm \
+#      --package $TARGET_DIR/NAME-$OD_VERSION.TYPE \
+#      -s dir \
+#      --name $PACKAGE_NAME \
+#      --description "Explore and visualize your Elasticsearch data" \
+#      --version $OD_VERSION \
+#      --url https://aws.amazon.com/ \
+#      --vendor "Amazon Web Services, Inc." \
+#      --maintainer "Opendistro Team <opendistroforelasticsearch@amazon.com>" \
+#      --license "ASL 2.0" \
+#      --conflicts kibana \
+#      --after-install $ROOT/scripts/post_install.sh \
+#      --before-install $ROOT/scripts/pre_install.sh \
+#      --before-remove $ROOT/scripts/pre_remove.sh \
+#      --after-remove $ROOT/scripts/post_remove.sh \
+#      --config-files /etc/kibana/kibana.yml \
+#      --template-value user=kibana \
+#      --template-value group=kibana \
+#      --template-value optimizeDir=/usr/share/kibana/optimize \
+#      --template-value configDir=/etc/kibana \
+#      --template-value pluginsDir=/usr/share/kibana/plugins \
+#      --template-value dataDir=/var/lib/kibana \
+#      --exclude usr/share/kibana/config \
+#      --exclude usr/share/kibana/data \
+#      --architecture x86_64 \
+#      --rpm-os linux \
+#      $ROOT/opendistroforelasticsearch-kibana/=/usr/share/kibana/ \
+#      $ROOT/opendistroforelasticsearch-kibana/config/=/etc/kibana/ \
+#      $ROOT/opendistroforelasticsearch-kibana/data/=/var/lib/kibana/ \
+#      $ROOT/service_templates/sysv/etc/=/etc/ \
+#      $ROOT/service_templates/systemd/etc/=/etc/
+#
+#      # Upload to S3
+#      ls -ltr $TARGET_DIR
+#      rpm_artifact=`ls $TARGET_DIR/*.rpm`
+#      aws s3 cp $rpm_artifact s3://$S3_BUCKET/downloads/rpms/opendistroforelasticsearch-kibana/
+#      aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/*"
+#
+#fi
+#
+#if [ $# -eq 0 ] || [ "$PACKAGE_TYPE" = "deb" ]; then
+#  echo "generating deb"
+#  fpm --force \
+#      -t deb \
+#      --package $TARGET_DIR/NAME-$OD_VERSION.TYPE \
+#      -s dir \
+#      --name $PACKAGE_NAME \
+#      --description "Explore and visualize your Elasticsearch data" \
+#      --version $OD_VERSION \
+#      --url https://aws.amazon.com/ \
+#      --vendor "Amazon Web Services, Inc." \
+#      --maintainer "Opendistro Team <opendistroforelasticsearch@amazon.com>" \
+#      --license "ASL 2.0" \
+#      --conflicts kibana \
+#      --after-install $ROOT/scripts/post_install.sh \
+#      --before-install $ROOT/scripts/pre_install.sh \
+#      --before-remove $ROOT/scripts/pre_remove.sh \
+#      --after-remove $ROOT/scripts/post_remove.sh \
+#      --config-files /etc/kibana/kibana.yml \
+#      --template-value user=kibana \
+#      --template-value group=kibana \
+#      --template-value optimizeDir=/usr/share/kibana/optimize \
+#      --template-value configDir=/etc/kibana \
+#      --template-value pluginsDir=/usr/share/kibana/plugins \
+#      --template-value dataDir=/var/lib/kibana \
+#      --exclude usr/share/kibana/config \
+#      --exclude usr/share/kibana/data \
+#      --architecture amd64 \
+#      $ROOT/opendistroforelasticsearch-kibana/=/usr/share/kibana/ \
+#      $ROOT/opendistroforelasticsearch-kibana/config/=/etc/kibana/ \
+#      $ROOT/opendistroforelasticsearch-kibana/data/=/var/lib/kibana/ \
+#      $ROOT/service_templates/sysv/etc/=/etc/ \
+#      $ROOT/service_templates/systemd/etc/=/etc/
+#
+#      # Upload to S3
+#      ls -ltr $TARGET_DIR
+#      deb_artifact=`ls $TARGET_DIR/*.deb`
+#      aws s3 cp $deb_artifact s3://$S3_BUCKET/downloads/debs/opendistroforelasticsearch-kibana/
+#      aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/*"
+#
+#fi
+
+if [ $# -eq 0 ] || [ "$PACKAGE_TYPE" = "tar" ]; then
+
+  # Generating tar
+  rm -rf $TARGET_DIR/*tar*
+  echo "generating tar"
+  tar -czf $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION-$OD_ARCH.tar.gz $PACKAGE_NAME
+  #tar -tzvf $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz
+  cd $TARGET_DIR
+  shasum -a 512 $PACKAGE_NAME-$OD_VERSION-$OD_ARCH.tar.gz > $PACKAGE_NAME-$OD_VERSION-$OD_ARCH.tar.gz.sha512
+  shasum -a 512 -c $PACKAGE_NAME-$OD_VERSION-$OD_ARCH.tar.gz.sha512
+  echo " CHECKSUM FILE "
+  echo "$(cat $PACKAGE_NAME-$OD_VERSION-$OD_ARCH.tar.gz.sha512)"
+  cd $ROOT
+
+  # Upload to S3
+  ls -ltr $TARGET_DIR
+  tar_artifact=`ls $TARGET_DIR/*.tar.gz`
+  tar_checksum_artifact=`ls $TARGET_DIR/*.tar.gz.sha512`
+  #aws s3 cp $tar_artifact s3://$S3_BUCKET/downloads/tarball/opendistroforelasticsearch-kibana/
+  #aws s3 cp $tar_checksum_artifact s3://$S3_BUCKET/downloads/tarball/opendistroforelasticsearch-kibana/
+  aws s3 cp $tar_artifact s3://$S3_BUCKET/temp/aarch64-test/
+  aws s3 cp $tar_checksum_artifact s3://$S3_BUCKET/temp/aarch64-test/
+  #aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/*"
+
+fi
