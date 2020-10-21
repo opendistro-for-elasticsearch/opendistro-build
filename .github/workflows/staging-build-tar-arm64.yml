@@ -65,7 +65,8 @@ jobs:
       run: |
         set -u
         sudo apt update
-        sudo apt install -y jq unzip
+        sudo apt update
+        sudo apt install -y jq unzip awscli
         hostname
         pwd
         lscpu
