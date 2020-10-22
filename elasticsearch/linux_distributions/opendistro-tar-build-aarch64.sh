@@ -77,7 +77,7 @@ mkdir $TARGET_DIR
 echo "Downloading ES oss"
 #wget -nv https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$ES_VERSION-linux-x86_64.tar.gz ; echo $?
 # aws s3 cp aarch64 es binary to local
-aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/temp/aarch64-test/elasticsearch-oss-${ES_VERSION}-linux-${OD_ARCH}.tar.gz . --quiet; echo $?
+aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/aarch64-test/elasticsearch-oss-${ES_VERSION}-linux-${OD_ARCH}.tar.gz . --quiet; echo $?
 #tar -xzf elasticsearch-oss-$ES_VERSION-linux-x86_64.tar.gz --strip-components=1 --directory "${PACKAGE_NAME}-${OD_VERSION}" && rm -rf elasticsearch-oss-$ES_VERSION-linux-x86_64.tar.gz
 tar -xzf elasticsearch-oss-${ES_VERSION}-linux-${OD_ARCH}.tar.gz --strip-components=1 --directory "${PACKAGE_NAME}-${OD_VERSION}" && rm -rf elasticsearch-oss-${ES_VERSION}-linux-${OD_ARCH}.tar.gz
 cp -v opendistro-tar-install.sh $PACKAGE_NAME-$OD_VERSION
@@ -156,7 +156,7 @@ tar_artifact=`ls $TARGET_DIR/*.tar.gz`
 tar_checksum_artifact=`ls $TARGET_DIR/*.tar.gz.sha512`
 #aws s3 cp $tar_artifact s3://$S3_BUCKET/downloads/tarball/opendistro-elasticsearch/
 #aws s3 cp $tar_checksum_artifact s3://$S3_BUCKET/downloads/tarball/opendistro-elasticsearch/
-aws s3 cp $tar_artifact s3://$S3_BUCKET/temp/aarch64-test/
-aws s3 cp $tar_checksum_artifact s3://$S3_BUCKET/temp/aarch64-test/
-aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/temp/*"
+aws s3 cp $tar_artifact s3://$S3_BUCKET/aarch64-test/
+aws s3 cp $tar_checksum_artifact s3://$S3_BUCKET/aarch64-test/
+aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/*"
 

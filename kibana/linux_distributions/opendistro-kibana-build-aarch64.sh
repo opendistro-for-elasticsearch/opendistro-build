@@ -90,7 +90,7 @@ mkdir $PACKAGE_NAME
 # Downloading Kibana oss
 echo "Downloading kibana oss"
 #curl -Ls "https://artifacts.elastic.co/downloads/kibana/kibana-oss-$ES_VERSION-linux-x86_64.tar.gz" | tar --strip-components=1 -zxf - --directory $PACKAGE_NAME
-aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/temp/aarch64-test/kibana-${ES_VERSION}-linux-${OD_ARCH}.tar.gz . --quiet; echo $?
+aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/aarch64-test/kibana-${ES_VERSION}-linux-${OD_ARCH}.tar.gz . --quiet; echo $?
 tar --strip-components=1 -zxf kibana-${ES_VERSION}-linux-${OD_ARCH}.tar.gz --directory $PACKAGE_NAME
 
 # Install required plugins
@@ -225,8 +225,8 @@ if [ $# -eq 0 ] || [ "$PACKAGE_TYPE" = "tar" ]; then
   tar_checksum_artifact=`ls $TARGET_DIR/*.tar.gz.sha512`
   #aws s3 cp $tar_artifact s3://$S3_BUCKET/downloads/tarball/opendistroforelasticsearch-kibana/
   #aws s3 cp $tar_checksum_artifact s3://$S3_BUCKET/downloads/tarball/opendistroforelasticsearch-kibana/
-  aws s3 cp $tar_artifact s3://$S3_BUCKET/temp/aarch64-test/
-  aws s3 cp $tar_checksum_artifact s3://$S3_BUCKET/temp/aarch64-test/
-  aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/temp/*"
+  aws s3 cp $tar_artifact s3://$S3_BUCKET/aarch64-test/
+  aws s3 cp $tar_checksum_artifact s3://$S3_BUCKET/aarch64-test/
+  aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/*"
 
 fi
