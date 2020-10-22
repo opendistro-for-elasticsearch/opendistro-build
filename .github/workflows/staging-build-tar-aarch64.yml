@@ -439,8 +439,8 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-#      - name: Setup Required Packages
-#        run: .github/scripts/setup_runners_required_packages.sh
+      - name: Setup Required Packages
+        run: .github/scripts/setup_runners_required_packages.sh
 
       - name: Retrieve plugin tags
         run: |
