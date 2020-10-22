@@ -1,0 +1,8 @@
+cluster.name: $CLUSTER_NAME
+
+node.name: ${CLUSTER_NAME}-node-1
+path.data: $DATA_DIR
+path.logs: $LOG_DIR
+path.repo: $SNAPSHOT_DIR
+
+script.context.field.max_compilations_rate: 1000/1m
