@@ -426,10 +426,8 @@ jobs:
     name: Test-AD-KIBANA
     steps:
       - uses: actions/checkout@v1
-#      - name: Setup Java
-#        uses: actions/setup-java@v1
-#        with:
-#          java-version: 14
+      - name: Setup Required Packages
+        run: .github/scripts/setup_runners_required_packages.sh
 
       - name: Retrieve plugin tags
         run: |

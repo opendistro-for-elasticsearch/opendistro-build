@@ -66,11 +66,11 @@
 #
 #                7. Runner AMI requires installation of packages of these:
 #                   Debian:
-#                   sudo apt install -y curl wget unzip jq python python3 git awscli
+#                   sudo apt install -y curl wget unzip jq python python3 git awscli openjdk-8-jdk
 #                   sudo apt install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
 #
 #                   RedHat:
-#                   sudo yum install -y curl wget unzip jq python python3 git awscli
+#                   sudo yum install -y curl wget unzip jq python python3 git awscli java-8-openjdk
 #                   sudo yum install -y xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-devel GConf2 nss libXScrnSaver alsa-lib
 #
 #                8. AMI must be at least 16GB during the creation.
@@ -98,7 +98,8 @@ SETUP_ACTION=$1
 SETUP_RUNNER=`echo $2 | sed 's/,/ /g'`
 SETUP_GIT_TOKEN=$3
 #EC2_AMI_ID="ami-0dd5d17deb78eff42"
-EC2_AMI_ID="ami-03d5e9433f92eaf7d"
+#EC2_AMI_ID="ami-03d5e9433f92eaf7d"
+EC2_AMI_ID="ami-0eddd5d08379980d8"
 #EC2_AMI_USER="ec2-user"
 EC2_AMI_USER="ubuntu" # Ubuntu User
 #EC2_INSTANCE_TYPE="m5.xlarge"
