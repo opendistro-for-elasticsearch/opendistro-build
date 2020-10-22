@@ -73,6 +73,8 @@
 #                   sudo yum install -y curl wget unzip jq python python3 git awscli
 #                   sudo yum install -y xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-devel GConf2 nss libXScrnSaver alsa-lib
 #
+#                8. AMI must be at least 16GB during the creation.
+#
 # Starting Date: 2020-07-27
 # Modified Date: 2020-10-21
 ###############################################################################################
@@ -96,7 +98,7 @@ SETUP_ACTION=$1
 SETUP_RUNNER=`echo $2 | sed 's/,/ /g'`
 SETUP_GIT_TOKEN=$3
 #EC2_AMI_ID="ami-0dd5d17deb78eff42"
-EC2_AMI_ID="ami-02352d244290170c0"
+EC2_AMI_ID="ami-03d5e9433f92eaf7d"
 #EC2_AMI_USER="ec2-user"
 EC2_AMI_USER="ubuntu" # Ubuntu User
 #EC2_INSTANCE_TYPE="m5.xlarge"
