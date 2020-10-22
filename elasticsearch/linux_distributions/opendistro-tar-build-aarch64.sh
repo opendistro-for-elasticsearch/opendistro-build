@@ -17,29 +17,6 @@
 set -e
 set -u
 
-# Prepare required packages
-if echo $OSTYPE | grep -i linux
-then
-  if which apt # Debian based linux
-  then
-    sudo add-apt-repository -y ppa:openjdk-r/ppa
-    # Need to update twice as ARM image seems not working correctly sometimes with only one update
-    sudo apt update; sudo apt update
-    sudo apt install -y curl wget unzip jq python python3 git awscli
-  elif which yum # RedHat based linux
-  then
-    # Need to update twice as ARM image seems not working correctly sometimes with only one update
-    sudo yum repolist; sudo yum repolist
-    sudo yum install -y curl wget unzip jq python python3 git awscli
-  else
-    echo "This script does not support your current os"
-    exit 1
-  fi
-else
-  echo "This script only support linux os now"
-  exit 1
-fi
-
 REPO_ROOT=`git rev-parse --show-toplevel`
 ROOT=`dirname $(realpath $0)`; echo $ROOT; cd $ROOT
 ES_VERSION=`$REPO_ROOT/bin/version-info --es`; echo ES_VERSION: $ES_VERSION
