@@ -37,10 +37,11 @@ REPO_ROOT=`git rev-parse --show-toplevel`
 ROOT=`dirname $(realpath $0)`; cd $ROOT
 OD_VERSION=`python $REPO_ROOT/bin/version-info --od`
 ES_VERSION=`python $REPO_ROOT/bin/version-info --es`
+OD_ARCH="aarch64"
 
-ES_PACKAGE_NAME="opendistroforelasticsearch-${OD_VERSION}"
+ES_PACKAGE_NAME="opendistroforelasticsearch-${OD_VERSION}-${OD_ARCH}"
 ES_ROOT="${ROOT}/odfe-testing/${ES_PACKAGE_NAME}"
-KIBANA_PACKAGE_NAME="opendistroforelasticsearch-kibana"
+KIBANA_PACKAGE_NAME="opendistroforelasticsearch-kibana-${OD_VERSION}-${OD_ARCH}"
 KIBANA_ROOT="${ROOT}/kibana-testing/${KIBANA_PACKAGE_NAME}"
 
 DOCKER_NAME="Test-Docker-${OD_VERSION}"
@@ -68,7 +69,7 @@ sudo chmod -R 777 /dev/shm
 if [ "$SETUP_DISTRO" = "zip" ]
 then
   mkdir -p $ES_ROOT
-  aws s3 cp s3://$S3_BUCKET/downloads/tarball/opendistro-elasticsearch/$ES_PACKAGE_NAME.tar.gz . --quiet; echo $?
+  aws s3 cp s3://$S3_BUCKET/aarch64-test/$ES_PACKAGE_NAME.tar.gz . --quiet; echo $?
   tar -zxf $ES_PACKAGE_NAME.tar.gz -C $ES_ROOT --strip-components 1
 fi
 
@@ -220,8 +221,8 @@ then
   if [ "$SETUP_DISTRO" = "zip" ]
   then
     mkdir -p $KIBANA_ROOT
-    aws s3 cp s3://$S3_BUCKET/downloads/tarball/$KIBANA_PACKAGE_NAME/$KIBANA_PACKAGE_NAME-$OD_VERSION.tar.gz . --quiet; echo $?
-    tar -zxf $KIBANA_PACKAGE_NAME-$OD_VERSION.tar.gz -C $KIBANA_ROOT --strip-components 1
+    aws s3 cp s3://$S3_BUCKET/aarch64-test/$KIBANA_PACKAGE_NAME.tar.gz . --quiet; echo $?
+    tar -zxf $KIBANA_PACKAGE_NAME.tar.gz -C $KIBANA_ROOT --strip-components 1
   elif [ "$SETUP_DISTRO" = "docker" ]
   then
     echo "FROM opendistroforelasticsearch/opendistroforelasticsearch-kibana:$OD_VERSION" >> Dockerfile.kibana
