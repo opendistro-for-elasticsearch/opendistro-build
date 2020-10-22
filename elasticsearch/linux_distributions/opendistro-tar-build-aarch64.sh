@@ -158,5 +158,5 @@ tar_checksum_artifact=`ls $TARGET_DIR/*.tar.gz.sha512`
 #aws s3 cp $tar_checksum_artifact s3://$S3_BUCKET/downloads/tarball/opendistro-elasticsearch/
 aws s3 cp $tar_artifact s3://$S3_BUCKET/temp/aarch64-test/
 aws s3 cp $tar_checksum_artifact s3://$S3_BUCKET/temp/aarch64-test/
-#aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/*"
+aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/temp/*"
 

@@ -55,8 +55,8 @@ jobs:
     #  image: opendistroforelasticsearch/multijava08101112-git:v1
     steps:
     - uses: actions/checkout@v1
-      with:
-        ref: v1.10.1
+      #with:
+      #  ref: v1.10.1
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -74,8 +74,8 @@ jobs:
     #  image: opendistroforelasticsearch/jsenv:v1
     steps:
       - uses: actions/checkout@v1
-        with:
-          ref: v1.10.1
+        #with:
+        #  ref: v1.10.1
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:

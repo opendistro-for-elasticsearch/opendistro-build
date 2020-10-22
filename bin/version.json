@@ -10,6 +10,6 @@
     "next": "1.10.2"
   },
   "versionCut": {
-    "is_cut": "false"
+    "is_cut": "true"
   }
 }
