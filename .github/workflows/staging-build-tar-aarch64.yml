@@ -420,7 +420,8 @@ jobs:
 #          command: npx cypress run
           
   Test-AD-KIBANA:
-    needs: [build-es-artifacts-aarch64, build-kibana-artifacts-aarch64]
+    #needs: [build-es-artifacts-aarch64, build-kibana-artifacts-aarch64]
+    needs: [Provision-Runners]
     runs-on: [self-hosted, Linux, ARM64, aarch64-tar-ad-kibana]
     name: Test-AD-KIBANA
     steps:
