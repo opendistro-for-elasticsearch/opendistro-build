@@ -175,7 +175,8 @@ jobs:
 #          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
 
   Test-AD-NoSec:
-    needs: [build-es-artifacts-aarch64, build-kibana-artifacts-aarch64]
+    #needs: [build-es-artifacts-aarch64, build-kibana-artifacts-aarch64]
+    needs: [Provision-Runners]
     name: Test-AD-NoSec
     runs-on: [self-hosted, Linux, ARM64, aarch64-tar-ad-nosec]
     steps:
