@@ -66,11 +66,11 @@
 #
 #                7. Runner AMI requires installation of packages of these:
 #                   Debian:
-#                   sudo apt install -y curl wget unzip jq python python3 git awscli openjdk-8-jdk
+#                   sudo apt install -y curl wget unzip tar jq python python3 git awscli openjdk-8-jdk
 #                   sudo apt install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
 #
 #                   RedHat:
-#                   sudo yum install -y curl wget unzip jq python python3 git awscli java-8-openjdk
+#                   sudo yum install -y curl wget unzip tar jq python python3 git awscli java-8-openjdk
 #                   sudo yum install -y xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-devel GConf2 nss libXScrnSaver alsa-lib
 #
 #                8. AMI must be at least 16GB during the creation.
