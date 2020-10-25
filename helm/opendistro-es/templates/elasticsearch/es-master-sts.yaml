@@ -96,9 +96,17 @@ spec:
         - name: node.master
           value: "true"
         - name: node.ingest
+        {{- if .Values.elasticsearch.client.enabled }}
           value: "false"
+        {{- else }}
+          value: "true"
+        {{- end }}
         - name: node.data
+        {{- if .Values.elasticsearch.data.enabled }}
           value: "false"
+        {{- else }}
+          value: "true"
+        {{- end }}
         - name: network.host
           value: "0.0.0.0"
     {{- if .Values.elasticsearch.transportKeyPassphrase.enabled}}
