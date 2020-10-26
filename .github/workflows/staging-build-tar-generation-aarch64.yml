@@ -1,0 +1,112 @@
+name: Process TAR AArch64 Artifacts Generations
+
+on:
+  #schedule:
+  #  - cron: '0 10 * * *'
+  repository_dispatch:
+    types: [staging-build-tar-generation-aarch64]
+  push:
+    branches: [opendistro-infra-issues-P40904739]
+
+jobs:
+#  plugin-availability:
+#    name: Check Plugin Availability
+#    runs-on: ubuntu-18.04
+#    steps:
+#      - uses: actions/checkout@v1
+#      - name: Configure AWS Credentials
+#        uses: aws-actions/configure-aws-credentials@v1
+#        with:
+#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#          aws-region: us-east-1
+#
+#      - name: Run check_plugin scripts
+#        run: .github/scripts/check_plugin.sh "elasticsearch_zip,kibana_zip"; exit `cat /tmp/plugin_status.check`
+#
+  Provision-Runners:
+    #needs: [plugin-availability]
+    name: Provision-Runners
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v1
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_EC2_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_EC2_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
+      - name: AWS Cli Processing
+        run: |
+          #!/bin/bash
+          # Please add comma at the end of the RUNNERS strings
+          RUNNERS="aarch64-tar-build-es,aarch64-tar-build-kibana,"
+          #RUNNERS+="aarch64-tar-ism-nosec,aarch64-tar-alerting-nosec,aarch64-tar-sql-nosec,aarch64-tar-knn-nosec,aarch64-tar-ad-nosec,"
+          #RUNNERS+="aarch64-tar-sql,aarch64-tar-ad,aarch64-tar-alerting,"
+          #RUNNERS+="aarch64-tar-ad-kibana-nosec,aarch64-tar-sql-kibana-nosec,"
+          #RUNNERS+="aarch64-tar-ad-kibana"
+          .github/scripts/setup_runners_aarch64.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
+
+  build-es-artifacts-aarch64:
+    needs: [Provision-Runners]
+    name: Build ES Artifacts AArch64
+    runs-on: [self-hosted, Linux, ARM64, aarch64-tar-build-es]
+    #container:
+    #  image: opendistroforelasticsearch/multijava08101112-git:v1
+    steps:
+    - uses: actions/checkout@v1
+      #with:
+      #  ref: v1.10.1
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+    - name: Build tar
+      run: ./elasticsearch/linux_distributions/opendistro-tar-build-aarch64.sh
+
+  build-kibana-artifacts-aarch64:
+    needs: [Provision-Runners]
+    name: Build Kibana Artifacts AArch64
+    runs-on: [self-hosted, Linux, ARM64, aarch64-tar-build-kibana]
+    #container:
+    #  image: opendistroforelasticsearch/jsenv:v1
+    steps:
+      - uses: actions/checkout@v1
+        #with:
+        #  ref: v1.10.1
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Build Kibana zip
+        run: ./kibana/linux_distributions/opendistro-kibana-build-aarch64.sh tar
+
+  CleanUp-Runners:
+    #needs: [Test-ISM-NoSec, Test-ALERTING-NoSec, Test-SQL-NoSec, Test-KNN-NoSec, Test-AD-NoSec, Test-SQL, Test-AD, Test-ALERTING, Test-AD-KIBANA-NoSec, Test-SQL-KIBANA-NoSec, Test-AD-KIBANA]
+    needs: [build-es-artifacts-aarch64, build-kibana-artifacts-aarch64]
+    if: always()
+    name: CleanUp-Runners
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v1
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_EC2_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_EC2_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
+      - name: AWS Cli Processing
+        run: |
+          #!/bin/bash
+          # Please add comma at the end of the RUNNERS strings
+          RUNNERS="aarch64-tar-build-es,aarch64-tar-build-kibana,"
+          #RUNNERS+="aarch64-tar-ism-nosec,aarch64-tar-alerting-nosec,aarch64-tar-sql-nosec,aarch64-tar-knn-nosec,aarch64-tar-ad-nosec,"
+          #RUNNERS+="aarch64-tar-sql,aarch64-tar-ad,aarch64-tar-alerting,"
+          #RUNNERS+="aarch64-tar-ad-kibana-nosec,aarch64-tar-sql-kibana-nosec,"
+          #RUNNERS+="aarch64-tar-ad-kibana"
+          .github/scripts/setup_runners_aarch64.sh terminate $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
+
