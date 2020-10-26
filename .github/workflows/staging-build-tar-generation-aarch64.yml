@@ -57,12 +57,15 @@ jobs:
     - uses: actions/checkout@v1
       #with:
       #  ref: v1.10.1
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
+    - name: Set up AWS Cred
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+    - name: Setup Required Packages
+        run: .github/scripts/setup_runners_required_packages.sh
     - name: Build tar
       run: ./elasticsearch/linux_distributions/opendistro-tar-build-aarch64.sh
 
@@ -76,12 +79,15 @@ jobs:
       - uses: actions/checkout@v1
         #with:
         #  ref: v1.10.1
-      - name: Configure AWS Credentials
+    - name: Set up AWS Cred
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
+
+      - name: Setup Required Packages
+        run: .github/scripts/setup_runners_required_packages.sh
       - name: Build Kibana zip
         run: ./kibana/linux_distributions/opendistro-kibana-build-aarch64.sh tar
 
