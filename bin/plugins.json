@@ -15,7 +15,7 @@
     "deb": "opendistro-alerting/opendistro-alerting",
     "rpm": "opendistro-alerting/opendistro-alerting",
     "windows": "opendistro-alerting/opendistro_alerting",
-    "cutversion": "1.11.0.0",
+    "cutversion": "1.11.0.1",
     "require_install": "true",
     "category": "elasticsearch"
   },
@@ -125,7 +125,7 @@
     "deb": "none",
     "rpm": "none",
     "windows": "none",
-    "cutversion": "1.11.0.0",
+    "cutversion": "1.11.0.2",
     "require_install": "true",
     "category": "kibana"
   },
