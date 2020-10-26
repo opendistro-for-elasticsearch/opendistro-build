@@ -1,0 +1,3 @@
+baseDirPath=$(pwd)
+gitBasePath=https://github.com/opendistro-for-elasticsearch/
+gitRepos=alerting,simple-ingest-transformation-utility-pipeline,opendistro-build,security,performance-analyzer-rca,anomaly-detection,index-management,security-kibana-plugin,sql,job-scheduler,notifications,performance-analyzer,index-management-kibana-plugin,alerting-kibana-plugin,common-utils,k-NN,anomaly-detection-kibana-plugin,perftop,kibana-notebooks,piped-processing-language
