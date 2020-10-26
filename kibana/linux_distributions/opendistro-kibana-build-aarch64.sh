@@ -67,7 +67,7 @@ mkdir $PACKAGE_NAME
 # Downloading Kibana oss
 echo "Downloading kibana oss"
 #curl -Ls "https://artifacts.elastic.co/downloads/kibana/kibana-oss-$ES_VERSION-linux-x86_64.tar.gz" | tar --strip-components=1 -zxf - --directory $PACKAGE_NAME
-aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/aarch64-test/kibana-${ES_VERSION}-linux-${OD_ARCH}.tar.gz . --quiet; echo $?
+aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/aarch64-test/kibana-oss-${ES_VERSION}-linux-${OD_ARCH}.tar.gz . --quiet; echo $?
 tar --strip-components=1 -zxf kibana-${ES_VERSION}-linux-${OD_ARCH}.tar.gz --directory $PACKAGE_NAME
 
 # Install required plugins
