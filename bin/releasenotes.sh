@@ -87,7 +87,7 @@ do
     entry_upper=`echo $entry_upper | sed -E 's/^#//g'`
 
     # Loop through the actual release notes lines in reverse order so they appear in normal order on distro release notes
-    for index in `seq $(echo ${#entry_notes_array[@]}) 0`
+    for index in `seq $(echo ${#entry_notes_array[@]}) -1 0`
     do
       # As a limitation in MacOS / BSD version of sed, we can only insert one line at a time
       # Ignore usage of in-place parameter as there are differences between BSD/MacOS sed and GNU sed commands
