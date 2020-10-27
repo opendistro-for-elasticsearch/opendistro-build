@@ -14,7 +14,7 @@
 # Platform:      This script works on both GNU/LINUX and MacOS
 #
 # Starting Date: 2020-09-03
-# Modified Date: 2020-09-15
+# Modified Date: 2020-10-27
 ###############################################################################################
 
 set -e
@@ -29,6 +29,10 @@ RELEASENOTES_SORTURL="$ROOT/releasenotes-sort-urls.txt"
 RELEASENOTES_TEMPTXT="$ROOT/releasenotes-temp-text.tmp"
 RELEASENOTES_DISTROS="$ROOT/releasenotes-dist-draft.md"
 RELEASENOTES_CATEGORIES="BREAKING CHANGES,FEATURES,ENHANCEMENTS,BUG FIXES,INFRASTRUCTURE,DOCUMENTATION,MAINTENANCE,REFACTORING" # upper cases
+
+# Clean up
+rm -rf $RELEASENOTES_SORTURL
+rm -rf $RELEASENOTES_TEMPTXT 
 
 # Sort the urls in reverse order so they appear in normal order in distro release notes
 (cat $RELEASENOTES_ORIGURL | grep -v -E "^#" | sort -rfd) > $RELEASENOTES_SORTURL
@@ -68,7 +72,7 @@ do
 
   # Pulling the plugin release notes and get available category
   echo $github_raw_url
-  wget -q $github_raw_url -O $RELEASENOTES_TEMPTXT; echo $?
+  wget -nv $github_raw_url -O $RELEASENOTES_TEMPTXT; echo $?
 
   CURR_CATEGORY_LIST=`cat $RELEASENOTES_TEMPTXT | grep "###"`
   for entry in $CURR_CATEGORY_LIST
@@ -78,7 +82,8 @@ do
 
     # Resolve MacOS / BSD sed does not work the same as gnu sed commands
     # Replace pulled plugin release notes category names to upper-case so that we can retrieve actual release notes lines
-    sed "s/$entry/$entry_upper/g" $RELEASENOTES_TEMPTXT > ${RELEASENOTES_TEMPTXT}1
+    # Also, make sure & is properly escaped here
+    sed "s/$entry/$entry_upper/g" $RELEASENOTES_TEMPTXT | sed 's/&/\\&/g' > ${RELEASENOTES_TEMPTXT}1
     mv ${RELEASENOTES_TEMPTXT}1 $RELEASENOTES_TEMPTXT
 
     # Get the actual release notes lines for the selected category, exclude category names
@@ -87,7 +92,7 @@ do
     entry_upper=`echo $entry_upper | sed -E 's/^#//g'`
 
     # Loop through the actual release notes lines in reverse order so they appear in normal order on distro release notes
-    for index in `seq $(echo ${#entry_notes_array[@]}) -1 0`
+    for index in `seq $(echo ${#entry_notes_array[@]}) 0`
     do
       # As a limitation in MacOS / BSD version of sed, we can only insert one line at a time
       # Ignore usage of in-place parameter as there are differences between BSD/MacOS sed and GNU sed commands
@@ -106,10 +111,10 @@ do
 done
 
 # Clean up
-
-rm $RELEASENOTES_SORTURL
-rm $RELEASENOTES_TEMPTXT 
+rm -rf $RELEASENOTES_SORTURL
+rm -rf $RELEASENOTES_TEMPTXT 
 
 echo ""
 echo "ODFE distro release notes has been generated now:"
 echo "$RELEASENOTES_DISTROS"
+
