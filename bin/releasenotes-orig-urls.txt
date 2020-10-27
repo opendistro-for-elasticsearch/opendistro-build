@@ -1,4 +1,17 @@
 # Add the plugin release notes github url here
 # Sample here:
-https://github.com/opendistro-for-elasticsearch/anomaly-detection/blob/master/release-notes/opendistro-for-elasticsearch-anomaly-detection.release-notes-1.10.0.0.md
-https://github.com/opendistro-for-elasticsearch/sql/blob/v1.10.0.0/release-notes/opendistro-for-elasticsearch-sql.release-notes-1.10.0.0.md
+https://github.com/opendistro-for-elasticsearch/anomaly-detection/blob/master/release-notes/opendistro-for-elasticsearch-anomaly-detection.release-notes-1.11.0.0.md
+https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/blob/master/release-notes/opendistro-for-elasticsearch-anomaly-detection-kibana-plugin.release-notes-1.11.0.0.md
+https://github.com/opendistro-for-elasticsearch/security-kibana-plugin/blob/main/release-notes/opendistro-for-elasticsearch-security-kibana-plugin.release-notes-1.11.0.0.md
+https://github.com/opendistro-for-elasticsearch/security/blob/master/release-notes/opendistro-for-elasticsearch-security.release-notes-1.11.0.0.md
+https://github.com/opendistro-for-elasticsearch/performance-analyzer/blob/opendistro-1.11/release-notes/opendistro-for-elasticsearch-performance-analyzer.release-notes-1.11.0.md
+https://github.com/opendistro-for-elasticsearch/perftop/blob/opendistro-1.11/release-notes/opendistro-for-elasticsearch.perftop.release-notes-1.11.0.0.md
+https://github.com/opendistro-for-elasticsearch/k-NN/blob/master/release-notes/opendistro-for-elasticsearch-knn.release-notes-1.11.0.0.md
+#https://github.com/opendistro-for-elasticsearch/job-scheduler/blob/master/release-notes/opendistro-for-elasticsearch-job-scheduler.release-notes-1.11.0.0.md
+https://github.com/opendistro-for-elasticsearch/job-scheduler/blob/master/release-notes/opendistro-for-elasticsearch-job-scheduler.release-notes-1.10.1.1.md
+https://github.com/opendistro-for-elasticsearch/index-management/blob/master/release-notes/opendistro-for-elasticsearch-index-management.release-notes-1.11.0.0.md
+https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/blob/master/release-notes/opendistro-for-elasticsearch-index-management-kibana-plugin.release-notes-1.11.0.0.md
+https://github.com/opendistro-for-elasticsearch/alerting/blob/master/release-notes/opendistro-for-elasticsearch-alerting.release-notes-1.11.0.1.md
+https://github.com/opendistro-for-elasticsearch/alerting-kibana-plugin/blob/master/release-notes/opendistro-for-elasticsearch-alerting-kibana-plugin.release-notes-1.11.0.2.md
+https://github.com/opendistro-for-elasticsearch/sql/blob/master/release-notes/opendistro-for-elasticsearch-sql.release-notes-1.11.0.0.md
+https://github.com/opendistro-for-elasticsearch/kibana-notebooks/blob/dev/release-notes/opendistro-for-elasticsearch-kibana-notebooks.release-notes-1.11.0.0.md

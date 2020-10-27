@@ -30,6 +30,10 @@ RELEASENOTES_TEMPTXT="$ROOT/releasenotes-temp-text.tmp"
 RELEASENOTES_DISTROS="$ROOT/releasenotes-dist-draft.md"
 RELEASENOTES_CATEGORIES="BREAKING CHANGES,FEATURES,ENHANCEMENTS,BUG FIXES,INFRASTRUCTURE,DOCUMENTATION,MAINTENANCE,REFACTORING" # upper cases
 
+# Clean up
+rm -rf $RELEASENOTES_SORTURL
+rm -rf $RELEASENOTES_TEMPTXT 
+
 # Sort the urls in reverse order so they appear in normal order in distro release notes
 (cat $RELEASENOTES_ORIGURL | grep -v -E "^#" | sort -rfd) > $RELEASENOTES_SORTURL
 
@@ -68,7 +72,7 @@ do
 
   # Pulling the plugin release notes and get available category
   echo $github_raw_url
-  wget -q $github_raw_url -O $RELEASENOTES_TEMPTXT; echo $?
+  wget -nv $github_raw_url -O $RELEASENOTES_TEMPTXT; echo $?
 
   CURR_CATEGORY_LIST=`cat $RELEASENOTES_TEMPTXT | grep "###"`
   for entry in $CURR_CATEGORY_LIST
@@ -78,7 +82,7 @@ do
 
     # Resolve MacOS / BSD sed does not work the same as gnu sed commands
     # Replace pulled plugin release notes category names to upper-case so that we can retrieve actual release notes lines
-    sed "s/$entry/$entry_upper/g" $RELEASENOTES_TEMPTXT > ${RELEASENOTES_TEMPTXT}1
+    sed "s/$entry/$entry_upper/g" $RELEASENOTES_TEMPTXT | sed 's/&/\\&/g' > ${RELEASENOTES_TEMPTXT}1
     mv ${RELEASENOTES_TEMPTXT}1 $RELEASENOTES_TEMPTXT
 
     # Get the actual release notes lines for the selected category, exclude category names
@@ -106,9 +110,8 @@ do
 done
 
 # Clean up
-
-rm $RELEASENOTES_SORTURL
-rm $RELEASENOTES_TEMPTXT 
+rm -rf $RELEASENOTES_SORTURL
+rm -rf $RELEASENOTES_TEMPTXT 
 
 echo ""
 echo "ODFE distro release notes has been generated now:"
