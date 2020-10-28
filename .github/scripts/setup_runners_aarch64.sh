@@ -133,7 +133,7 @@ then
   do
     echo "[${instance_name1}]: Start provisioning vm"
     aws ec2 run-instances --image-id $EC2_AMI_ID --count 1 --instance-type $EC2_INSTANCE_TYPE \
-                          --block-device-mapping DeviceName=/dev/xvda,Ebs={VolumeSize=$EC2_INSTANCE_SIZE} \
+                          --block-device-mapping DeviceName=/dev/sda1,Ebs={VolumeSize=$EC2_INSTANCE_SIZE} \
                           --key-name $EC2_KEYPAIR --security-groups $EC2_SECURITYGROUP \
                           --iam-instance-profile Name=$IAM_ROLE \
                           --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$instance_name1}]" > /dev/null 2>&1; echo $?
