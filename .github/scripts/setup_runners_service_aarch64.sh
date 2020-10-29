@@ -223,6 +223,7 @@ then
     mkdir -p $KIBANA_ROOT
     aws s3 cp s3://$S3_BUCKET/aarch64-test/$KIBANA_PACKAGE_NAME.tar.gz . --quiet; echo $?
     tar -zxf $KIBANA_PACKAGE_NAME.tar.gz -C $KIBANA_ROOT --strip-components 1
+    echo "server.host: 0.0.0.0" >> $KIBANA_ROOT/config/kibana.yml
   elif [ "$SETUP_DISTRO" = "docker" ]
   then
     echo "FROM opendistroforelasticsearch/opendistroforelasticsearch-kibana:$OD_VERSION" >> Dockerfile.kibana
