@@ -251,6 +251,8 @@ jobs:
     needs: [Provision-Runners]
     runs-on: [self-hosted, Linux, ARM64, aarch64-tar-ad-kibana]
     name: Test-AD-KIBANA-SETUP
+    outputs:
+      runner_ip_output: ${{ steps.runner_ip_step.outputs.runner_ip-aarch64-tar-ad-kibana }}
     steps:
       - uses: actions/checkout@v1
       - name: Set up AWS Cred
@@ -266,9 +268,9 @@ jobs:
       - name: Start ES and Kibana
         run: .github/scripts/setup_runners_service_aarch64.sh zip --kibana
 
-      - name:
-        run: |
-          echo ::set-env name=runner_ip-aarch64-tar-ad-kibana::$(curl http://169.254.169.254/latest/meta-data/public-ipv4)
+      - name: export the runner_ip
+        id: runner_ip_step
+        run: echo ::set-output name=runner_ip-aarch64-tar-ad-kibana::$(curl http://169.254.169.254/latest/meta-data/public-ipv4)
 
   Test-AD-KIBANA-VERIFY:
     #needs: [build-es-artifacts-aarch64, build-kibana-artifacts-aarch64]
@@ -341,7 +343,7 @@ jobs:
         uses: cypress-io/github-action@v1
         with:
           working-directory: kibana/plugins/anomaly-detection-kibana-plugin
-          command: yarn cy:run-with-security --config baseurl=http://${{env.runner_ip-aarch64-tar-ad-kibana}}:5601
+          command: yarn cy:run-with-security --config baseurl=http://${{needs.Test-AD-KIBANA-SETUP.outputs.runner_ip_output}}:5601
 
   CleanUp-Runners:
     #needs: [Test-ISM-NoSec, Test-ALERTING-NoSec, Test-SQL-NoSec, Test-KNN-NoSec, Test-AD-NoSec, Test-SQL, Test-AD, Test-ALERTING, Test-AD-KIBANA-NoSec, Test-SQL-KIBANA-NoSec, Test-AD-KIBANA]
