@@ -64,7 +64,7 @@
 #                6. If you change the above resources name from "odfe-release-runner" to "xyz",
 #                   please update "Variables / Parameters / Settings" section of this script
 #
-#                7. Runner AMI requires installation of packages of these:
+#                7. Runner AMI requires installation of packages of these (java version can be different as gradle might request a higher version):
 #                   Debian:
 #                   sudo apt install -y curl wget unzip tar jq python python3 git awscli openjdk-8-jdk
 #                   sudo apt install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
@@ -97,8 +97,6 @@ fi
 SETUP_ACTION=$1
 SETUP_RUNNER=`echo $2 | sed 's/,/ /g'`
 SETUP_GIT_TOKEN=$3
-#EC2_AMI_ID="ami-0dd5d17deb78eff42"
-#EC2_AMI_ID="ami-03d5e9433f92eaf7d"
 EC2_AMI_ID="ami-0eddd5d08379980d8"
 #EC2_AMI_USER="ec2-user"
 EC2_AMI_USER="ubuntu" # Ubuntu User
@@ -128,12 +126,15 @@ then
   echo "Run / Start instances and bootstrap runners [${SETUP_RUNNER}]"
   echo ""
 
+  # Get root device
+  instance_root_device=`aws ec2 describe-images --image-id $EC2_AMI_ID --query 'Images[*].RootDeviceName' --output text`
+
   # Provision VMs
   for instance_name1 in $SETUP_RUNNER
   do
     echo "[${instance_name1}]: Start provisioning vm"
     aws ec2 run-instances --image-id $EC2_AMI_ID --count 1 --instance-type $EC2_INSTANCE_TYPE \
-                          --block-device-mapping DeviceName=/dev/sda1,Ebs={VolumeSize=$EC2_INSTANCE_SIZE} \
+                          --block-device-mapping DeviceName=$instance_root_device,Ebs={VolumeSize=$EC2_INSTANCE_SIZE} \
                           --key-name $EC2_KEYPAIR --security-groups $EC2_SECURITYGROUP \
                           --iam-instance-profile Name=$IAM_ROLE \
                           --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$instance_name1}]" > /dev/null 2>&1; echo $?
