@@ -345,12 +345,12 @@ jobs:
 #          working-directory: kibana/plugins/anomaly-detection-kibana-plugin
 #          command: yarn cy:run-with-security --config baseUrl=http://${{needs.Test-AD-KIBANA-SETUP.outputs.runner_ip_output}}:5601
 
-       - name: test run
-         run: |
-           curl http://${{needs.Test-AD-KIBANA-SETUP.outputs.runner_ip_output}}:5601/api/status
-           wget --timeout=30 http://${{needs.Test-AD-KIBANA-SETUP.outputs.runner_ip_output}}:5601
-           echo sleep 100
-           sleep 100 
+      - name: test run
+        run: |
+          curl http://${{needs.Test-AD-KIBANA-SETUP.outputs.runner_ip_output}}:5601/api/status
+          wget --timeout=30 http://${{needs.Test-AD-KIBANA-SETUP.outputs.runner_ip_output}}:5601
+          echo sleep 100
+          sleep 100 
 
   CleanUp-Runners:
     #needs: [Test-ISM-NoSec, Test-ALERTING-NoSec, Test-SQL-NoSec, Test-KNN-NoSec, Test-AD-NoSec, Test-SQL, Test-AD, Test-ALERTING, Test-AD-KIBANA-NoSec, Test-SQL-KIBANA-NoSec, Test-AD-KIBANA]
