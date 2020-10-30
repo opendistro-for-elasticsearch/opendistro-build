@@ -273,7 +273,6 @@ jobs:
 #        run: echo ::set-output name=runner_ip-aarch64-tar-ad-kibana::$(curl http://169.254.169.254/latest/meta-data/public-ipv4)
 
   Test-AD-KIBANA-VERIFY:
-    #needs: [build-es-artifacts-aarch64, build-kibana-artifacts-aarch64]
     #needs: [TEST-AD-KIBANA-SETUP]
     runs-on: [ubuntu-18.04]
     name: Test-AD-KIBANA-VERIFY
@@ -286,50 +285,50 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-     - name: Retrieve plugin tags
-       run: |
-         echo ::set-env name=es_version_kibana::$(./bin/version-info --es)
-         echo ::set-env name=p_tag_ad_kibana::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)
-
-     - name: Checkout Kibana
-       uses: actions/checkout@v2
-       with:
-         repository: opendistro-for-elasticsearch/kibana-oss
-         ref: ${{env.es_version_kibana}}
-         token: ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
-         path: kibana
-
-     - name: Get node and yarn versions
-       id: node_yarn_versions
-       run: |
-         curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
-         . ~/.nvm/nvm.sh
-         nvm install node
-         
-         echo ::set-env name=kibana_node_version::$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")
-         echo ::set-env name=kibana_yarn_version::$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")
-
-     - name: Setup node
-       uses: actions/setup-node@v1
-       with:
-         node-version: ${{env.kibana_node_version}}
-         registry-url: 'https://registry.npmjs.org'
-
-     - name: Install correct yarn version for Kibana
-       run: |
-         npm uninstall -g yarn
-         echo "Installing yarn ${{ env.kibana_yarn_version }}"
-         npm i -g yarn@${{ env.kibana_yarn_version }}
-
-     - name: Checking out ad kibana repo
-       uses: actions/checkout@v2
-       with:
-         repository: opendistro-for-elasticsearch/anomaly-detection-kibana-plugin
-         ref: ${{env.p_tag_ad_kibana}}
-         path: kibana/plugins/anomaly-detection-kibana-plugin
-
-     - name: Bootstrap the AD kibana plugin
-       run: |
+      - name: Retrieve plugin tags
+        run: |
+          echo ::set-env name=es_version_kibana::$(./bin/version-info --es)
+          echo ::set-env name=p_tag_ad_kibana::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)
+ 
+      - name: Checkout Kibana
+        uses: actions/checkout@v2
+        with:
+          repository: opendistro-for-elasticsearch/kibana-oss
+          ref: ${{env.es_version_kibana}}
+          token: ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
+          path: kibana
+ 
+      - name: Get node and yarn versions
+        id: node_yarn_versions
+        run: |
+          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
+          . ~/.nvm/nvm.sh
+          nvm install node
+          
+          echo ::set-env name=kibana_node_version::$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")
+          echo ::set-env name=kibana_yarn_version::$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")
+ 
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{env.kibana_node_version}}
+          registry-url: 'https://registry.npmjs.org'
+ 
+      - name: Install correct yarn version for Kibana
+        run: |
+          npm uninstall -g yarn
+          echo "Installing yarn ${{ env.kibana_yarn_version }}"
+          npm i -g yarn@${{ env.kibana_yarn_version }}
+ 
+      - name: Checking out ad kibana repo
+        uses: actions/checkout@v2
+        with:
+          repository: opendistro-for-elasticsearch/anomaly-detection-kibana-plugin
+          ref: ${{env.p_tag_ad_kibana}}
+          path: kibana/plugins/anomaly-detection-kibana-plugin
+ 
+      - name: Bootstrap the AD kibana plugin
+        run: |
          cd ./kibana/plugins/anomaly-detection-kibana-plugin
          yarn kbn bootstrap
 
