@@ -286,12 +286,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-<<<<<<< HEAD
-=======
-#      - name: Setup Required Packages
-#        run: .github/scripts/setup_runners_required_packages.sh
-
->>>>>>> 8b26e0a50ad85415b8140b449d53f7f31e7c7e86
      - name: Retrieve plugin tags
        run: |
          echo ::set-env name=es_version_kibana::$(./bin/version-info --es)
