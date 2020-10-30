@@ -64,7 +64,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [14]
+        java: [14, 15]
     steps:
       - name: Set up AWS Cred
         uses: aws-actions/configure-aws-credentials@v1
@@ -97,7 +97,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [14]
+        java: [14, 15]
     steps:
       - name: Set up AWS Cred
         uses: aws-actions/configure-aws-credentials@v1
@@ -130,7 +130,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [14]
+        java: [14, 15]
     steps:
       - name: Set up AWS Cred
         uses: aws-actions/configure-aws-credentials@v1
@@ -163,7 +163,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [14]
+        java: [14, 15]
     steps:
       - name: Set up AWS Cred
         uses: aws-actions/configure-aws-credentials@v1
@@ -196,7 +196,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [14]
+        java: [14, 15]
     steps:
       - name: Set up AWS Cred
         uses: aws-actions/configure-aws-credentials@v1
@@ -229,7 +229,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [14]
+        java: [14, 15]
     steps:
       - name: Set up AWS Cred
         uses: aws-actions/configure-aws-credentials@v1
@@ -262,7 +262,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [14]
+        java: [14, 15]
     steps:
       - name: Set up AWS Cred
         uses: aws-actions/configure-aws-credentials@v1
@@ -295,7 +295,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [14]
+        java: [14, 15]
     steps:
       - uses: actions/checkout@v1
       - name: Set up AWS Cred
@@ -332,7 +332,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [14]
+        java: [14, 15]
     steps:
       - uses: actions/checkout@v1
       - name: Set up AWS Cred
@@ -404,7 +404,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [14]
+        java: [14, 15]
     steps:
       - uses: actions/checkout@v1
       - name: Set up AWS Cred
@@ -492,7 +492,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [14]
+        java: [14, 15]
     steps:
       - uses: actions/checkout@v1
       - name: Set up AWS Cred
