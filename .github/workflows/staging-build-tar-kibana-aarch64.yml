@@ -24,28 +24,28 @@ jobs:
 #      - name: Run check_plugin scripts
 #        run: .github/scripts/check_plugin.sh "elasticsearch_zip,kibana_zip"; exit `cat /tmp/plugin_status.check`
 #
-#  Provision-Runners:
-#    #needs: [plugin-availability]
-#    name: Provision-Runners
-#    runs-on: ubuntu-18.04
-#    steps:
-#      - uses: actions/checkout@v1
-#      - name: Configure AWS Credentials
-#        uses: aws-actions/configure-aws-credentials@v1
-#        with:
-#          aws-access-key-id: ${{ secrets.AWS_EC2_ACCESS_KEY_ID }}
-#          aws-secret-access-key: ${{ secrets.AWS_EC2_SECRET_ACCESS_KEY }}
-#          aws-region: us-west-2
-#      - name: AWS Cli Processing
-#        run: |
-#          #!/bin/bash
-#          # Please add comma at the end of the RUNNERS strings
-#          #RUNNERS="aarch64-tar-build-es,aarch64-tar-build-kibana,"
-#          #RUNNERS+="aarch64-tar-ism-nosec,aarch64-tar-alerting-nosec,aarch64-tar-sql-nosec,aarch64-tar-knn-nosec,aarch64-tar-ad-nosec,"
-#          #RUNNERS+="aarch64-tar-sql,aarch64-tar-ad,aarch64-tar-alerting,"
-#          #RUNNERS+="aarch64-tar-ad-kibana-nosec,aarch64-tar-sql-kibana-nosec,"
-#          RUNNERS+="aarch64-tar-ad-kibana"
-#          .github/scripts/setup_runners_aarch64.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
+  Provision-Runners:
+    #needs: [plugin-availability]
+    name: Provision-Runners
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v1
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_EC2_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_EC2_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
+      - name: AWS Cli Processing
+        run: |
+          #!/bin/bash
+          # Please add comma at the end of the RUNNERS strings
+          #RUNNERS="aarch64-tar-build-es,aarch64-tar-build-kibana,"
+          #RUNNERS+="aarch64-tar-ism-nosec,aarch64-tar-alerting-nosec,aarch64-tar-sql-nosec,aarch64-tar-knn-nosec,aarch64-tar-ad-nosec,"
+          #RUNNERS+="aarch64-tar-sql,aarch64-tar-ad,aarch64-tar-alerting,"
+          #RUNNERS+="aarch64-tar-ad-kibana-nosec,aarch64-tar-sql-kibana-nosec,"
+          RUNNERS+="aarch64-tar-ad-kibana"
+          .github/scripts/setup_runners_aarch64.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
 
 #  build-es-artifacts-aarch64:
 #    needs: [Provision-Runners]
