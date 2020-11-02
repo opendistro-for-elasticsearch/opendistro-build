@@ -16,7 +16,7 @@ then
   then
     # Need to update twice as ARM image seems not working correctly sometimes with only one update
     sudo yum repolist; sudo yum repolist
-    sudo yum install -y curl wget unzip tar jq python python3 git awscli java-8-openjdk
+    sudo yum install -y curl wget unzip tar jq python python3 git awscli java-1.8.0-openjdk
     # cypress dependencies
     sudo yum install -y xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-devel GConf2 nss libXScrnSaver alsa-lib
   else

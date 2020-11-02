@@ -262,6 +262,9 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
+      - name: test
+        run: curl http://169.254.169.254/latest/meta-data/public-ipv4
+
       - name: export the runner_ip
         id: runner_ip_step
         run: echo ::set-output name=runner_ip-aarch64-tar-ad-kibana::$(curl http://169.254.169.254/latest/meta-data/public-ipv4)
