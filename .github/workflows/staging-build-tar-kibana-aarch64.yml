@@ -44,7 +44,8 @@ jobs:
           #RUNNERS+="aarch64-tar-ism-nosec,aarch64-tar-alerting-nosec,aarch64-tar-sql-nosec,aarch64-tar-knn-nosec,aarch64-tar-ad-nosec,"
           #RUNNERS+="aarch64-tar-sql,aarch64-tar-ad,aarch64-tar-alerting,"
           #RUNNERS+="aarch64-tar-ad-kibana-nosec,aarch64-tar-sql-kibana-nosec,"
-          RUNNERS+="aarch64-tar-ad-kibana"
+          #RUNNERS+="aarch64-tar-ad-kibana"
+          RUNNERS+="aarch64-tar-kibana,aarch64-tar-kibana-nosec"
           .github/scripts/setup_runners_aarch64.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
 
 #  build-es-artifacts-aarch64:
@@ -84,6 +85,51 @@ jobs:
 #          aws-region: us-east-1
 #      - name: Build Kibana zip
 #        run: ./kibana/linux_distributions/opendistro-kibana-build-aarch64.sh tar
+
+  Test-KIBANA-SETUP:
+    #needs: [build-es-artifacts-aarch64, build-kibana-artifacts-aarch64]
+    needs: [Provision-Runners]
+    runs-on: [self-hosted, Linux, ARM64, aarch64-tar-kibana]
+    name: Test-KIBANA-SETUP
+    steps:
+      - uses: actions/checkout@v1
+      - name: Set up AWS Cred
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Setup Required Packages
+        run: .github/scripts/setup_runners_required_packages.sh
+
+      - name: Start ES and Kibana
+        run: |
+          .github/scripts/setup_runners_service_aarch64.sh zip --kibana
+
+  Test-KIBANA-NoSec-SETUP:
+    #needs: [build-es-artifacts-aarch64, build-kibana-artifacts-aarch64]
+    needs: [Provision-Runners]
+    runs-on: [self-hosted, Linux, ARM64, aarch64-tar-kibana-nosec]
+    name: Test-KIBANA-NoSec-SETUP
+    steps:
+      - uses: actions/checkout@v1
+      - name: Set up AWS Cred
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: test
+        run: curl http://169.254.169.254/latest/meta-data/public-ipv4
+
+      - name: Setup Required Packages
+        run: .github/scripts/setup_runners_required_packages.sh
+
+      - name: Start ES and Kibana
+        run: |
+          .github/scripts/setup_runners_service_aarch64.sh zip --kibana-nosec
 
 #  Test-AD-KIBANA-NoSec:
 #    #needs: [build-es-artifacts-aarch64, build-kibana-artifacts-aarch64]
@@ -246,130 +292,98 @@ jobs:
 #          working-directory: kibana/plugins/workbench
 #          command: npx cypress run
          
-  Test-AD-KIBANA-SETUP:
-    #needs: [build-es-artifacts-aarch64, build-kibana-artifacts-aarch64]
-    needs: [Provision-Runners]
-    runs-on: [self-hosted, Linux, ARM64, aarch64-tar-ad-kibana]
-    name: Test-AD-KIBANA-SETUP
-    outputs:
-      runner_ip_output: ${{ steps.runner_ip_step.outputs.runner_ip-aarch64-tar-ad-kibana }}
-    steps:
-      - uses: actions/checkout@v1
-      - name: Set up AWS Cred
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
 
-      - name: test
-        run: curl http://169.254.169.254/latest/meta-data/public-ipv4
+#  Test-AD-KIBANA-VERIFY:
+#    #needs: [TEST-AD-KIBANA-SETUP]
+#    needs: [Provision-Runners]
+#    runs-on: [ubuntu-18.04]
+#    name: Test-AD-KIBANA-VERIFY
+#    steps:
+#      - uses: actions/checkout@v1
+#      - name: Set up AWS Cred
+#        uses: aws-actions/configure-aws-credentials@v1
+#        with:
+#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#          aws-region: us-east-1
+#
+#      - name: Retrieve plugin tags
+#        run: |
+#          echo ::set-env name=es_version_kibana::$(./bin/version-info --es)
+#          echo ::set-env name=p_tag_ad_kibana::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)
+# 
+#      - name: Checkout Kibana
+#        uses: actions/checkout@v2
+#        with:
+#          repository: opendistro-for-elasticsearch/kibana-oss
+#          ref: ${{env.es_version_kibana}}
+#          token: ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
+#          path: kibana
+# 
+#      - name: Get node and yarn versions
+#        id: node_yarn_versions
+#        run: |
+#          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
+#          . ~/.nvm/nvm.sh
+#          nvm install node
+#          
+#          echo ::set-env name=kibana_node_version::$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")
+#          echo ::set-env name=kibana_yarn_version::$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")
+# 
+#      - name: Setup node
+#        uses: actions/setup-node@v1
+#        with:
+#          node-version: ${{env.kibana_node_version}}
+#          registry-url: 'https://registry.npmjs.org'
+# 
+#      - name: Install correct yarn version for Kibana
+#        run: |
+#          npm uninstall -g yarn
+#          echo "Installing yarn ${{ env.kibana_yarn_version }}"
+#          npm i -g yarn@${{ env.kibana_yarn_version }}
+# 
+#      - name: Checking out ad kibana repo
+#        uses: actions/checkout@v2
+#        with:
+#          repository: opendistro-for-elasticsearch/anomaly-detection-kibana-plugin
+#          ref: ${{env.p_tag_ad_kibana}}
+#          path: kibana/plugins/anomaly-detection-kibana-plugin
+# 
+#      - name: Bootstrap the AD kibana plugin
+#        run: |
+#         cd ./kibana/plugins/anomaly-detection-kibana-plugin
+#         yarn kbn bootstrap
+#
+#      - name: run IT
+#        uses: cypress-io/github-action@v1
+#        with:
+#          working-directory: kibana/plugins/anomaly-detection-kibana-plugin
+#          command: yarn cy:run-with-security --config baseUrl=http://${{secrets.TEST_VALUES_KIBANA}}:5601
+#          #command: yarn cy:run-with-security --config baseUrl=http://${{needs.Test-AD-KIBANA-SETUP.outputs.runner_ip_output}}:5601
 
-      - name: export the runner_ip
-        id: runner_ip_step
-        run: echo ::set-output name=runner_ip-aarch64-tar-ad-kibana::$(curl http://169.254.169.254/latest/meta-data/public-ipv4)
-
-      - name: Setup Required Packages
-        run: .github/scripts/setup_runners_required_packages.sh
-
-      - name: Start ES and Kibana
-        run: |
-          .github/scripts/setup_runners_service_aarch64.sh zip --kibana
-          echo sleep 600 seconds to prevent github stop bg processes until remote verificaition is complete
-          sleep 600
-
-
-  Test-AD-KIBANA-VERIFY:
-    #needs: [TEST-AD-KIBANA-SETUP]
-    needs: [Provision-Runners]
-    runs-on: [ubuntu-18.04]
-    name: Test-AD-KIBANA-VERIFY
-    steps:
-      - uses: actions/checkout@v1
-      - name: Set up AWS Cred
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-
-      - name: Retrieve plugin tags
-        run: |
-          echo ::set-env name=es_version_kibana::$(./bin/version-info --es)
-          echo ::set-env name=p_tag_ad_kibana::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)
- 
-      - name: Checkout Kibana
-        uses: actions/checkout@v2
-        with:
-          repository: opendistro-for-elasticsearch/kibana-oss
-          ref: ${{env.es_version_kibana}}
-          token: ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
-          path: kibana
- 
-      - name: Get node and yarn versions
-        id: node_yarn_versions
-        run: |
-          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
-          . ~/.nvm/nvm.sh
-          nvm install node
-          
-          echo ::set-env name=kibana_node_version::$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")
-          echo ::set-env name=kibana_yarn_version::$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")
- 
-      - name: Setup node
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{env.kibana_node_version}}
-          registry-url: 'https://registry.npmjs.org'
- 
-      - name: Install correct yarn version for Kibana
-        run: |
-          npm uninstall -g yarn
-          echo "Installing yarn ${{ env.kibana_yarn_version }}"
-          npm i -g yarn@${{ env.kibana_yarn_version }}
- 
-      - name: Checking out ad kibana repo
-        uses: actions/checkout@v2
-        with:
-          repository: opendistro-for-elasticsearch/anomaly-detection-kibana-plugin
-          ref: ${{env.p_tag_ad_kibana}}
-          path: kibana/plugins/anomaly-detection-kibana-plugin
- 
-      - name: Bootstrap the AD kibana plugin
-        run: |
-         cd ./kibana/plugins/anomaly-detection-kibana-plugin
-         yarn kbn bootstrap
-
-      - name: run IT
-        uses: cypress-io/github-action@v1
-        with:
-          working-directory: kibana/plugins/anomaly-detection-kibana-plugin
-          #command: yarn cy:run-with-security --config baseUrl=http://${{secrets.TEST_VALUES}}:5601
-          command: yarn cy:run-with-security --config baseUrl=http://${{needs.Test-AD-KIBANA-SETUP.outputs.runner_ip_output}}:5601
-
-  CleanUp-Runners:
-    #needs: [Test-ISM-NoSec, Test-ALERTING-NoSec, Test-SQL-NoSec, Test-KNN-NoSec, Test-AD-NoSec, Test-SQL, Test-AD, Test-ALERTING, Test-AD-KIBANA-NoSec, Test-SQL-KIBANA-NoSec, Test-AD-KIBANA]
-    #needs: [Test-ISM-NoSec, Test-ALERTING-NoSec, Test-SQL-NoSec, Test-KNN-NoSec, Test-AD-NoSec, Test-SQL, Test-AD, Test-ALERTING]
-    needs: [Test-AD-KIBANA-SETUP, Test-AD-KIBANA-VERIFY]
-    if: always()
-    name: CleanUp-Runners
-    runs-on: ubuntu-18.04
-    steps:
-      - uses: actions/checkout@v1
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_EC2_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_EC2_SECRET_ACCESS_KEY }}
-          aws-region: us-west-2
-      - name: AWS Cli Processing
-        run: |
-          #!/bin/bash
-          # Please add comma at the end of the RUNNERS strings
-          #RUNNERS="aarch64-tar-build-es,aarch64-tar-build-kibana,"
-          #RUNNERS+="aarch64-tar-ism-nosec,aarch64-tar-alerting-nosec,aarch64-tar-sql-nosec,aarch64-tar-knn-nosec,aarch64-tar-ad-nosec,"
-          #RUNNERS+="aarch64-tar-sql,aarch64-tar-ad,aarch64-tar-alerting,"
-          #RUNNERS+="aarch64-tar-ad-kibana-nosec,aarch64-tar-sql-kibana-nosec,"
-          RUNNERS+="aarch64-tar-ad-kibana"
-          .github/scripts/setup_runners_aarch64.sh terminate $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
+#  CleanUp-Runners:
+#    #needs: [Test-ISM-NoSec, Test-ALERTING-NoSec, Test-SQL-NoSec, Test-KNN-NoSec, Test-AD-NoSec, Test-SQL, Test-AD, Test-ALERTING, Test-AD-KIBANA-NoSec, Test-SQL-KIBANA-NoSec, Test-AD-KIBANA]
+#    #needs: [Test-ISM-NoSec, Test-ALERTING-NoSec, Test-SQL-NoSec, Test-KNN-NoSec, Test-AD-NoSec, Test-SQL, Test-AD, Test-ALERTING]
+#    needs: [Test-AD-KIBANA-SETUP, Test-AD-KIBANA-VERIFY]
+#    if: always()
+#    name: CleanUp-Runners
+#    runs-on: ubuntu-18.04
+#    steps:
+#      - uses: actions/checkout@v1
+#      - name: Configure AWS Credentials
+#        uses: aws-actions/configure-aws-credentials@v1
+#        with:
+#          aws-access-key-id: ${{ secrets.AWS_EC2_ACCESS_KEY_ID }}
+#          aws-secret-access-key: ${{ secrets.AWS_EC2_SECRET_ACCESS_KEY }}
+#          aws-region: us-west-2
+#      - name: AWS Cli Processing
+#        run: |
+#          #!/bin/bash
+#          # Please add comma at the end of the RUNNERS strings
+#          #RUNNERS="aarch64-tar-build-es,aarch64-tar-build-kibana,"
+#          #RUNNERS+="aarch64-tar-ism-nosec,aarch64-tar-alerting-nosec,aarch64-tar-sql-nosec,aarch64-tar-knn-nosec,aarch64-tar-ad-nosec,"
+#          #RUNNERS+="aarch64-tar-sql,aarch64-tar-ad,aarch64-tar-alerting,"
+#          #RUNNERS+="aarch64-tar-ad-kibana-nosec,aarch64-tar-sql-kibana-nosec,"
+#          RUNNERS+="aarch64-tar-ad-kibana"
+#          .github/scripts/setup_runners_aarch64.sh terminate $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
 
