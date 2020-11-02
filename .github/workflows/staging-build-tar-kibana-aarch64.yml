@@ -272,8 +272,8 @@ jobs:
       - name: Start ES and Kibana
         run: |
           .github/scripts/setup_runners_service_aarch64.sh zip --kibana
-          echo sleep 3600 seconds to prevent github stop bg processes until remote verificaition is complete
-          sleep 3600
+          echo sleep 600 seconds to prevent github stop bg processes until remote verificaition is complete
+          sleep 600
 
 
   Test-AD-KIBANA-VERIFY:
@@ -347,7 +347,7 @@ jobs:
   CleanUp-Runners:
     #needs: [Test-ISM-NoSec, Test-ALERTING-NoSec, Test-SQL-NoSec, Test-KNN-NoSec, Test-AD-NoSec, Test-SQL, Test-AD, Test-ALERTING, Test-AD-KIBANA-NoSec, Test-SQL-KIBANA-NoSec, Test-AD-KIBANA]
     #needs: [Test-ISM-NoSec, Test-ALERTING-NoSec, Test-SQL-NoSec, Test-KNN-NoSec, Test-AD-NoSec, Test-SQL, Test-AD, Test-ALERTING]
-    needs: [Test-AD-KIBANA-VERIFY]
+    needs: [Test-AD-KIBANA-SETUP, Test-AD-KIBANA-VERIFY]
     if: always()
     name: CleanUp-Runners
     runs-on: ubuntu-18.04
