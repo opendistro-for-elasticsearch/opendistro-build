@@ -246,34 +246,38 @@ jobs:
 #          working-directory: kibana/plugins/workbench
 #          command: npx cypress run
          
-#  Test-AD-KIBANA-SETUP:
-#    #needs: [build-es-artifacts-aarch64, build-kibana-artifacts-aarch64]
-#    needs: [Provision-Runners]
-#    runs-on: [self-hosted, Linux, ARM64, aarch64-tar-ad-kibana]
-#    name: Test-AD-KIBANA-SETUP
-#    outputs:
-#      runner_ip_output: ${{ steps.runner_ip_step.outputs.runner_ip-aarch64-tar-ad-kibana }}
-#    steps:
-#      - uses: actions/checkout@v1
-#      - name: Set up AWS Cred
-#        uses: aws-actions/configure-aws-credentials@v1
-#        with:
-#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#          aws-region: us-east-1
-#
-#      - name: Setup Required Packages
-#        run: .github/scripts/setup_runners_required_packages.sh
-#
-#      - name: Start ES and Kibana
-#        run: .github/scripts/setup_runners_service_aarch64.sh zip --kibana
-#
-#      - name: export the runner_ip
-#        id: runner_ip_step
-#        run: echo ::set-output name=runner_ip-aarch64-tar-ad-kibana::$(curl http://169.254.169.254/latest/meta-data/public-ipv4)
+  Test-AD-KIBANA-SETUP:
+    #needs: [build-es-artifacts-aarch64, build-kibana-artifacts-aarch64]
+    needs: [Provision-Runners]
+    runs-on: [self-hosted, Linux, ARM64, aarch64-tar-ad-kibana]
+    name: Test-AD-KIBANA-SETUP
+    outputs:
+      runner_ip_output: ${{ steps.runner_ip_step.outputs.runner_ip-aarch64-tar-ad-kibana }}
+    steps:
+      - uses: actions/checkout@v1
+      - name: Set up AWS Cred
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: export the runner_ip
+        id: runner_ip_step
+        run: echo ::set-output name=runner_ip-aarch64-tar-ad-kibana::$(curl http://169.254.169.254/latest/meta-data/public-ipv4)
+
+      - name: Setup Required Packages
+        run: .github/scripts/setup_runners_required_packages.sh
+
+      - name: Start ES and Kibana
+        run: |
+          .github/scripts/setup_runners_service_aarch64.sh zip --kibana
+          echo sleep 3600 seconds to prevent github stop bg processes until remote verificaition is complete
+          sleep 3600
+
 
   Test-AD-KIBANA-VERIFY:
-    #needs: [TEST-AD-KIBANA-SETUP]
+    needs: [TEST-AD-KIBANA-SETUP]
     runs-on: [ubuntu-18.04]
     name: Test-AD-KIBANA-VERIFY
     steps:
@@ -336,32 +340,32 @@ jobs:
         uses: cypress-io/github-action@v1
         with:
           working-directory: kibana/plugins/anomaly-detection-kibana-plugin
-          command: yarn cy:run-with-security --config baseUrl=http://${{secrets.TEST_VALUES}}:5601
-          #command: yarn cy:run-with-security --config baseUrl=http://${{needs.Test-AD-KIBANA-SETUP.outputs.runner_ip_output}}:5601
+          #command: yarn cy:run-with-security --config baseUrl=http://${{secrets.TEST_VALUES}}:5601
+          command: yarn cy:run-with-security --config baseUrl=http://${{needs.Test-AD-KIBANA-SETUP.outputs.runner_ip_output}}:5601
 
-#  CleanUp-Runners:
-#    #needs: [Test-ISM-NoSec, Test-ALERTING-NoSec, Test-SQL-NoSec, Test-KNN-NoSec, Test-AD-NoSec, Test-SQL, Test-AD, Test-ALERTING, Test-AD-KIBANA-NoSec, Test-SQL-KIBANA-NoSec, Test-AD-KIBANA]
-#    #needs: [Test-ISM-NoSec, Test-ALERTING-NoSec, Test-SQL-NoSec, Test-KNN-NoSec, Test-AD-NoSec, Test-SQL, Test-AD, Test-ALERTING]
-#    needs: [Test-AD-KIBANA-VERIFY]
-#    if: always()
-#    name: CleanUp-Runners
-#    runs-on: ubuntu-18.04
-#    steps:
-#      - uses: actions/checkout@v1
-#      - name: Configure AWS Credentials
-#        uses: aws-actions/configure-aws-credentials@v1
-#        with:
-#          aws-access-key-id: ${{ secrets.AWS_EC2_ACCESS_KEY_ID }}
-#          aws-secret-access-key: ${{ secrets.AWS_EC2_SECRET_ACCESS_KEY }}
-#          aws-region: us-west-2
-#      - name: AWS Cli Processing
-#        run: |
-#          #!/bin/bash
-#          # Please add comma at the end of the RUNNERS strings
-#          #RUNNERS="aarch64-tar-build-es,aarch64-tar-build-kibana,"
-#          #RUNNERS+="aarch64-tar-ism-nosec,aarch64-tar-alerting-nosec,aarch64-tar-sql-nosec,aarch64-tar-knn-nosec,aarch64-tar-ad-nosec,"
-#          #RUNNERS+="aarch64-tar-sql,aarch64-tar-ad,aarch64-tar-alerting,"
-#          #RUNNERS+="aarch64-tar-ad-kibana-nosec,aarch64-tar-sql-kibana-nosec,"
-#          RUNNERS+="aarch64-tar-ad-kibana"
-#          .github/scripts/setup_runners_aarch64.sh terminate $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
+  CleanUp-Runners:
+    #needs: [Test-ISM-NoSec, Test-ALERTING-NoSec, Test-SQL-NoSec, Test-KNN-NoSec, Test-AD-NoSec, Test-SQL, Test-AD, Test-ALERTING, Test-AD-KIBANA-NoSec, Test-SQL-KIBANA-NoSec, Test-AD-KIBANA]
+    #needs: [Test-ISM-NoSec, Test-ALERTING-NoSec, Test-SQL-NoSec, Test-KNN-NoSec, Test-AD-NoSec, Test-SQL, Test-AD, Test-ALERTING]
+    needs: [Test-AD-KIBANA-VERIFY]
+    if: always()
+    name: CleanUp-Runners
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v1
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_EC2_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_EC2_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
+      - name: AWS Cli Processing
+        run: |
+          #!/bin/bash
+          # Please add comma at the end of the RUNNERS strings
+          #RUNNERS="aarch64-tar-build-es,aarch64-tar-build-kibana,"
+          #RUNNERS+="aarch64-tar-ism-nosec,aarch64-tar-alerting-nosec,aarch64-tar-sql-nosec,aarch64-tar-knn-nosec,aarch64-tar-ad-nosec,"
+          #RUNNERS+="aarch64-tar-sql,aarch64-tar-ad,aarch64-tar-alerting,"
+          #RUNNERS+="aarch64-tar-ad-kibana-nosec,aarch64-tar-sql-kibana-nosec,"
+          RUNNERS+="aarch64-tar-ad-kibana"
+          .github/scripts/setup_runners_aarch64.sh terminate $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
 
