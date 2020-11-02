@@ -277,7 +277,8 @@ jobs:
 
 
   Test-AD-KIBANA-VERIFY:
-    needs: [TEST-AD-KIBANA-SETUP]
+    #needs: [TEST-AD-KIBANA-SETUP]
+    needs: [Provision-Runners]
     runs-on: [ubuntu-18.04]
     name: Test-AD-KIBANA-VERIFY
     steps:
