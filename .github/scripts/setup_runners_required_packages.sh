@@ -9,7 +9,7 @@ then
     # Need to update twice as ARM image seems not working correctly sometimes with only one update
     sudo apt update; sudo apt update
     #sudo apt install -y curl wget unzip tar jq python python3 git awscli openjdk-14-jdk
-    sudo apt install -y curl wget unzip tar jq python python3 git awscli openjdk-8-jdk
+    sudo apt install -y curl wget unzip tar jq python python3 git awscli openjdk-14-jdk
     # cypress dependencies
     #sudo apt install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
   elif which yum # RedHat based linux
