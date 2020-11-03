@@ -282,7 +282,7 @@ jobs:
       - name: run IT
         uses: cypress-io/github-action@v1
         with:
-          working-directory: kibana/plugins/workbench
+          working-directory: kibana/plugins/sql-workbench
           command: npx cypress run --config baseUrl=http://${{secrets.TEST_VALUES_KIBANA_NOSEC}}:5601
          
 
