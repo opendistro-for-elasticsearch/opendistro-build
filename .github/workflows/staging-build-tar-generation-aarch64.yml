@@ -5,8 +5,8 @@ on:
   #  - cron: '0 10 * * *'
   repository_dispatch:
     types: [staging-build-tar-generation-aarch64]
-  #push:
-  #  branches: [opendistro-infra-issues-P40904739]
+  push:
+    branches: [opendistro-infra-issues-P40904739]
 
 jobs:
 #  plugin-availability:
