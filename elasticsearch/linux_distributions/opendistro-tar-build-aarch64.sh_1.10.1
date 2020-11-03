@@ -70,13 +70,10 @@ do
   plugin_path=${PLUGINS_ARRAY[$index]}
   plugin_latest=`aws s3api list-objects --bucket $S3_BUCKET --prefix "downloads/elasticsearch-plugins/${plugin_path}-${plugin_version}" --query 'Contents[].[Key]' --output text | sort | tail -n 1`
 
-  if [ "$plugin_path" != "none" ] && !(echo $plugin_path | grep -q "opendistro_performance_analyzer")
+  if [ "$plugin_path" != "none" ]
   then
     echo "installing $plugin_latest"
     $PACKAGE_NAME-$OD_VERSION/bin/elasticsearch-plugin install --batch "${ARTIFACTS_URL}/${plugin_latest}"; \
-  else
-    echo installing opendistro_performance_analyzer fix
-    $PACKAGE_NAME-$OD_VERSION/bin/elasticsearch-plugin install --batch "${ARTIFACTS_URL}/aarch64-test/opendistro_performance_analyzer-1.11.0.0-clifix.zip"; \
   fi
 done
 
