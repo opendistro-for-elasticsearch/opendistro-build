@@ -133,8 +133,9 @@ jobs:
 
   Test-AD-KIBANA-NoSec:
     #needs: [build-es-artifacts-aarch64, build-kibana-artifacts-aarch64]
-    needs: [Provision-Runners]
-    runs-on: [self-hosted, Linux, ARM64, aarch64-tar-ad-kibana-nosec]
+    #needs: [Provision-Runners]
+    #runs-on: [self-hosted, Linux, ARM64, aarch64-tar-ad-kibana-nosec]
+    runs-on: ubuntu-18.04
     name: Test-AD-KIBANA-NoSec
     steps:
       - uses: actions/checkout@v1
@@ -201,7 +202,8 @@ jobs:
 #  Test-SQL-KIBANA-NoSec:
 #    #needs: [build-es-artifacts-aarch64, build-kibana-artifacts-aarch64]
 #    #needs: [Provision-Runners]
-#    runs-on: [self-hosted, Linux, ARM64, aarch64-tar-sql-kibana-nosec]
+#    #runs-on: [self-hosted, Linux, ARM64, aarch64-tar-sql-kibana-nosec]
+#    runs-on: ubuntu-18.04
 #    name: Test-SQL-KIBANA-NoSec
 #    steps:
 #      - uses: actions/checkout@v1
