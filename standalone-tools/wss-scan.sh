@@ -61,9 +61,6 @@ done
 
 echo -n > info.txt
 
-# Capture the PID's of sub processes 
-scanpids=()
-i=0
 
 # scan the Repos using the WhiteSource Unified Agent
 for repo in $gitRepos
@@ -72,17 +69,13 @@ do
   if [ -d "$repo_path" ]
   then
     echo "Scanning repo: "$gitBasePath$repo " Project: " $repo 
-    java -jar wss-unified-agent.jar -c wss-unified-agent.config -d $repo_path -apiKey $wss_apikey -product ODFE -project $repo | grep "Project name" | sed 's/^.\{,41\}//' >> info.txt 2>&1 &
-    scanpids[i]=$!
-    ((i=i+1))
+    java -jar wss-unified-agent.jar -c wss-unified-agent.config -d $repo_path -apiKey $wss_apikey -product ODFE -project $repo | grep "Project name" | sed 's/^.\{,41\}//' >> info.txt 2>&1 
   else
     echo "Scanning failed for repo: "$gitBasePath$repo " Project: " $repo
   fi
 done
 
 
-# wait for the scannings to complete
-wait "${scanpids[@]}"
 
 # mail function to send the scan details to the desired recepient 
 mail_format_func()
