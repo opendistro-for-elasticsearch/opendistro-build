@@ -220,9 +220,9 @@ jobs:
       - name: Bootstrap the plugin
         run: |
           cd ./kibana/plugins
-          cp -rp sql/workbench .
+          cp -rp sql/sql-workbench .
           rm -rf sql/
-          cd workbench
+          cd sql-workbench
 
       - name: Retry the bootstraps
         # sql repo has a bug that you have to bootstrap at least twice to success
@@ -232,7 +232,7 @@ jobs:
           # 60 min timeouts as certain runners like windows may take 30+ min just to complete one bootstrap
           timeout_minutes: 60
           max_attempts: 3
-          command: cd ./kibana/plugins/workbench; pwd; yarn kbn bootstrap
+          command: cd ./kibana/plugins/sql-workbench; pwd; yarn kbn bootstrap
 
 #      - name: Start ES and Kibana
 #        run: |
@@ -244,7 +244,7 @@ jobs:
       - name: run IT
         uses: cypress-io/github-action@v1
         with:
-          working-directory: kibana/plugins/workbench
+          working-directory: kibana/plugins/sql-workbench
           command: npx cypress run --config baseUrl=http://${{secrets.TEST_VALUES_KIBANA_NOSEC}}:5601
          
 
