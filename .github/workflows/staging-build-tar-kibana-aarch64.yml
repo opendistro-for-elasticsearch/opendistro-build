@@ -250,7 +250,7 @@ jobs:
 
   Test-AD-KIBANA:
     #needs: [TEST-AD-KIBANA-SETUP]
-    needs: [Provision-Runners]
+    #needs: [Provision-Runners]
     runs-on: [ubuntu-18.04]
     name: Test-AD-KIBANA
     steps:
