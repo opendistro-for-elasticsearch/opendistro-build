@@ -26,4 +26,4 @@ name: opendistro-es
 sources:
 - https://pages.git.viasat.com/ATG/charts
 # Chart version
-version: 1.10.1
+version: 1.10.2

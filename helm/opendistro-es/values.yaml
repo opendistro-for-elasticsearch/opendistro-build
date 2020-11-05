@@ -607,6 +607,8 @@ configurer:
   ## https://opendistro.github.io/for-elasticsearch-docs/docs/elasticsearch/rest-api-reference/#indicesput_template
   overwriteTemplates: true
 
+  snapshotRepository: s3_snapshotRepository_7.x
+
   ism:
     rolloverSize: 1
     rolloverAge: 1

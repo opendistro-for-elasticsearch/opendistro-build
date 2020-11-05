@@ -12,7 +12,7 @@ wait_until_ready=600
 poll_interval=5
 
 auth="${ES_USERNAME}:${ES_PASSWORD}"
-snapshot_repository="s3_{{ .Values.elasticsearch.s3.provider }}_7.x"
+snapshot_repository="{{ .Values.configurer.snapshotRepository }}"
 es_url="http://{{ template "opendistro-es.fullname" . }}-client-service:9200"
 kibana_url="http://{{ template "opendistro-es.fullname" . }}-kibana-svc:443"
 create_indices="{{ .Values.configurer.createIndices }}"
