@@ -1,0 +1,345 @@
+name: Process TAR AArch64 Artifacts
+
+on:
+  #schedule:
+  #  - cron: '0 10 * * *'
+  repository_dispatch:
+    types: [staging-build-tar-aarch64]
+  push:
+    branches: [opendistro-infra-issues-P40904739]
+
+jobs:
+#  plugin-availability:
+#    name: Check Plugin Availability
+#    runs-on: ubuntu-18.04
+#    steps:
+#      - uses: actions/checkout@v1
+#      - name: Configure AWS Credentials
+#        uses: aws-actions/configure-aws-credentials@v1
+#        with:
+#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#          aws-region: us-east-1
+#
+#      - name: Run check_plugin scripts
+#        run: .github/scripts/check_plugin.sh "elasticsearch_zip,kibana_zip"; exit `cat /tmp/plugin_status.check`
+#
+  Provision-Runners:
+    #needs: [plugin-availability]
+    name: Provision-Runners
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v1
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_EC2_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_EC2_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
+      - name: AWS Cli Processing
+        run: |
+          #!/bin/bash
+          # Please add comma at the end of the RUNNERS strings
+          #RUNNERS="aarch64-tar-build-es,aarch64-tar-build-kibana,"
+          #RUNNERS+="aarch64-tar-ism-nosec,aarch64-tar-alerting-nosec,aarch64-tar-sql-nosec,aarch64-tar-knn-nosec,aarch64-tar-ad-nosec,"
+          #RUNNERS+="aarch64-tar-sql,aarch64-tar-ad,aarch64-tar-alerting,"
+          #RUNNERS+="aarch64-tar-ad-kibana-nosec,aarch64-tar-sql-kibana-nosec,"
+          #RUNNERS+="aarch64-tar-ad-kibana"
+          RUNNERS+="aarch64-tar-knn-nosec"
+          .github/scripts/setup_runners_aarch64.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
+
+#  build-es-artifacts-aarch64:
+#    needs: [Provision-Runners]
+#    name: Build ES Artifacts AArch64
+#    runs-on: [self-hosted, Linux, ARM64, aarch64-tar-build-es]
+#    #container:
+#    #  image: opendistroforelasticsearch/multijava08101112-git:v1
+#    steps:
+#      - uses: actions/checkout@v1
+#        #with:
+#        #  ref: v1.10.1
+#      - name: Configure AWS Credentials
+#        uses: aws-actions/configure-aws-credentials@v1
+#        with:
+#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#          aws-region: us-east-1
+#      - name: Build tar
+#        run: ./elasticsearch/linux_distributions/opendistro-tar-build-aarch64.sh
+#
+#  build-kibana-artifacts-aarch64:
+#    needs: [Provision-Runners]
+#    name: Build Kibana Artifacts AArch64
+#    runs-on: [self-hosted, Linux, ARM64, aarch64-tar-build-kibana]
+#    #container:
+#    #  image: opendistroforelasticsearch/jsenv:v1
+#    steps:
+#      - uses: actions/checkout@v1
+#        #with:
+#        #  ref: v1.10.1
+#      - name: Configure AWS Credentials
+#        uses: aws-actions/configure-aws-credentials@v1
+#        with:
+#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#          aws-region: us-east-1
+#      - name: Build Kibana zip
+#        run: ./kibana/linux_distributions/opendistro-kibana-build-aarch64.sh tar
+
+#  Test-ISM-NoSec:
+#    #needs: [build-es-artifacts-aarch64, build-kibana-artifacts-aarch64]
+#    needs: [Provision-Runners]
+#    name: Test-ISM-NoSec
+#    runs-on: [self-hosted, Linux, ARM64, aarch64-tar-ism-nosec]
+#    steps:
+#      - uses: actions/checkout@v1
+#      - name: Set up AWS Cred
+#        uses: aws-actions/configure-aws-credentials@v1
+#        with:
+#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#          aws-region: us-east-1
+#
+#      - name: Setup Required Packages
+#        run: .github/scripts/setup_runners_required_packages.sh
+#
+#      - name: Retrieve plugin tags
+#        run: echo ::set-env name=p_tag_ism::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)
+#      - uses: actions/checkout@v1
+#        with:
+#          repository: opendistro-for-elasticsearch/index-management
+#          ref: ${{env.p_tag_ism}}
+#      - name: IT for ISM NoSec
+#        run: |
+#          .github/scripts/setup_runners_service_aarch64.sh zip --es-nosec
+#          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../index-management; pwd
+#          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
+#
+#  Test-ALERTING-NoSec:
+#    #needs: [build-es-artifacts-aarch64, build-kibana-artifacts-aarch64]
+#    needs: [Provision-Runners]
+#    name: Test-ALERTING-NoSec
+#    runs-on: [self-hosted, Linux, ARM64, aarch64-tar-alerting-nosec]
+#    steps:
+#      - uses: actions/checkout@v1
+#      - name: Set up AWS Cred
+#        uses: aws-actions/configure-aws-credentials@v1
+#        with:
+#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#          aws-region: us-east-1
+#
+#      - name: Setup Required Packages
+#        run: .github/scripts/setup_runners_required_packages.sh
+#
+#      - name: Retrieve plugin tags
+#        run: echo ::set-env name=p_tag_alerting::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)
+#      - uses: actions/checkout@v1
+#        with:
+#          repository: opendistro-for-elasticsearch/alerting
+#          ref: ${{env.p_tag_alerting}}
+#      - name: IT for ALERTING NoSec
+#        run: |
+#          .github/scripts/setup_runners_service_aarch64.sh zip --es-nosec
+#          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../alerting/alerting; pwd
+#          ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
+#
+#  Test-SQL-NoSec:
+#    #needs: [build-es-artifacts-aarch64, build-kibana-artifacts-aarch64]
+#    needs: [Provision-Runners]
+#    name: Test-SQL-NoSec
+#    runs-on: [self-hosted, Linux, ARM64, aarch64-tar-sql-nosec]
+#    steps:
+#      - uses: actions/checkout@v1
+#      - name: Set up AWS Cred
+#        uses: aws-actions/configure-aws-credentials@v1
+#        with:
+#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#          aws-region: us-east-1
+#
+#      - name: Setup Required Packages
+#        run: .github/scripts/setup_runners_required_packages.sh
+#
+#      - name: Retrieve plugin tags
+#        run: echo ::set-env name=p_tag_sql::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)
+#      - uses: actions/checkout@v1
+#        with:
+#          repository: opendistro-for-elasticsearch/sql
+#          ref: ${{env.p_tag_sql}}
+#      - name: IT for SQL NoSec
+#        run: |
+#          .github/scripts/setup_runners_service_aarch64.sh zip --es-nosec
+#          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../sql; pwd
+#          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
+
+  Test-KNN-NoSec:
+    #needs: [build-es-artifacts-aarch64, build-kibana-artifacts-aarch64]
+    needs: [Provision-Runners]
+    name: Test-KNN-NoSec
+    runs-on: [self-hosted, Linux, ARM64, aarch64-tar-knn-nosec]
+    steps:
+      - uses: actions/checkout@v1
+      - name: Set up AWS Cred
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Setup Required Packages
+        run: .github/scripts/setup_runners_required_packages.sh
+
+      - name: Retrieve plugin tags
+        run: echo ::set-env name=p_tag_knn::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/k-NN)
+      - uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/k-NN
+          ref: ${{env.p_tag_knn}}
+      - name: IT for KNN NoSec
+        run: |
+          .github/scripts/setup_runners_service_aarch64.sh zip --es-nosec
+          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../k-NN; pwd
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
+
+#  Test-AD-NoSec:
+#    #needs: [build-es-artifacts-aarch64, build-kibana-artifacts-aarch64]
+#    needs: [Provision-Runners]
+#    name: Test-AD-NoSec
+#    runs-on: [self-hosted, Linux, ARM64, aarch64-tar-ad-nosec]
+#    steps:
+#      - uses: actions/checkout@v1
+#      - name: Set up AWS Cred
+#        uses: aws-actions/configure-aws-credentials@v1
+#        with:
+#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#          aws-region: us-east-1
+#
+#      - name: Setup Required Packages
+#        run: .github/scripts/setup_runners_required_packages.sh
+#
+#      - name: Retrieve plugin tags
+#        run: echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)
+#      - uses: actions/checkout@v1
+#        with:
+#          repository: opendistro-for-elasticsearch/anomaly-detection
+#          ref: ${{env.p_tag_ad}}
+#      - name: IT for AD NoSec
+#        run: |
+#          .github/scripts/setup_runners_service_aarch64.sh zip --es-nosec
+#          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../anomaly-detection; pwd
+#          ./gradlew :integTestRunner --tests "com.amazon.opendistroforelasticsearch.ad.rest.*IT" --tests "com.amazon.opendistroforelasticsearch.ad.e2e.*IT" -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
+#
+#  Test-SQL:
+#    #needs: [build-es-artifacts-aarch64, build-kibana-artifacts-aarch64]
+#    needs: [Provision-Runners]
+#    name: Test-SQL
+#    runs-on: [self-hosted, Linux, ARM64, aarch64-tar-sql]
+#    steps:
+#      - uses: actions/checkout@v1
+#      - name: set up aws cred
+#        uses: aws-actions/configure-aws-credentials@v1
+#        with:
+#          aws-access-key-id: ${{ secrets.aws_access_key_id }}
+#          aws-secret-access-key: ${{ secrets.aws_secret_access_key }}
+#          aws-region: us-east-1
+#
+#      - name: setup required packages
+#        run: .github/scripts/setup_runners_required_packages.sh
+#      - name: Retrieve plugin tags
+#        run: echo ::set-env name=p_tag_sql::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)
+#      - uses: actions/checkout@v1
+#        with:
+#          repository: opendistro-for-elasticsearch/sql
+#          ref: ${{env.p_tag_sql}}
+#      - name: IT for SQL
+#        run: |
+#          .github/scripts/setup_runners_service_aarch64.sh zip --es
+#          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../sql; pwd
+#          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin
+#
+#  Test-AD:
+#    #needs: [build-es-artifacts-aarch64, build-kibana-artifacts-aarch64]
+#    needs: [Provision-Runners]
+#    name: Test-AD
+#    runs-on: [self-hosted, Linux, ARM64, aarch64-tar-ad]
+#    steps:
+#      - uses: actions/checkout@v1
+#      - name: set up aws cred
+#        uses: aws-actions/configure-aws-credentials@v1
+#        with:
+#          aws-access-key-id: ${{ secrets.aws_access_key_id }}
+#          aws-secret-access-key: ${{ secrets.aws_secret_access_key }}
+#          aws-region: us-east-1
+#
+#      - name: setup required packages
+#        run: .github/scripts/setup_runners_required_packages.sh
+#
+#      - name: Retrieve plugin tags
+#        run: echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)
+#      - uses: actions/checkout@v1
+#        with:
+#          repository: opendistro-for-elasticsearch/anomaly-detection
+#          ref: ${{env.p_tag_ad}}
+#      - name: IT for AD
+#        run: |
+#          .github/scripts/setup_runners_service_aarch64.sh zip --es
+#          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../anomaly-detection; pwd
+#          ./gradlew :integTestRunner --tests "com.amazon.opendistroforelasticsearch.ad.rest.*IT" --tests "com.amazon.opendistroforelasticsearch.ad.e2e.*IT" -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest" -Dhttps=true -Duser=admin -Dpassword=admin
+#  
+#  Test-ALERTING:
+#    #needs: [build-es-artifacts-aarch64, build-kibana-artifacts-aarch64]
+#    needs: [Provision-Runners]
+#    name: Test-ALERTING
+#    runs-on: [self-hosted, Linux, ARM64, aarch64-tar-alerting]
+#    steps:
+#      - uses: actions/checkout@v1
+#      - name: set up aws cred
+#        uses: aws-actions/configure-aws-credentials@v1
+#        with:
+#          aws-access-key-id: ${{ secrets.aws_access_key_id }}
+#          aws-secret-access-key: ${{ secrets.aws_secret_access_key }}
+#          aws-region: us-east-1
+#
+#      - name: setup required packages
+#        run: .github/scripts/setup_runners_required_packages.sh
+#
+#      - name: Retrieve plugin tags
+#        run: echo ::set-env name=p_tag_alerting::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)
+#      - uses: actions/checkout@v1
+#        with:
+#          repository: opendistro-for-elasticsearch/alerting
+#          ref: ${{env.p_tag_alerting}}
+#      - name: IT for Alerting
+#        run: |
+#          .github/scripts/setup_runners_service_aarch64.sh zip --es
+#          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../alerting/alerting; pwd
+#          ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin
+
+  CleanUp-Runners:
+    #needs: [Test-ISM-NoSec, Test-ALERTING-NoSec, Test-SQL-NoSec, Test-KNN-NoSec, Test-AD-NoSec, Test-SQL, Test-AD, Test-ALERTING, Test-AD-KIBANA-NoSec, Test-SQL-KIBANA-NoSec, Test-AD-KIBANA]
+    needs: [Test-ISM-NoSec, Test-ALERTING-NoSec, Test-SQL-NoSec, Test-KNN-NoSec, Test-AD-NoSec, Test-SQL, Test-AD, Test-ALERTING]
+    if: always()
+    name: CleanUp-Runners
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v1
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_EC2_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_EC2_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
+      - name: AWS Cli Processing
+        run: |
+          #!/bin/bash
+          # Please add comma at the end of the RUNNERS strings
+          #RUNNERS="aarch64-tar-build-es,aarch64-tar-build-kibana,"
+          #RUNNERS+="aarch64-tar-ism-nosec,aarch64-tar-alerting-nosec,aarch64-tar-sql-nosec,aarch64-tar-knn-nosec,aarch64-tar-ad-nosec,"
+          #RUNNERS+="aarch64-tar-sql,aarch64-tar-ad,aarch64-tar-alerting,"
+          #RUNNERS+="aarch64-tar-ad-kibana-nosec,aarch64-tar-sql-kibana-nosec,"
+          #RUNNERS+="aarch64-tar-ad-kibana"
+          RUNNERS+="aarch64-tar-knn-nosec"
+          .github/scripts/setup_runners_aarch64.sh terminate $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
+
