@@ -501,6 +501,10 @@ elasticsearch:
     accessKey:
     secretKey:
 
+  gcs:
+    enabled: false
+    useExistingSecret: true
+    keyfileData: ""
 
 nameOverride: ""
 fullnameOverride: ""
