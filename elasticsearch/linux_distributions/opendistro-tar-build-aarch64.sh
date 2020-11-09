@@ -111,9 +111,10 @@ do
     fi
   fi
 done
-knnlib_latest=`aws s3api list-objects --bucket $S3_BUCKET --prefix "downloads/${knnlib_path}-${knnlib_version}" --query 'Contents[].[Key]' --output text | sort | tail -n 1`
+#knnlib_latest=`aws s3api list-objects --bucket $S3_BUCKET --prefix "downloads/${knnlib_path}-${knnlib_version}" --query 'Contents[].[Key]' --output text | sort | tail -n 1`
+knnlib_latest="aarch64-test/opendistro-knnlib-1.11.0.0-1_linux.aarch64.zip"
 echo "downloading $knnlib_latest"
-aws s3 cp "s3://artifacts.opendistroforelasticsearch.amazon.com/${knnlib_latest}" ./
+aws s3 cp "s3://$S3_BUCKET/${knnlib_latest}" ./
 unzip opendistro-knnlib*.zip
 mkdir -p $PACKAGE_NAME-$OD_VERSION/plugins/opendistro-knn/knn-lib/ 
 mv -v opendistro-knnlib*/libKNNIndex*.so $PACKAGE_NAME-$OD_VERSION/plugins/opendistro-knn/knn-lib/ 
