@@ -34,11 +34,11 @@ iam = boto3.resource('iam')
 git_base_url = "https://api.github.com"
 git_auth_token="token " + str(os.environ.get('git_token'))
 
-# This function encrypts git secret string using pubic key
+# This function encrypts git secret string using public key
 def encrypt_git_key(public_key,secret):
     try:
-        public_key = public.PublicKey(public_key.encode("utf-8"), encoding.Base64Encoder())
-        sealed_box = public.SealedBox(public_key)
+        key = public.PublicKey(public_key.encode("utf-8"), encoding.Base64Encoder())
+        sealed_box = public.SealedBox(key)
         encrypted = sealed_box.encrypt(secret.encode("utf-8"))
     except Exception as ex:
         logging.info("Failed to generate public key")
