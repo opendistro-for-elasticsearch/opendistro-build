@@ -1,8 +1,7 @@
 {  "key-rotate":{
-    "git-owner":"sreekarjami",
+    "git-owner":"opendistro-for-elasticsearch",
     "odfe-repos":[
-      {  "repo":"sample", "aws_iam_user_name":"sreekarj_iam_test" ,"git_access_key_id":"WSS_API_KEY",  "git_secret_access_key":"WSS_API_SECRET"  },
-      {  "repo":"sample", "aws_iam_user_name":"sreekarj_iam_test_2" ,"git_access_key_id":"WSS_API_KEY",  "git_secret_access_key":"WSS_API_SECRET"  }
+      {  "repo":"opendistro-build", "aws_iam_user":"s3-staging" ,"git_access_key_id":"AWS_STAGING_ACCESS_KEY_ID",  "git_access_secret_key":"AWS_STAGING_SECRET_ACCESS_KEY"  }
     ]
   }
 }
