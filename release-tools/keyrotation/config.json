@@ -1,7 +1,20 @@
 {  "key-rotate":{
     "git-owner":"opendistro-for-elasticsearch",
     "odfe-repos":[
-      {  "repo":"opendistro-build", "aws_iam_user":"s3-staging" ,"git_access_key_id":"AWS_STAGING_ACCESS_KEY_ID",  "git_access_secret_key":"AWS_STAGING_SECRET_ACCESS_KEY"  }
+          {  "repo":"opendistro-build", "aws_iam_user":"s3-staging" ,"git_access_key_id":"AWS_STAGING_ACCESS_KEY_ID",  "git_access_secret_key":"AWS_STAGING_SECRET_ACCESS_KEY"  },
+          {  "repo":"security", "aws_iam_user":"Security" ,"git_access_key_id":"AWS_STAGING_ACCESS_KEY_ID",  "git_access_secret_key":"AWS_STAGING_SECRET_ACCESS_KEY"  },
+          {  "repo":"security-kibana-plugin", "aws_iam_user":"SecurityKibana" ,"git_access_key_id":"AWS_STAGING_ACCESS_KEY_ID",  "git_access_secret_key":"AWS_STAGING_SECRET_ACCESS_KEY"  },
+          {  "repo":"sql", "aws_iam_user":"SQL" ,"git_access_key_id":"AWS_STAGING_ACCESS_KEY_ID",  "git_access_secret_key":"AWS_STAGING_SECRET_ACCESS_KEY"  },
+          {  "repo":"perftop", "aws_iam_user":"PerfTop" ,"git_access_key_id":"AWS_STAGING_ACCESS_KEY_ID",  "git_access_secret_key":"AWS_STAGING_SECRET_ACCESS_KEY"  },
+	  {  "repo":"performance-analyzer", "aws_iam_user":"PerformanceAnalyzer" ,"git_access_key_id":"AWS_STAGING_ACCESS_KEY_ID",  "git_access_secret_key":"AWS_STAGING_SECRET_ACCESS_KEY"  },
+	  {  "repo":"k-NN", "aws_iam_user":"k-NN" ,"git_access_key_id":"AWS_STAGING_ACCESS_KEY_ID",  "git_access_secret_key":"AWS_STAGING_SECRET_ACCESS_KEY"  },
+	  {  "repo":"job-scheduler", "aws_iam_user":"JobScheduler" ,"git_access_key_id":"AWS_STAGING_ACCESS_KEY_ID",  "git_access_secret_key":"AWS_STAGING_SECRET_ACCESS_KEY"  },
+	  {  "repo":"index-management-kibana-plugin", "aws_iam_user":"IndexManagementKibana" ,"git_access_key_id":"AWS_STAGING_ACCESS_KEY_ID",  "git_access_secret_key":"AWS_STAGING_SECRET_ACCESS_KEY"  },
+	  {  "repo":"index-management", "aws_iam_user":"IndexManagement" ,"git_access_key_id":"AWS_STAGING_ACCESS_KEY_ID",  "git_access_secret_key":"AWS_STAGING_SECRET_ACCESS_KEY"  },
+	  {  "repo":"anomaly-detection-kibana-plugin", "aws_iam_user":"AnomalyDetectionKibana" ,"git_access_key_id":"AWS_STAGING_ACCESS_KEY_ID",  "git_access_secret_key":"AWS_STAGING_SECRET_ACCESS_KEY"  },
+          {  "repo":"anomaly-detection", "aws_iam_user":"AnomalyDetection" ,"git_access_key_id":"AWS_STAGING_ACCESS_KEY_ID",  "git_access_secret_key":"AWS_STAGING_SECRET_ACCESS_KEY"  },
+	  {  "repo":"alerting-kibana-plugin", "aws_iam_user":"AlertingKibana" ,"git_access_key_id":"AWS_STAGING_ACCESS_KEY_ID",  "git_access_secret_key":"AWS_STAGING_SECRET_ACCESS_KEY"  },
+	  {  "repo":"alerting", "aws_iam_user":"Alerting" ,"git_access_key_id":"AWS_STAGING_ACCESS_KEY_ID",  "git_access_secret_key":"AWS_STAGING_SECRET_ACCESS_KEY"  }
     ]
   }
 }
