@@ -139,15 +139,14 @@ def get_public_key(git_repo,git_owner):
 
 
 # Update GIT secrets with the new AWS Access key ID and Access key Secret
-def update_git_secret(git_repo,git_owner,git_secret,secret):
+def update_git_secret(git_repo,git_owner,git_secret_name,secret):
     try:
-        response = get_public_key(git_repo,git_owner)
-        encrypted_key=encrypt_git_key(response.get('key'),secret)
-        body = {"encrypted_value": str(encrypted_key), "key_id": str(response.get('key_id'))}
+        public_key = get_public_key(git_repo,git_owner)
+        encrypted_key=encrypt_git_key(public_key.get('key'),secret)
+        body = {"encrypted_value": str(encrypted_key), "key_id": str(public_key.get('key_id'))}
         data = json.dumps(body)
-        #url = git_base_url + "/repos/" + git_owner + "/opendistro-for-elasticsearch/" + git_repo + "/actions/secrets/" + git_secret
-        url = git_base_url + "/repos/" + git_owner + "/" + git_repo + "/actions/secrets/" + git_secret
-        logging.info("GIT Secret to be updated : " + git_secret)
+        url = git_base_url + "/repos/" + git_owner + "/" + git_repo + "/actions/secrets/" + git_secret_name
+        logging.info("GIT Secret to be updated : " + git_secret_name)
         logging.info("URL for updating GIT Secret : " + url)
         print("URL for updating GIT Secret : " + url)
         headers = {
