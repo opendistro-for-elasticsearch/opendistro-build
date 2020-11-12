@@ -1,9 +1,5 @@
 #! /usr/bin/python
 """
-Name:          key_rotation.py
-Maintainer:    ODFE Infra Team
-Language:      python
-
 About:
                Key rotation of the AWS Accesskeys and update the git secrets.
 
