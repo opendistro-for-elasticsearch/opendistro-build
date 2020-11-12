@@ -500,11 +500,13 @@ elasticsearch:
     useExistingSecret: true
     accessKey:
     secretKey:
+    bucketName: ""
 
   gcs:
     enabled: false
     useExistingSecret: true
     keyfileData: ""
+    bucketName: ""
 
 nameOverride: ""
 fullnameOverride: ""

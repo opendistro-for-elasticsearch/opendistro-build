@@ -67,6 +67,19 @@ register_s3_repository() {
   fi
 }
 
+register_gcs_repository() {
+  echo
+  echo "Registering gcs snapshot repository"
+  resp=$(curl -X PUT "${es_url}/_snapshot/${snapshot_repository}" \
+    -H 'Content-Type: application/json' \
+    -d' {"type": "gcs", "settings":{ "bucket": "{{ .Values.elasticsearch.gcs.bucketName }}", "client": "default"}}' \
+    -s -k -u "${auth}")
+  acknowledged=$(echo "${resp}" | grep "^{" | jq -r '.acknowledged')
+  if [ "${acknowledged}" != "true" ]; then
+    log_error_exit "Failed to register gcs repository" "${resp}"
+  fi
+}
+
 create_index_templates() {
   echo
   echo "Creating index templates"
@@ -224,7 +237,11 @@ create_user() {
 
 wait_for_kibana
 setup_kibana_dashboard
+{{ if .Values.elasticsearch.s3.enabled -}}
 register_s3_repository
+{{ else if .Values.elasticsearch.gcs.enabled -}}
+register_gcs_repository
+{{- end }}
 create_index_templates
 setup_policies
 if [ "${create_indices}" = "true" ]; then init_indices; fi
