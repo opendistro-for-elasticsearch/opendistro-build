@@ -622,6 +622,7 @@ The following table lists the configurable parameters of the opendistro elastics
 | `elasticsearch.extraVolumes`                              | Array of extra volumes to be added                                                                                                                       | `[]`                                                                    |
 | `elasticsearch.extraVolumeMounts`                         | Array of extra volume mounts to be added                                                                                                                 | `[]`                                                                    |
 | `elasticsearch.extraInitContainers`                       | Array of extra init containers                                                                                                                           | `[]`                                                                    |
+| `elasticsearch.extraContainers`                           | Array of extra containers                                                                                                                                | `[]`                                                                    |
 
 ## Acknowledgements
 * [Kalvin Chau](https://github.com/kalvinnchau) (Software Engineer - Viasat) for all his help with the Kubernetes internals, certs, and debugging

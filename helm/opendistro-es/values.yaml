@@ -187,6 +187,11 @@ elasticsearch:
   #   image: busybox
   #   command: ['do', 'something']
 
+  extraContainers: []
+  # - name: do-something
+  #   image: busybox
+  #   command: ['do', 'something']
+
   extraVolumes: []
   # - name: extras
   #   emptyDir: {}

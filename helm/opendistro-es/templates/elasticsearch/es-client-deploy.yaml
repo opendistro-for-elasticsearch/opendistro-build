@@ -181,6 +181,9 @@ spec:
 {{- if .Values.elasticsearch.extraVolumeMounts }}
 {{ toYaml .Values.elasticsearch.extraVolumeMounts | indent 8 }}
 {{- end }}
+{{- if .Values.elasticsearch.extraContainers }}
+{{ toYaml .Values.elasticsearch.extraContainers | indent 6 }}
+{{- end }}
       volumes:
       - name: config
         secret:
