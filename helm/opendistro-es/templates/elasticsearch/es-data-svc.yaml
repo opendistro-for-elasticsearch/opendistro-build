@@ -33,7 +33,7 @@ spec:
     name: rca
   clusterIP: None
   selector:
-  {{- if .Values.elasticsearch.data.enabled }}
+  {{- if .Values.elasticsearch.data.dedicatedPod }}
     role: data
   {{- else }}
     role: master
