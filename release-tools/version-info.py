@@ -20,26 +20,26 @@
 # Language:      Python
 #
 # About:         Print the ES/ODFE/VersionCut related information and values
-#                as defined in the 'version.json' file
+#                as defined in the 'manifest.yml' file
 #
 # Usage:         [python] ./version-info $VERSION_TYPE
 #                $VERSION_TYPE (required): --od | --od-prev | --od-next
 #                                          --es | --es-prev | --es-next
-#                                          --is-cut
 #
 # Starting Date: 2019-05-15
-# Modified Date: 2020-08-24
+# Modified Date: 2020-11-16
 ###############################################################################################
 
 import sys
-import json
+import yaml
 from os import environ
 
 
 def get_hard_coded_version(key1, key2):
-    version_file = sys.path[0] + '/' + 'version.json'
-    version_info = json.load(open(version_file))
-    return version_info[key1][key2]
+    version_file = sys.path[0] + '/' + 'manifest.yml'
+    version_info = yaml.load(open(version_file), Loader=yaml.FullLoader)
+    print(version_info[key1][key2])
+    #return version_info[key1][key2]
 
 
 def get_es_version(user_param):
@@ -71,6 +71,8 @@ def get_version_cut(user_param):
       return(get_hard_coded_version('versionCut', 'is_cut'))
 
 if __name__ == '__main__':
+    get_hard_coded_version('ODFE', 'versions')
+    exit(1)
     # Provide a shell compatible interface, defaults to OD version
     if len(sys.argv) == 2 :
         arg_value = sys.argv[1]
