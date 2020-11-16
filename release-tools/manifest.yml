@@ -130,10 +130,10 @@ ODFE:
 
   releases: 
     url: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/releases/1.11.0/"
-  version:
+  versions:
     ES: "7.9.1"
     ODFE: "1.11.0"
-  url:
+  urls:
     ES: 
       linux_x86: "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-7.9.1-linux-x86_64.tar.gz"
       linux_aarch64: "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-7.9.1-linux-aarch64.tar.gz"
