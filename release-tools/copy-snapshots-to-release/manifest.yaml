@@ -104,13 +104,25 @@ ODFE:
       plugin_location: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-clients/sql-jdbc/"
     - 
       plugin: sql
+      plugin_full_name: "Open Distro for Elasticsearch SQL ODBC Driver 32-bit-1.11.0.0"
+      plugin_type: [msi]
+      plugin_category: client
+      plugin_location: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-clients/sql-odbc/"
+    - 
+      plugin: sql
       plugin_full_name: "Open Distro for Elasticsearch SQL ODBC Driver 64-bit-1.11.0.0"
       plugin_type: [pkg,msi]
       plugin_category: client
       plugin_location: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-clients/sql-odbc/"
     - 
       plugin: perftop
-      plugin_full_name: "perf-top-1.11.0.0"
+      plugin_full_name: "perf-top-1.11.0.0-LINUX"
+      plugin_type: [zip]
+      plugin_category: client
+      plugin_location: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-clients/perftop/"
+    - 
+      plugin: perftop
+      plugin_full_name: "perf-top-1.11.0.0-MACOS"
       plugin_type: [zip]
       plugin_category: client
       plugin_location: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-clients/perftop/"
