@@ -1,0 +1,16 @@
+ODFE: 
+  plugins: 
+    - 
+      plugin: alerting
+      plugin_full_name: "opendistro_alerting-0.10.0.0"
+      plugin_type: [zip,deb,rpm] 
+      plugin_location: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-plugins/alerting/"
+    - 
+      plugin: k-NN
+      plugin_full_name: "opendistro-knn-1.10.0.0"
+      plugin_type: [zip]
+      plugin_location: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-plugins/kibana-plugins/knn/"
+  release-destination: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/releases/1.11.0/"
+  ES-version: ""
+  Kibana-version: ""
+
