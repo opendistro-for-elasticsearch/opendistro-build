@@ -134,7 +134,7 @@ snapshots:
     plugin_category: client
     plugin_location: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-clients/sql-odbc"
   - 
-    plugin_git: perftop
+    plugin_git: opendistro-for-elasticsearch/perftop
     plugin_version: "1.11.0.0"
     plugin_build: ""
     plugin_type: [zip]
