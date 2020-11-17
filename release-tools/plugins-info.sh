@@ -8,7 +8,7 @@
 # About:         Print the ES/KIBANA plugin names and git urls with correct dependency orders
 #                as defined in the $PLUGIN_LIST file
 #
-# Usage:         ./plugins-info $PLUGIN_TYPE $RETURN_TYPE
+# Usage:         ./plugins-info.sh $PLUGIN_CATEGORY $PLUGIN_TYPE
 #                $PLUGIN_CATEGORY : elasticsearch | kibana | client | library  (required)
 #                $PLUGIN_TYPE     : zip | deb | rpm | git | ...... (required)
 #
