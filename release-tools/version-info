@@ -15,14 +15,14 @@
 #
 
 ###### Information ############################################################################
-# Name:          version-info
+# Name:          version-info.py
 # Maintainer:    ODFE Infra Team
 # Language:      Python
 #
 # About:         Print the ES/ODFE/VersionCut related information and values
 #                as defined in the 'manifest.yml' file
 #
-# Usage:         [python] ./version-info $VERSION_TYPE
+# Usage:         [python] ./version-info.py $VERSION_TYPE
 #                $VERSION_TYPE (required): --od | --od-prev | --od-next
 #                                          --es | --es-prev | --es-next
 #
