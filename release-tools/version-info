@@ -38,8 +38,7 @@ from os import environ
 def get_hard_coded_version(key1, key2):
     version_file = sys.path[0] + '/' + 'manifest.yml'
     version_info = yaml.load(open(version_file), Loader=yaml.FullLoader)
-    print(version_info[key1][key2])
-    #return version_info[key1][key2]
+    return version_info['versions'][key1][key2]
 
 
 def get_es_version(user_param):
@@ -48,11 +47,11 @@ def get_es_version(user_param):
         return(environ['ES_VERSION'])
     else:
         if user_param == '--es-prev':
-          return(get_hard_coded_version('esVersion', 'previous'))
+          return(get_hard_coded_version('ES', 'previous'))
         elif user_param == '--es-next':
-          return(get_hard_coded_version('esVersion', 'next'))
+          return(get_hard_coded_version('ES', 'next'))
         else:
-          return(get_hard_coded_version('esVersion', 'current'))
+          return(get_hard_coded_version('ES', 'current'))
 
 def get_od_version(user_param):
     if 'OD_VERSION' in environ:
@@ -60,19 +59,17 @@ def get_od_version(user_param):
         return(environ['OD_VERSION'])
     else:
         if user_param == '--od-prev':
-          return(get_hard_coded_version('odVersion', 'previous'))
+          return(get_hard_coded_version('ODFE', 'previous'))
         elif user_param == '--od-next':
-          return(get_hard_coded_version('odVersion', 'next'))
+          return(get_hard_coded_version('ODFE', 'next'))
         else:
-          return(get_hard_coded_version('odVersion', 'current'))
+          return(get_hard_coded_version('ODFE', 'current'))
 
 def get_version_cut(user_param):
     if user_param == '--is-cut':
       return(get_hard_coded_version('versionCut', 'is_cut'))
 
 if __name__ == '__main__':
-    get_hard_coded_version('ODFE', 'versions')
-    exit(1)
     # Provide a shell compatible interface, defaults to OD version
     if len(sys.argv) == 2 :
         arg_value = sys.argv[1]
