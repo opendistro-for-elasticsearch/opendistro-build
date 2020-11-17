@@ -77,16 +77,12 @@ if __name__ == '__main__':
             print(get_es_version(arg_value))
         elif (arg_value == '--od') or (arg_value == '--od-prev') or (arg_value == '--od-next'):
             print(get_od_version(arg_value))
-        elif (arg_value == '--is-cut'):
-            print(get_version_cut(arg_value))
         else:
           raise Exception('invalid argument, use --es OR --od ',
                           'OR --es-prev OR --od-prev ',
-                          'OR --es-next OR --od-next ',
-                          'OR --is-cut')
+                          'OR --es-next OR --od-next ')
     else:
       raise Exception('invalid argument, use --es OR --od ',
                       'OR --es-prev OR --od-prev ',
-                      'OR --es-next OR --od-next ',
-                      'OR --is-cut')
+                      'OR --es-next OR --od-next ')
 
