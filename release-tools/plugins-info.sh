@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ###### Information ############################################################################
-# Name:          plugins-info
+# Name:          plugins-info.sh
 # Maintainer:    ODFE Infra Team
 # Language:      Shell
 #
