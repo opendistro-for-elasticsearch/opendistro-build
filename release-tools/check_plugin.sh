@@ -71,7 +71,6 @@ rm -rf message.md chime_message.md
 IFS=,
 for plugin_category in $PLUGIN_CATEGORY
 do
-  # Try to dynamically assign the variables based on PLUGIN_CATEGORY
   IFS=$OLDIFS
   PLUGINS_LOCATION_ARRAY=( `$REPO_ROOT/release-tools/plugins-info.sh $plugin_category plugin_location` )
   PLUGINS_TYPE_ARRAY=( `$REPO_ROOT/release-tools/plugins-info.sh $plugin_category plugin_type | sed 's/\[//g;s/\]//g;s/ *//g'` )
@@ -90,7 +89,6 @@ do
   for pindex in ${!PLUGINS_LOCATION_ARRAY[@]}
   do
     IFS=' '
-    # temp fix until we change the structures
     plugin_name=`echo ${PLUGINS_LOCATION_ARRAY[$pindex]} | awk -F/ '{print $NF}'`
     plugin_bucket=`echo ${PLUGINS_LOCATION_ARRAY[$pindex]} | awk -F/ '{print $3}'`
     plugin_path=`echo ${PLUGINS_LOCATION_ARRAY[$pindex]} | sed "s/^.*$plugin_bucket\///g"`
