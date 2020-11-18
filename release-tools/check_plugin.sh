@@ -100,8 +100,6 @@ do
 
     IFS=`echo -ne "\n\b"`
 
-    #echo $plugin_name
-    #echo 123123${PLUGINS_KEYWORD_ARRAY[@]}123123
     for tindex in ${!plugin_type_array[@]}
     do
       for kindex in ${!plugin_keyword_array[@]}
