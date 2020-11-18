@@ -4,6 +4,7 @@ snapshots:
     plugin_git: opendistro-for-elasticsearch/sql
     plugin_version: "1.11.0.0"
     plugin_build: ""
+    plugin_keyword: []
     plugin_type: [zip,deb,rpm]
     plugin_category: elasticsearch
     plugin_location: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-plugins/sql"
@@ -11,6 +12,7 @@ snapshots:
     plugin_git: opendistro-for-elasticsearch/alerting
     plugin_version: "1.11.0.1"
     plugin_build: ""
+    plugin_keyword: []
     plugin_type: [zip,deb,rpm]
     plugin_category: elasticsearch
     plugin_location: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-plugins/alerting"
@@ -18,6 +20,7 @@ snapshots:
     plugin_git: opendistro-for-elasticsearch/job-scheduler
     plugin_version: "1.11.0.0"
     plugin_build: ""
+    plugin_keyword: []
     plugin_type: [zip,deb,rpm]
     plugin_category: elasticsearch
     plugin_location: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-plugins/job-scheduler"
@@ -25,6 +28,7 @@ snapshots:
     plugin_git: opendistro-for-elasticsearch/security
     plugin_version: "1.11.0.0"
     plugin_build: ""
+    plugin_keyword: []
     plugin_type: [zip,deb,rpm]
     plugin_category: elasticsearch
     plugin_location: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-plugins/security"
@@ -32,6 +36,7 @@ snapshots:
     plugin_git: opendistro-for-elasticsearch/performance-analyzer
     plugin_version: "1.11.0.0"
     plugin_build: ""
+    plugin_keyword: []
     plugin_type: [zip,deb,rpm]
     plugin_category: elasticsearch
     plugin_location: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-plugins/performance-analyzer"
@@ -39,6 +44,7 @@ snapshots:
     plugin_git: opendistro-for-elasticsearch/index-management
     plugin_version: "1.11.0.0"
     plugin_build: ""
+    plugin_keyword: []
     plugin_type: [zip,deb,rpm]
     plugin_category: elasticsearch
     plugin_location: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-plugins/index-management"
@@ -46,6 +52,7 @@ snapshots:
     plugin_git: opendistro-for-elasticsearch/k-NN
     plugin_version: "1.11.0.0"
     plugin_build: ""
+    plugin_keyword: []
     plugin_type: [zip,deb,rpm]
     plugin_category: elasticsearch
     plugin_location: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-plugins/knn"
@@ -53,6 +60,7 @@ snapshots:
     plugin_git: opendistro-for-elasticsearch/k-NN
     plugin_version: "1.11.0.0"
     plugin_build: ""
+    plugin_keyword: []
     plugin_type: [zip,deb,rpm]
     plugin_category: library
     plugin_location: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/opendistro-libs/knnlib"
@@ -60,6 +68,7 @@ snapshots:
     plugin_git: opendistro-for-elasticsearch/anomaly-detection
     plugin_version: "1.11.0.0"
     plugin_build: ""
+    plugin_keyword: []
     plugin_type: [zip,deb,rpm]
     plugin_category: elasticsearch
     plugin_location: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-plugins/anomaly-detection"
@@ -67,6 +76,7 @@ snapshots:
     plugin_git: opendistro-for-elasticsearch/sql
     plugin_version: "1.11.0.0"
     plugin_build: ""
+    plugin_keyword: []
     plugin_type: [zip]
     plugin_category: kibana
     plugin_location: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/kibana-plugins/sql-workbench"
@@ -74,6 +84,7 @@ snapshots:
     plugin_git: opendistro-for-elasticsearch/anomaly-detection-kibana-plugin
     plugin_version: "1.11.0.0"
     plugin_build: ""
+    plugin_keyword: []
     plugin_type: [zip]
     plugin_category: kibana
     plugin_location: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/kibana-plugins/anomaly-detection"
@@ -81,6 +92,7 @@ snapshots:
     plugin_git: opendistro-for-elasticsearch/security-kibana-plugin
     plugin_version: "1.11.0.0"
     plugin_build: ""
+    plugin_keyword: []
     plugin_type: [zip]
     plugin_category: kibana
     plugin_location: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/kibana-plugins/security"
@@ -88,6 +100,7 @@ snapshots:
     plugin_git: opendistro-for-elasticsearch/alerting-kibana-plugin
     plugin_version: "1.11.0.2"
     plugin_build: ""
+    plugin_keyword: []
     plugin_type: [zip]
     plugin_category: kibana
     plugin_location: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/kibana-plugins/alerting"
@@ -95,6 +108,7 @@ snapshots:
     plugin_git: opendistro-for-elasticsearch/index-management-kibana-plugin
     plugin_version: "1.11.0.0"
     plugin_build: ""
+    plugin_keyword: []
     plugin_type: [zip]
     plugin_category: kibana
     plugin_location: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/kibana-plugins/index-management"
@@ -102,6 +116,7 @@ snapshots:
     plugin_git: opendistro-for-elasticsearch/kibana-notebooks
     plugin_version: "1.11.0.0"
     plugin_build: ""
+    plugin_keyword: []
     plugin_type: [zip]
     plugin_category: kibana
     plugin_location: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/kibana-plugins/notebooks"
@@ -109,6 +124,7 @@ snapshots:
     plugin_git: opendistro-for-elasticsearch/sql
     plugin_version: "1.11.0.0"
     plugin_build: ""
+    plugin_keyword: []
     plugin_type: [tar.gz,whl]
     plugin_category: client
     plugin_location: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-clients/sql-cli"
@@ -116,6 +132,7 @@ snapshots:
     plugin_git: opendistro-for-elasticsearch/sql
     plugin_version: "1.11.0.0"
     plugin_build: ""
+    plugin_keyword: []
     plugin_type: [jar]
     plugin_category: client
     plugin_location: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-clients/sql-jdbc"
@@ -123,20 +140,23 @@ snapshots:
     plugin_git: opendistro-for-elasticsearch/sql
     plugin_version: "1.11.0.0"
     plugin_build: ""
-    plugin_type: [msi]
+    plugin_keyword: [32-bit,64-bit]
+    plugin_type: [msi] # WINDOWS specific ODBC .msi
     plugin_category: client
     plugin_location: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-clients/sql-odbc"
   - 
     plugin_git: opendistro-for-elasticsearch/sql
     plugin_version: "1.11.0.0"
     plugin_build: ""
-    plugin_type: [pkg,msi]
+    plugin_keyword: []
+    plugin_type: [pkg] # MACOS specific ODBC .pkg
     plugin_category: client
     plugin_location: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-clients/sql-odbc"
   - 
     plugin_git: opendistro-for-elasticsearch/perftop
     plugin_version: "1.11.0.0"
     plugin_build: ""
+    plugin_keyword: [MACOS,LINUX] # MACOS and WINDOWS 64-bit Version .zip
     plugin_type: [zip]
     plugin_category: client
     plugin_location: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-clients/perftop"
