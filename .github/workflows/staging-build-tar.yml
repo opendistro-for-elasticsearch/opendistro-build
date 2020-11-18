@@ -78,7 +78,7 @@ jobs:
           java-version: ${{ matrix.java }}
       - uses: actions/checkout@v1
       - name: Retrieve plugin tags
-        run:  echo ::set-env name=p_tag_ism::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)
+        run:  echo "p_tag_ism=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)" >> $GITHUB_ENV
       - name: Checkout ISM
         uses: actions/checkout@v1
         with:
@@ -111,7 +111,7 @@ jobs:
           java-version: ${{ matrix.java }}
       - uses: actions/checkout@v1
       - name: Retrieve plugin tags
-        run:  echo ::set-env name=p_tag_alerting::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)
+        run:  echo "p_tag_alerting=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)" >> $GITHUB_ENV
       - name: Checkout Alerting
         uses: actions/checkout@v1
         with:
@@ -144,7 +144,7 @@ jobs:
           java-version: ${{ matrix.java }}
       - uses: actions/checkout@v1
       - name: Retrieve plugin tags
-        run:  echo ::set-env name=p_tag_sql::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)
+        run:  echo "p_tag_sql=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)" >> $GITHUB_ENV
       - name: Checkout SQL
         uses: actions/checkout@v1
         with:
@@ -177,7 +177,7 @@ jobs:
           java-version: ${{ matrix.java }}
       - uses: actions/checkout@v1
       - name: Retrieve plugin tags
-        run:  echo ::set-env name=p_tag_knn::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/k-NN)
+        run:  echo "p_tag_knn=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/k-NN)" >> $GITHUB_ENV
       - name: Checkout k-NN
         uses: actions/checkout@v1
         with:
@@ -210,7 +210,7 @@ jobs:
           java-version: ${{ matrix.java }}
       - uses: actions/checkout@v1
       - name: Retrieve plugin tags
-        run:  echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)
+        run:  echo "p_tag_ad=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)" >> $GITHUB_ENV
       - name: Checkout anomaly-detection
         uses: actions/checkout@v1
         with:
@@ -243,7 +243,7 @@ jobs:
           java-version: ${{ matrix.java }}
       - uses: actions/checkout@v1
       - name: Retrieve plugin tags
-        run:  echo ::set-env name=p_tag_sql::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)
+        run:  echo "p_tag_sql=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)" >> $GITHUB_ENV
       - name: Checkout SQL
         uses: actions/checkout@v1
         with:
@@ -276,7 +276,7 @@ jobs:
           java-version: ${{ matrix.java }}
       - uses: actions/checkout@v1
       - name: Retrieve plugin tags
-        run:  echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)
+        run:  echo "p_tag_ad=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)" >> $GITHUB_ENV
       - name: Checkout anomaly-detection
         uses: actions/checkout@v1
         with:
@@ -306,7 +306,7 @@ jobs:
           aws-region: us-east-1
 
       - name: Retrieve plugin tags 
-        run:  echo ::set-env name=p_tag_alerting::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)
+        run:  echo "p_tag_alerting=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)" >> $GITHUB_ENV
 
       - uses: actions/checkout@v1
         with:
@@ -343,8 +343,8 @@ jobs:
           aws-region: us-east-1
       - name: Retrieve plugin tags 
         run: |
-          echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)
-          echo ::set-env name=es_version::$(./bin/version-info --es)
+          echo "p_tag_ad=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)" >> $GITHUB_ENV
+          echo "es_version=$(./bin/version-info --es)" >> $GITHUB_ENV
           
       - name: Checkout Kibana
         uses: actions/checkout@v2
@@ -368,8 +368,8 @@ jobs:
       - name: Get node and yarn versions
         id: node_yarn_versions
         run: |
-          echo ::set-env name=kibana_node_version::$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")
-          echo ::set-env name=kibana_yarn_version::$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")   
+          echo "kibana_node_version=$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV
+          echo "kibana_yarn_version=$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV   
       
       - name: Setup node
         uses: actions/setup-node@v1
@@ -415,8 +415,8 @@ jobs:
           aws-region: us-east-1
       - name: Retrieve plugin tags 
         run: |
-          echo ::set-env name=p_tag_sql_kibana::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)
-          echo ::set-env name=es_version::$(./bin/version-info --es)
+          echo "p_tag_sql_kibana=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)" >> $GITHUB_ENV
+          echo "es_version=$(./bin/version-info --es)" >> $GITHUB_ENV
           
       - name: Checkout Kibana
         uses: actions/checkout@v2
@@ -440,8 +440,8 @@ jobs:
       - name: Get node and yarn versions
         id: node_yarn_versions
         run: |
-          echo ::set-env name=kibana_node_version::$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")
-          echo ::set-env name=kibana_yarn_version::$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")   
+          echo "kibana_node_version=$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV
+          echo "kibana_yarn_version=$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV   
       
       - name: Setup node
         uses: actions/setup-node@v1
@@ -503,8 +503,8 @@ jobs:
           aws-region: us-east-1
       - name: Retrieve plugin tags 
         run: |
-          echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)
-          echo ::set-env name=es_version::$(./bin/version-info --es)
+          echo "p_tag_ad=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)" >> $GITHUB_ENV
+          echo "es_version=$(./bin/version-info --es)" >> $GITHUB_ENV
           
       - name: Checkout Kibana
         uses: actions/checkout@v2
@@ -528,8 +528,8 @@ jobs:
       - name: Get node and yarn versions
         id: node_yarn_versions
         run: |
-          echo ::set-env name=kibana_node_version::$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")
-          echo ::set-env name=kibana_yarn_version::$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")   
+          echo "kibana_node_version=$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV
+          echo "kibana_yarn_version=$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV   
       
       - name: Setup node
         uses: actions/setup-node@v1

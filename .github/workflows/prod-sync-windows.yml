@@ -20,7 +20,7 @@ jobs:
       - name: Getting OD version
         run: |
           OD_VERSION=`./bin/version-info --od`
-          echo "::set-env name=od_version::$OD_VERSION"
+          echo "od_version=$OD_VERSION" >> $GITHUB_ENV
     
       - name: Moving windows artifacts from staging to prod
         run: |
