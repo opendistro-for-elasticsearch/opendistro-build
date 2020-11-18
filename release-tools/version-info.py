@@ -39,7 +39,6 @@ from os import environ
 
 def get_hard_coded_version(key1, key2):
     version_file = sys.path[0] + '/' + 'manifest.yml'
-    #version_info = yaml.load(open(version_file), Loader=yaml.FullLoader)
     version_info = yaml.load(open(version_file), yaml.Loader)
     return version_info['versions'][key1][key2]
 
