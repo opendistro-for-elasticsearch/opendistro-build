@@ -11,7 +11,7 @@
 # Usage:         ./plugins-info.sh $PLUGIN_CATEGORY $RETURN_TYPE
 #                $PLUGIN_CATEGORY : elasticsearch | kibana | client | library  (required)
 #                $RETURN_TYPE     : plugin_location | plugin_git | plugin_version | plugin_build
-#                                   plugin_type | plugin_keyword | ......
+#                                   plugin_type | ......
 #                                 ($PLUGIN_LIST file for more return types)
 #
 # Requirements:  Need to install yq on your system:
@@ -39,4 +39,5 @@ then
 fi
 
 yq r $PLUGIN_LIST "snapshots.(plugin_category==${PLUGIN_CATEGORY}).${RETURN_TYPE}"
+
 
