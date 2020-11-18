@@ -74,8 +74,9 @@ do
   # Try to dynamically assign the variables based on PLUGIN_CATEGORY
   IFS=$OLDIFS
   PLUGINS_LOCATION_ARRAY=( `$REPO_ROOT/release-tools/plugins-info.sh $plugin_category plugin_location` )
-  PLUGINS_GIT=`$REPO_ROOT/release-tools/plugins-info.sh $plugin_category plugin_git | tr '\n' ' '`
   PLUGINS_TYPE_ARRAY=( `$REPO_ROOT/release-tools/plugins-info.sh $plugin_category plugin_type | sed 's/\[//g;s/\]//g;s/ *//g'` )
+  PLUGINS_KEYWORD_ARRAY=( `$REPO_ROOT/release-tools/plugins-info.sh $plugin_category plugin_keyword | sed 's/\[/#/g;s/\]/#/g;s/ *//g;s/##/None/g;s/#//g'` )
+  PLUGINS_GIT=`$REPO_ROOT/release-tools/plugins-info.sh $plugin_category plugin_git | tr '\n' ' '`
   plugin_total=0
   unavailable_plugin=()
   inprogress_plugin=()
@@ -94,23 +95,35 @@ do
     plugin_bucket=`echo ${PLUGINS_LOCATION_ARRAY[$pindex]} | awk -F/ '{print $3}'`
     plugin_path=`echo ${PLUGINS_LOCATION_ARRAY[$pindex]} | sed "s/^.*$plugin_bucket\///g"`
     plugin_type_array=( `echo ${PLUGINS_TYPE_ARRAY[$pindex]} | tr ',' ' '` )
+    plugin_keyword_array=( `echo ${PLUGINS_KEYWORD_ARRAY[$pindex]} | tr ',' ' '` )
     plugin_total=$((plugin_total+${#plugin_type_array[@]}))
 
     IFS=`echo -ne "\n\b"`
 
+    #echo $plugin_name
+    #echo 123123${PLUGINS_KEYWORD_ARRAY[@]}123123
     for tindex in ${!plugin_type_array[@]}
     do
-      plugin_latest=`aws s3api list-objects --bucket $plugin_bucket --prefix $plugin_path --query 'Contents[].[Key]' --output text \
-                     | grep $ODFE_VERSION | grep ${plugin_type_array[$tindex]} | sort | tail -n 1 | awk -F '/' '{print $NF}'`
-      if [ -z "$plugin_latest" ]
-      then
-        plugin_latest="unavailable:${plugin_type_array[$tindex]}:${plugin_name}"
-        unavailable_plugin+=( $plugin_latest )
-      else
-        plugin_latest="isavailable:${plugin_type_array[$tindex]}:${plugin_latest}"
-        available_plugin+=( $plugin_latest )
-      fi
-      echo $plugin_latest
+      for kindex in ${!plugin_keyword_array[@]}
+      do
+        if [ "${plugin_keyword_array[$kindex]}" = "None" ]
+        then
+        plugin_latest=`aws s3api list-objects --bucket $plugin_bucket --prefix $plugin_path --query 'Contents[].[Key]' --output text --profile StagingAdminRole \
+                       | grep $ODFE_VERSION | grep -i ${plugin_type_array[$tindex]} | sort | tail -n 1 | awk -F '/' '{print $NF}'`
+        else
+        plugin_latest=`aws s3api list-objects --bucket $plugin_bucket --prefix $plugin_path --query 'Contents[].[Key]' --output text --profile StagingAdminRole \
+                       | grep $ODFE_VERSION | grep -i ${plugin_type_array[$tindex]} | grep -i ${plugin_keyword_array[$kindex]} | sort | tail -n 1 | awk -F '/' '{print $NF}'`
+        fi
+        if [ -z "$plugin_latest" ]
+        then
+          plugin_latest="unavailable:${plugin_type_array[$tindex]}:${plugin_name}"
+          unavailable_plugin+=( $plugin_latest )
+        else
+          plugin_latest="isavailable:${plugin_type_array[$tindex]}:${plugin_latest}"
+          available_plugin+=( $plugin_latest )
+        fi
+        echo $plugin_latest
+      done
     done
 
   done
