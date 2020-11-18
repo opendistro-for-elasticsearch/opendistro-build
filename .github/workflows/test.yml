@@ -7,7 +7,7 @@ on:
     types: [staging-build-deb]
   push:
     branches:
-      - "setenv"
+      - "env-fix"
 
 
 jobs:
