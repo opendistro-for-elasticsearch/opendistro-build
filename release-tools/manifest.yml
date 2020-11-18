@@ -141,7 +141,7 @@ snapshots:
     plugin_version: "1.11.0.0"
     plugin_build: ""
     plugin_keyword: [32-bit,64-bit]
-    plugin_type: [msi] # WINDOWS specific ODBC .msi
+    plugin_type: [msi]
     plugin_category: client
     plugin_location: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-clients/sql-odbc"
   - 
@@ -149,14 +149,14 @@ snapshots:
     plugin_version: "1.11.0.0"
     plugin_build: ""
     plugin_keyword: []
-    plugin_type: [pkg] # MACOS specific ODBC .pkg
+    plugin_type: [pkg]
     plugin_category: client
     plugin_location: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-clients/sql-odbc"
   - 
     plugin_git: opendistro-for-elasticsearch/perftop
     plugin_version: "1.11.0.0"
     plugin_build: ""
-    plugin_keyword: [MACOS,LINUX] # MACOS and WINDOWS 64-bit Version .zip
+    plugin_keyword: [MACOS,LINUX]
     plugin_type: [zip]
     plugin_category: client
     plugin_location: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-clients/perftop"
