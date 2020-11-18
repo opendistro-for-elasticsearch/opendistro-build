@@ -197,9 +197,6 @@ jobs:
 
       - name: Retrieve plugin tags 
         run:  echo "p_tag_ism=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)" >> $GITHUB_ENV
-          # echo 'p_tag_ism<<EOF' >> $GITHUB_ENV
-          # .github/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management >> $GITHUB_ENV
-          # echo 'EOF' >> $GITHUB_ENV
 
       - uses: actions/checkout@v1
         with:
@@ -218,35 +215,35 @@ jobs:
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
           
 
-  # Test-ALERTING-NoSec:
-  #   needs: [sign-deb-artifacts]
-  #   runs-on: [ubuntu-18.04]
-  #   name: Test-ALERTING-NoSec
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       java: [14, 15]
-  #   steps:
-  #     - uses: actions/checkout@v1
+  Test-ALERTING-NoSec:
+    # needs: [sign-deb-artifacts]
+    runs-on: [ubuntu-18.04]
+    name: Test-ALERTING-NoSec
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [14, 15]
+    steps:
+      - uses: actions/checkout@v1
 
-  #     - name: Retrieve plugin tags 
-  #       run:  echo ::set-env name=p_tag_alerting::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)
+      - name: Retrieve plugin tags 
+        run:  echo "p_tag_alerting=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)" >> $GITHUB_ENV; echo $GITHUB_ENV
 
-  #     - uses: actions/checkout@v1
-  #       with:
-  #         repository: opendistro-for-elasticsearch/alerting
-  #         ref: ${{env.p_tag_alerting}}
+      - uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/alerting
+          ref: ${{env.p_tag_alerting}}
 
-  #     - name: Setup Java
-  #       uses: actions/setup-java@v1
-  #       with:
-  #         java-version: ${{ matrix.java }}
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
 
-  #     - name: IT
-  #       run: |
-  #         .github/scripts/setup_runners_service.sh deb --es-nosec
-  #         export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../alerting/alerting; pwd
-  #         ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
+      - name: IT
+        run: |
+          .github/scripts/setup_runners_service.sh deb --es-nosec
+          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../alerting/alerting; pwd
+          ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
           
   # Test-SQL-NoSec:
   #   needs: [sign-deb-artifacts]
@@ -260,7 +257,7 @@ jobs:
   #     - uses: actions/checkout@v1
 
   #     - name: Retrieve plugin tags 
-  #       run:  echo ::set-env name=p_tag_sql::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)
+  #       run:  echo "p_tag_sql=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)" >> $GITHUB_ENV
 
   #     - uses: actions/checkout@v1
   #       with:
