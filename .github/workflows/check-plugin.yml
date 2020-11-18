@@ -6,8 +6,6 @@ on:
 
   repository_dispatch:
     types: [check-plugin]
-  push:
-    branches: [staging-separation-P40553676]
 
 jobs:
   plugin-availability-main:
