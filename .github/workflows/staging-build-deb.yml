@@ -579,7 +579,7 @@ jobs:
           command: npx cypress run
 
   Test-AD-KIBANA:
-    # needs: [sign-deb-artifacts]
+    needs: [sign-deb-artifacts]
     runs-on: [ubuntu-18.04]
     name: Test-AD-KIBANA
     strategy:
