@@ -484,7 +484,7 @@ jobs:
         run: .github/scripts/setup_runners_service.sh deb --kibana-nosec
           
       - name: run IT
-        uses: cypress-io/github-action@v1
+        uses: cypress-io/github-action@v2.5.0
         with:
           working-directory: kibana/plugins/anomaly-detection-kibana-plugin
           command: yarn cy:run --config baseurl=http://localhost:5601
@@ -572,7 +572,7 @@ jobs:
           curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/sql/master/integ-test/src/test/resources/employee_nested.json | curl -s -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/employee_nested/_bulk?pretty' --data-binary @- > /dev/null 2>&1
  
       - name: run IT
-        uses: cypress-io/github-action@v1
+        uses: cypress-io/github-action@v2.5.0
         with:
           working-directory: kibana/plugins/workbench
           command: npx cypress run
@@ -639,7 +639,7 @@ jobs:
         run: .github/scripts/setup_runners_service.sh deb --kibana
           
       - name: run IT
-        uses: cypress-io/github-action@v1
+        uses: cypress-io/github-action@v2.5.0
         with:
           working-directory: kibana/plugins/anomaly-detection-kibana-plugin
           command: yarn cy:run-with-security --config baseurl=http://localhost:5601
