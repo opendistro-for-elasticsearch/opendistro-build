@@ -195,7 +195,7 @@ jobs:
           echo running tests
           cd ..\anomaly-detection
           dir
-          .\gradlew.bat :integTestRunner --tests "com.amazon.opendistroforelasticsearch.ad.rest.*IT" --tests "com.amazon.opendistroforelasticsearch.ad.e2e.*IT" -D tests.rest.cluster=localhost:9200 -D tests.cluster=localhost:9200 -D tests.clustername=es-integrationtest --stacktrace
+          .\gradlew.bat integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest"
 
   Test-SQL:
     needs: [build-es-artifacts, build-kibana-artifacts]
@@ -268,7 +268,7 @@ jobs:
           echo "running tests"
           cd ..\anomaly-detection
           dir
-          .\gradlew.bat :integTestRunner --tests "com.amazon.opendistroforelasticsearch.ad.rest.*IT" --tests "com.amazon.opendistroforelasticsearch.ad.e2e.*IT" -D tests.rest.cluster=localhost:9200 -D tests.cluster=localhost:9200 -D tests.clustername=es-integrationtest -D https=true -D user=admin -D password=admin --stacktrace
+          .\gradlew.bat integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest" -Dhttps=true -Duser=admin -Dpassword=admin  
 
   Test-ALERTING:
     needs: [build-es-artifacts, build-kibana-artifacts]
