@@ -485,7 +485,7 @@ jobs:
         run: .github/scripts/setup_runners_service.sh deb --kibana-nosec
           
       - name: run IT
-        uses: cypress-io/github-action@v2.3.1
+        uses: cypress-io/github-action@v1
         with:
           working-directory: kibana/plugins/anomaly-detection-kibana-plugin
           command: yarn cy:run --config baseurl=http://localhost:5601
