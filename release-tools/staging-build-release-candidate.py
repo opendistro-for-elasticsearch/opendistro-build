@@ -11,7 +11,7 @@ Prerequisites:
                sudo pip install pyyaml
 
 Usage: 
-              ./copy_snapshots_to_release.py $BUILD_NUMBER
+              ./staging-build-release-candidate.py $BUILD_NUMBER
 
 """
 import boto3
@@ -38,11 +38,7 @@ def download_file(filename,url):
 # Upload local file to the release folder
 def upload_plugin(plugin,release_bucket_name,plugin_category,rc_folder_path):
     try:
-        if plugin_category != "":
-            response = s3.upload_file("downloads/"+plugin,release_bucket_name,rc_folder_path+plugin_category+'/'+plugin)
-            print("Upload completed : " + plugin)
-        else:
-            response = s3.upload_file("downloads/"+plugin,release_bucket_name,rc_folder_path+plugin)
+            s3.upload_file("downloads/"+plugin,release_bucket_name,rc_folder_path+plugin_category+'/'+plugin)
             print("Upload completed : " + plugin)
     except:
         raise

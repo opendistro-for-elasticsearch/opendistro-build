@@ -1,11 +1,14 @@
-name: Generate Release Candidate
+name: Staging Build Release Candidate
 
-on: 
+on:
+#  schedule:
+#    - cron: '30 10 * * *' 
+
   repository_dispatch:
-    types: [generate-release-candidate]
+    types: [staging-build-release-candidate]
 
 jobs:
-  Generate-Release-Candidate:
+  Staging-Build-Release-Candidate:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v1
@@ -26,4 +29,4 @@ jobs:
       - name: Moving artifacts from snapshots to release folder
         run: |
           cd release-tools
-          ./generate-release-candidate.py ${GITHUB_RUN_ID}
+          ./staging-build-release-candidate.py ${GITHUB_RUN_ID}
