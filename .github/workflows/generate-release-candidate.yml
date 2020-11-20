@@ -27,4 +27,5 @@ jobs:
     
       - name: Moving artifacts from snapshots to release folder
         run: |
-          release-tools/generate-release-candidate.py ${GITHUB_RUN_ID}
+          cd release-tools
+          ./generate-release-candidate.py ${GITHUB_RUN_ID}
