@@ -1,10 +1,8 @@
 name: Generate Release Candidate
 
 on: 
-#  repository_dispatch:
-#    types: [generate-release-candidate]
-   push:
-     branches: [sreekarj_rc]
+  repository_dispatch:
+    types: [generate-release-candidate]
 
 jobs:
   Generate-Release-Candidate:
