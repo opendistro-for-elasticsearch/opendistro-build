@@ -27,7 +27,9 @@ jobs:
           #!/bin/bash
           set -e
           .github/scripts/check_plugin.sh
-          echo "CHIME_MESSAGE=$(cat /tmp/chime_message.md)" >> $GITHUB_ENV
+          echo 'CHIME_MESSAGE<<EOF' >> $GITHUB_ENV
+            cat /tmp/chime_message.md >> $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV
           exit `cat /tmp/plugin_status.check`
 
       - name: Send Slack Message
