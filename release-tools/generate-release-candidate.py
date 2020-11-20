@@ -179,6 +179,7 @@ def main():
                         status = create_release_folder(release_bucket_name,"upstream",rc_folder_path)
                         if status == "success":
                             upload_plugin(filename,release_bucket_name,"upstream",rc_folder_path)
+
             # Parse Kibana url's for downloading to local and upload to release bucket
             print("Upload Kibana artifacts to release candidate\n")
             for es in source.get('urls').get('KIBANA'):
