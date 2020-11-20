@@ -89,9 +89,19 @@
     "require_install": "true",
     "category": "elasticsearch"
   },
+  "reports-scheduler": {
+    "git": "opendistro-for-elasticsearch/kibana-reports",
+    "zip": "opendistro-reports-scheduler/opendistro-reports-scheduler",
+    "deb": "opendistro-reports-scheduler/opendistro-reports-scheduler",
+    "rpm": "opendistro-reports-scheduler/opendistro-reports-scheduler",
+    "windows": "opendistro-reports-scheduler/opendistro-reports-scheduler",
+    "cutversion": "1.11.0.0",
+    "require_install": "true",
+    "category": "elasticsearch"
+  },
   "sql-workbench": {
     "git": "opendistro-for-elasticsearch/sql",
-    "zip": "opendistro-query-workbench/opendistro-query-workbench",
+    "zip": "opendistro-query-workbench/opendistroQueryWorkbenchKibana",
     "deb": "none",
     "rpm": "none",
     "windows": "none",
@@ -101,7 +111,7 @@
   },
   "anomaly-detection-kibana": {
     "git": "opendistro-for-elasticsearch/anomaly-detection-kibana-plugin",
-    "zip": "opendistro-anomaly-detection/opendistro-anomaly-detection-kibana",
+    "zip": "opendistro-anomaly-detection/opendistroAnomalyDetectionKibana",
     "deb": "none",
     "rpm": "none",
     "windows": "none",
@@ -111,7 +121,7 @@
   },
   "security-kibana": {
     "git": "opendistro-for-elasticsearch/security-kibana-plugin",
-    "zip": "opendistro-security/opendistro_security_kibana_plugin",
+    "zip": "opendistro-security/opendistroSecurityKibana",
     "deb": "none",
     "rpm": "none",
     "windows": "none",
@@ -121,7 +131,7 @@
   },
   "alerting-kibana": {
     "git": "opendistro-for-elasticsearch/alerting-kibana-plugin",
-    "zip": "opendistro-alerting/opendistro-alerting",
+    "zip": "opendistro-alerting/opendistroAlertingKibana",
     "deb": "none",
     "rpm": "none",
     "windows": "none",
@@ -131,7 +141,7 @@
   },
   "index-management-kibana": {
     "git": "opendistro-for-elasticsearch/index-management-kibana-plugin",
-    "zip": "opendistro-index-management/opendistro_index_management_kibana",
+    "zip": "opendistro-index-management/opendistroIndexManagementKibana",
     "deb": "none",
     "rpm": "none",
     "windows": "none",
@@ -141,7 +151,37 @@
   },
   "notebooks-kibana": {
     "git": "opendistro-for-elasticsearch/kibana-notebooks",
-    "zip": "opendistro-notebooks/opendistro-notebooks-kibana",
+    "zip": "opendistro-notebooks/opendistroNoteboooksKibana",
+    "deb": "none",
+    "rpm": "none",
+    "windows": "none",
+    "cutversion": "1.11.0.0",
+    "require_install": "true",
+    "category": "kibana"
+  },
+  "reports": {
+    "git": "opendistro-for-elasticsearch/kibana-reports",
+    "zip": "opendistro-reports/opendistroReportsKibana",
+    "deb": "none",
+    "rpm": "none",
+    "windows": "none",
+    "cutversion": "1.11.0.0",
+    "require_install": "true",
+    "category": "kibana"
+  },
+  "gantt-chart": {
+    "git": "opendistro-for-elasticsearch/kibana-visualizations",
+    "zip": "opendistro-reports/opendistroGanttChartKibana",
+    "deb": "none",
+    "rpm": "none",
+    "windows": "none",
+    "cutversion": "1.11.0.0",
+    "require_install": "true",
+    "category": "kibana"
+  },
+  "trace-analytics": {
+    "git": "opendistro-for-elasticsearch/kibana-visualizations",
+    "zip": "opendistro-reports/opendistroTraceAnalyticsKibana",
     "deb": "none",
     "rpm": "none",
     "windows": "none",
