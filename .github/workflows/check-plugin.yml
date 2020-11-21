@@ -1,11 +1,10 @@
 name: Check Plugin Availability Main
 
 on:
- schedule:
-   - cron: '0 0,15 * * *'
-
- repository_dispatch:
-   types: [check-plugin]
+  schedule:
+    - cron: '0 0,15 * * *'
+  repository_dispatch:
+    types: [check-plugin]
 
 jobs:
   plugin-availability-main:
