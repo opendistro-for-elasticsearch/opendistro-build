@@ -96,13 +96,13 @@ spec:
         - name: node.master
           value: "true"
         - name: node.ingest
-        {{- if .Values.elasticsearch.client.dedicatedPod }}
+        {{- if .Values.elasticsearch.client.dedicatedPod.enabled }}
           value: "false"
         {{- else }}
           value: "true"
         {{- end }}
         - name: node.data
-        {{- if .Values.elasticsearch.data.dedicatedPod }}
+        {{- if .Values.elasticsearch.data.dedicatedPod.enabled }}
           value: "false"
         {{- else }}
           value: "true"

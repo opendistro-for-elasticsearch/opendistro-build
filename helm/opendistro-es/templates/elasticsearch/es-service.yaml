@@ -34,7 +34,7 @@ spec:
     - name: rca
       port: 9650
   selector:
-  {{- if .Values.elasticsearch.client.dedicatedPod }}
+  {{- if .Values.elasticsearch.client.dedicatedPod.enabled }}
     role: client
   {{- else }}
     role: master
