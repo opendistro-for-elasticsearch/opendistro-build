@@ -13,7 +13,6 @@
 # permissions and limitations under the License.
 
 # @formatter:off
-{{- if .Values.elasticsearch.client.enabled }}
 kind: Service
 apiVersion: v1
 metadata:
@@ -35,6 +34,9 @@ spec:
     - name: rca
       port: 9650
   selector:
+  {{- if .Values.elasticsearch.client.dedicatedPod.enabled }}
     role: client
+  {{- else }}
+    role: master
+  {{- end }}
   type: {{ .Values.elasticsearch.client.service.type }}
-{{- end }}
