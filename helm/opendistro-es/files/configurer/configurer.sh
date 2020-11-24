@@ -21,6 +21,9 @@ users='{{ toJson .Values.configurer.securityPlugin.users }}'
 roles='{{ toJson .Values.configurer.securityPlugin.roles }}'
 rolesmappings='{{ toJson .Values.configurer.securityPlugin.roles_mapping }}'
 
+template_names=$(ls /files/*.template.json 2> /dev/null | sed s/^.*\\/\// | cut -f1 -d.)
+policy_names=$(ls /files/*.policy.json 2> /dev/null | sed s/^.*\\/\// | cut -f1 -d.)
+
 log_error_exit() {
   description=$1
   error_msg=$2
@@ -80,9 +83,8 @@ register_gcs_repository() {
   fi
 }
 
-create_index_templates() {
-  echo
-  echo "Creating index templates"
+create_index_template() {
+  name="${1}"
   overwrite_templates="{{ .Values.configurer.overwriteTemplates }}"
   # The opendistro API uses a value representing 'strict create' rather than
   # 'overwrite_templates', therefore negate
@@ -91,25 +93,23 @@ create_index_templates() {
     false) strict="true" ;;
     *) log_error_exit "Unknown value for .Values.configurer.overwriteTemplates, should be 'true' or 'false'" "" ;;
   esac
-  for index in kubeaudit kubernetes other; do
-    filename="${index}_template.json"
-    echo "Creating index template for file '${filename}'"
-    resp=$(curl -X PUT "${es_url}/_template/${index}?create=${strict}" \
-      -H "Content-Type: application/json" -s \
-      -d@/files/${filename} -k -u "${auth}")
-    acknowledged=$(echo "${resp}" | grep "^{" | jq -r '.acknowledged')
-    if [ "${acknowledged}" != "true" ]; then
-      if [ "${overwrite_templates}" = "false" ] \
-          && echo "${resp}" | grep "already exists" > /dev/null ; then
-        echo "Index template '${index}' already exists, do nothing"
-      else
-        log_error_exit "Failed to create index template for file '${filename}'" "${resp}"
-      fi
+  filename="${name}.template.json"
+  echo "Creating index template from file '${filename}'"
+  resp=$(curl -X PUT "${es_url}/_index_template/${name}?create=${strict}" \
+    -H "Content-Type: application/json" -s \
+    -d@/files/${filename} -k -u "${auth}")
+  acknowledged=$(echo "${resp}" | grep "^{" | jq -r '.acknowledged')
+  if [ "${acknowledged}" != "true" ]; then
+    if [ "${overwrite_templates}" = "false" ] \
+        && echo "${resp}" | grep "already exists" > /dev/null ; then
+      echo "Index template '${name}' already exists, do nothing"
+    else
+      log_error_exit "Failed to create index template from template '${filename}'" "${resp}"
     fi
-  done
+  fi
 }
 
-setup_policies() {
+setup_policy() {
   create_update_policy() {
     update_policies="{{ .Values.configurer.updatePolicies }}"
 
@@ -122,7 +122,7 @@ setup_policies() {
       primary_term=$(echo "${policy_json}" | jq -r '._primary_term')
       resp=$(curl -X PUT "${es_url}/_opendistro/_ism/policies/${policy}?if_seq_no=${seq_no}&if_primary_term=${primary_term}" \
         -H "Content-Type: application/json" -k -s \
-        -d@"/files/${policy}_policy.json" \
+        -d@"/files/${policy}.policy.json" \
         -u "${auth}")
       id=$(echo "${resp}" | grep "^{" | jq -r '._id')
       if [ "${id}" != "${policy}" ]; then
@@ -131,11 +131,11 @@ setup_policies() {
       echo "Updated policy '${policy}'"
     }
 
-    policy=$1
+    policy="${1}"
     echo "Creating policy '${policy}'"
     resp=$(curl -X PUT "${es_url}/_opendistro/_ism/policies/${policy}" \
       -H "Content-Type: application/json" \
-      -d@"/files/${policy}_policy.json" -k -s \
+      -d@"/files/${policy}.policy.json" -k -s \
       -u "${auth}")
     status=$(echo "${resp}" | grep "^{" | jq -r '.status')
     id=$(echo "${resp}" | grep "^{" | jq -r '._id')
@@ -149,9 +149,7 @@ setup_policies() {
 
   echo
   echo "Creating and adding ISM policies"
-  for policy in kubeaudit kubernetes other; do
-    create_update_policy "${policy}"
-  done
+  create_update_policy "${1}"
 }
 
 init_indices() {
@@ -242,8 +240,17 @@ register_s3_repository
 {{ else if .Values.elasticsearch.gcs.enabled -}}
 register_gcs_repository
 {{- end }}
-create_index_templates
-setup_policies
+
+[ -n "${template_names}" ] && echo && echo "Creating index templates"
+for template in ${template_names}; do
+  create_index_template ${template}
+done
+
+[ -n "${policy_names}" ] && echo && echo "Creating ISM policies"
+for policy in ${policy_names}; do
+  setup_policy ${policy}
+done
+
 if [ "${create_indices}" = "true" ]; then init_indices; fi
 
 echo

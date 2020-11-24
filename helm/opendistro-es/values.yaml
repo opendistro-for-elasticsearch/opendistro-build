@@ -608,6 +608,57 @@ configurer:
   ## exists.
   updatePolicies: true
 
+  ## If true, configurer will create the default ISM policices for
+  ## kubernetes, kubeaudit, and other indices
+  defaultPolicies: true
+
+  ## Allows for specification of additional ISM policies
+  additionalPolicies: {}
+    # # Naming must follow <policy_name>.policy.json
+    # my_policy.policy.json: |-
+    #   {
+    #     "policy": {
+    #       "policy_id": "my_policy",
+    #       "description": "Other ISM policy",
+    #       "default_state": "hot",
+    #       "states": [
+    #         {
+    #           "name": "hot",
+    #           "actions": [
+    #             {
+    #               "rollover": {
+    #                 "min_size": "1GB",
+    #                 "min_index_age": "1d"
+    #               }
+    #             }
+    #           ]
+    #         }
+    #       ]
+    #     }
+    #   }
+
+  ## If true, configurer will create the default index templates for
+  ## kubernetes, kubeaudit, and other indices
+  defaultTemplates: true
+
+  ## Allows for specification of additional index templates
+  additionalTemplates: {}
+    # # Naming must follow <template_name>.template.json
+    # my_template.template.json: |-
+    #   {
+    #     "index_patterns": [
+    #       "my_index*"
+    #     ],
+    #     "template": {
+    #       "settings": {
+    #         "index.refresh_interval": "10s",
+    #         "opendistro.index_state_management.policy_id": "my_policy",
+    #         "opendistro.index_state_management.rollover_alias": "my_alias",
+    #         "mapping.total_fields.limit": "1000"
+    #       }
+    #     }
+    #   }
+
   ## If true, configurer will overwrite existing templates.
   ## A negation of the 'create' parameter, see:
   ## https://opendistro.github.io/for-elasticsearch-docs/docs/elasticsearch/rest-api-reference/#indicesput_template

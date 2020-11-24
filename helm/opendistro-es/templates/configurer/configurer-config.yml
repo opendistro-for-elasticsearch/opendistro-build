@@ -16,7 +16,19 @@ stringData:
 
   kibana-dashboards.ndjson: {{ .Files.Get "files/configurer/kibana-resources/kibana-resources.ndjson" | quote }}
 
+{{- if .Values.configurer.defaultTemplates }}
 {{ (.Files.Glob "files/configurer/index-templates/*.json").AsConfig | indent 2 }}
+{{- end }}
 
+{{- if .Values.configurer.defaultPolicies }}
 {{ tpl ((.Files.Glob "files/configurer/ism-policies/*.json").AsConfig) . | indent 2 }}
+{{- end }}
+
+{{- range $key, $val := .Values.configurer.additionalTemplates }}
+  {{ $key }}: {{ $val | toPrettyJson }}
+{{- end }}
+
+{{- range $key, $val := .Values.configurer.additionalPolicies }}
+  {{ $key }}: {{ $val | toPrettyJson }}
+{{- end }}
 {{- end }}
