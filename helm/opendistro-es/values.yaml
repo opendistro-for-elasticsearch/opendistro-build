@@ -303,7 +303,7 @@ elasticsearch:
     enabled: true
     ## Enables dedicated statefulset for data. Otherwise master nodes as data storage
     dedicatedPod:
-      enalbled: true
+      enabled: true
     replicas: 1
     updateStrategy: "RollingUpdate"
 
@@ -372,7 +372,7 @@ elasticsearch:
     enabled: true
     ## Enables dedicated deployment for client/ingest. Otherwise master nodes as client/ingest
     dedicatedPod:
-      enalbled: true
+      enabled: true
     service:
       type: ClusterIP
       annotations: {}
