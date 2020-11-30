@@ -151,7 +151,7 @@
   },
   "notebooks-kibana": {
     "git": "opendistro-for-elasticsearch/kibana-notebooks",
-    "zip": "opendistro-notebooks/opendistroNoteboooksKibana",
+    "zip": "opendistro-notebooks/opendistroNotebooksKibana",
     "deb": "none",
     "rpm": "none",
     "windows": "none",
