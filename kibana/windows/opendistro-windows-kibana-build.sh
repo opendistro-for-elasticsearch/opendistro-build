@@ -5,10 +5,17 @@ REPO_ROOT=`git rev-parse --show-toplevel`
 ROOT=`dirname $(realpath $0)`; echo $ROOT; cd $ROOT
 ES_VERSION=`$REPO_ROOT/bin/version-info --es`; echo $ES_VERSION
 OD_VERSION=`$REPO_ROOT/bin/version-info --od`; echo $OD_VERSION
+IS_CUT=`$REPO_ROOT/bin/version-info --is-cut`; echo IS_CUT: $IS_CUT
 S3_BUCKET="artifacts.opendistroforelasticsearch.amazon.com"
 ARTIFACTS_URL="https://d3g5vo6xdbdb9a.cloudfront.net"
 PACKAGE_NAME="opendistroforelasticsearch-kibana"
 TARGET_DIR="$ROOT/target"
+
+# Please DO NOT change the orders, they have dependencies
+PLUGINS=`$REPO_ROOT/bin/plugins-info kibana windows --require-install-true`
+PLUGINS_ARRAY=( $PLUGINS )
+CUT_VERSIONS=`$REPO_ROOT/bin/plugins-info kibana cutversion --require-install-true`
+CUT_VERSIONS_ARRAY=( $CUT_VERSIONS )
 
 mkdir $TARGET_DIR
 
@@ -18,6 +25,26 @@ aws s3 cp "s3://${S3_BUCKET}/downloads/tarball/${PACKAGE_NAME}/${PACKAGE_NAME}-$
 # Untar the tar artifact
 tar -xzf $PACKAGE_NAME-$OD_VERSION.tar.gz
 rm -rf $PACKAGE_NAME-$OD_VERSION.tar.gz
+
+# Re-install Windows specific version of Kibana Plugins
+for pindex in ${!PLUGINS_ARRAY[@]}
+do
+  plugin_path=${PLUGINS_ARRAY[$pindex]}
+  plugin_version=$OD_VERSION
+
+  if [ "$IS_CUT" = "true" ]
+  then
+    plugin_version=${CUT_VERSIONS_ARRAY[$pindex]}
+  fi
+
+  if [ "$plugin_path" != "none" ]
+  then
+    plugin_name=`echo $plugin_path | awk -F '/' '{print $NF}'`
+    plugin_latest=`aws s3api list-objects --bucket $S3_BUCKET --prefix "downloads/kibana-plugins/${plugin_path}-${plugin_version}" --query 'Contents[].[Key]' --output text | sort | tail -n 1`
+    $PACKAGE_NAME/bin/kibana-plugin remove $plugin_name
+    $PACKAGE_NAME/bin/kibana-plugin --allow-root install "${ARTIFACTS_URL}/${plugin_latest}"
+  fi
+done
 
 # Download windowss oss for copying batch files
 wget -nv https://artifacts.elastic.co/downloads/kibana/kibana-oss-$ES_VERSION-windows-x86_64.zip
