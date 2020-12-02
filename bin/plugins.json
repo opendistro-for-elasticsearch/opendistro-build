@@ -161,10 +161,10 @@
   },
   "reports": {
     "git": "opendistro-for-elasticsearch/kibana-reports",
-    "zip": "opendistro-reports/opendistroReportsKibana",
+    "zip": "opendistro-reports/linux/x64/opendistroReportsKibana",
     "deb": "none",
     "rpm": "none",
-    "windows": "none",
+    "windows": "opendistro-reports/windows/x64/opendistroReportsKibana",
     "cutversion": "1.11.0.0",
     "require_install": "true",
     "category": "kibana"

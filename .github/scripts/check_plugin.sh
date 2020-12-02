@@ -109,17 +109,24 @@ do
     plugin_folder=`echo $item|awk -F/ '{print $1}'`
     plugin_item=`echo $item|awk -F/ '{print $2}'`
     plugin_item_extra=`echo $item|awk -F/ '{print $3}'`
+    plugin_item_extra_again=`echo $item|awk -F/ '{print $4}'`
 
-    if [ -z "$plugin_item_extra" ]
+    # Very complicated logic for temp solution until we move to staging env
+    if [ -z "$plugin_item_extra_again" ]
     then
-      if [ -z "$plugin_item" ]
+      if [ -z "$plugin_item_extra" ]
       then
-        plugin_arr+=( $plugin_folder )
+        if [ -z "$plugin_item" ]
+        then
+          plugin_arr+=( $plugin_folder )
+        else
+          plugin_arr+=( $plugin_item )
+        fi
       else
-        plugin_arr+=( $plugin_item )
+        plugin_arr+=( $plugin_item_extra )
       fi
     else
-      plugin_arr+=( $plugin_item_extra )
+      plugin_arr+=( $plugin_item_extra_again )
     fi
 
     plugin_latest=`aws s3api list-objects --bucket $S3_BUCKET --prefix "${S3_DIR}/${item}-${ODFE_VERSION}" --query 'Contents[].[Key]' --output text | sort | tail -n 1`
