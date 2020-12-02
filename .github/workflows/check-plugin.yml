@@ -33,7 +33,7 @@ jobs:
         uses: peterzhuamazon/github-slack-action@master
         with:
           text: ${{ env.CHIME_MESSAGE }}
-          webhook: ${{ secrets.SLACK_TEST_MESSAGE }}
+          webhook: ${{ secrets.SLACK_ODFE_RELEASE }}
 
       - name: Send mail
         if: ${{ always() }}
