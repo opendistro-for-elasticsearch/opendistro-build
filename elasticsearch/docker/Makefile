@@ -116,7 +116,7 @@ run-cluster: docker-compose
 
 #build: clean venv dockerfile docker-compose
 build: clean dockerfile
-        #-pyfiglet -f puffy -w 160 "Building ES ";
+	#-pyfiglet -f puffy -w 160 "Building ES ";
 	docker build -t $(IMAGE_TAG):$(OPENDISTRO_VERSION) -f build/elasticsearch/Dockerfile build/elasticsearch || \
 	docker tag $(IMAGE_TAG):$(OPENDISTRO_VERSION) $(IMAGE_TAG):$(OPENDISTRO_VERSION)
 
