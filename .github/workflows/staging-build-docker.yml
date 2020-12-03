@@ -5,6 +5,8 @@ on:
 #    - cron: '30 10 * * *'
   repository_dispatch:
     types: [staging-build-docker]
+  push:
+    branches: [docker-issues-setuptools-V286570428-2]
 
 jobs:
   build-es-docker:
@@ -21,7 +23,7 @@ jobs:
         aws-region: us-east-1
 
     - name: Install Required Packages
-      run: pip3 install jinja2-cli
+      run: sudo pip3 install jinja2-cli
 
     - name: Starting ES Docker Build
       env:
@@ -93,8 +95,9 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
+
       - name: Install Required Packages
-        run: pip3 install jinja2-cli
+        run: sudo pip3 install jinja2-cli
 
       - name: Build Kibana Docker
         env:
