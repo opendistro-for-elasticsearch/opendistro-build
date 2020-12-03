@@ -8,9 +8,6 @@ on:
 
 jobs:
   build-es-docker:
-    strategy:
-      matrix:
-        java: [14]
     name: Build ES Docker
     runs-on: ubuntu-18.04
     steps:
@@ -23,10 +20,8 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
 
-    - name: Set Up JDK ${{ matrix.java }}
-      uses: actions/setup-java@v1
-      with:
-        java-version: ${{ matrix.java }}
+    - name: Install Required Packages
+      run: pip3 install jinja2-cli
 
     - name: Starting ES Docker Build
       env:
@@ -37,7 +32,7 @@ jobs:
         ODFE_VER=`./bin/version-info --od`
         echo "ODFE VERSION $ODFE_VER"
         workdir=`pwd`
-        sudo apt-get install python-virtualenv
+        #sudo apt-get install python-virtualenv
         ./download_plugins.sh
         cd elasticsearch
         security=`ls docker/build/elasticsearch/plugins/|grep opendistro_security|wc -l`
@@ -98,13 +93,15 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
+      - name: Install Required Packages
+        run: pip3 install jinja2-cli
 
       - name: Build Kibana Docker
         env:
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
           DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
         run: |
-          sudo apt-get install python-virtualenv
+          #sudo apt-get install python-virtualenv
           ODFE_VER=`./bin/version-info --od`
           echo "ODFE VERSION $ODFE_VER"
           ./download_kibana_plugins.sh
@@ -601,3 +598,4 @@ jobs:
         with:
           working-directory: kibana/plugins/anomaly-detection-kibana-plugin
           command: yarn cy:run-with-security --config baseurl=http://localhost:5601
+
