@@ -114,8 +114,9 @@ run-single: docker-compose
 run-cluster: docker-compose
 	DATA_VOLUME1=esdata1 DATA_VOLUME2=esdata2 $(DOCKER_COMPOSE) -f docker-compose.cluster.yml up elasticsearch1 elasticsearch2
 
-build: clean venv dockerfile docker-compose
-	-pyfiglet -f puffy -w 160 "Building ES "; \
+#build: clean venv dockerfile docker-compose
+build: clean dockerfile
+	#-pyfiglet -f puffy -w 160 "Building ES ";
 	docker build -t $(IMAGE_TAG):$(OPENDISTRO_VERSION) -f build/elasticsearch/Dockerfile build/elasticsearch || \
 	docker tag $(IMAGE_TAG):$(OPENDISTRO_VERSION) $(IMAGE_TAG):$(OPENDISTRO_VERSION)
 
@@ -143,7 +144,8 @@ venv: requirements.txt
 	touch venv;\
 
 # Generate the Dockerfiles from a Jinja2 template.
-dockerfile: venv templates/Dockerfile.j2
+#dockerfile: venv templates/Dockerfile.j2
+dockerfile:
 	jinja2 \
 		-D elastic_version='$(ELASTIC_VERSION)' \
 		-D plugin_url_paths='${PLUGIN_URL_PATHS}' \
@@ -164,3 +166,4 @@ docker-compose: venv templates/docker-compose.yml.j2 templates/docker-compose-fr
 	  templates/docker-compose.yml.j2 > docker-compose.yml; \
 	jinja2 \
 	  templates/docker-compose-fragment.yml.j2 > tests/docker-compose.yml; 
+
