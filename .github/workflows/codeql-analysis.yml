@@ -21,8 +21,8 @@ on:
     branches:
       - master
       - opendistro-*
-  schedule:
-    - cron: '0 */3 * * *'
+#  schedule:
+#    - cron: '0 */3 * * *'
 
 jobs:
   analyze: 
