@@ -195,7 +195,7 @@ jobs:
           echo running tests
           cd ..\anomaly-detection
           dir
-          .\gradlew.bat integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest"
+          .\gradlew.bat integTest -D tests.rest.cluster=localhost:9200 -D tests.cluster=localhost:9200 -D tests.clustername="es-integrationtest"
 
   Test-SQL:
     needs: [build-es-artifacts, build-kibana-artifacts]
@@ -268,7 +268,7 @@ jobs:
           echo "running tests"
           cd ..\anomaly-detection
           dir
-          .\gradlew.bat integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest" -Dhttps=true -Duser=admin -Dpassword=admin
+          .\gradlew.bat integTest -D tests.rest.cluster=localhost:9200 -D tests.cluster=localhost:9200 -D tests.clustername="es-integrationtest" -D https=true -D user=admin -D password=admin
 
   Test-ALERTING:
     needs: [build-es-artifacts, build-kibana-artifacts]
