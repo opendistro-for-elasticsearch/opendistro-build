@@ -79,14 +79,14 @@ jobs:
               sleep 60
             }
 
-            if ${{ github.event_name == 'repository_dispatch' }} || ${{ github.event_name == 'push' }}
+            if ${{ github.event_name == 'repository_dispatch' }} 
             then
               distribution_type=`echo ${{github.event.client_payload.distribution}} | tr [:lower:] [:upper:]`
               security=`echo ${{github.event.client_payload.security}} | tr [:lower:] [:upper:]`
               stackName=ODFE-$distribution_type-SECURITY-$security
               echo $stackName
               stack_setup $distribution_type $security
-            elif ${{ github.event_name == 'schedule' }}
+            elif ${{ github.event_name == 'schedule' }} || ${{ github.event_name == 'push' }}
             then
               for distribution_type in RPM DEB TAR
               do
