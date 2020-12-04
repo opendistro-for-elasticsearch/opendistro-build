@@ -137,7 +137,7 @@ if ($SETUP_ACTION -eq "--kibana"){
 if ($SETUP_ACTION -eq "--kibana-nosec"){
   echo "removing kibana security"
   cd opendistroforelasticsearch-kibana
-  .\bin\kibana-plugin.bat remove opendistro_security
+  .\bin\kibana-plugin.bat remove opendistroSecurityKibana
   del .\config\kibana.yml
   aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/utils/kibana-config-without-security/kibana.yml .\config --quiet; echo $?
 
