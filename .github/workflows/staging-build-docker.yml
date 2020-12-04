@@ -5,8 +5,6 @@ on:
 #    - cron: '30 10 * * *'
   repository_dispatch:
     types: [staging-build-docker]
-  push:
-    branches: [docker-issues-setuptools-V286570428-2]
 
 jobs:
   build-es-docker:
