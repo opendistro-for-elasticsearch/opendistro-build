@@ -11,6 +11,9 @@ on:
 #    - cron: '0 11 * * *'
   repository_dispatch:
     types: [test-cluster-static-domain-set-up]
+  push:
+    branches:
+      - "test-cluster-fix"
 
 jobs:
   Create-Cluster:
@@ -76,7 +79,7 @@ jobs:
               sleep 60
             }
 
-            if ${{ github.event_name == 'repository_dispatch' }}
+            if ${{ github.event_name == 'repository_dispatch' }} || ${{ github.event_name == 'push' }}
             then
               distribution_type=`echo ${{github.event.client_payload.distribution}} | tr [:lower:] [:upper:]`
               security=`echo ${{github.event.client_payload.security}} | tr [:lower:] [:upper:]`
