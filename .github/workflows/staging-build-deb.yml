@@ -5,242 +5,245 @@ on:
 #    - cron: '0 10 * * *'
   repository_dispatch:
     types: [staging-build-deb]
+  push:
+    branches:
+      - "test-cluster-fix"
 
 jobs:
-  plugin-availability:
-    name: Check Plugin Availability
-    runs-on: ubuntu-18.04
-    steps:
-      - uses: actions/checkout@v1
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
+  # plugin-availability:
+  #   name: Check Plugin Availability
+  #   runs-on: ubuntu-18.04
+  #   steps:
+  #     - uses: actions/checkout@v1
+  #     - name: Configure AWS Credentials
+  #       uses: aws-actions/configure-aws-credentials@v1
+  #       with:
+  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #         aws-region: us-east-1
 
-      - name: Run check_plugin scripts
-        run: .github/scripts/check_plugin.sh "elasticsearch_deb,kibana_zip"; exit `cat /tmp/plugin_status.check`
+  #     - name: Run check_plugin scripts
+  #       run: .github/scripts/check_plugin.sh "elasticsearch_deb,kibana_zip"; exit `cat /tmp/plugin_status.check`
 
-  build-es-artifacts:
-    needs: [plugin-availability]
-    name: Build ES Artifacts
-    runs-on: ubuntu-18.04
-    container:
-      image: opendistroforelasticsearch/multijava08101112-git:v1
-    steps:
-      - uses: actions/checkout@v1
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-      - name: Build deb
-        run: |
-          #!/bin/bash -x
-          set -e
-          set -u
-          export JAVA_HOME=/openjdk12
-          export PATH=$JAVA_HOME:$PATH
-          cd elasticsearch/linux_distributions
-          apt update -y
-          apt install jq python -y
-          ./gradlew buildDeb --console=plain -Dbuild.snapshot=false -b ./build.gradle
-          ls -ltr build/distributions/*.deb
-          deb_artifact=`ls build/distributions/*.deb`
+  # build-es-artifacts:
+  #   needs: [plugin-availability]
+  #   name: Build ES Artifacts
+  #   runs-on: ubuntu-18.04
+  #   container:
+  #     image: opendistroforelasticsearch/multijava08101112-git:v1
+  #   steps:
+  #     - uses: actions/checkout@v1
+  #     - name: Configure AWS Credentials
+  #       uses: aws-actions/configure-aws-credentials@v1
+  #       with:
+  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #         aws-region: us-east-1
+  #     - name: Build deb
+  #       run: |
+  #         #!/bin/bash -x
+  #         set -e
+  #         set -u
+  #         export JAVA_HOME=/openjdk12
+  #         export PATH=$JAVA_HOME:$PATH
+  #         cd elasticsearch/linux_distributions
+  #         apt update -y
+  #         apt install jq python -y
+  #         ./gradlew buildDeb --console=plain -Dbuild.snapshot=false -b ./build.gradle
+  #         ls -ltr build/distributions/*.deb
+  #         deb_artifact=`ls build/distributions/*.deb`
 
-          aws s3 cp $deb_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/debs/opendistro-elasticsearch/
-          aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/*"
-          echo "DEB creation for ES completed"
+  #         aws s3 cp $deb_artifact s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/debs/opendistro-elasticsearch/
+  #         aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/*"
+  #         echo "DEB creation for ES completed"
 
-  build-kibana-artifacts:
-    needs: [plugin-availability]
-    name: Build Kibana Artifacts
-    runs-on: [ubuntu-18.04]
-    container:
-      image: opendistroforelasticsearch/jsenv:v1
-    steps:
-      - uses: actions/checkout@v1
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-      - name: Build Kibana deb
-        run: apt install -y jq; ./kibana/linux_distributions/opendistro-kibana-build.sh deb
+  # build-kibana-artifacts:
+  #   needs: [plugin-availability]
+  #   name: Build Kibana Artifacts
+  #   runs-on: [ubuntu-18.04]
+  #   container:
+  #     image: opendistroforelasticsearch/jsenv:v1
+  #   steps:
+  #     - uses: actions/checkout@v1
+  #     - name: Configure AWS Credentials
+  #       uses: aws-actions/configure-aws-credentials@v1
+  #       with:
+  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #         aws-region: us-east-1
+  #     - name: Build Kibana deb
+  #       run: apt install -y jq; ./kibana/linux_distributions/opendistro-kibana-build.sh deb
 
-  sign-deb-artifacts:
-    needs: [build-es-artifacts, build-kibana-artifacts]
-    runs-on: [ubuntu-18.04]
-    container:
-      image: opendistroforelasticsearch/base-ubuntu
-    steps:
-      - uses: actions/checkout@v1
+  # sign-deb-artifacts:
+  #   needs: [build-es-artifacts, build-kibana-artifacts]
+  #   runs-on: [ubuntu-18.04]
+  #   container:
+  #     image: opendistroforelasticsearch/base-ubuntu
+  #   steps:
+  #     - uses: actions/checkout@v1
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
+  #     - name: Configure AWS Credentials
+  #       uses: aws-actions/configure-aws-credentials@v1
+  #       with:
+  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #         aws-region: us-east-1
 
-      - name: Sign Deb Artifacts
-        env:
-          passphrase: ${{ secrets.PASSPHRASE }}
-        run: |
+  #     - name: Sign Deb Artifacts
+  #       env:
+  #         passphrase: ${{ secrets.PASSPHRASE }}
+  #       run: |
 
-          echo "deb http://repo.aptly.info/ squeeze main" | sudo tee -a /etc/apt/sources.list.d/aptly.list
-          sudo apt-get install -y gnupg1
-          sudo apt install -y gpgv1
-          alias gpg=gpg1
-          wget -qO - https://www.aptly.info/pubkey.txt | sudo apt-key add -
+  #         echo "deb http://repo.aptly.info/ squeeze main" | sudo tee -a /etc/apt/sources.list.d/aptly.list
+  #         sudo apt-get install -y gnupg1
+  #         sudo apt install -y gpgv1
+  #         alias gpg=gpg1
+  #         wget -qO - https://www.aptly.info/pubkey.txt | sudo apt-key add -
 
-          sudo apt-get update -y
-          sudo apt-get install -y aptly
-          aws s3 cp s3://opendistro-docs/github-actions/pgp-public-key .
-          aws s3 cp s3://opendistro-docs/github-actions/pgp-private-key .
+  #         sudo apt-get update -y
+  #         sudo apt-get install -y aptly
+  #         aws s3 cp s3://opendistro-docs/github-actions/pgp-public-key .
+  #         aws s3 cp s3://opendistro-docs/github-actions/pgp-private-key .
 
-          aptly repo create -distribution=stable -component=main odfe-release
+  #         aptly repo create -distribution=stable -component=main odfe-release
 
-          mkdir -p downloads/debs
-          aws s3 sync s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/debs downloads/debs
-          aptly repo add odfe-release downloads
+  #         mkdir -p downloads/debs
+  #         aws s3 sync s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/debs downloads/debs
+  #         aptly repo add odfe-release downloads
 
-          aptly repo show -with-packages odfe-release
-          aptly snapshot create opendistroforelasticsearch from repo odfe-release
-          aptly snapshot list
+  #         aptly repo show -with-packages odfe-release
+  #         aptly snapshot create opendistroforelasticsearch from repo odfe-release
+  #         aptly snapshot list
 
-          gpg --import pgp-public-key
-          gpg --allow-secret-key-import --import pgp-private-key
-          echo "Printing Secret List"
-          ls -ltr ~/.gnupg/
-          gpg --list-secret
+  #         gpg --import pgp-public-key
+  #         gpg --allow-secret-key-import --import pgp-private-key
+  #         echo "Printing Secret List"
+  #         ls -ltr ~/.gnupg/
+  #         gpg --list-secret
 
-          aptly publish snapshot -batch=true -passphrase=$passphrase opendistroforelasticsearch
+  #         aptly publish snapshot -batch=true -passphrase=$passphrase opendistroforelasticsearch
 
-          aws s3 sync ~/.aptly/public/ s3://artifacts.opendistroforelasticsearch.amazon.com/staging/apt
+  #         aws s3 sync ~/.aptly/public/ s3://artifacts.opendistroforelasticsearch.amazon.com/staging/apt
 
-          aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/staging/apt/*"
+  #         aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/staging/apt/*"
 
-  Build-ES-and-Kibana-Ubuntu-Docker:
-    needs: [sign-deb-artifacts]
-    runs-on: [ubuntu-18.04]
-    name: Build ubuntu image for Sanity Testing
-    steps:
-      - uses: actions/checkout@v1
-      - name: Checkout Opendistro-Infra
-        uses: actions/checkout@v1
-        with:
-          repository: opendistro-for-elasticsearch/opendistro-infra
-          ref: jenkins-test
-          token: ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
-      - name: Build Ubuntu Docker Image
-        env:
-          DOCKER_USER: ${{ secrets.DOCKER_USER }}
-          DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
-        run: |
-          ES_VER=`./bin/version-info --es`
-          ODFE_VER=`./bin/version-info --od`
-          cd elasticsearch/linux_distributions
-          cd ../../..
-          cd opendistro-infra/scripts/dockerfiles/tests/elasticsearch
-          docker build --build-arg VER=$ES_VER -t opendistroforelasticsearch/elasticsearch-test-ubuntu:$ODFE_VER -f opendistro.elasticsearch.test.ubuntu.Dockerfile .
+  # Build-ES-and-Kibana-Ubuntu-Docker:
+  #   needs: [sign-deb-artifacts]
+  #   runs-on: [ubuntu-18.04]
+  #   name: Build ubuntu image for Sanity Testing
+  #   steps:
+  #     - uses: actions/checkout@v1
+  #     - name: Checkout Opendistro-Infra
+  #       uses: actions/checkout@v1
+  #       with:
+  #         repository: opendistro-for-elasticsearch/opendistro-infra
+  #         ref: jenkins-test
+  #         token: ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
+  #     - name: Build Ubuntu Docker Image
+  #       env:
+  #         DOCKER_USER: ${{ secrets.DOCKER_USER }}
+  #         DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
+  #       run: |
+  #         ES_VER=`./bin/version-info --es`
+  #         ODFE_VER=`./bin/version-info --od`
+  #         cd elasticsearch/linux_distributions
+  #         cd ../../..
+  #         cd opendistro-infra/scripts/dockerfiles/tests/elasticsearch
+  #         docker build --build-arg VER=$ES_VER -t opendistroforelasticsearch/elasticsearch-test-ubuntu:$ODFE_VER -f opendistro.elasticsearch.test.ubuntu.Dockerfile .
           
-          cd ../kibana
-          docker build -t opendistroforelasticsearch/kibana-test-ubuntu:$ODFE_VER -f opendistro.kibana.test.ubuntu.Dockerfile .
+  #         cd ../kibana
+  #         docker build -t opendistroforelasticsearch/kibana-test-ubuntu:$ODFE_VER -f opendistro.kibana.test.ubuntu.Dockerfile .
           
-          echo "******************************"
-          echo "Login to Docker"
-          echo "******************************"
-          docker login --username $DOCKER_USER --password $DOCKER_PASS
+  #         echo "******************************"
+  #         echo "Login to Docker"
+  #         echo "******************************"
+  #         docker login --username $DOCKER_USER --password $DOCKER_PASS
           
-          docker push opendistroforelasticsearch/elasticsearch-test-ubuntu:$ODFE_VER
-          sleep 5
-          docker push opendistroforelasticsearch/kibana-test-ubuntu:$ODFE_VER
+  #         docker push opendistroforelasticsearch/elasticsearch-test-ubuntu:$ODFE_VER
+  #         sleep 5
+  #         docker push opendistroforelasticsearch/kibana-test-ubuntu:$ODFE_VER
 
-      - name: Create Email Message
-        run: |
-          echo "<h2>Docker Images for Ubuntu Are Ready</h2>" >> Message.md
-          echo "<h3> ES Image for Ubuntu Testing: opendistroforelasticsearch/elasticsearch-test-ubuntu:Version-Tag </h3>" >> Message.md
-          echo "<h3> Kibana Image for Ubuntu Testing: opendistroforelasticsearch/kibana-test-ubuntu:Version-Tag </h3>" >> Message.md
+  #     - name: Create Email Message
+  #       run: |
+  #         echo "<h2>Docker Images for Ubuntu Are Ready</h2>" >> Message.md
+  #         echo "<h3> ES Image for Ubuntu Testing: opendistroforelasticsearch/elasticsearch-test-ubuntu:Version-Tag </h3>" >> Message.md
+  #         echo "<h3> Kibana Image for Ubuntu Testing: opendistroforelasticsearch/kibana-test-ubuntu:Version-Tag </h3>" >> Message.md
 
-      - name: Send Mail
-        uses: dawidd6/action-send-mail@master
-        with:
-          server_address: smtp.gmail.com
-          server_port: 465
-          username: ${{secrets.MAIL_USERNAME}}
-          password: ${{secrets.MAIL_PASSWORD}}
-          subject: Opendistro for Elasticsearch Build - Debian Images For Testing
-          # Read file contents as body:
-          body: file://Message.md
-          to: odfe-distribution-build@amazon.com
-          from: Opendistro Elasticsearch
-          # Optional content type:
-          content_type: text/html
+  #     - name: Send Mail
+  #       uses: dawidd6/action-send-mail@master
+  #       with:
+  #         server_address: smtp.gmail.com
+  #         server_port: 465
+  #         username: ${{secrets.MAIL_USERNAME}}
+  #         password: ${{secrets.MAIL_PASSWORD}}
+  #         subject: Opendistro for Elasticsearch Build - Debian Images For Testing
+  #         # Read file contents as body:
+  #         body: file://Message.md
+  #         to: odfe-distribution-build@amazon.com
+  #         from: Opendistro Elasticsearch
+  #         # Optional content type:
+  #         content_type: text/html
 
-  Test-ISM-NoSec:
-    needs: [sign-deb-artifacts]
-    runs-on: [ubuntu-18.04]
-    name: Test-ISM-NoSec
-    strategy:
-      fail-fast: false
-      matrix:
-        java: [14]
-    steps:
-      - uses: actions/checkout@v1
+  # Test-ISM-NoSec:
+  #   needs: [sign-deb-artifacts]
+  #   runs-on: [ubuntu-18.04]
+  #   name: Test-ISM-NoSec
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       java: [14]
+  #   steps:
+  #     - uses: actions/checkout@v1
 
-      - name: Retrieve plugin tags 
-        run:  echo "p_tag_ism=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)" >> $GITHUB_ENV
+  #     - name: Retrieve plugin tags 
+  #       run:  echo "p_tag_ism=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)" >> $GITHUB_ENV
 
-      - uses: actions/checkout@v1
-        with:
-          repository: opendistro-for-elasticsearch/index-management
-          ref: ${{env.p_tag_ism}}
+  #     - uses: actions/checkout@v1
+  #       with:
+  #         repository: opendistro-for-elasticsearch/index-management
+  #         ref: ${{env.p_tag_ism}}
 
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.java }}
+  #     - name: Setup Java
+  #       uses: actions/setup-java@v1
+  #       with:
+  #         java-version: ${{ matrix.java }}
 
-      - name: IT
-        run: |
-          .github/scripts/setup_runners_service.sh deb --es-nosec
-          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../index-management; pwd
-          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
+  #     - name: IT
+  #       run: |
+  #         .github/scripts/setup_runners_service.sh deb --es-nosec
+  #         export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../index-management; pwd
+  #         ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
           
 
-  Test-ALERTING-NoSec:
-    needs: [sign-deb-artifacts]
-    runs-on: [ubuntu-18.04]
-    name: Test-ALERTING-NoSec
-    strategy:
-      fail-fast: false
-      matrix:
-        java: [14]
-    steps:
-      - uses: actions/checkout@v1
+  # Test-ALERTING-NoSec:
+  #   needs: [sign-deb-artifacts]
+  #   runs-on: [ubuntu-18.04]
+  #   name: Test-ALERTING-NoSec
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       java: [14]
+  #   steps:
+  #     - uses: actions/checkout@v1
 
-      - name: Retrieve plugin tags 
-        run:  echo "p_tag_alerting=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)" >> $GITHUB_ENV
+  #     - name: Retrieve plugin tags 
+  #       run:  echo "p_tag_alerting=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)" >> $GITHUB_ENV
 
-      - uses: actions/checkout@v1
-        with:
-          repository: opendistro-for-elasticsearch/alerting
-          ref: ${{env.p_tag_alerting}}
+  #     - uses: actions/checkout@v1
+  #       with:
+  #         repository: opendistro-for-elasticsearch/alerting
+  #         ref: ${{env.p_tag_alerting}}
 
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.java }}
+  #     - name: Setup Java
+  #       uses: actions/setup-java@v1
+  #       with:
+  #         java-version: ${{ matrix.java }}
 
-      - name: IT
-        run: |
-          .github/scripts/setup_runners_service.sh deb --es-nosec
-          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../alerting/alerting; pwd
-          ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
+  #     - name: IT
+  #       run: |
+  #         .github/scripts/setup_runners_service.sh deb --es-nosec
+  #         export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../alerting/alerting; pwd
+  #         ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
           
   Test-SQL-NoSec:
     needs: [sign-deb-artifacts]
@@ -272,374 +275,374 @@ jobs:
           export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../sql; pwd
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
   
-  Test-KNN-NoSec:
-    needs: [sign-deb-artifacts]
-    runs-on: [ubuntu-18.04]
-    name: Test-KNN-NoSec
-    strategy:
-      fail-fast: false
-      matrix:
-        java: [14]
-    steps:
-      - uses: actions/checkout@v1
+  # Test-KNN-NoSec:
+  #   needs: [sign-deb-artifacts]
+  #   runs-on: [ubuntu-18.04]
+  #   name: Test-KNN-NoSec
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       java: [14]
+  #   steps:
+  #     - uses: actions/checkout@v1
 
-      - name: Retrieve plugin tags 
-        run:  echo "p_tag_knn=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/k-NN)" >> $GITHUB_ENV
+  #     - name: Retrieve plugin tags 
+  #       run:  echo "p_tag_knn=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/k-NN)" >> $GITHUB_ENV
 
-      - uses: actions/checkout@v1
-        with:
-          repository: opendistro-for-elasticsearch/k-NN
-          ref: ${{env.p_tag_knn}}
+  #     - uses: actions/checkout@v1
+  #       with:
+  #         repository: opendistro-for-elasticsearch/k-NN
+  #         ref: ${{env.p_tag_knn}}
 
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.java }}
+  #     - name: Setup Java
+  #       uses: actions/setup-java@v1
+  #       with:
+  #         java-version: ${{ matrix.java }}
 
-      - name: IT
-        run: |
-          .github/scripts/setup_runners_service.sh deb --es-nosec
-          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../k-NN; pwd
-          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
+  #     - name: IT
+  #       run: |
+  #         .github/scripts/setup_runners_service.sh deb --es-nosec
+  #         export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../k-NN; pwd
+  #         ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
    
-  Test-AD-NoSec:
-    needs: [sign-deb-artifacts]
-    runs-on: [ubuntu-18.04]
-    name: Test-AD-NoSec
-    strategy:
-      fail-fast: false
-      matrix:
-        java: [14]
-    steps:
-      - uses: actions/checkout@v1
+  # Test-AD-NoSec:
+  #   needs: [sign-deb-artifacts]
+  #   runs-on: [ubuntu-18.04]
+  #   name: Test-AD-NoSec
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       java: [14]
+  #   steps:
+  #     - uses: actions/checkout@v1
 
-      - name: Retrieve plugin tags 
-        run:  echo "p_tag_ad=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)" >> $GITHUB_ENV
+  #     - name: Retrieve plugin tags 
+  #       run:  echo "p_tag_ad=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)" >> $GITHUB_ENV
 
-      - uses: actions/checkout@v1
-        with:
-          repository: opendistro-for-elasticsearch/anomaly-detection
-          ref: ${{env.p_tag_ad}}
+  #     - uses: actions/checkout@v1
+  #       with:
+  #         repository: opendistro-for-elasticsearch/anomaly-detection
+  #         ref: ${{env.p_tag_ad}}
 
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.java }}
+  #     - name: Setup Java
+  #       uses: actions/setup-java@v1
+  #       with:
+  #         java-version: ${{ matrix.java }}
 
-      - name: IT
-        run: |
-          .github/scripts/setup_runners_service.sh deb --es-nosec
-          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../anomaly-detection; pwd
-          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest"
+  #     - name: IT
+  #       run: |
+  #         .github/scripts/setup_runners_service.sh deb --es-nosec
+  #         export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../anomaly-detection; pwd
+  #         ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest"
 
-  Test-SQL:
-    needs: [sign-deb-artifacts]
-    runs-on: [ubuntu-18.04]
-    name: Test-SQL
-    strategy:
-      fail-fast: false
-      matrix:
-        java: [14]
-    steps:
-      - uses: actions/checkout@v1
+  # Test-SQL:
+  #   needs: [sign-deb-artifacts]
+  #   runs-on: [ubuntu-18.04]
+  #   name: Test-SQL
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       java: [14]
+  #   steps:
+  #     - uses: actions/checkout@v1
 
-      - name: Retrieve plugin tags 
-        run:  echo "p_tag_sql=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)" >> $GITHUB_ENV
+  #     - name: Retrieve plugin tags 
+  #       run:  echo "p_tag_sql=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)" >> $GITHUB_ENV
 
-      - uses: actions/checkout@v1
-        with:
-          repository: opendistro-for-elasticsearch/sql
-          ref: ${{env.p_tag_sql}}
+  #     - uses: actions/checkout@v1
+  #       with:
+  #         repository: opendistro-for-elasticsearch/sql
+  #         ref: ${{env.p_tag_sql}}
 
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.java }}
+  #     - name: Setup Java
+  #       uses: actions/setup-java@v1
+  #       with:
+  #         java-version: ${{ matrix.java }}
 
-      - name: IT
-        run: |
-          .github/scripts/setup_runners_service.sh deb --es
-          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../sql; pwd
-          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin
+  #     - name: IT
+  #       run: |
+  #         .github/scripts/setup_runners_service.sh deb --es
+  #         export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../sql; pwd
+  #         ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin
           
-  Test-AD:
-    needs: [sign-deb-artifacts]
-    runs-on: [ubuntu-18.04]
-    name: Test-AD
-    strategy:
-      fail-fast: false
-      matrix:
-        java: [14]
-    steps:
-      - uses: actions/checkout@v1
+  # Test-AD:
+  #   needs: [sign-deb-artifacts]
+  #   runs-on: [ubuntu-18.04]
+  #   name: Test-AD
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       java: [14]
+  #   steps:
+  #     - uses: actions/checkout@v1
 
-      - name: Retrieve plugin tags 
-        run:  echo "p_tag_ad=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)" >> $GITHUB_ENV
+  #     - name: Retrieve plugin tags 
+  #       run:  echo "p_tag_ad=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)" >> $GITHUB_ENV
 
-      - uses: actions/checkout@v1
-        with:
-          repository: opendistro-for-elasticsearch/anomaly-detection
-          ref: ${{env.p_tag_ad}}
+  #     - uses: actions/checkout@v1
+  #       with:
+  #         repository: opendistro-for-elasticsearch/anomaly-detection
+  #         ref: ${{env.p_tag_ad}}
 
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.java }}
+  #     - name: Setup Java
+  #       uses: actions/setup-java@v1
+  #       with:
+  #         java-version: ${{ matrix.java }}
 
-      - name: IT
-        run: |
-          .github/scripts/setup_runners_service.sh deb --es
-          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../anomaly-detection; pwd
-          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest" -Dhttps=true -Duser=admin -Dpassword=admin
+  #     - name: IT
+  #       run: |
+  #         .github/scripts/setup_runners_service.sh deb --es
+  #         export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../anomaly-detection; pwd
+  #         ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest" -Dhttps=true -Duser=admin -Dpassword=admin
   
-  Test-ALERTING:
-    needs: [sign-deb-artifacts]
-    runs-on: [ubuntu-18.04]
-    name: Test-ALERTING
-    strategy:
-      fail-fast: false
-      matrix:
-        java: [14]
-    steps:
-      - uses: actions/checkout@v1
+  # Test-ALERTING:
+  #   needs: [sign-deb-artifacts]
+  #   runs-on: [ubuntu-18.04]
+  #   name: Test-ALERTING
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       java: [14]
+  #   steps:
+  #     - uses: actions/checkout@v1
 
-      - name: Retrieve plugin tags 
-        run:  echo "p_tag_alerting=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)" >> $GITHUB_ENV
+  #     - name: Retrieve plugin tags 
+  #       run:  echo "p_tag_alerting=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)" >> $GITHUB_ENV
 
-      - uses: actions/checkout@v1
-        with:
-          repository: opendistro-for-elasticsearch/alerting
-          ref: ${{env.p_tag_alerting}}
+  #     - uses: actions/checkout@v1
+  #       with:
+  #         repository: opendistro-for-elasticsearch/alerting
+  #         ref: ${{env.p_tag_alerting}}
 
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.java }}
+  #     - name: Setup Java
+  #       uses: actions/setup-java@v1
+  #       with:
+  #         java-version: ${{ matrix.java }}
 
-      - name: IT
-        run: |
-          .github/scripts/setup_runners_service.sh deb --es
-          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../alerting/alerting; pwd
-          ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin
+  #     - name: IT
+  #       run: |
+  #         .github/scripts/setup_runners_service.sh deb --es
+  #         export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../alerting/alerting; pwd
+  #         ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin
         
-  Test-AD-KIBANA-NoSec:
-    needs: [sign-deb-artifacts]
-    runs-on: [ubuntu-18.04]
-    name: Test-AD-KIBANA-NoSec
-    strategy:
-      fail-fast: false
-      matrix:
-        java: [14]
-    steps:
-      - uses: actions/checkout@v1
+  # Test-AD-KIBANA-NoSec:
+  #   needs: [sign-deb-artifacts]
+  #   runs-on: [ubuntu-18.04]
+  #   name: Test-AD-KIBANA-NoSec
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       java: [14]
+  #   steps:
+  #     - uses: actions/checkout@v1
 
-      - name: Retrieve plugin tags 
-        run: |
-          echo "p_tag_ad=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)" >> $GITHUB_ENV
-          echo "es_version=$(./bin/version-info --es)" >> $GITHUB_ENV
+  #     - name: Retrieve plugin tags 
+  #       run: |
+  #         echo "p_tag_ad=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)" >> $GITHUB_ENV
+  #         echo "es_version=$(./bin/version-info --es)" >> $GITHUB_ENV
           
-      - name: Checkout Kibana
-        uses: actions/checkout@v2
-        with:
-          repository: opendistro-for-elasticsearch/kibana-oss
-          ref: ${{env.es_version}}
-          token: ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
-          path: kibana
+  #     - name: Checkout Kibana
+  #       uses: actions/checkout@v2
+  #       with:
+  #         repository: opendistro-for-elasticsearch/kibana-oss
+  #         ref: ${{env.es_version}}
+  #         token: ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
+  #         path: kibana
            
-      - uses: actions/checkout@v2
-        with:
-          repository: opendistro-for-elasticsearch/anomaly-detection-kibana-plugin
-          ref: ${{env.p_tag_ad}}
-          path: kibana/plugins/anomaly-detection-kibana-plugin
+  #     - uses: actions/checkout@v2
+  #       with:
+  #         repository: opendistro-for-elasticsearch/anomaly-detection-kibana-plugin
+  #         ref: ${{env.p_tag_ad}}
+  #         path: kibana/plugins/anomaly-detection-kibana-plugin
       
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.java }}
+  #     - name: Setup Java
+  #       uses: actions/setup-java@v1
+  #       with:
+  #         java-version: ${{ matrix.java }}
       
-      - name: Get node and yarn versions
-        id: node_yarn_versions
-        run: |
-          echo "kibana_node_version=$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV
-          echo "kibana_yarn_version=$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV
+  #     - name: Get node and yarn versions
+  #       id: node_yarn_versions
+  #       run: |
+  #         echo "kibana_node_version=$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV
+  #         echo "kibana_yarn_version=$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV
       
-      - name: Setup node
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{env.kibana_node_version}}
-          registry-url: 'https://registry.npmjs.org'
+  #     - name: Setup node
+  #       uses: actions/setup-node@v1
+  #       with:
+  #         node-version: ${{env.kibana_node_version}}
+  #         registry-url: 'https://registry.npmjs.org'
       
-      - name: Install correct yarn version for Kibana
-        run: |
-          npm uninstall -g yarn
-          echo "Installing yarn ${{ env.kibana_yarn_version }}"
-          npm i -g yarn@${{ env.kibana_yarn_version }}     
+  #     - name: Install correct yarn version for Kibana
+  #       run: |
+  #         npm uninstall -g yarn
+  #         echo "Installing yarn ${{ env.kibana_yarn_version }}"
+  #         npm i -g yarn@${{ env.kibana_yarn_version }}     
       
-      - name: Bootstrap the plugin
-        run: |
-          cd ./kibana/plugins/anomaly-detection-kibana-plugin
-          yarn kbn bootstrap
+  #     - name: Bootstrap the plugin
+  #       run: |
+  #         cd ./kibana/plugins/anomaly-detection-kibana-plugin
+  #         yarn kbn bootstrap
           
-      - name: Start ES and Kibana
-        run: .github/scripts/setup_runners_service.sh deb --kibana-nosec
+  #     - name: Start ES and Kibana
+  #       run: .github/scripts/setup_runners_service.sh deb --kibana-nosec
           
-      - name: run IT
-        uses: cypress-io/github-action@v2.5.0
-        with:
-          working-directory: kibana/plugins/anomaly-detection-kibana-plugin
-          command: yarn cy:run --config baseurl=http://localhost:5601
+  #     - name: run IT
+  #       uses: cypress-io/github-action@v2.5.0
+  #       with:
+  #         working-directory: kibana/plugins/anomaly-detection-kibana-plugin
+  #         command: yarn cy:run --config baseurl=http://localhost:5601
           
-  Test-SQL-KIBANA-NoSec:
-    needs: [sign-deb-artifacts]
-    runs-on: [ubuntu-18.04]
-    name: Test-SQL-KIBANA-NoSec
-    strategy:
-      fail-fast: false
-      matrix:
-        java: [14]
-    steps:
-      - uses: actions/checkout@v1
-      - name: Set up AWS Cred
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-      - name: Retrieve plugin tags 
-        run: |
-          echo "p_tag_sql_kibana=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)" >> $GITHUB_ENV
-          echo "es_version=$(./bin/version-info --es)" >> $GITHUB_ENV
+  # Test-SQL-KIBANA-NoSec:
+  #   needs: [sign-deb-artifacts]
+  #   runs-on: [ubuntu-18.04]
+  #   name: Test-SQL-KIBANA-NoSec
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       java: [14]
+  #   steps:
+  #     - uses: actions/checkout@v1
+  #     - name: Set up AWS Cred
+  #       uses: aws-actions/configure-aws-credentials@v1
+  #       with:
+  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #         aws-region: us-east-1
+  #     - name: Retrieve plugin tags 
+  #       run: |
+  #         echo "p_tag_sql_kibana=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)" >> $GITHUB_ENV
+  #         echo "es_version=$(./bin/version-info --es)" >> $GITHUB_ENV
           
-      - name: Checkout Kibana
-        uses: actions/checkout@v2
-        with:
-          repository: opendistro-for-elasticsearch/kibana-oss
-          ref: ${{env.es_version}}
-          token: ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
-          path: kibana
+  #     - name: Checkout Kibana
+  #       uses: actions/checkout@v2
+  #       with:
+  #         repository: opendistro-for-elasticsearch/kibana-oss
+  #         ref: ${{env.es_version}}
+  #         token: ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
+  #         path: kibana
            
-      - uses: actions/checkout@v2
-        with:
-          repository: opendistro-for-elasticsearch/sql
-          ref: ${{env.p_tag_sql_kibana}}
-          path: kibana/plugins/sql
+  #     - uses: actions/checkout@v2
+  #       with:
+  #         repository: opendistro-for-elasticsearch/sql
+  #         ref: ${{env.p_tag_sql_kibana}}
+  #         path: kibana/plugins/sql
       
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.java }}
+  #     - name: Setup Java
+  #       uses: actions/setup-java@v1
+  #       with:
+  #         java-version: ${{ matrix.java }}
       
-      - name: Get node and yarn versions
-        id: node_yarn_versions
-        run: |
-          echo "kibana_node_version=$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV
-          echo "kibana_yarn_version=$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV   
+  #     - name: Get node and yarn versions
+  #       id: node_yarn_versions
+  #       run: |
+  #         echo "kibana_node_version=$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV
+  #         echo "kibana_yarn_version=$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV   
       
-      - name: Setup node
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{env.kibana_node_version}}
-          registry-url: 'https://registry.npmjs.org'
+  #     - name: Setup node
+  #       uses: actions/setup-node@v1
+  #       with:
+  #         node-version: ${{env.kibana_node_version}}
+  #         registry-url: 'https://registry.npmjs.org'
       
-      - name: Install correct yarn version for Kibana
-        run: |
-          npm uninstall -g yarn
-          echo "Installing yarn ${{ env.kibana_yarn_version }}"
-          npm i -g yarn@${{ env.kibana_yarn_version }}
+  #     - name: Install correct yarn version for Kibana
+  #       run: |
+  #         npm uninstall -g yarn
+  #         echo "Installing yarn ${{ env.kibana_yarn_version }}"
+  #         npm i -g yarn@${{ env.kibana_yarn_version }}
       
-      - name: Bootstrap the plugin
-        run: |
-          cd ./kibana/plugins
-          cp -rp sql/workbench .
-          rm -rf sql/
-          cd workbench
+  #     - name: Bootstrap the plugin
+  #       run: |
+  #         cd ./kibana/plugins
+  #         cp -rp sql/workbench .
+  #         rm -rf sql/
+  #         cd workbench
 
-      - name: Retry the bootstraps
-        # sql repo has a bug that you have to bootstrap at least twice to success
-        # this is a temp solution and they will try to fix it later
-        uses: nick-invision/retry@v1
-        with:
-          # 60 min timeouts as certain runners like windows may take 30+ min just to complete one bootstrap
-          timeout_minutes: 60
-          max_attempts: 3
-          command: cd ./kibana/plugins/workbench; pwd; yarn kbn bootstrap
+  #     - name: Retry the bootstraps
+  #       # sql repo has a bug that you have to bootstrap at least twice to success
+  #       # this is a temp solution and they will try to fix it later
+  #       uses: nick-invision/retry@v1
+  #       with:
+  #         # 60 min timeouts as certain runners like windows may take 30+ min just to complete one bootstrap
+  #         timeout_minutes: 60
+  #         max_attempts: 3
+  #         command: cd ./kibana/plugins/workbench; pwd; yarn kbn bootstrap
 
-      - name: Start ES and Kibana
-        run: |
-          .github/scripts/setup_runners_service.sh deb --kibana-nosec
-          echo "load the indices"
-          curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/sql/master/integ-test/src/test/resources/accounts.json | curl -s -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/accounts/_bulk?pretty' --data-binary @- > /dev/null 2>&1
-          curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/sql/master/integ-test/src/test/resources/employee_nested.json | curl -s -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/employee_nested/_bulk?pretty' --data-binary @- > /dev/null 2>&1
+  #     - name: Start ES and Kibana
+  #       run: |
+  #         .github/scripts/setup_runners_service.sh deb --kibana-nosec
+  #         echo "load the indices"
+  #         curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/sql/master/integ-test/src/test/resources/accounts.json | curl -s -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/accounts/_bulk?pretty' --data-binary @- > /dev/null 2>&1
+  #         curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/sql/master/integ-test/src/test/resources/employee_nested.json | curl -s -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/employee_nested/_bulk?pretty' --data-binary @- > /dev/null 2>&1
  
-      - name: run IT
-        uses: cypress-io/github-action@v2.5.0
-        with:
-          working-directory: kibana/plugins/workbench
-          command: npx cypress run
+  #     - name: run IT
+  #       uses: cypress-io/github-action@v2.5.0
+  #       with:
+  #         working-directory: kibana/plugins/workbench
+  #         command: npx cypress run
 
-  Test-AD-KIBANA:
-    needs: [sign-deb-artifacts]
-    runs-on: [ubuntu-18.04]
-    name: Test-AD-KIBANA
-    strategy:
-      fail-fast: false
-      matrix:
-        java: [14]
-    steps:
-      - uses: actions/checkout@v1
+  # Test-AD-KIBANA:
+  #   needs: [sign-deb-artifacts]
+  #   runs-on: [ubuntu-18.04]
+  #   name: Test-AD-KIBANA
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       java: [14]
+  #   steps:
+  #     - uses: actions/checkout@v1
 
-      - name: Retrieve plugin tags 
-        run: |
-          echo "p_tag_ad=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)" >> $GITHUB_ENV
-          echo "es_version=$(./bin/version-info --es)" >> $GITHUB_ENV
+  #     - name: Retrieve plugin tags 
+  #       run: |
+  #         echo "p_tag_ad=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)" >> $GITHUB_ENV
+  #         echo "es_version=$(./bin/version-info --es)" >> $GITHUB_ENV
           
-      - name: Checkout Kibana
-        uses: actions/checkout@v2
-        with:
-          repository: opendistro-for-elasticsearch/kibana-oss
-          ref: ${{env.es_version}}
-          token: ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
-          path: kibana
+  #     - name: Checkout Kibana
+  #       uses: actions/checkout@v2
+  #       with:
+  #         repository: opendistro-for-elasticsearch/kibana-oss
+  #         ref: ${{env.es_version}}
+  #         token: ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
+  #         path: kibana
            
-      - uses: actions/checkout@v2
-        with:
-          repository: opendistro-for-elasticsearch/anomaly-detection-kibana-plugin
-          ref: ${{env.p_tag_ad}}
-          path: kibana/plugins/anomaly-detection-kibana-plugin
+  #     - uses: actions/checkout@v2
+  #       with:
+  #         repository: opendistro-for-elasticsearch/anomaly-detection-kibana-plugin
+  #         ref: ${{env.p_tag_ad}}
+  #         path: kibana/plugins/anomaly-detection-kibana-plugin
       
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.java }}
+  #     - name: Setup Java
+  #       uses: actions/setup-java@v1
+  #       with:
+  #         java-version: ${{ matrix.java }}
       
-      - name: Get node and yarn versions
-        id: node_yarn_versions
-        run: |
-          echo "kibana_node_version=$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV
-          echo "kibana_yarn_version=$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV   
+  #     - name: Get node and yarn versions
+  #       id: node_yarn_versions
+  #       run: |
+  #         echo "kibana_node_version=$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV
+  #         echo "kibana_yarn_version=$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV   
       
-      - name: Setup node
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{env.kibana_node_version}}
-          registry-url: 'https://registry.npmjs.org'
+  #     - name: Setup node
+  #       uses: actions/setup-node@v1
+  #       with:
+  #         node-version: ${{env.kibana_node_version}}
+  #         registry-url: 'https://registry.npmjs.org'
       
-      - name: Install correct yarn version for Kibana
-        run: |
-          npm uninstall -g yarn
-          echo "Installing yarn ${{ env.kibana_yarn_version }}"
-          npm i -g yarn@${{ env.kibana_yarn_version }}     
+  #     - name: Install correct yarn version for Kibana
+  #       run: |
+  #         npm uninstall -g yarn
+  #         echo "Installing yarn ${{ env.kibana_yarn_version }}"
+  #         npm i -g yarn@${{ env.kibana_yarn_version }}     
       
-      - name: Bootstrap the plugin
-        run: |
-          cd ./kibana/plugins/anomaly-detection-kibana-plugin
-          yarn kbn bootstrap
+  #     - name: Bootstrap the plugin
+  #       run: |
+  #         cd ./kibana/plugins/anomaly-detection-kibana-plugin
+  #         yarn kbn bootstrap
           
-      - name: Start ES and Kibana
-        run: .github/scripts/setup_runners_service.sh deb --kibana
+  #     - name: Start ES and Kibana
+  #       run: .github/scripts/setup_runners_service.sh deb --kibana
           
-      - name: run IT
-        uses: cypress-io/github-action@v2.5.0
-        with:
-          working-directory: kibana/plugins/anomaly-detection-kibana-plugin
-          command: yarn cy:run-with-security --config baseurl=http://localhost:5601
+  #     - name: run IT
+  #       uses: cypress-io/github-action@v2.5.0
+  #       with:
+  #         working-directory: kibana/plugins/anomaly-detection-kibana-plugin
+  #         command: yarn cy:run-with-security --config baseurl=http://localhost:5601
