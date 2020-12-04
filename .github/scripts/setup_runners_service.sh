@@ -275,7 +275,7 @@ then
 
   if [ "$SETUP_DISTRO" = "zip" ]
   then
-    $KIBANA_ROOT/bin/kibana-plugin remove opendistro_security 
+    $KIBANA_ROOT/bin/kibana-plugin remove opendistroSecurityKibana 
     sed -i /^opendistro_security/d $KIBANA_ROOT/config/kibana.yml
     sed -i 's/https/http/' $KIBANA_ROOT/config/kibana.yml
 
@@ -285,7 +285,7 @@ then
     nohup ./bin/kibana > /dev/null 2>&1 &
   elif [ "$SETUP_DISTRO" = "docker" ]
   then
-    echo "RUN /usr/share/kibana/bin/kibana-plugin remove opendistro_security" >> Dockerfile.kibana
+    echo "RUN /usr/share/kibana/bin/kibana-plugin remove opendistroSecurityKibana" >> Dockerfile.kibana
     echo "RUN sed -i /^opendistro_security/d /usr/share/kibana/config/kibana.yml" >> Dockerfile.kibana
     echo "RUN sed -i 's/https/http/' /usr/share/kibana/config/kibana.yml" >> Dockerfile.kibana
     docker build -t odfe-kibana-http:no-security -f Dockerfile.kibana .
@@ -294,7 +294,7 @@ then
     docker run -d --name $DOCKER_NAME_KIBANA_NoSec --network="host" odfe-kibana-http:no-security
     docker ps
   else
-    sudo /usr/share/kibana/bin/kibana-plugin remove opendistro_security --allow-root
+    sudo /usr/share/kibana/bin/kibana-plugin remove opendistroSecurityKibana --allow-root
     sudo sed -i /^opendistro_security/d /etc/kibana/kibana.yml
     sudo sed -i 's/https/http/' /etc/kibana/kibana.yml
     sudo systemctl restart elasticsearch.service
