@@ -157,8 +157,14 @@ jobs:
           docker login --username $DOCKER_USER --password $DOCKER_PASS
           
           docker push opendistroforelasticsearch/elasticsearch-test-ubuntu:$ODFE_VER
+          docker tag opendistroforelasticsearch/elasticsearch-test-ubuntu:$ODFE_VER opendistroforelasticsearch/elasticsearch-test-ubuntu:latest
+          docker push opendistroforelasticsearch/elasticsearch-test-ubuntu:latest
           sleep 5
           docker push opendistroforelasticsearch/kibana-test-ubuntu:$ODFE_VER
+          docker tag opendistroforelasticsearch/kibana-test-ubuntu:$ODFE_VER opendistroforelasticsearch/kibana-test-ubuntu:latest
+          docker push opendistroforelasticsearch/kibana-test-ubuntu:latest
+
+          docker logout
 
       - name: Create Email Message
         run: |

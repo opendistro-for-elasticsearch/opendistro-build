@@ -64,8 +64,10 @@ jobs:
         IMAGE_ID=`docker images | grep data-prepper/data-prepper | awk -F ' ' '{print $3}'`
         docker login --username $DOCKER_USER --password $DOCKER_PASS
         docker tag $IMAGE_ID $DOCKER_REG:$TAG_VERSION
+        docker tag $IMAGE_ID $DOCKER_REG:latest
         docker images
-        docker push $DOCKER_REG:$TAG_VERSION 
+        docker push $DOCKER_REG:$TAG_VERSION
+        docker push $DOCKER_REG:latest
         docker logout
 
 

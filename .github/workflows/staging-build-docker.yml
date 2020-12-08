@@ -56,8 +56,11 @@ jobs:
         DOCKER_NAME=odfe-test-$ODFE_VER
         echo "Docker Id is $image_id"
         docker tag $image_id opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER
+        docker tag $image_id opendistroforelasticsearch/opendistroforelasticsearch:latest
         docker images
         docker push opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER
+        docker push opendistroforelasticsearch/opendistroforelasticsearch:latest
+        docker logout
         #echo "<h2>The docker image opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER for ODFE has been created and uploaded to docker-hub</h2>" >> $workdir/Release.md
         cd ../../..
         ls -ltr
@@ -118,8 +121,11 @@ jobs:
           kibana_image_id=`awk -F ' ' '{print $3}' kibana_id.out`
           echo "Docker Id is $kibana_image_id"
           docker tag $kibana_image_id opendistroforelasticsearch/opendistroforelasticsearch-kibana:$ODFE_VER
+          docker tag $kibana_image_id opendistroforelasticsearch/opendistroforelasticsearch-kibana:latest
           docker images
           docker push opendistroforelasticsearch/opendistroforelasticsearch-kibana:$ODFE_VER
+          docker push opendistroforelasticsearch/opendistroforelasticsearch-kibana:latest
+          docker logout
           
       - name: Create Email Message
         run: |
