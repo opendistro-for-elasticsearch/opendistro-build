@@ -179,16 +179,6 @@
     "require_install": "true",
     "category": "kibana"
   },
-  "trace-analytics": {
-    "git": "opendistro-for-elasticsearch/kibana-visualizations",
-    "zip": "opendistro-trace-analytics/opendistroTraceAnalyticsKibana",
-    "deb": "none",
-    "rpm": "none",
-    "windows": "none",
-    "cutversion": "1.11.0.0",
-    "require_install": "true",
-    "category": "kibana"
-  },
   "data-prepper": {
     "git": "opendistro-for-elasticsearch/Data-Prepper",
     "zip": "downloads/tarball/opendistroforelasticsearch-data-prepper",
