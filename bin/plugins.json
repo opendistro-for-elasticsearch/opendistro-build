@@ -195,7 +195,7 @@
     "deb": "none",
     "rpm": "none",
     "windows": "none",
-    "cutversion": "0.1.0",
+    "cutversion": "0.7.0-alpha",
     "require_install": "false",
     "category": "data-prepper"
   },
