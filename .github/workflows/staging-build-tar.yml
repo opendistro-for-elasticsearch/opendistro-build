@@ -5,7 +5,6 @@ on:
     - cron: '0 10 * * *'
   repository_dispatch:
     types: [staging-build-tar]
-
 jobs:
   plugin-availability:
     name: Check Plugin Availability
@@ -323,7 +322,7 @@ jobs:
           .github/scripts/setup_runners_service.sh zip --es
           export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../alerting/alerting; pwd
           ls -ltr
-          ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin
+          ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin -Dsecurity=true
                
   Test-AD-KIBANA-NoSec:
     needs: [build-es-artifacts, build-kibana-artifacts]
