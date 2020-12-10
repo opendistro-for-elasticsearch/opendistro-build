@@ -8,11 +8,10 @@ The release consists of Apache 2 licensed Elasticsearch version 7.10.0, and Kiba
 
 ## Release Details
 
-Open Distro for Elasticsearch 1.11.0 includes the following breaking changes, features, enhancements, bug fixes, infrastructure, documentation, maintenance, and refactoring updates.
-
+Open Distro for Elasticsearch 1.12.0 includes the following breaking changes, features, enhancements, bug fixes, infrastructure, documentation, maintenance, and refactoring updates.
 
 ## BREAKING CHANGES
-
+* We have renamed all the Kibana Plugins with camelCase naming convention. You can find the full list of names [here](https://opendistro.github.io/for-elasticsearch-docs/docs/kibana/plugins/#plugin-compatibility)
 
 ## FEATURES
 
