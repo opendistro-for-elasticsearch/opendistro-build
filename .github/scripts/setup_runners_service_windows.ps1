@@ -85,8 +85,7 @@ if ($SETUP_ACTION -eq "--es-nosec" -Or $SETUP_ACTION -eq "--kibana-nosec"){
   mkdir .\$PACKAGE-$OD_VERSION\snapshots
   dir
   pwd
-  $path=".\$PACKAGE-$OD_VERSION\snapshots"
-  Add-Content .\$PACKAGE-$OD_VERSION\config\elasticsearch.yml "path.repo : [\"$path\"]"
+  echo "path.repo: [\"$PACKAGE-$OD_VERSION\snapshots\"]" >> .\$PACKAGE-$OD_VERSION\config\elasticsearch.yml
 }
 
 if ($SETUP_ACTION -eq "--es-nosec"){
