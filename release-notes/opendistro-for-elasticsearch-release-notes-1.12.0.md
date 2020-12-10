@@ -566,7 +566,7 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 * Design Proposal Update ([#15](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/15))
 
 
-### Sql
+### SQL
 * Add identifier and datatype documentation for PPL ([#873](https://github.com/opendistro-for-elasticsearch/sql/pull/873))
 * Add doc for ODFE SQL demo ([#826](https://github.com/opendistro-for-elasticsearch/sql/pull/826))
 * Update out-of-date documentation ([#820](https://github.com/opendistro-for-elasticsearch/sql/pull/820))
