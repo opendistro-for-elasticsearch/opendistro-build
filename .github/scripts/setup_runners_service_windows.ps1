@@ -54,10 +54,10 @@ unzip -qq .\$S3_PACKAGE
 if ($SETUP_ACTION -eq "--es"){
   echo "removing useless config" #deprecated since 7.8.0 and will crash --es-nosec now
   findstr /V "node.max_local_storage_nodes" .\$PACKAGE-$OD_VERSION\config\elasticsearch.yml > .\$PACKAGE-$OD_VERSION\config\elasticsearch.yml.new
-  mkdir snapshots
+  mkdir .\$PACKAGE-$OD_VERSION\snapshots
   dir
   pwd
-  echo "path.repo: [\"$PWD\snapshots"]">> .\$PACKAGE-$OD_VERSION\config\elasticsearch.yml.new
+  echo "path.repo: [\".\$PACKAGE-$OD_VERSION\snapshots"]">> .\$PACKAGE-$OD_VERSION\config\elasticsearch.yml.new
   del .\$PACKAGE-$OD_VERSION\config\elasticsearch.yml
   move .\$PACKAGE-$OD_VERSION\config\elasticsearch.yml.new .\$PACKAGE-$OD_VERSION\config\elasticsearch.yml
   type .\$PACKAGE-$OD_VERSION\config\elasticsearch.yml
@@ -86,6 +86,10 @@ if ($SETUP_ACTION -eq "--es-nosec" -Or $SETUP_ACTION -eq "--kibana-nosec"){
   echo "Overriding with elasticsearch.yml having no certificates"
   del .\$PACKAGE-$OD_VERSION\config\elasticsearch.yml
   aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/utils/elasticsearch.yml .\$PACKAGE-$OD_VERSION\config --quiet; echo $?
+  mkdir .\$PACKAGE-$OD_VERSION\snapshots
+  dir
+  pwd
+  echo "path.repo: [\".\$PACKAGE-$OD_VERSION\snapshots"]">> .\$PACKAGE-$OD_VERSION\config\elasticsearch.yml
 }
 
 if ($SETUP_ACTION -eq "--es-nosec"){
