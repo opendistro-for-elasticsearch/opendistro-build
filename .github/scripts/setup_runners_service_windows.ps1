@@ -54,10 +54,6 @@ unzip -qq .\$S3_PACKAGE
 if ($SETUP_ACTION -eq "--es"){
   echo "removing useless config" #deprecated since 7.8.0 and will crash --es-nosec now
   findstr /V "node.max_local_storage_nodes" .\$PACKAGE-$OD_VERSION\config\elasticsearch.yml > .\$PACKAGE-$OD_VERSION\config\elasticsearch.yml.new
-  mkdir .\$PACKAGE-$OD_VERSION\snapshots
-  dir
-  pwd
-  echo "path.repo: [\".\$PACKAGE-$OD_VERSION\snapshots"]">> .\$PACKAGE-$OD_VERSION\config\elasticsearch.yml.new
   del .\$PACKAGE-$OD_VERSION\config\elasticsearch.yml
   move .\$PACKAGE-$OD_VERSION\config\elasticsearch.yml.new .\$PACKAGE-$OD_VERSION\config\elasticsearch.yml
   type .\$PACKAGE-$OD_VERSION\config\elasticsearch.yml
@@ -89,7 +85,8 @@ if ($SETUP_ACTION -eq "--es-nosec" -Or $SETUP_ACTION -eq "--kibana-nosec"){
   mkdir .\$PACKAGE-$OD_VERSION\snapshots
   dir
   pwd
-  echo "path.repo: [\".\$PACKAGE-$OD_VERSION\snapshots"]">> .\$PACKAGE-$OD_VERSION\config\elasticsearch.yml
+  $path=".\$PACKAGE-$OD_VERSION\snapshots"
+  Add-Content .\$PACKAGE-$OD_VERSION\config\elasticsearch.yml "path.repo : [\"$path\"]"
 }
 
 if ($SETUP_ACTION -eq "--es-nosec"){
