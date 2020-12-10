@@ -669,8 +669,8 @@ Open Distro for Elasticsearch 1.12.0 includes the following breaking changes, fe
 
 
 ### Kibana Reports
-* [UI] Align create report definition UI to schema \\& API refactor ([#83](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/83))
-* [UI] Align UI to the schema \\& API refactor - table and detail page ([#78](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/78))
+* [UI] Align create report definition UI to schema & API refactor ([#83](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/83))
+* [UI] Align UI to the schema & API refactor - table and detail page ([#78](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/78))
 * Refactoring saved search reporting APIs maintenance ([#73](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/73))
 * Refactor schema and API [backend] ([#72](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/72))
 
