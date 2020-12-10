@@ -56,6 +56,7 @@ if ($SETUP_ACTION -eq "--es"){
   findstr /V "node.max_local_storage_nodes" .\$PACKAGE-$OD_VERSION\config\elasticsearch.yml > .\$PACKAGE-$OD_VERSION\config\elasticsearch.yml.new
   mkdir .\$PACKAGE-$OD_VERSION\snapshots
   echo "path.repo: [\"$PACKAGE-$OD_VERSION\snapshots\"]" >> .\$PACKAGE-$OD_VERSION\config\elasticsearch.yml.new
+  cat .\$PACKAGE-$OD_VERSION\config\elasticsearch.yml.new
   del .\$PACKAGE-$OD_VERSION\config\elasticsearch.yml
   move .\$PACKAGE-$OD_VERSION\config\elasticsearch.yml.new .\$PACKAGE-$OD_VERSION\config\elasticsearch.yml
   type .\$PACKAGE-$OD_VERSION\config\elasticsearch.yml
