@@ -162,10 +162,7 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 * Adding new GC info collector to the scheduled metrics collector([#225](https://github.com/opendistro-for-elasticsearch/performance-analyzer/pull/225))
 
 
-### Opendistro For Elasticsearch
-
-
-### Sql
+### SQL
 * Add count() support for PPL ([#894](https://github.com/opendistro-for-elasticsearch/sql/pull/894))
 * Add like, isnull, isnotnull function in PPL ([#893](https://github.com/opendistro-for-elasticsearch/sql/pull/893))
 * Revert Error Messages for Run/Explain ([#889](https://github.com/opendistro-for-elasticsearch/sql/pull/889))
@@ -233,7 +230,7 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 * Adding requested tenant to the thread context transient info for consumption ([#850](https://github.com/opendistro-for-elasticsearch/security/pull/850))
 
 
-### Sql
+### SQL
 * Sort field push down ([#848](https://github.com/opendistro-for-elasticsearch/sql/pull/848))
 * Seperate the logical plan optimization rule from core to storage engine ([#836](https://github.com/opendistro-for-elasticsearch/sql/pull/836))
 
@@ -489,9 +486,6 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 * Cache Size metric: Using the Actual Cache Values and not the Delta ([#231](https://github.com/opendistro-for-elasticsearch/performance-analyzer/pull/231))
 
 
-### Opendistro For Elasticsearch
-
-
 ### Security
 * Fix missing trim when parsing roles in proxy authenticator ([#766](https://github.com/opendistro-for-elasticsearch/security/pull/766))
 * Fix empty password issue in upgrade from 6x to 7x ([#816](https://github.com/opendistro-for-elasticsearch/security/pull/816))
@@ -501,7 +495,7 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 * Catch and respond invalid_index_name_exception when an index with invalid name is mentioned ([#865](https://github.com/opendistro-for-elasticsearch/security/pull/865))
 
 
-### Sql
+### SQL
 * Fix workbench version number for ODFE 1.12.0.0 ([#903](https://github.com/opendistro-for-elasticsearch/sql/pull/903))
 * Disable sorting on workbench ([#900](https://github.com/opendistro-for-elasticsearch/sql/pull/900))
 * Fix select all from subquery issue ([#902](https://github.com/opendistro-for-elasticsearch/sql/pull/902))
@@ -540,7 +534,7 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 * Set up jacoco for code coverage ([#234](https://github.com/opendistro-for-elasticsearch/performance-analyzer/pull/234))
 
 
-### Sql
+### SQL
 * Revert java version in jdbc release workflow ([#871](https://github.com/opendistro-for-elasticsearch/sql/pull/871))
 * fix for odbc build failure ([#885](https://github.com/opendistro-for-elasticsearch/sql/pull/885))
 * Fix release workflow for workbench ([#868](https://github.com/opendistro-for-elasticsearch/sql/pull/868))
@@ -570,12 +564,6 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 * Update user stories ([#22](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/22))
 * Update Design Proposal ([#18](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/18))
 * Design Proposal Update ([#15](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/15))
-
-
-### Performance Analyzer
-
-
-### Opendistro For Elasticsearch
 
 
 ### Sql
@@ -635,12 +623,6 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 * Bump odfe version to 1.12 ([#273](https://github.com/opendistro-for-elasticsearch/k-NN/pull/273))
 
 
-### Performance Analyzer
-
-
-### Opendistro For Elasticsearch
-
-
 ### Security
 * Create release drafter ([#769](https://github.com/opendistro-for-elasticsearch/security/pull/769))
 * Upgrade junit to 4.13.1 ([#835](https://github.com/opendistro-for-elasticsearch/security/pull/835))
@@ -658,7 +640,7 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 * Add support for elasticsearch 7.10.0 ([#626](https://github.com/opendistro-for-elasticsearch/security-kibana-plugin/pull/626))
 
 
-### Sql
+### SQL
 * SQL release for Elasticsearch 7.10 ([#834](https://github.com/opendistro-for-elasticsearch/sql/pull/834))
 * Migrate Query Workbench to new Platform ([#812](https://github.com/opendistro-for-elasticsearch/sql/pull/812))
 * Migrate Query Workbench to 7.10 ([#840](https://github.com/opendistro-for-elasticsearch/sql/pull/840))
@@ -682,6 +664,3 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 * [UI] Align UI to the schema \\& API refactor - table and detail page ([#78](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/78))
 * Refactoring saved search reporting APIs maintenance ([#73](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/73))
 * Refactor schema and API [backend] ([#72](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/72))
-
-
-### Performance Analyzer
