@@ -7,7 +7,6 @@ on:
     types: [staging-odfe-cli]
 
 jobs:
-
   Test-ODFE-CLI:
     runs-on: ubuntu-18.04
     name: Test-ODFE-CLI
