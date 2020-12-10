@@ -1,0 +1,54 @@
+name: Staging ODFE CLI
+
+on:
+#  schedule:
+#    - cron: '0 12 * * *'
+  repository_dispatch:
+    types: [staging-odfe-cli]
+
+jobs:
+
+  Test-ODFE-CLI:
+    runs-on: ubuntu-18.04
+    name: Test-ODFE-CLI
+    strategy:
+      matrix:
+        go-version: [1.14]
+    steps:
+      - name: Set up AWS Cred
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Setup Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go-version }}
+      - uses: actions/checkout@v1
+      - name: Retrieve plugin tags
+        run: |
+          echo "p_tag_cli=$(jq '.["odfe-cli"].cutversion' ./bin/plugins.json |sed 's/"//g')" >> $GITHUB_ENV
+      - name: Checkout odfe-cli
+        uses: actions/checkout@v2
+        with:
+          repository: opendistro-for-elasticsearch/odfe-cli
+#          ref: ${{env.p_tag_cli}}
+          ref: main
+      - name: IT
+        run: |
+          #!/bin/bash
+          sed -i "s/^\(\s*image\s*:\s*\).*/\1opendistroforelasticsearch\/opendistroforelasticsearch:latest/" docker-compose.yml
+          docker login --username $DOCKER_USER --password $DOCKER_PASS
+          docker-compose up -d
+          ls -ltr;
+          go clean -testcache;
+          go test -tags=integration ./it;
+          docker logout
+        env: 
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}
+          DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
+          ODFE_ENDPOINT : "https://localhost:9200"
+          ODFE_USER : "admin"
+          ODFE_PASSWORD : "admin"
+

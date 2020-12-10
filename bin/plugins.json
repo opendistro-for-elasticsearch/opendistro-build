@@ -99,6 +99,16 @@
     "require_install": "true",
     "category": "elasticsearch"
   },
+  "odfe-cli": {
+    "git": "opendistro-for-elasticsearch/odfe-cli",
+    "zip": "downloads/elasticsearch-clients/opendistro-cli",
+    "deb": "none",
+    "rpm": "none",
+    "windows": "none",
+    "cutversion": "1.0.0",
+    "require_install": "false",
+    "category": "elasticsearch"
+  },
   "sql-workbench": {
     "git": "opendistro-for-elasticsearch/sql",
     "zip": "opendistro-query-workbench/opendistroQueryWorkbenchKibana",
