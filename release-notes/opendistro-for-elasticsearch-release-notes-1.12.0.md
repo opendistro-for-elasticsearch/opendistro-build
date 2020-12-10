@@ -8,9 +8,11 @@ The release consists of Apache 2 licensed Elasticsearch version 7.10.0, and Kiba
 
 ## Release Details
 
-You can also track upcoming features in Open Distro for Elasticsearch by watching the code repositories or checking the [project website](https://opendistro.github.io/for-elasticsearch/features/comingsoon.html).
+Open Distro for Elasticsearch 1.11.0 includes the following breaking changes, features, enhancements, bug fixes, infrastructure, documentation, maintenance, and refactoring updates.
+
 
 ## BREAKING CHANGES
+
 
 ## FEATURES
 
@@ -678,3 +680,5 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 * [UI] Align UI to the schema \\& API refactor - table and detail page ([#78](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/78))
 * Refactoring saved search reporting APIs maintenance ([#73](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/73))
 * Refactor schema and API [backend] ([#72](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/72))
+
+You can also track upcoming features in Open Distro for Elasticsearch by watching the code repositories or checking the [project website](https://opendistro.github.io/for-elasticsearch/features/comingsoon.html).
