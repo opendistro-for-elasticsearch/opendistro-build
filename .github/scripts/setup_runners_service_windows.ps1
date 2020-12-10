@@ -55,6 +55,7 @@ if ($SETUP_ACTION -eq "--es"){
   echo "removing useless config" #deprecated since 7.8.0 and will crash --es-nosec now
   findstr /V "node.max_local_storage_nodes" .\$PACKAGE-$OD_VERSION\config\elasticsearch.yml > .\$PACKAGE-$OD_VERSION\config\elasticsearch.yml.new
   mkdir snapshots
+  ls
   echo "path.repo: [\"$PWD\snapshots"]">> .\$PACKAGE-$OD_VERSION\config\elasticsearch.yml.new
   del .\$PACKAGE-$OD_VERSION\config\elasticsearch.yml
   move .\$PACKAGE-$OD_VERSION\config\elasticsearch.yml.new .\$PACKAGE-$OD_VERSION\config\elasticsearch.yml
