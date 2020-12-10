@@ -151,7 +151,7 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 * Rebase gantt chart to main as a sub directory ([#1](https://github.com/opendistro-for-elasticsearch/kibana-visualizations/pull/1))
 
 
-### Knn
+### k-NN
 * Support for hamming bit distance in custom scoring ([#267](https://github.com/opendistro-for-elasticsearch/k-NN/pull/267))
 
 
@@ -628,7 +628,7 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 * Upgrade to ODFE 1.12.0 ([#3](https://github.com/opendistro-for-elasticsearch/kibana-visualizations/pull/3))
 
 
-### Knn
+### k-NN
 * k-NN plugin support for Elasticsearch version 7.10.0 ([#271](https://github.com/opendistro-for-elasticsearch/k-NN/pull/271))
 * Bump odfe version to 1.12 ([#273](https://github.com/opendistro-for-elasticsearch/k-NN/pull/273))
 
