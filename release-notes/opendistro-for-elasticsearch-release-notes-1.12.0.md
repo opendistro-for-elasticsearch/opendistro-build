@@ -221,7 +221,6 @@ Open Distro for Elasticsearch 1.12.0 includes the following breaking changes, fe
 * Kibana migration ([#142](https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/pull/142))
  
 
-
 ### Performance Analyzer
 * Updating Default Port web-server to 9600 ([#233](https://github.com/opendistro-for-elasticsearch/performance-analyzer/pull/233))
 
@@ -289,7 +288,6 @@ Open Distro for Elasticsearch 1.12.0 includes the following breaking changes, fe
 * Bug fix for duplicate dimension/metrics items and deletion error ([#145](https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/pull/145))
   
 
-
 ### Kibana Notebooks
 * Correct URL link ([#55](https://github.com/opendistro-for-elasticsearch/kibana-notebooks/pull/55))
 
@@ -340,7 +338,6 @@ Open Distro for Elasticsearch 1.12.0 includes the following breaking changes, fe
 ### Index Management Kibana Plugin
 * Bug fix for duplicate dimension/metrics items and deletion error ([#145](https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/pull/145))
   
-
 
 ### Kibana Notebooks
 * Correct URL link ([#55](https://github.com/opendistro-for-elasticsearch/kibana-notebooks/pull/55))
@@ -407,8 +404,7 @@ Open Distro for Elasticsearch 1.12.0 includes the following breaking changes, fe
 
 
 ### Index Management Kibana Plugin
-* Bug fix for duplicate dimension/metrics items and deletion error ([#145](https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/pull/145)) 
-  
+* Bug fix for duplicate dimension/metrics items and deletion error ([#145](https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/pull/145))
 
 
 ### Kibana Notebooks
@@ -461,7 +457,6 @@ Open Distro for Elasticsearch 1.12.0 includes the following breaking changes, fe
 ### Index Management Kibana Plugin
 * Bug fix for duplicate dimension/metrics items and deletion error ([#145](https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/pull/145)) 
   
-
 
 ### Kibana Notebooks
 * Correct URL link ([#55](https://github.com/opendistro-for-elasticsearch/kibana-notebooks/pull/55))
@@ -539,7 +534,6 @@ Open Distro for Elasticsearch 1.12.0 includes the following breaking changes, fe
 ### Index Management Kibana Plugin
 * Updates to github action workflows and some bug fix after upgrading to Kibana 7.10 ([#139](https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/pull/139))
   
-
 
 ### Kibana Notebooks
 * Update plugin id to use camelcase ([#51](https://github.com/opendistro-for-elasticsearch/kibana-notebooks/pull/51))
