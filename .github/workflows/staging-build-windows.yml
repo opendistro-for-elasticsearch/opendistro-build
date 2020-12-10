@@ -84,10 +84,10 @@ jobs:
         run: |
           .github\scripts\setup_runners_service_windows.ps1 --es-nosec
           $ErrorActionPreference = 'SilentlyContinue'
-          # echo running tests
-          # cd ..\index-management
-          # dir
-          # ./gradlew.bat integTest -D tests.rest.cluster=localhost:9200 -D tests.cluster=localhost:9200 -D tests.clustername=es-integrationtest --stacktrace          
+          echo running tests
+          cd ..\index-management
+          dir
+          ./gradlew.bat integTest -D tests.rest.cluster=localhost:9200 -D tests.cluster=localhost:9200 -D tests.clustername=es-integrationtest --stacktrace          
 
   # Test-ALERTING-NoSec:
   #   needs: [build-es-artifacts, build-kibana-artifacts]
