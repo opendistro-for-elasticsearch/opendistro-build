@@ -4,7 +4,7 @@
 
 ## Release Details
 
-You can also track upcoming features in Open Distro for Elasticsearch by watching the code repositories or checking the project website (https://opendistro.github.io/for-elasticsearch/features/comingsoon.html).
+You can also track upcoming features in Open Distro for Elasticsearch by watching the code repositories or checking the [project website](https://opendistro.github.io/for-elasticsearch/features/comingsoon.html).
 
 ## BREAKING CHANGES
 
@@ -222,15 +222,15 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 
 
 ### Security
-* Adding support for SSL dual mode [#712](https://github.com/opendistro-for-elasticsearch/security/pull/712)
-* When replacing .kibana index with multi-tenant index, create index with alias if one already does not exist [#765](https://github.com/opendistro-for-elasticsearch/security/pull/765)
-* Demo Config : Adding AD Indices to system index and creating pre-defined roles [#776](https://github.com/opendistro-for-elasticsearch/security/pull/776)
-* Add user & roles to the thread context  [#798](https://github.com/opendistro-for-elasticsearch/security/pull/798)
-* Security configuration for reporting and notification plugins [#836](https://github.com/opendistro-for-elasticsearch/security/pull/836)
-* Support user injection for transport requests [#763](https://github.com/opendistro-for-elasticsearch/security/pull/763)
-* Support ES 7.10.0 [#840](https://github.com/opendistro-for-elasticsearch/security/pull/840)
-* Support certs with separate Extended Key Usage [#493](https://github.com/opendistro-for-elasticsearch/security/pull/493)
-* Adding requested tenant to the thread context transient info for consumption [#850](https://github.com/opendistro-for-elasticsearch/security/pull/850)
+* Adding support for SSL dual mode ([#712](https://github.com/opendistro-for-elasticsearch/security/pull/712))
+* When replacing .kibana index with multi-tenant index, create index with alias if one already does not exist ([#765](https://github.com/opendistro-for-elasticsearch/security/pull/765))
+* Demo Config : Adding AD Indices to system index and creating pre-defined roles ([#776](https://github.com/opendistro-for-elasticsearch/security/pull/776))
+* Add user & roles to the thread context  ([#798](https://github.com/opendistro-for-elasticsearch/security/pull/798))
+* Security configuration for reporting and notification plugins ([#836](https://github.com/opendistro-for-elasticsearch/security/pull/836))
+* Support user injection for transport requests ([#763](https://github.com/opendistro-for-elasticsearch/security/pull/763))
+* Support ES 7.10.0 ([#840](https://github.com/opendistro-for-elasticsearch/security/pull/840))
+* Support certs with separate Extended Key Usage ([#493](https://github.com/opendistro-for-elasticsearch/security/pull/493))
+* Adding requested tenant to the thread context transient info for consumption ([#850](https://github.com/opendistro-for-elasticsearch/security/pull/850))
 
 
 ### Sql
@@ -287,9 +287,9 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 
 ### Kibana Reports
 * Use default max size to call getAll ES API ([#224](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/224))
-* in-context menu download UI ([#219](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/219))
+* In-context menu download UI ([#219](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/219))
 * ReportInstance is missing id field ([#207](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/207))
-* Permission denied error for background job when security is disabled ([#191](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/191))
+* BugFix: Permission denied error for background job when security is disabled ([#191](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/191))
 * Add missing import \## BUG FIXES
 
 ### Alerting
@@ -339,7 +339,7 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 
 ### Kibana Reports
 * Use default max size to call getAll ES API ([#224](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/224))
-* In-context menu download UI ([#219](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/219))
+* in-context menu download UI ([#219](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/219))
 * ReportInstance is missing id field ([#207](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/207))
 * Permission denied error for background job when security is disabled ([#191](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/191)) refine error handler ([#187](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/187))
 * use relative url for href attribute of report source link ([#173](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/173))
@@ -347,7 +347,7 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 * Fix Timezone selection and bugs ([#144](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/144))
 * Create/Edit Bug Fixes ([#140](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/140))
 * Improve logging and error handling; Fix edit report bug; Fix header/footer rendering ([#123](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/123))
-* fix small display issues in report details and report table ([#85](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/85))
+* Fix small display issues in report details and report table ([#85](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/85))
 * Configure fixed timezone for jest testing ([#163](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/163))
 * Fix "open in Kibana" link issue in embedded html of email body ([#148](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/148))
 * fix email recipients render in edit report definition page ([#146](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/146))
@@ -408,7 +408,7 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 
 ### Kibana Reports
 * Use default max size to call getAll ES API ([#224](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/224))
-* In-context menu download UI ([#219](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/219))
+* in-context menu download UI ([#219](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/219))
 * ReportInstance is missing id field ([#207](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/207))
 * Permission denied error for background job when security is disabled ([#191](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/191))
 * Add missing import \## BUG FIXES
@@ -450,7 +450,7 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 
 
 ### Index Management Kibana Plugin
-* Bug fix for duplicate dimension/metrics items and deletion error ([#145](https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/pull/145))
+* Bug fix for duplicate dimension/metrics items and deletion error ([#145](https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/pull/145)) 
   
 
 
@@ -460,10 +460,10 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 
 ### Kibana Reports
 * Use default max size to call getAll ES API ([#224](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/224))
-* In-context menu download UI ([#219](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/219))
+* in-context menu download UI ([#219](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/219))
 * ReportInstance is missing id field ([#207](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/207))
 * Permission denied error for background job when security is disabled ([#191](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/191)) refine error handler ([#187](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/187))
-* Use relative url for href attribute of report source link ([#173](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/173))
+* use relative url for href attribute of report source link ([#173](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/173))
 * Context menu doesn't show up when switching between tabs from sidebar ([#172](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/172))
 * Fix Timezone selection and bugs ([#144](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/144))
 * Create/Edit Bug Fixes ([#140](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/140))
@@ -493,12 +493,12 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 
 
 ### Security
-* Fix missing trim when parsing roles in proxy authenticator [#766](https://github.com/opendistro-for-elasticsearch/security/pull/766)
-* Fix empty password issue in upgrade from 6x to 7x [#816](https://github.com/opendistro-for-elasticsearch/security/pull/816)
-* Reject empty password in internal user creation [#818](https://github.com/opendistro-for-elasticsearch/security/pull/818)
-* Use reflection to get reduceOrder, termBytes and format due to java.lang.IllegalAccessError [#866](https://github.com/opendistro-for-elasticsearch/security/pull/866)
-* Fix for java.io.OptionalDataException that is caused by changes to User object after it is put on thread context. [#869](https://github.com/opendistro-for-elasticsearch/security/pull/869)
-* Catch and respond invalid_index_name_exception when an index with invalid name is mentioned [#865](https://github.com/opendistro-for-elasticsearch/security/pull/865)
+* Fix missing trim when parsing roles in proxy authenticator ([#766](https://github.com/opendistro-for-elasticsearch/security/pull/766))
+* Fix empty password issue in upgrade from 6x to 7x ([#816](https://github.com/opendistro-for-elasticsearch/security/pull/816))
+* Reject empty password in internal user creation ([#818](https://github.com/opendistro-for-elasticsearch/security/pull/818))
+* Use reflection to get reduceOrder, termBytes and format due to java.lang.IllegalAccessError ([#866](https://github.com/opendistro-for-elasticsearch/security/pull/866))
+* Fix for java.io.OptionalDataException that is caused by changes to User object after it is put on thread context. ([#869](https://github.com/opendistro-for-elasticsearch/security/pull/869))
+* Catch and respond invalid_index_name_exception when an index with invalid name is mentioned ([#865](https://github.com/opendistro-for-elasticsearch/security/pull/865))
 
 
 ### Sql
@@ -528,7 +528,6 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 
 
 ### Index Management Kibana Plugin
-  
 * Updates to github action workflows and some bug fix after upgrading to Kibana 7.10 ([#139](https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/pull/139))
   
 
@@ -643,16 +642,16 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 
 
 ### Security
-* Create release drafter [#769](https://github.com/opendistro-for-elasticsearch/security/pull/769)
-* Upgrade junit to 4.13.1 [#835](https://github.com/opendistro-for-elasticsearch/security/pull/835)
-* updating static_roles.yml [#838](https://github.com/opendistro-for-elasticsearch/security/pull/838)
-* Security configuration cleanup for static and test resources [#841](https://github.com/opendistro-for-elasticsearch/security/pull/841)
-* Change version to 1.12.0.0 [#860](https://github.com/opendistro-for-elasticsearch/security/pull/860)
-* Upgrade github CD action to using Environment Files [#862](https://github.com/opendistro-for-elasticsearch/security/pull/862)
-* Refactor getUserInfoString [#864](https://github.com/opendistro-for-elasticsearch/security/pull/864)
-* Update 1.12 release notes [#867](https://github.com/opendistro-for-elasticsearch/security/pull/867)
-* Update 1.12 release notes [#872](https://github.com/opendistro-for-elasticsearch/security/pull/872)
-* Use StringJoiner instead of (Immutable)List builder [#877](https://github.com/opendistro-for-elasticsearch/security/pull/877)
+* Create release drafter ([#769](https://github.com/opendistro-for-elasticsearch/security/pull/769))
+* Upgrade junit to 4.13.1 ([#835](https://github.com/opendistro-for-elasticsearch/security/pull/835))
+* updating static_roles.yml ([#838](https://github.com/opendistro-for-elasticsearch/security/pull/838))
+* Security configuration cleanup for static and test resources ([#841](https://github.com/opendistro-for-elasticsearch/security/pull/841))
+* Change version to 1.12.0.0 ([#860](https://github.com/opendistro-for-elasticsearch/security/pull/860))
+* Upgrade github CD action to using Environment Files ([#862](https://github.com/opendistro-for-elasticsearch/security/pull/862))
+* Refactor getUserInfoString ([#864](https://github.com/opendistro-for-elasticsearch/security/pull/864))
+* Update 1.12 release notes ([#867](https://github.com/opendistro-for-elasticsearch/security/pull/867))
+* Update 1.12 release notes ([#872](https://github.com/opendistro-for-elasticsearch/security/pull/872))
+* Use StringJoiner instead of (Immutable)List builder ([#877](https://github.com/opendistro-for-elasticsearch/security/pull/877))
 
 
 ### Security Kibana Plugin
