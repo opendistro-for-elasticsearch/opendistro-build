@@ -181,6 +181,9 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 * Support HAVING in new SQL engine ([#798](https://github.com/opendistro-for-elasticsearch/sql/pull/798))
 * Add ppl request log ([#796](https://github.com/opendistro-for-elasticsearch/sql/pull/796))
 
+### Release Engineering
+* Add CodeQL for scanning vulnerabilities for Pull Request in opendistro-build repository ([#466](https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/466))
+
 
 ## ENHANCEMENTS
 
@@ -233,6 +236,10 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 ### SQL
 * Sort field push down ([#848](https://github.com/opendistro-for-elasticsearch/sql/pull/848))
 * Seperate the logical plan optimization rule from core to storage engine ([#836](https://github.com/opendistro-for-elasticsearch/sql/pull/836))
+
+
+### Release Engineering
+* All roles in one statefulset, allows to choose between dedicated/non-dedicated pods for lightweight deployments, thanks @everythings-gonna-be-alright  ([#453](https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/453))
 
 
 ## BUG FIXES
@@ -509,6 +516,9 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 * Fix bug of nested field format issue in JDBC response ([#846](https://github.com/opendistro-for-elasticsearch/sql/pull/846))
 * Fix symbol error and Fix SSLError when connect es. ([#831](https://github.com/opendistro-for-elasticsearch/sql/pull/831))
 * Bug fix, using Local.Root when format the string in DateTimeFunctionIT ([#794](https://github.com/opendistro-for-elasticsearch/sql/pull/794))
+
+### Release Engineering
+* [Helm] Fix description of "maxUnavailable", thanks @webwurst ([#489](https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/489))
 
 
 ## INFRASTRUCTURE
