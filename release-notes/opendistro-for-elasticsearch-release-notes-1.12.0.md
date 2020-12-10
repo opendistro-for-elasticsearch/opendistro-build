@@ -171,7 +171,7 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 * Remove workbench side nav logo and fix download link ([#869](https://github.com/opendistro-for-elasticsearch/sql/pull/869))
 * For ODFE 1.12 change position for sql workbench plugin (remove DEFAULT_APP_CATEGORIES) ([#857](https://github.com/opendistro-for-elasticsearch/sql/pull/857))
 * For ODFE 1.12 change position for sql workbench plugin ([#855](https://github.com/opendistro-for-elasticsearch/sql/pull/855))
-* add support for HH:mm:ss ([#850](https://github.com/opendistro-for-elasticsearch/sql/pull/850))
+* Add support for HH:mm:ss ([#850](https://github.com/opendistro-for-elasticsearch/sql/pull/850))
 * Support NULLS FIRST/LAST in new engine ([#843](https://github.com/opendistro-for-elasticsearch/sql/pull/843))
 * Support subquery in FROM clause in new engine ([#822](https://github.com/opendistro-for-elasticsearch/sql/pull/822))
 * Support CASE clause in new engine ([#818](https://github.com/opendistro-for-elasticsearch/sql/pull/818))
@@ -207,12 +207,12 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 
 ### Anomaly Detection Kibana Plugin
 * Fix vulnerability caused by old version formik. Issue: #333 ([#334](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/333))
-* change side bar position for anomly detection plugin ([#335](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/335))
+* Change side bar position for anomly detection plugin ([#335](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/335))
 * Use plotly.js-dist to reduce artifact size ([#340](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/340))
 
 
 ### Index Management Kibana Plugin
-* change position of index-management in kibana side bar ([#140](https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/pull/140))
+* Change position of index-management in kibana side bar ([#140](https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/pull/140))
 * Kibana migration ([#142](https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/pull/142))
  
 
@@ -239,7 +239,7 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 
 
 ### Release Engineering
-* All roles in one statefulset, allows to choose between dedicated/non-dedicated pods for lightweight deployments, thanks @everythings-gonna-be-alright  ([#453](https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/453))
+* All roles in one statefulset, allows to choose between dedicated/non-dedicated pods for lightweight deployments in helm charts, thanks @everythings-gonna-be-alright  ([#453](https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/453))
 
 
 ## BUG FIXES
@@ -258,15 +258,15 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 
 ### Anomaly Detection
 * Fix edge case where entities found for preview is empty ([#296](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/296))
-* fix null user in detector ([#301](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/301))
-* fix fatal error of missing method parseString ([#302](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/302))
-* remove clock Guice binding ([#305](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/305))
-* filter out empty value for entity features ([#306](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/306))
+* Fix null user in detector ([#301](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/301))
+* Fix fatal error of missing method parseString ([#302](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/302))
+* Remove clock Guice binding ([#305](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/305))
+* Filter out empty value for entity features ([#306](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/306))
 * Fix for upgrading mapping ([#309](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/309))
-* fix double nan error when parse to json ([#310](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/310))
+* Fix double nan error when parse to json ([#310](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/310))
 * Fix issue where data hole exists for Preview API ([#312](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/312))
-* fix delete running detector bug ([#320](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/320))
-* fix detector and feature serialization ([#322](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/322))
+* Fix delete running detector bug ([#320](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/320))
+* Fix detector and feature serialization ([#322](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/322))
 * Moving common-utils to 1.12.0.2 ([#323](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/323))
 
 
@@ -310,15 +310,15 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 
 ### Anomaly Detection
 * Fix edge case where entities found for preview is empty ([#296](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/296))
-* fix null user in detector ([#301](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/301))
-* fix fatal error of missing method parseString ([#302](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/302))
-* remove clock Guice binding ([#305](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/305))
-* filter out empty value for entity features ([#306](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/306))
+* Fix null user in detector ([#301](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/301))
+* Fix fatal error of missing method parseString ([#302](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/302))
+* Remove clock Guice binding ([#305](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/305))
+* Filter out empty value for entity features ([#306](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/306))
 * Fix for upgrading mapping ([#309](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/309))
-* fix double nan error when parse to json ([#310](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/310))
+* Fix double nan error when parse to json ([#310](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/310))
 * Fix issue where data hole exists for Preview API ([#312](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/312))
-* fix delete running detector bug ([#320](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/320))
-* fix detector and feature serialization ([#322](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/322))
+* Fix delete running detector bug ([#320](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/320))
+* Fix detector and feature serialization ([#322](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/322))
 * Moving common-utils to 1.12.0.2 ([#323](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/323))
 
 
@@ -343,10 +343,10 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 
 ### Kibana Reports
 * Use default max size to call getAll ES API ([#224](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/224))
-* in-context menu download UI ([#219](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/219))
+* In-context menu download UI ([#219](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/219))
 * ReportInstance is missing id field ([#207](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/207))
 * Permission denied error for background job when security is disabled ([#191](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/191)) refine error handler ([#187](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/187))
-* use relative url for href attribute of report source link ([#173](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/173))
+* Use relative url for href attribute of report source link ([#173](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/173))
 * Context menu doesn't show up when switching between tabs from sidebar ([#172](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/172))
 * Fix Timezone selection and bugs ([#144](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/144))
 * Create/Edit Bug Fixes ([#140](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/140))
@@ -354,7 +354,7 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 * Fix small display issues in report details and report table ([#85](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/85))
 * Configure fixed timezone for jest testing ([#163](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/163))
 * Fix "open in Kibana" link issue in embedded html of email body ([#148](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/148))
-* fix email recipients render in edit report definition page ([#146](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/146))
+* Fix email recipients render in edit report definition page ([#146](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/146))
 * Report Details UI Fixes ([#145](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/145))
 * Workaround to fix table refresh, disable links for pending reports ([#139](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/139))
 * Landing Page Minor Issues Fix ([#132](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/132))
@@ -379,15 +379,15 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 
 ### Anomaly Detection
 * Fix edge case where entities found for preview is empty ([#296](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/296))
-* fix null user in detector ([#301](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/301))
-* fix fatal error of missing method parseString ([#302](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/302))
-* remove clock Guice binding ([#305](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/305))
-* filter out empty value for entity features ([#306](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/306))
+* Fix null user in detector ([#301](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/301))
+* Fix fatal error of missing method parseString ([#302](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/302))
+* Remove clock Guice binding ([#305](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/305))
+* Filter out empty value for entity features ([#306](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/306))
 * Fix for upgrading mapping ([#309](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/309))
-* fix double nan error when parse to json ([#310](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/310))
+* Fix double nan error when parse to json ([#310](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/310))
 * Fix issue where data hole exists for Preview API ([#312](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/312))
-* fix delete running detector bug ([#320](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/320))
-* fix detector and feature serialization ([#322](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/322))
+* Fix delete running detector bug ([#320](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/320))
+* Fix detector and feature serialization ([#322](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/322))
 * Moving common-utils to 1.12.0.2 ([#323](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/323))
 
 
@@ -412,7 +412,7 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 
 ### Kibana Reports
 * Use default max size to call getAll ES API ([#224](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/224))
-* in-context menu download UI ([#219](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/219))
+* In-context menu download UI ([#219](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/219))
 * ReportInstance is missing id field ([#207](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/207))
 * Permission denied error for background job when security is disabled ([#191](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/191))
 * Add missing import \## BUG FIXES
@@ -431,15 +431,15 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 
 ### Anomaly Detection
 * Fix edge case where entities found for preview is empty ([#296](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/296))
-* fix null user in detector ([#301](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/301))
-* fix fatal error of missing method parseString ([#302](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/302))
-* remove clock Guice binding ([#305](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/305))
-* filter out empty value for entity features ([#306](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/306))
+* Fix null user in detector ([#301](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/301))
+* Fix fatal error of missing method parseString ([#302](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/302))
+* Remove clock Guice binding ([#305](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/305))
+* Filter out empty value for entity features ([#306](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/306))
 * Fix for upgrading mapping ([#309](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/309))
-* fix double nan error when parse to json ([#310](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/310))
+* Fix double nan error when parse to json ([#310](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/310))
 * Fix issue where data hole exists for Preview API ([#312](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/312))
-* fix delete running detector bug ([#320](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/320))
-* fix detector and feature serialization ([#322](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/322))
+* Fix delete running detector bug ([#320](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/320))
+* Fix detector and feature serialization ([#322](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/322))
 * Moving common-utils to 1.12.0.2 ([#323](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/323))
 
 
@@ -464,10 +464,10 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 
 ### Kibana Reports
 * Use default max size to call getAll ES API ([#224](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/224))
-* in-context menu download UI ([#219](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/219))
+* In-context menu download UI ([#219](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/219))
 * ReportInstance is missing id field ([#207](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/207))
 * Permission denied error for background job when security is disabled ([#191](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/191)) refine error handler ([#187](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/187))
-* use relative url for href attribute of report source link ([#173](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/173))
+* Use relative url for href attribute of report source link ([#173](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/173))
 * Context menu doesn't show up when switching between tabs from sidebar ([#172](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/172))
 * Fix Timezone selection and bugs ([#144](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/144))
 * Create/Edit Bug Fixes ([#140](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/140))
@@ -475,7 +475,7 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 * Fix small display issues in report details and report table ([#85](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/85))
 * Configure fixed timezone for jest testing ([#163](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/163))
 * Fix "open in Kibana" link issue in embedded html of email body ([#148](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/148))
-* fix email recipients render in edit report definition page ([#146](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/146))
+* Fix email recipients render in edit report definition page ([#146](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/146))
 * Report Details UI Fixes ([#145](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/145))
 * Workaround to fix table refresh, disable links for pending reports ([#139](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/139))
 * Landing Page Minor Issues Fix ([#132](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/132))
@@ -518,7 +518,7 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 * Bug fix, using Local.Root when format the string in DateTimeFunctionIT ([#794](https://github.com/opendistro-for-elasticsearch/sql/pull/794))
 
 ### Release Engineering
-* [Helm] Fix description of "maxUnavailable", thanks @webwurst ([#489](https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/489))
+* Fix description of "maxUnavailable" in helm charts, thanks @webwurst ([#489](https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/489))
 
 
 ## INFRASTRUCTURE
@@ -546,11 +546,11 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 
 ### SQL
 * Revert java version in jdbc release workflow ([#871](https://github.com/opendistro-for-elasticsearch/sql/pull/871))
-* fix for odbc build failure ([#885](https://github.com/opendistro-for-elasticsearch/sql/pull/885))
+* Fix for odbc build failure ([#885](https://github.com/opendistro-for-elasticsearch/sql/pull/885))
 * Fix release workflow for workbench ([#868](https://github.com/opendistro-for-elasticsearch/sql/pull/868))
 * Add workflow to rename and upload odbc to s3 ([#865](https://github.com/opendistro-for-elasticsearch/sql/pull/865))
-* add codecov for sql plugin ([#835](https://github.com/opendistro-for-elasticsearch/sql/pull/835))
-* update odbc workflow ([#828](https://github.com/opendistro-for-elasticsearch/sql/pull/828))
+* Add codecov for sql plugin ([#835](https://github.com/opendistro-for-elasticsearch/sql/pull/835))
+* Update odbc workflow ([#828](https://github.com/opendistro-for-elasticsearch/sql/pull/828))
 * Updated workbench snapshots to fix broken workflow ([#823](https://github.com/opendistro-for-elasticsearch/sql/pull/823))
 * Updated Mac version for GitHub action build ([#804](https://github.com/opendistro-for-elasticsearch/sql/pull/804))
 * Fix unstable integration tests ([#793](https://github.com/opendistro-for-elasticsearch/sql/pull/793))
@@ -612,8 +612,8 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 
 
 ### Kibana Reports
-* position change for reporting plugin in side bar ([#223](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/223))
-* position change for reporting plugin in side bar ([#217](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/217))
+* Position change for reporting plugin in side bar ([#223](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/223))
+* Position change for reporting plugin in side bar ([#217](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/217))
 * Add support for Kibana 7.10.0 ([#205](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/205))
 * Migrate all Kibana server side APIs to call ES-reporting APIs ([#177](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/177))
 * Upgrade to ES/Kibana version v7.9.1 ([#101](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/101))
