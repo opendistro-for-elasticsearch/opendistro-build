@@ -1,8 +1,8 @@
 name: Build Windows Exe using tar artifacts
 
 on:
-  schedule:
-    - cron: '30 10 * * *'
+  # schedule:
+  #   - cron: '30 10 * * *'
   repository_dispatch:
     types: [staging-build-windows]
 
