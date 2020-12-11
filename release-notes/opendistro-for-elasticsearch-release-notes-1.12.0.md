@@ -47,7 +47,7 @@ Open Distro for Elasticsearch 1.12.0 includes the following breaking changes, fe
 * Add Permissions Error Toasts and Input Validation Errors ([#196](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/196))
 * Updated Time Range Parsing in Report Details ([#195](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/195))
 * Call updateReportStatus and notification API as Kibana user ([#194](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/194))
-* remove create report logic for background job ([#193](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/193))
+* Remove create report logic for background job ([#193](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/193))
 * Fixed Base Url Formation for Visualizations/Saved Searches ([#192](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/192))
 * Adding Validation Modal for Deleting Report Definition ([#190](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/190))
 * Updated logging : reduced logging size where not required to be verbose ([#189](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/189))
@@ -79,7 +79,7 @@ Open Distro for Elasticsearch 1.12.0 includes the following breaking changes, fe
 * Fix Warning on Report Details Test ([#156](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/156))
 * Improved Test Coverage for Report Settings ([#155](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/155))
 * Report definition details/Report details test coverage increase ([#154](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/154))
-* remove "refresh interval" option from time selector ([#153](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/153))
+* Remove "refresh interval" option from time selector ([#153](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/153))
 * Disable/Hide related UI to leave only CSV report ([#152](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/152))
 * Removed baseUrl as it can be created from SourceType and Source.id ([#151](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/151))
 * Report Trigger Jest Test Coverage ([#150](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/150))
@@ -94,7 +94,7 @@ Open Distro for Elasticsearch 1.12.0 includes the following breaking changes, fe
 * ReportDefinition and ReportInstance index operations and REST APIs cr… ([#135](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/135))
 * Change Selector for Visualization Reports ([#133](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/133))
 * Add download to reportDetails and reportDefinitionDetails ([#131](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/131))
-* use session cookie for puppeteer to access url of security-enabled domain ([#129](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/129))
+* Use session cookie for puppeteer to access url of security-enabled domain ([#129](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/129))
 * Improve server side input validation ([#128](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/128))
 * Update Jest Snapshots ([#127](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/127))
 * Main_utils Test Suite ([#126](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/126))
@@ -207,7 +207,7 @@ Open Distro for Elasticsearch 1.12.0 includes the following breaking changes, fe
 * Improve profile API ([#298](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/298))
 * Add checkpoint index retention for multi entity detector ([#283](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/283))
 * Stashing context for Stats API to allow users to query from RestAPI ([#300](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/300))
-* add HC detector request/failure stats ([#307](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/307))
+* Add HC detector request/failure stats ([#307](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/307))
 
 
 ### Anomaly Detection Kibana Plugin
@@ -328,7 +328,7 @@ Open Distro for Elasticsearch 1.12.0 includes the following breaking changes, fe
 ### Anomaly Detection Kibana Plugin
 * Show second for heatmap cell hover timestamp ([#327](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/327))
 * Fix sunburst chart height is 0 ([#332](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/332))
-* Fix 2 issues during recent upgrade ([#339](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/339))
+* Fix two issues during recent upgrade ([#339](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/339))
 
 
 ### Index Management
@@ -447,7 +447,7 @@ Open Distro for Elasticsearch 1.12.0 includes the following breaking changes, fe
 ### Anomaly Detection Kibana Plugin
 * Show second for heatmap cell hover timestamp ([#327](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/327))
 * Fix sunburst chart height is 0 ([#332](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/332))
-* Fix 2 issues during recent upgrade ([#339](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/339))
+* Fix two issues during recent upgrade ([#339](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/339))
 
 
 ### Index Management
@@ -635,7 +635,7 @@ Open Distro for Elasticsearch 1.12.0 includes the following breaking changes, fe
 ### Security
 * Create release drafter ([#769](https://github.com/opendistro-for-elasticsearch/security/pull/769))
 * Upgrade junit to 4.13.1 ([#835](https://github.com/opendistro-for-elasticsearch/security/pull/835))
-* updating static_roles.yml ([#838](https://github.com/opendistro-for-elasticsearch/security/pull/838))
+* Updating static_roles.yml ([#838](https://github.com/opendistro-for-elasticsearch/security/pull/838))
 * Security configuration cleanup for static and test resources ([#841](https://github.com/opendistro-for-elasticsearch/security/pull/841))
 * Change version to 1.12.0.0 ([#860](https://github.com/opendistro-for-elasticsearch/security/pull/860))
 * Upgrade github CD action to using Environment Files ([#862](https://github.com/opendistro-for-elasticsearch/security/pull/862))
