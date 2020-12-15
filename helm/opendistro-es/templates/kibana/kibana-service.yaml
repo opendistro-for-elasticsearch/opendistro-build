@@ -29,6 +29,7 @@ spec:
     port: {{ .Values.kibana.externalPort }}
     targetPort: {{ .Values.kibana.port }}
   selector:
+{{ include "opendistro-es.labels.selector" . | indent 4 }}
     role: kibana
   type: {{ .Values.kibana.service.type }}
 {{- end }}
