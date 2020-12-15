@@ -27,6 +27,8 @@ Open Distro for Elasticsearch 1.12.0 includes the following breaking changes, fe
 ### Alerting Kibana Plugin
 * Allow for http method selection in custom webhook ([#90](https://github.com/opendistro-for-elasticsearch/alerting-kibana-plugin/pull/90))
 
+### Index Management
+* Adds support for Rollup feature ([#319](https://github.com/opendistro-for-elasticsearch/index-management/pull/319), [#320](https://github.com/opendistro-for-elasticsearch/index-management/pull/320), [#321](https://github.com/opendistro-for-elasticsearch/index-management/pull/321), [#322](https://github.com/opendistro-for-elasticsearch/index-management/pull/322), [#323](https://github.com/opendistro-for-elasticsearch/index-management/pull/323), [#324](https://github.com/opendistro-for-elasticsearch/index-management/pull/324), [#336](https://github.com/opendistro-for-elasticsearch/index-management/pull/336), [#337](https://github.com/opendistro-for-elasticsearch/index-management/pull/337), [#338](https://github.com/opendistro-for-elasticsearch/index-management/pull/338), [#339](https://github.com/opendistro-for-elasticsearch/index-management/pull/339), [#340](https://github.com/opendistro-for-elasticsearch/index-management/pull/340), [#341](https://github.com/opendistro-for-elasticsearch/index-management/pull/341), [#342](https://github.com/opendistro-for-elasticsearch/index-management/pull/342), [#343](https://github.com/opendistro-for-elasticsearch/index-management/pull/343), [#344](https://github.com/opendistro-for-elasticsearch/index-management/pull/344), [#345](https://github.com/opendistro-for-elasticsearch/index-management/pull/345), [#346](https://github.com/opendistro-for-elasticsearch/index-management/pull/346), [#347](https://github.com/opendistro-for-elasticsearch/index-management/pull/347), [#348](https://github.com/opendistro-for-elasticsearch/index-management/pull/348))
 
 ### Index Management Kibana Plugin
 * Rollup Kibana ([#128](https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/pull/128))
@@ -220,6 +222,8 @@ Open Distro for Elasticsearch 1.12.0 includes the following breaking changes, fe
 * Change side bar position for anomly detection plugin ([#335](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/335))
 * Use plotly.js-dist to reduce artifact size ([#340](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/340))
 
+### Index Management
+* Adds support for Elasticsearch 7.10.0 ([#349](https://github.com/opendistro-for-elasticsearch/index-management/pull/349))
 
 ### Index Management Kibana Plugin
 * Change position of index-management in kibana side bar ([#140](https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/pull/140))
@@ -286,6 +290,7 @@ Open Distro for Elasticsearch 1.12.0 includes the following breaking changes, fe
 
 
 ### Index Management
+* Correctly handles remote transport exceptions in rollover ([#325](https://github.com/opendistro-for-elasticsearch/index-management/pull/325))
 * Accept request parameters in RestGetRollupAction and fix flakey tests ([#353](https://github.com/opendistro-for-elasticsearch/index-management/pull/353))
 
 
@@ -436,6 +441,11 @@ Open Distro for Elasticsearch 1.12.0 includes the following breaking changes, fe
 * Migrate entire plugin to new platform ([#328](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/328))
 * Upgrade to Kibana 7.10.0 ([#329](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/329))
 
+### Index Management
+* Uploads elasticsearch.log files from failed CI runs ([#336](https://github.com/opendistro-for-elasticsearch/index-management/pull/336))
+* Adds support for running local cluster with security plugin enabled ([#322](https://github.com/opendistro-for-elasticsearch/index-management/pull/322))
+* Updates integration tests to not wipe indices between each test to help reduce tests bleeding into each other ([#342](https://github.com/opendistro-for-elasticsearch/index-management/pull/342))
+* Changes set-env command in github workflow (* Adds support for Elasticsearch 7.10.0 ([#349](https://github.com/opendistro-for-elasticsearch/index-management/pull/349)))
 
 ### Job Scheduler
 * Support Elasticsearch 7.10 ([#82](https://github.com/opendistro-for-elasticsearch/job-scheduler/pull/82))
