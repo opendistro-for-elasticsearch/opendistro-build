@@ -28,5 +28,6 @@ spec:
       protocol: TCP
   clusterIP: None
   selector:
+{{ include "opendistro-es.labels.selector" . | indent 4 }}
     role: master
 {{- end }}
