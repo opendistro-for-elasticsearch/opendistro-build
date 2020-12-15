@@ -34,6 +34,7 @@ spec:
     - name: rca
       port: 9650
   selector:
+{{ include "opendistro-es.labels.selector" . | indent 4 }}
   {{- if .Values.elasticsearch.client.dedicatedPod.enabled }}
     role: client
   {{- else }}
