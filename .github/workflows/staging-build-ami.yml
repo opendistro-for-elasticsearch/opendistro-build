@@ -28,7 +28,7 @@ jobs:
         OD_version=`./bin/version-info --od`
         export region_name="us-east-1"
         export os="amazonLinux"
-        export security_group_id="sg-0ffdd3b008cfb0b63"
+        export security_group_id="sg-0a4180f6848aa8675"
     
         
         # please check this during the new release, are we getting the latest ami id
