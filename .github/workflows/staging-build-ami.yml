@@ -3,6 +3,8 @@ name: Build ODFE AMI
 on:
   repository_dispatch:
     types: [staging-build-ami]
+  push:
+    branches: [ami-sg-V290419891]
     
 jobs:
   build:
@@ -28,7 +30,7 @@ jobs:
         OD_version=`./bin/version-info --od`
         export region_name="us-east-1"
         export os="amazonLinux"
-        export security_group_id="sg-0a4180f6848aa8675"
+        export security_group_id="sg-cb2f6f88"
     
         
         # please check this during the new release, are we getting the latest ami id
