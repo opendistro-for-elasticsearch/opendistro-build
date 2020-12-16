@@ -23,7 +23,7 @@ jobs:
         #!/bin/bash
         S3_BUCKET_PROD="artifacts.opendistroforelasticsearch.amazon.com"
         S3_BUCKET_PLUGIN="artifacts.learning"
-        TAG_VERSION="$(./bin/plugins-info client cutversion --require-install-false | tr ' ' '\n' | uniq | sort -V | head -n 1)"
+        TAG_VERSION="$(jq '.["odfe-cli"].cutversion' ./bin/plugins.json |sed 's/"//g')"
         aws s3 sync s3://$S3_BUCKET_PLUGIN/clients/odfe-cli/linux/ s3://$S3_BUCKET_PROD/downloads/elasticsearch-clients/opendistro-cli/ --exclude "*" --include "odfe-cli-${TAG_VERSION}*" --quiet 
         aws s3 sync s3://$S3_BUCKET_PLUGIN/clients/odfe-cli/mac/ s3://$S3_BUCKET_PROD/downloads/elasticsearch-clients/opendistro-cli/ --exclude "*" --include "odfe-cli-${TAG_VERSION}*" --quiet
         aws s3 sync s3://$S3_BUCKET_PLUGIN/clients/odfe-cli/windows/ s3://$S3_BUCKET_PROD/downloads/elasticsearch-clients/opendistro-cli/ --exclude "*" --include "odfe-cli-${TAG_VERSION}*" --quiet
