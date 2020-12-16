@@ -29,7 +29,6 @@ jobs:
       - uses: actions/checkout@v1
       - name: Retrieve plugin tags
         run: |
-#          echo "p_tag_cli=$(jq '.["odfe-cli"].cutversion' ./bin/plugins.json |sed 's/"//g')" >> $GITHUB_ENV
           echo "tag_v=$(./bin/plugins-info client cutversion --require-install-false | tr ' ' '\n' | uniq | sort -V | head -n 1)" >> $GITHUB_ENV 
       - name: Checkout odfe-cli
         uses: actions/checkout@v2
