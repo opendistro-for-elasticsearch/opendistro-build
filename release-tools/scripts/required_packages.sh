@@ -9,7 +9,7 @@ echo "This script is to installed the required packages for GitHub Runners"
 
 # Install from package managers
 sudo apt update || sudo yum repolist
-sudo apt install -y $DEB_PKGS || sudo yum install $RPM_PKGS
+sudo apt install -y $DEB_PKGS || sudo yum install -y $RPM_PKGS
 
 # Install from repositories
 
