@@ -39,7 +39,7 @@ GIT_REPONAMES=$1
 OLDIFS=$IFS
 
 # Avoid issues when running on windows
-OD_VERSION=`$SCRIPTS_DIR/version-info.py --od`
+OD_VERSION=`python $SCRIPTS_DIR/version-info.py --od`
 
 # Use Major.Minor only to check available tags
 if [ "$USE_PATCH_VERSION" -eq 0 ]
