@@ -62,9 +62,8 @@ jobs:
               paTargetGroup=`aws elbv2 describe-target-groups --names PA-$distribution_type-SECURITY-$security --query TargetGroups[*].TargetGroupArn --output text`
   
               echo "Creating $stackName stack"
-  
               aws cloudformation create-stack --stack-name $stackName \
-              --template-body file://.github/templates/odfe-testing-cluster-static-domain-template.json \
+              --template-body file://release-tools/templates/odfe-testing-cluster-static-domain-template.json \
               --parameters ParameterKey=userdata,ParameterValue=$(base64 -w0 userdata_$distribution_type.sh) \
               ParameterKey=distribution,ParameterValue=$distribution_type \
               ParameterKey=security,ParameterValue=$security \
