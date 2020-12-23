@@ -26,8 +26,8 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_STACK_KEY }}
-          aws-secret-access-key: ${{ secrets.AWS_STACK_SECRET }}
+          aws-access-key-id: ${{ secrets.TESTING_ACCOUNT_IAM_KEY}}
+          aws-secret-access-key: ${{ secrets.TESTING_ACCOUNT_IAM_SECRET }}
           aws-region: us-west-2
 
       - name: Creating cluster with static domain name
@@ -67,8 +67,8 @@ jobs:
               --parameters ParameterKey=userdata,ParameterValue=$(base64 -w0 userdata_$distribution_type.sh) \
               ParameterKey=distribution,ParameterValue=$distribution_type \
               ParameterKey=security,ParameterValue=$security \
-              ParameterKey=ODFESecurityGroup,ParameterValue=${{secrets.ODFESECURITYGROUP}} \
-              ParameterKey=keypair,ParameterValue=${{secrets.AWS_ODFE_TESTING_CLUSTER_KEYPAIR}} \
+              ParameterKey=ODFESecurityGroup,ParameterValue=sg-050990cf314e66320 \
+              ParameterKey=keypair,ParameterValue=odfe-testing-cluster \
               ParameterKey=esTargetGroup,ParameterValue=$esTargetGroup \
               ParameterKey=kibanaTargetGroup,ParameterValue=$kibanaTargetGroup \
               ParameterKey=paTargetGroup,ParameterValue=$paTargetGroup
