@@ -11,6 +11,9 @@ on:
   #   - cron: '0 11 * * *'
   repository_dispatch:
     types: [test-cluster-static-domain-set-up]
+  push:
+    branches:
+      - "test-cluster-fixes"
 
 jobs:
   Create-Cluster:
@@ -50,7 +53,7 @@ jobs:
                   fi
               done
               
-              .github/scripts/userdata.sh $1 $2
+              release-tools/scripts/userdata.sh $1 $2
               ls -ltr
 
               # Getting target groups for ELB mapping
@@ -83,11 +86,11 @@ jobs:
               stackName=ODFE-$distribution_type-SECURITY-$security
               echo $stackName
               stack_setup $distribution_type $security
-            elif ${{ github.event_name == 'schedule' }}
+            elif ${{ github.event_name == 'schedule' }} || ${{ github.event_name == 'push' }}
             then
-              for distribution_type in RPM DEB TAR
+              for distribution_type in RPM
               do
-                for security in ENABLE DISABLE
+                for security in ENABLE
                 do
                   stackName=ODFE-$distribution_type-SECURITY-$security
                   echo $stackName
