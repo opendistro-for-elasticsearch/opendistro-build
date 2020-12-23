@@ -179,7 +179,7 @@ then
     docker build -t odfe-http:no-security -f Dockerfile .
     sleep 5
   else
-    sudo /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro_security 
+    sudo /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro_security
     sudo sed -i '/http\.port/s/^# *//' /etc/elasticsearch/elasticsearch.yml
     sudo sed -i /^opendistro_security/d /etc/elasticsearch/elasticsearch.yml
     sudo sed -i /CN=kirk/d /etc/elasticsearch/elasticsearch.yml

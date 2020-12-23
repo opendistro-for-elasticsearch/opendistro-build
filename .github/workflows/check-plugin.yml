@@ -15,14 +15,18 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
+
+      - name: Required Packages
+        run: release-tools/scripts/required_packages.sh
+
       - name: Checking Availability
         run: |
           #!/bin/bash
           set -e
-          .github/scripts/check_plugin.sh
+          release-tools/scripts/check_plugin.sh
           echo 'CHIME_MESSAGE<<EOF' >> $GITHUB_ENV
             cat /tmp/chime_message.md >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
