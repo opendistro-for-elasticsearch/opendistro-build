@@ -23,8 +23,8 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.TESTING_ACCOUNT_IAM_KEY }}
-          aws-secret-access-key: ${{ secrets.TESTING_ACCOUNT_IAM_SECRET }}
+          aws-access-key-id: ${{ secrets.AWS_TESTING_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_TESTING_SECRET_ACCESS_KEY }}
           aws-region: us-west-2
 
       - name: Creating cluster with static domain name
