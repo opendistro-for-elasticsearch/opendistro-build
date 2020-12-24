@@ -37,16 +37,12 @@ jobs:
 
             #Function to create stack
             function stack_setup() {
-              echo "infunction"
-              echo $stackName
               distribution_type=$1
               security=$2
               existingStacks=`aws cloudformation list-stacks --query 'StackSummaries[*].StackName' --output text`
-              echo "existing stacks are $existingStacks"
 
               for i in $existingStacks
               do
-                  echo "i now is $i"
                   if [[ $i = $stackName ]]
                   then
                       echo "Stack already exists! Deleting the old stack"
@@ -90,13 +86,12 @@ jobs:
               stack_setup $distribution_type $security
             elif ${{ github.event_name == 'schedule' }} || ${{ github.event_name == 'push' }}
             then
-              for distribution_type in RPM
+              for distribution_type in RPM DEB
               do
                 for security in ENABLE
                 do
                   stackName=ODFE-$distribution_type-SECURITY-$security
                   echo $stackName
-                  echo "Calling function"
                   stack_setup $distribution_type $security
                   rm userdata_$distribution_type.sh
                 done
