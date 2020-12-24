@@ -42,9 +42,11 @@ jobs:
               distribution_type=$1
               security=$2
               existingStacks=`aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE --query 'StackSummaries[*].StackName' --output text`
+              echo "existing stacks are $existingStacks"
 
               for i in $existingStacks
               do
+                  echo "i now is $i"
                   if [[ $i = $stackName ]]
                   then
                       echo "Stack already exists! Deleting the old stack"
