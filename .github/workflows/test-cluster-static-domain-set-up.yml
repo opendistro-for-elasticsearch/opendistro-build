@@ -23,8 +23,8 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_STACK_KEY }}
-          aws-secret-access-key: ${{ secrets.AWS_STACK_SECRET }}
+          aws-access-key-id: ${{ secrets.AWS_TESTING_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_TESTING_SECRET_ACCESS_KEY }}
           aws-region: us-west-2
 
       - name: Creating cluster with static domain name
@@ -33,11 +33,10 @@ jobs:
             set -e
 
             #Function to create stack
-
             function stack_setup() {
               distribution_type=$1
               security=$2
-              existingStacks=`aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE --query 'StackSummaries[*].StackName' --output text`
+              existingStacks=`aws cloudformation list-stacks --query 'StackSummaries[*].StackName' --output text`
 
               for i in $existingStacks
               do
@@ -50,7 +49,7 @@ jobs:
                   fi
               done
               
-              .github/scripts/userdata.sh $1 $2
+              release-tools/scripts/userdata.sh $1 $2
               ls -ltr
 
               # Getting target groups for ELB mapping
@@ -59,14 +58,13 @@ jobs:
               paTargetGroup=`aws elbv2 describe-target-groups --names PA-$distribution_type-SECURITY-$security --query TargetGroups[*].TargetGroupArn --output text`
   
               echo "Creating $stackName stack"
-  
               aws cloudformation create-stack --stack-name $stackName \
-              --template-body file://.github/templates/odfe-testing-cluster-static-domain-template.json \
+              --template-body file://release-tools/templates/odfe-testing-cluster-static-domain-template.json \
               --parameters ParameterKey=userdata,ParameterValue=$(base64 -w0 userdata_$distribution_type.sh) \
               ParameterKey=distribution,ParameterValue=$distribution_type \
               ParameterKey=security,ParameterValue=$security \
-              ParameterKey=ODFESecurityGroup,ParameterValue=${{secrets.ODFESECURITYGROUP}} \
-              ParameterKey=keypair,ParameterValue=${{secrets.AWS_ODFE_TESTING_CLUSTER_KEYPAIR}} \
+              ParameterKey=ODFESecurityGroup,ParameterValue=sg-050990cf314e66320 \
+              ParameterKey=keypair,ParameterValue=odfe-testing-cluster \
               ParameterKey=esTargetGroup,ParameterValue=$esTargetGroup \
               ParameterKey=kibanaTargetGroup,ParameterValue=$kibanaTargetGroup \
               ParameterKey=paTargetGroup,ParameterValue=$paTargetGroup
