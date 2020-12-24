@@ -41,7 +41,7 @@ jobs:
               echo $stackName
               distribution_type=$1
               security=$2
-              existingStacks=`aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE --query 'StackSummaries[*].StackName' --output text`
+              existingStacks=`aws cloudformation list-stacks --query 'StackSummaries[*].StackName' --output text`
               echo "existing stacks are $existingStacks"
 
               for i in $existingStacks
