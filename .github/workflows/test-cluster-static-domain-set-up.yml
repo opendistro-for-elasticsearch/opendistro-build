@@ -37,6 +37,8 @@ jobs:
 
             #Function to create stack
             function stack_setup() {
+              echo "infunction"
+              echo $stackName
               distribution_type=$1
               security=$2
               existingStacks=`aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE --query 'StackSummaries[*].StackName' --output text`
@@ -92,6 +94,7 @@ jobs:
                 do
                   stackName=ODFE-$distribution_type-SECURITY-$security
                   echo $stackName
+                  echo "Calling function"
                   stack_setup $distribution_type $security
                   rm userdata_$distribution_type.sh
                 done
