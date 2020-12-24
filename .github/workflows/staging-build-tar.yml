@@ -561,7 +561,7 @@ jobs:
 
   Test-SEC-KIBANA:
     # needs: [build-es-artifacts, build-kibana-artifacts]
-    runs-on: [ubuntu-18.04]
+    runs-on: [ubuntu-16.04]
     name: Test-AD-KIBANA
     strategy:
       fail-fast: false
