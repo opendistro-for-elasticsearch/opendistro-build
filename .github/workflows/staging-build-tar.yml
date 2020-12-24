@@ -605,6 +605,7 @@ jobs:
       
       - name: Install correct yarn version for Kibana
         run: |
+          sudo chown -R $USER /usr/local/lib/node_modules
           npm uninstall -g yarn
           echo "Installing yarn ${{ env.kibana_yarn_version }}"
           npm i -g yarn@${{ env.kibana_yarn_version }}
