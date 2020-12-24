@@ -32,7 +32,7 @@ jobs:
             echo $distribution_type $security
             stackName=ODFE-$distribution_type-SECURITY-$security
 
-            existingStacks=`aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE --query 'StackSummaries[*].StackName' --output text`
+            existingStacks=`aws cloudformation list-stacks --query 'StackSummaries[*].StackName' --output text`
 
             for i in $existingStacks
             do
@@ -45,13 +45,13 @@ jobs:
                 fi
             done
             
-            .github/scripts/userdata.sh "$distribution_type" "$security"
+            release-tools/scripts/userdata.sh "$distribution_type" "$security"
             ls -ltr
 
             echo "Creating $stackName stack"
 
             aws cloudformation create-stack --stack-name $stackName \
-            --template-body file://.github/templates/odfe-testing-cluster-template.json \
+            --template-body file://release-tools/templates/odfe-testing-cluster-template.json \
             --parameters ParameterKey=userdata,ParameterValue=$(base64 -w0 userdata_$distribution_type.sh) \
             ParameterKey=distribution,ParameterValue=$distribution_type \
             ParameterKey=security,ParameterValue=$security \
