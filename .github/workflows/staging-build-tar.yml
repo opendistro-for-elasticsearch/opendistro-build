@@ -579,7 +579,15 @@ jobs:
         run: |
           echo "p_tag_ad=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/security-kibana-plugin)" >> $GITHUB_ENV
           echo "es_version=$(release-tools/scripts/version-info.py --es)" >> $GITHUB_ENV
-           
+
+      - name: Checkout Kibana
+        uses: actions/checkout@v2
+        with:
+          repository: opendistro-for-elasticsearch/kibana-oss
+          ref: ${{env.es_version}}
+          token: ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
+          path: kibana  
+
       - uses: actions/checkout@v2
         with:
           repository: opendistro-for-elasticsearch/security-kibana-plugin
@@ -605,7 +613,6 @@ jobs:
       
       - name: Install correct yarn version for Kibana
         run: |
-          sudo chown -R $USER /usr/local/lib/node_modules
           npm uninstall -g yarn
           echo "Installing yarn ${{ env.kibana_yarn_version }}"
           npm i -g yarn@${{ env.kibana_yarn_version }}
