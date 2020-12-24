@@ -36,7 +36,6 @@ jobs:
             set -e
 
             #Function to create stack
-
             function stack_setup() {
               distribution_type=$1
               security=$2
