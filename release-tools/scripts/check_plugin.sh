@@ -89,7 +89,7 @@ do
 
   for pindex in ${!PLUGINS_LOCATION_ARRAY[@]}
   do
-    IFS=' '
+    IFS=$OLDIFS
     plugin_basename=`echo ${PLUGINS_BASENAME_ARRAY[$pindex]}`
     plugin_bucket=`echo ${PLUGINS_LOCATION_ARRAY[$pindex]} | awk -F/ '{print $3}'`
     plugin_path=`echo ${PLUGINS_LOCATION_ARRAY[$pindex]} | sed "s/^.*$plugin_bucket\///g"`
