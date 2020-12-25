@@ -109,14 +109,6 @@ do
       plugin_latest=`aws s3api list-objects --bucket $plugin_bucket --prefix $plugin_path --query 'Contents[].[Key]' --output text \
                      | grep "${ODFE_VERSION}" | grep "${plugin_platform}" | grep "${plugin_arch}" | grep "${plugin_type}" | sort | tail -n 1 | awk -F '/' '{print $NF}'`
 
-      #if [ "${plugin_keyword_array[$kindex]}" = "None" ]
-      #then
-      #  plugin_latest=`aws s3api list-objects --bucket $plugin_bucket --prefix $plugin_path --query 'Contents[].[Key]' --output text \
-      #                 | grep $ODFE_VERSION | grep -i ${plugin_type_array[$tindex]} | sort | tail -n 1 | awk -F '/' '{print $NF}'`
-      #else
-      #  plugin_latest=`aws s3api list-objects --bucket $plugin_bucket --prefix $plugin_path --query 'Contents[].[Key]' --output text \
-      #                 | grep $ODFE_VERSION | grep -i ${plugin_type_array[$tindex]} | grep -i ${plugin_keyword_array[$kindex]} | sort | tail -n 1 | awk -F '/' '{print $NF}'`
-      #fi
       if [ -z "$plugin_latest" ]
       then
         plugin_tag=`$SCRIPTS_DIR/plugin_tag.sh $plugin_git $ODFE_VERSION`
@@ -137,73 +129,73 @@ do
 
   done
 
-#  cd $ROOT
-#
-#  echo "<h1><u>[$plugin_category] Plugins ($ODFE_VERSION) Availability Checks for ( ${#available_plugin[@]}/$plugin_total )</u></h1>" >> message.md
-#  echo "[$plugin_category] Plugins ($ODFE_VERSION) for ( ${#available_plugin[@]}/$plugin_total ): " >> chime_message.md
-#  
-#  echo "<h2><p style='color:red;'><b>NOT AVAILABLE</b></p></h2>" >> message.md
-#  if [ "${#unavailable_plugin[@]}" -gt 0 ]
-#  then
-#    RUN_STATUS=1
-#    echo "<ol>" >> message.md
-#    for item in ${unavailable_plugin[@]}
-#    do
-#      item=`echo $item | awk -F ':' '{print $NF}'`
-#      echo "<li><h3>$item</h3></li>" >> message.md
-#      echo ":x: $item " >> chime_message.md
-#    done
-#    echo "</ol>" >> message.md
-#    echo "<br><br>" >> message.md
-#  fi
-#  
-#  echo "<h2><p style='color:gold;'><b>IN PROGRESS</b></p></h2>" >> message.md
-#  if [ "${#inprogress_plugin[@]}" -gt 0 ]
-#  then
-#    RUN_STATUS=1
-#    echo "<ol>" >> message.md
-#    for item in ${inprogress_plugin[@]}
-#    do
-#      item=`echo $item | awk -F ':' '{print $NF}'`
-#      echo "<li><h3>$item</h3></li>" >> message.md
-#      echo ":hourglass_flowing_sand: $item " >> chime_message.md
-#    done
-#    echo "</ol>" >> message.md
-#    echo "<br><br>" >> message.md
-#  fi
-#
-#  echo "<h2><p style='color:green;;'><b>AVAILABLE</b></p></h2>" >> message.md
-#  if [ "${#available_plugin[@]}" -gt 0 ]
-#  then
-#    echo "<ol>" >> message.md
-#    for item in ${available_plugin[@]}
-#    do
-#      item=`echo $item | awk -F ':' '{print $NF}'`
-#      echo "<li><h3>$item</h3></li>" >> message.md
-#      echo ":white_check_mark: $item " >> chime_message.md
-#    done
-#    echo "</ol>" >> message.md
-#    echo "<br><br>" >> message.md
-#  fi
-#  
-#  echo "<br><br>" >> message.md
-#  echo "" >> chime_message.md
-#
+  cd $ROOT
+
+  echo "<h1><u>[$plugin_category] Plugins ($ODFE_VERSION) Availability Checks for ( ${#available_plugin[@]}/$plugin_total )</u></h1>" >> message.md
+  echo "[$plugin_category] Plugins ($ODFE_VERSION) for ( ${#available_plugin[@]}/$plugin_total ): " >> chime_message.md
+  
+  echo "<h2><p style='color:red;'><b>NOT AVAILABLE</b></p></h2>" >> message.md
+  if [ "${#unavailable_plugin[@]}" -gt 0 ]
+  then
+    RUN_STATUS=1
+    echo "<ol>" >> message.md
+    for item in ${unavailable_plugin[@]}
+    do
+      item=`echo $item | awk -F ':' '{print $NF}'`
+      echo "<li><h3>$item</h3></li>" >> message.md
+      echo ":x: $item " >> chime_message.md
+    done
+    echo "</ol>" >> message.md
+    echo "<br><br>" >> message.md
+  fi
+  
+  echo "<h2><p style='color:gold;'><b>IN PROGRESS</b></p></h2>" >> message.md
+  if [ "${#inprogress_plugin[@]}" -gt 0 ]
+  then
+    RUN_STATUS=1
+    echo "<ol>" >> message.md
+    for item in ${inprogress_plugin[@]}
+    do
+      item=`echo $item | awk -F ':' '{print $NF}'`
+      echo "<li><h3>$item</h3></li>" >> message.md
+      echo ":hourglass_flowing_sand: $item " >> chime_message.md
+    done
+    echo "</ol>" >> message.md
+    echo "<br><br>" >> message.md
+  fi
+
+  echo "<h2><p style='color:green;;'><b>AVAILABLE</b></p></h2>" >> message.md
+  if [ "${#available_plugin[@]}" -gt 0 ]
+  then
+    echo "<ol>" >> message.md
+    for item in ${available_plugin[@]}
+    do
+      item=`echo $item | awk -F ':' '{print $NF}'`
+      echo "<li><h3>$item</h3></li>" >> message.md
+      echo ":white_check_mark: $item " >> chime_message.md
+    done
+    echo "</ol>" >> message.md
+    echo "<br><br>" >> message.md
+  fi
+  
+  echo "<br><br>" >> message.md
+  echo "" >> chime_message.md
+
 done
-#
-#echo "#######################################"
-## cp message.md to work with the check_plugin.yml workflow
-#cp -v message.md /tmp/message.md
-#cp -v chime_message.md /tmp/chime_message.md
-#
-## Use status to decide a success or failure run
-## DO NOT change this as workflow email is depend on this
-#if [ "$RUN_STATUS" -eq 1 ]
-#then
-#  echo "Plugin Checks Failure with 1 or more plugin(s) is not available"
-#  echo -n 1 > /tmp/plugin_status.check
-#else
-#  echo "Plugin Checks Success"
-#  echo -n 0 > /tmp/plugin_status.check
-#fi
+
+echo "#######################################"
+# cp message.md to work with the check_plugin.yml workflow
+cp -v message.md /tmp/message.md
+cp -v chime_message.md /tmp/chime_message.md
+
+# Use status to decide a success or failure run
+# DO NOT change this as workflow email is depend on this
+if [ "$RUN_STATUS" -eq 1 ]
+then
+  echo "Plugin Checks Failure with 1 or more plugin(s) is not available"
+  echo -n 1 > /tmp/plugin_status.check
+else
+  echo "Plugin Checks Success"
+  echo -n 0 > /tmp/plugin_status.check
+fi
 
