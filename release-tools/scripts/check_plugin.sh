@@ -104,43 +104,35 @@ do
     for lindex in ${!plugin_platform_array[@]}
     do
       plugin_platform=${plugin_platform_array[$lindex]}; if [ "$plugin_platform" = "all" ]; then plugin_platform="";  fi
- 
-      for aindex in ${!plugin_arch_array[@]}
-      do
-        plugin_arch=${plugin_arch_array[$aindex]}; if [ "$plugin_arch" = "all" ]; then plugin_arch="";  fi
+      plugin_arch=${plugin_arch_array[$aindex]}; if [ "$plugin_arch" = "all" ]; then plugin_arch="";  fi
+      plugin_type=${plugin_type_array[$tindex]}
+      plugin_latest=`aws s3api list-objects --bucket $plugin_bucket --prefix $plugin_path --query 'Contents[].[Key]' --output text \
+                     | grep "${ODFE_VERSION}" | grep "${plugin_platform}" | grep "${plugin_arch}" | grep "${plugin_type}" | sort | tail -n 1 | awk -F '/' '{print $NF}'`
 
-        for tindex in ${!plugin_type_array[@]}
-        do
-          plugin_type=${plugin_type_array[$tindex]}
-          plugin_latest=`aws s3api list-objects --bucket $plugin_bucket --prefix $plugin_path --query 'Contents[].[Key]' --output text \
-                         | grep "${ODFE_VERSION}" | grep "${plugin_platform}" | grep "${plugin_arch}" | grep "${plugin_type}" | sort | tail -n 1 | awk -F '/' '{print $NF}'`
-
-          #if [ "${plugin_keyword_array[$kindex]}" = "None" ]
-          #then
-          #  plugin_latest=`aws s3api list-objects --bucket $plugin_bucket --prefix $plugin_path --query 'Contents[].[Key]' --output text \
-          #                 | grep $ODFE_VERSION | grep -i ${plugin_type_array[$tindex]} | sort | tail -n 1 | awk -F '/' '{print $NF}'`
-          #else
-          #  plugin_latest=`aws s3api list-objects --bucket $plugin_bucket --prefix $plugin_path --query 'Contents[].[Key]' --output text \
-          #                 | grep $ODFE_VERSION | grep -i ${plugin_type_array[$tindex]} | grep -i ${plugin_keyword_array[$kindex]} | sort | tail -n 1 | awk -F '/' '{print $NF}'`
-          #fi
-          if [ -z "$plugin_latest" ]
-          then
-            plugin_tag=`$SCRIPTS_DIR/plugin_tag.sh $plugin_git $ODFE_VERSION`
-            if [ -z "$plugin_tag" ]
-            then
-              plugin_latest="unavailable:${plugin_type_array[$tindex]}:${plugin_basename}"
-              unavailable_plugin+=( $plugin_latest )
-            else
-              plugin_latest="in_progress:${plugin_type_array[$tindex]}:${plugin_basename}"
-              inprogress_plugin+=( $plugin_latest )
-            fi
-          else
-            plugin_latest="isavailable:${plugin_type_array[$tindex]}:${plugin_latest}"
-            available_plugin+=( $plugin_latest )
-          fi
-          echo $plugin_latest
-        done
-      done
+      #if [ "${plugin_keyword_array[$kindex]}" = "None" ]
+      #then
+      #  plugin_latest=`aws s3api list-objects --bucket $plugin_bucket --prefix $plugin_path --query 'Contents[].[Key]' --output text \
+      #                 | grep $ODFE_VERSION | grep -i ${plugin_type_array[$tindex]} | sort | tail -n 1 | awk -F '/' '{print $NF}'`
+      #else
+      #  plugin_latest=`aws s3api list-objects --bucket $plugin_bucket --prefix $plugin_path --query 'Contents[].[Key]' --output text \
+      #                 | grep $ODFE_VERSION | grep -i ${plugin_type_array[$tindex]} | grep -i ${plugin_keyword_array[$kindex]} | sort | tail -n 1 | awk -F '/' '{print $NF}'`
+      #fi
+      if [ -z "$plugin_latest" ]
+      then
+        plugin_tag=`$SCRIPTS_DIR/plugin_tag.sh $plugin_git $ODFE_VERSION`
+        if [ -z "$plugin_tag" ]
+        then
+          plugin_latest="unavailable:${plugin_type_array[$tindex]}:${plugin_basename}"
+          unavailable_plugin+=( $plugin_latest )
+        else
+          plugin_latest="in_progress:${plugin_type_array[$tindex]}:${plugin_basename}"
+          inprogress_plugin+=( $plugin_latest )
+        fi
+      else
+        plugin_latest="isavailable:${plugin_type_array[$tindex]}:${plugin_latest}"
+        available_plugin+=( $plugin_latest )
+      fi
+      echo $plugin_latest
     done
 
   done
