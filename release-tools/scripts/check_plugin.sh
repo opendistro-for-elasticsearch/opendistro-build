@@ -113,7 +113,7 @@ do
         do
           plugin_type=${plugin_type_array[$tindex]}
           plugin_latest=`aws s3api list-objects --bucket $plugin_bucket --prefix $plugin_path --query 'Contents[].[Key]' --output text \
-                         | grep -E "${ODFE_VERSION}|${plugin_platform}|${plugin_arch}|${plugin_type}" | sort | tail -n 1 | awk -F '/' '{print $NF}'
+                         | grep -E "${ODFE_VERSION}|${plugin_platform}|${plugin_arch}|${plugin_type}" | sort | tail -n 1 | awk -F '/' '{print $NF}'`
 
           #if [ "${plugin_keyword_array[$kindex]}" = "None" ]
           #then
