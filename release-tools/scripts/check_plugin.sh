@@ -104,8 +104,8 @@ do
     for lindex in ${!plugin_platform_array[@]}
     do
       plugin_platform=${plugin_platform_array[$lindex]}; if [ "$plugin_platform" = "all" ]; then plugin_platform="";  fi
-      plugin_arch=${plugin_arch_array[$aindex]}; if [ "$plugin_arch" = "all" ]; then plugin_arch="";  fi
-      plugin_type=${plugin_type_array[$tindex]}
+      plugin_arch=${plugin_arch_array[$lindex]}; if [ "$plugin_arch" = "all" ]; then plugin_arch="";  fi
+      plugin_type=${plugin_type_array[$lindex]}
       plugin_latest=`aws s3api list-objects --bucket $plugin_bucket --prefix $plugin_path --query 'Contents[].[Key]' --output text \
                      | grep "${ODFE_VERSION}" | grep "${plugin_platform}" | grep "${plugin_arch}" | grep "${plugin_type}" | sort | tail -n 1 | awk -F '/' '{print $NF}'`
 
