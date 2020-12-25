@@ -9,9 +9,10 @@
 #                as defined in the $PLUGIN_LIST file
 #
 # Usage:         ./plugins-info.sh $PLUGIN_CATEGORY $RETURN_TYPE
-#                $PLUGIN_CATEGORY : elasticsearch | kibana | client | library  (required)
+#                $PLUGIN_CATEGORY : elasticsearch-plugins | kibana-plugins  (required)
+#                                 | elasticsearch-clients | opendistro-libs  (required)
 #                $RETURN_TYPE     : plugin_location* | plugin_git | plugin_version | plugin_build
-#                                   plugin_type | ......
+#                                   plugin_spec | ......
 #                                 ($PLUGIN_LIST file for more return types)
 #
 # Requirements:  Need to install yq (v4.0.0+) on your system:
@@ -19,7 +20,7 @@
 #                MACOS: brew install yq
 #
 # Starting Date: 2020-06-24
-# Modified Date: 2020-11-16
+# Modified Date: 2020-12-24
 ###############################################################################################
 
 set -e
@@ -41,6 +42,6 @@ fi
 # yq r $PLUGIN_LIST "snapshots.(plugin_category==${PLUGIN_CATEGORY}).${RETURN_TYPE}"
 
 # yq v4.0.0+
-yq eval ".snapshots.[] | select(.plugin_category == \"${PLUGIN_CATEGORY}\") | .${RETURN_TYPE}" $PLUGIN_LIST
+yq eval ".plugins.[] | select(.plugin_category == \"${PLUGIN_CATEGORY}\") | .${RETURN_TYPE}" $PLUGIN_LIST
 
 
