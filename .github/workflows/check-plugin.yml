@@ -5,8 +5,6 @@ on:
   #   - cron: '0 0,15 * * *'
   repository_dispatch:
     types: [check-plugin]
-  push:
-    branches: [dev-conversion-P40553676]
 
 jobs:
   plugin-availability-main:
@@ -39,8 +37,7 @@ jobs:
         uses: peterzhuamazon/github-slack-action@master
         with:
           text: ${{ env.CHIME_MESSAGE }}
-          #webhook: ${{ secrets.SLACK_ODFE_RELEASE }}
-          webhook: ${{ secrets.SLACK_TEST_MESSAGE }}
+          webhook: ${{ secrets.SLACK_ODFE_RELEASE }}
 
       - name: Send mail
         if: ${{ always() }}
@@ -54,8 +51,7 @@ jobs:
           subject: ODFE Plugin Status
           # Read file contents as body:
           body: file:///tmp/message.md
-          #to: odfe-release-process@amazon.com
-          to: zhujiaxi@amazon.com
+          to: odfe-release-process@amazon.com
           from: Opendistro Elasticsearch
           # Optional content type:
           content_type: text/html
