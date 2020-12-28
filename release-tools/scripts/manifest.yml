@@ -12,17 +12,17 @@ versions:
 urls:
   ES: 
     linux_x86: https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-7.9.1-linux-x86_64.tar.gz
-    linux_aarch64: https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-7.9.1-linux-aarch64.tar.gz
+    linux_arm64: https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-7.9.1-linux-aarch64.tar.gz
     windows_x86: https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-7.9.1-windows-x86_64.zip
-    windows_aarch64: 
+    windows_arm64: 
   KIBANA:
     linux_x86: https://artifacts.elastic.co/downloads/kibana/kibana-oss-7.9.1-linux-x86_64.tar.gz
-    linux_aarch64: https://artifacts.elastic.co/downloads/kibana/kibana-oss-7.9.1-linux-aarch64.tar.gz
+    linux_arm64: https://artifacts.elastic.co/downloads/kibana/kibana-oss-7.9.1-linux-aarch64.tar.gz
     windows_x86: https://artifacts.elastic.co/downloads/kibana/kibana-oss-7.9.1-windows-x86_64.zip
-    windows_aarch64: 
+    windows_arm64: 
   OTHERS:
-    prod: s3://staging.artifacts.opendistroforelasticsearch.amazon.com/
-    snapshots: s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/
+    prod: s3://artifacts.opendistroforelasticsearch.amazon.com/
+    #snapshots: s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/
     releases: s3://staging.artifacts.opendistroforelasticsearch.amazon.com/releases/
 
 # Please do not change the plugin orders as they have dependencies
