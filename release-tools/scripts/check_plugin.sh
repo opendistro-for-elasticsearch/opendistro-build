@@ -14,7 +14,7 @@
 #                GREEN:  plugin artifact is in S3
 #
 # Usage:         ./check_plugin.sh $PLUGIN_CATEGORY [$ODFE_VERSION]
-#                $PLUGIN_CATEGORY: elasticsearch | kibana | client | library
+#                $PLUGIN_CATEGORY: elasticsearch-plugins,kibana-plugins,elasticsearch-clients,opendistro-libs
 #                               (optional, use "," to separate multiple entries in one run)
 #                $ODFE_VERSION: x.y.z (optional)
 #
@@ -51,7 +51,7 @@ echo "PLUGIN_CATEGORY is: $PLUGIN_CATEGORY"
 if [ -z "$PLUGIN_CATEGORY" ]
 then
   # Kibana currently have the same plugins for all distros
-  PLUGIN_CATEGORY="elasticsearch,kibana,client,library" # separate the types by comma here
+  PLUGIN_CATEGORY="elasticsearch-plugins,kibana-plugins,elasticsearch-clients,opendistro-libs" # separate the types by comma here
   echo "Use default PLUGIN_CATEGORY: $PLUGIN_CATEGORY"
 fi
 PLUGIN_CATEGORY=`echo $PLUGIN_CATEGORY | tr '[:upper:]' '[:lower:]'`
@@ -73,9 +73,10 @@ IFS=,
 for plugin_category in $PLUGIN_CATEGORY
 do
   IFS=$OLDIFS
+  PLUGINS_BASENAME_ARRAY=( `$SCRIPTS_DIR/plugins-info.sh $plugin_category plugin_basename` )
+  PLUGINS_BUILD_ARRAY=( `$SCRIPTS_DIR/plugins-info.sh $plugin_category plugin_build` )
   PLUGINS_LOCATION_ARRAY=( `$SCRIPTS_DIR/plugins-info.sh $plugin_category plugin_location_staging` )
-  PLUGINS_TYPE_ARRAY=( `$SCRIPTS_DIR/plugins-info.sh $plugin_category plugin_type | sed 's/\[//g;s/\]//g;s/ *//g'` )
-  PLUGINS_KEYWORD_ARRAY=( `$SCRIPTS_DIR/plugins-info.sh $plugin_category plugin_keyword | sed 's/\[/#/g;s/\]/#/g;s/ *//g;s/##/None/g;s/#//g'` )
+  PLUGINS_SPEC_ARRAY=( `$SCRIPTS_DIR/plugins-info.sh $plugin_category plugin_spec | sed 's/\[//g;s/\]//g;s/ *//g'` )
   PLUGINS_GIT=`$SCRIPTS_DIR/plugins-info.sh $plugin_category plugin_git | tr '\n' ' '`
   plugin_total=0
   unavailable_plugin=()
@@ -89,46 +90,44 @@ do
 
   for pindex in ${!PLUGINS_LOCATION_ARRAY[@]}
   do
-    IFS=' '
-    plugin_name=`echo ${PLUGINS_LOCATION_ARRAY[$pindex]} | awk -F/ '{print $NF}'`
+    IFS=$OLDIFS
+    plugin_basename=`echo ${PLUGINS_BASENAME_ARRAY[$pindex]}`
+    plugin_build=`echo ${PLUGINS_BUILD_ARRAY[$pindex]}`
     plugin_bucket=`echo ${PLUGINS_LOCATION_ARRAY[$pindex]} | awk -F/ '{print $3}'`
     plugin_path=`echo ${PLUGINS_LOCATION_ARRAY[$pindex]} | sed "s/^.*$plugin_bucket\///g"`
-    plugin_type_array=( `echo ${PLUGINS_TYPE_ARRAY[$pindex]} | tr ',' ' '` )
-    plugin_keyword_array=( `echo ${PLUGINS_KEYWORD_ARRAY[$pindex]} | tr ',' ' '` )
+    plugin_platform_array=( `echo ${PLUGINS_SPEC_ARRAY[$pindex]} | tr ',' '\n' | awk -F '_' '{print $1}'` )
+    plugin_arch_array=( `echo ${PLUGINS_SPEC_ARRAY[$pindex]} | tr ',' '\n' | awk -F '_' '{print $2}'` )
+    plugin_type_array=( `echo ${PLUGINS_SPEC_ARRAY[$pindex]} | tr ',' '\n' | awk -F '_' '{print $3}'` )
     plugin_total=$((plugin_total+${#plugin_type_array[@]}))
     plugin_git=${PLUGINS_GIT_ARRAY[$pindex]}
 
     IFS=`echo -ne "\n\b"`
 
-    for tindex in ${!plugin_type_array[@]}
+    for lindex in ${!plugin_platform_array[@]}
     do
-      for kindex in ${!plugin_keyword_array[@]}
-      do
-        if [ "${plugin_keyword_array[$kindex]}" = "None" ]
+      plugin_platform=${plugin_platform_array[$lindex]}; if [ "$plugin_platform" = "noplatform" ]; then plugin_platform="";  fi
+      plugin_arch=${plugin_arch_array[$lindex]}; if [ "$plugin_arch" = "noarch" ]; then plugin_arch="";  fi
+      plugin_type=${plugin_type_array[$lindex]}
+      plugin_latest=`aws s3api list-objects --bucket $plugin_bucket --prefix $plugin_path --query 'Contents[].[Key]' --output text \
+                     | grep "${plugin_basename}" | grep "${ODFE_VERSION}" | grep "${plugin_platform}" | grep "${plugin_arch}" | grep "${plugin_build}" | grep "${plugin_type}" \
+                     | sort | tail -n 1 | awk -F '/' '{print $NF}'`
+
+      if [ -z "$plugin_latest" ]
+      then
+        plugin_tag=`$SCRIPTS_DIR/plugin_tag.sh $plugin_git $ODFE_VERSION`
+        if [ -z "$plugin_tag" ]
         then
-          plugin_latest=`aws s3api list-objects --bucket $plugin_bucket --prefix $plugin_path --query 'Contents[].[Key]' --output text \
-                         | grep $ODFE_VERSION | grep -i ${plugin_type_array[$tindex]} | sort | tail -n 1 | awk -F '/' '{print $NF}'`
+          plugin_latest="unavailable:${plugin_type_array[$tindex]}:${plugin_basename}"
+          unavailable_plugin+=( $plugin_latest )
         else
-          plugin_latest=`aws s3api list-objects --bucket $plugin_bucket --prefix $plugin_path --query 'Contents[].[Key]' --output text \
-                         | grep $ODFE_VERSION | grep -i ${plugin_type_array[$tindex]} | grep -i ${plugin_keyword_array[$kindex]} | sort | tail -n 1 | awk -F '/' '{print $NF}'`
+          plugin_latest="in_progress:${plugin_type_array[$tindex]}:${plugin_basename}"
+          inprogress_plugin+=( $plugin_latest )
         fi
-        if [ -z "$plugin_latest" ]
-        then
-          plugin_tag=`$SCRIPTS_DIR/plugin_tag.sh $plugin_git $ODFE_VERSION`
-          if [ -z "$plugin_tag" ]
-          then
-            plugin_latest="unavailable:${plugin_type_array[$tindex]}:${plugin_name}"
-            unavailable_plugin+=( $plugin_latest )
-          else
-            plugin_latest="in_progress:${plugin_type_array[$tindex]}:${plugin_name}"
-            inprogress_plugin+=( $plugin_latest )
-          fi
-        else
-          plugin_latest="isavailable:${plugin_type_array[$tindex]}:${plugin_latest}"
-          available_plugin+=( $plugin_latest )
-        fi
-        echo $plugin_latest
-      done
+      else
+        plugin_latest="isavailable:${plugin_type_array[$tindex]}:${plugin_latest}"
+        available_plugin+=( $plugin_latest )
+      fi
+      echo $plugin_latest
     done
 
   done

@@ -9,9 +9,10 @@
 #                as defined in the $PLUGIN_LIST file
 #
 # Usage:         ./plugins-info.sh $PLUGIN_CATEGORY $RETURN_TYPE
-#                $PLUGIN_CATEGORY : elasticsearch | kibana | client | library  (required)
+#                $PLUGIN_CATEGORY : elasticsearch-plugins | kibana-plugins  (required)
+#                                 | elasticsearch-clients | opendistro-libs  (required)
 #                $RETURN_TYPE     : plugin_location* | plugin_git | plugin_version | plugin_build
-#                                   plugin_type | ......
+#                                   plugin_spec | ......
 #                                 ($PLUGIN_LIST file for more return types)
 #
 # Requirements:  Need to install yq (v4.0.0+) on your system:
@@ -19,7 +20,7 @@
 #                MACOS: brew install yq
 #
 # Starting Date: 2020-06-24
-# Modified Date: 2020-11-16
+# Modified Date: 2020-12-24
 ###############################################################################################
 
 set -e
@@ -32,8 +33,8 @@ REQUIRE_INSTALL=`echo $3 | tr '[:upper:]' '[:lower:]'`
 if [ -z "$PLUGIN_CATEGORY" ] || [ -z "$RETURN_TYPE" ]
 then
   echo "Please enter \$PLUGIN_CATEGORY \$RETURN_TYPE [\$REQUIRE_INSTALL] as parameter(s)"
-  echo "Example: \"$0 elasticsearch plugin_version\" (Retrieve es plugins versions)"
-  echo "Example: \"$0 kibana plugin_git\" (Retrieve kibana plugins s3 paths for git urls)"
+  echo "Example: \"$0 elasticsearch-plugins plugin_version\" (Retrieve es plugins versions)"
+  echo "Example: \"$0 kibana-plugins plugin_git\" (Retrieve kibana plugins git repo urls)"
   exit 1
 fi
 
@@ -41,6 +42,6 @@ fi
 # yq r $PLUGIN_LIST "snapshots.(plugin_category==${PLUGIN_CATEGORY}).${RETURN_TYPE}"
 
 # yq v4.0.0+
-yq eval ".snapshots.[] | select(.plugin_category == \"${PLUGIN_CATEGORY}\") | .${RETURN_TYPE}" $PLUGIN_LIST
+yq eval ".plugins.[] | select(.plugin_category == \"${PLUGIN_CATEGORY}\") | .${RETURN_TYPE}" $PLUGIN_LIST
 
 
