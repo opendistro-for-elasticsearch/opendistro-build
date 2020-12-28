@@ -74,6 +74,7 @@ for plugin_category in $PLUGIN_CATEGORY
 do
   IFS=$OLDIFS
   PLUGINS_BASENAME_ARRAY=( `$SCRIPTS_DIR/plugins-info.sh $plugin_category plugin_basename` )
+  PLUGINS_BUILD_ARRAY=( `$SCRIPTS_DIR/plugins-info.sh $plugin_category plugin_build` )
   PLUGINS_LOCATION_ARRAY=( `$SCRIPTS_DIR/plugins-info.sh $plugin_category plugin_location_staging` )
   PLUGINS_SPEC_ARRAY=( `$SCRIPTS_DIR/plugins-info.sh $plugin_category plugin_spec | sed 's/\[//g;s/\]//g;s/ *//g'` )
   LUGINS_GIT=`$SCRIPTS_DIR/plugins-info.sh $plugin_category plugin_git | tr '\n' ' '`
@@ -91,6 +92,7 @@ do
   do
     IFS=$OLDIFS
     plugin_basename=`echo ${PLUGINS_BASENAME_ARRAY[$pindex]}`
+    plugin_build=`echo ${PLUGINS_BUILD_ARRAY[$pindex]}`
     plugin_bucket=`echo ${PLUGINS_LOCATION_ARRAY[$pindex]} | awk -F/ '{print $3}'`
     plugin_path=`echo ${PLUGINS_LOCATION_ARRAY[$pindex]} | sed "s/^.*$plugin_bucket\///g"`
     plugin_platform_array=( `echo ${PLUGINS_SPEC_ARRAY[$pindex]} | tr ',' '\n' | awk -F '_' '{print $1}'` )
@@ -103,11 +105,12 @@ do
 
     for lindex in ${!plugin_platform_array[@]}
     do
-      plugin_platform=${plugin_platform_array[$lindex]}; if [ "$plugin_platform" = "all" ]; then plugin_platform="";  fi
-      plugin_arch=${plugin_arch_array[$lindex]}; if [ "$plugin_arch" = "all" ]; then plugin_arch="";  fi
+      plugin_platform=${plugin_platform_array[$lindex]}; if [ "$plugin_platform" = "noplatform" ]; then plugin_platform="";  fi
+      plugin_arch=${plugin_arch_array[$lindex]}; if [ "$plugin_arch" = "noarch" ]; then plugin_arch="";  fi
       plugin_type=${plugin_type_array[$lindex]}
       plugin_latest=`aws s3api list-objects --bucket $plugin_bucket --prefix $plugin_path --query 'Contents[].[Key]' --output text \
-                     | grep "${ODFE_VERSION}" | grep "${plugin_platform}" | grep "${plugin_arch}" | grep "${plugin_type}" | sort | tail -n 1 | awk -F '/' '{print $NF}'`
+                     | grep "${plugin_basename}" | grep "${ODFE_VERSION}" | grep "${plugin_platform}" | grep "${plugin_arch}" | grep "${plugin_build}" | grep "${plugin_type}" \
+                     | sort | tail -n 1 | awk -F '/' '{print $NF}'`
 
       if [ -z "$plugin_latest" ]
       then
