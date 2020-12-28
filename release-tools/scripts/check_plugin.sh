@@ -77,7 +77,7 @@ do
   PLUGINS_BUILD_ARRAY=( `$SCRIPTS_DIR/plugins-info.sh $plugin_category plugin_build` )
   PLUGINS_LOCATION_ARRAY=( `$SCRIPTS_DIR/plugins-info.sh $plugin_category plugin_location_staging` )
   PLUGINS_SPEC_ARRAY=( `$SCRIPTS_DIR/plugins-info.sh $plugin_category plugin_spec | sed 's/\[//g;s/\]//g;s/ *//g'` )
-  LUGINS_GIT=`$SCRIPTS_DIR/plugins-info.sh $plugin_category plugin_git | tr '\n' ' '`
+  PLUGINS_GIT=`$SCRIPTS_DIR/plugins-info.sh $plugin_category plugin_git | tr '\n' ' '`
   plugin_total=0
   unavailable_plugin=()
   inprogress_plugin=()
