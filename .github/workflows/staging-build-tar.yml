@@ -5,9 +5,7 @@ on:
   #   - cron: '0 10 * * *'
   repository_dispatch:
     types: [staging-build-tar]
-  push:
-    branches:
-      - "sec-kibana-IT"
+    
 jobs:
   # plugin-availability:
   #   name: Check Plugin Availability
@@ -562,7 +560,7 @@ jobs:
   Test-SEC-KIBANA:
     # needs: [build-es-artifacts, build-kibana-artifacts]
     runs-on: [ubuntu-16.04]
-    name: Test-AD-KIBANA
+    name: Test-SEC-KIBANA
     strategy:
       fail-fast: false
       matrix:
