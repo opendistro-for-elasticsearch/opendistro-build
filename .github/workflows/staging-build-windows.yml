@@ -576,7 +576,7 @@ jobs:
           
       - name: Retrieve plugin tags 
         run: |
-          choco --yes install pip
+          choco install pip -y
           pip --version
           python pip install PyYaml
           echo "p_tag_ad=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/security-kibana-plugin)" >> $GITHUB_ENV
