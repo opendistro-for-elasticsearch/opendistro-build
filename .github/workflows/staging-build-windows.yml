@@ -578,6 +578,7 @@ jobs:
         run: |
           echo "p_tag_ad=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/security-kibana-plugin)" >> $GITHUB_ENV
           echo "es_version=$(release-tools/scripts/version-info.py --es)" >> $GITHUB_ENV
+        shell: bash
 
       - name: Checkout Kibana
         uses: actions/checkout@v2
@@ -603,7 +604,8 @@ jobs:
         run: |
           echo "kibana_node_version=$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV
           echo "kibana_yarn_version=$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV   
-      
+        shell: bash
+
       - name: Setup node
         uses: actions/setup-node@v1
         with:
