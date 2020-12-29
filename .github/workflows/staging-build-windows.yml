@@ -577,7 +577,8 @@ jobs:
       - name: Retrieve plugin tags 
         run: |
           echo "p_tag_ad=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/security-kibana-plugin)" >> $GITHUB_ENV
-          echo "es_version=$(release-tools/scripts/version-info.py --es)" >> $GITHUB_ENV
+          python --version
+          echo "es_version=$(python release-tools/scripts/version-info.py --es)" >> $GITHUB_ENV
         shell: bash
 
       - name: Checkout Kibana
