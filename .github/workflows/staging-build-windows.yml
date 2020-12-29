@@ -573,10 +573,13 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
+      
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
           
       - name: Retrieve plugin tags 
         run: |
-          choco install pip -y
           pip --version
           python pip install PyYaml
           echo "p_tag_ad=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/security-kibana-plugin)" >> $GITHUB_ENV
