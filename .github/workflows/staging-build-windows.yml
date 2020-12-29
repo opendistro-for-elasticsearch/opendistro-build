@@ -578,6 +578,7 @@ jobs:
         run: |
           echo "p_tag_ad=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/security-kibana-plugin)" >> $GITHUB_ENV
           python --version
+          python pip install PyYaml
           echo "es_version=$(python3 release-tools/scripts/version-info.py --es)" >> $GITHUB_ENV
         shell: bash
 
