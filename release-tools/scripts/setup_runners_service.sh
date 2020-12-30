@@ -117,7 +117,6 @@ then
   echo "RUN echo \"path.repo: [\\\"/usr/share/elasticsearch\\\"]\" >> /usr/share/elasticsearch/config/elasticsearch.yml" >> Dockerfile
   # Increase the number of allowed script compilations. The SQL integ tests use a lot of scripts.
   echo "RUN echo \"script.context.field.max_compilations_rate: 1000/1m\" >> /usr/share/elasticsearch/config/elasticsearch.yml" >> Dockerfile
-  echo "RUN echo \"opendistro_security.unsupported.restapi.allow_securityconfig_modification: true\" >> /usr/share/elasticsearch/config/elasticsearch.yml" >> Dockerfile
   docker build -t odfe-http:security -f Dockerfile .
   sleep 5
   docker run -d -p 9200:9200 -d -p 9600:9600 -e "discovery.type=single-node" --name $DOCKER_NAME odfe-http:security
@@ -249,6 +248,7 @@ then
     nohup ./bin/kibana > /dev/null 2>&1 &
   elif [ "$SETUP_DISTRO" = "docker" ]
   then
+    docker exec -t $DOCKER_NAME /bin/bash -c "echo \"opendistro_security.unsupported.restapi.allow_securityconfig_modification: true\" >> /usr/share/elasticsearch/config/elasticsearch.yml"
     docker restart $DOCKER_NAME
     docker run -d --name $DOCKER_NAME_KIBANA --network="host" odfe-kibana-http:security
     docker ps

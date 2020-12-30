@@ -618,12 +618,6 @@ jobs:
         java: [14]
     steps:
       - uses: actions/checkout@v1
-      - name: Set up AWS Cred
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
           
       - name: Retrieve plugin tags 
         run: |
@@ -673,7 +667,7 @@ jobs:
           yarn kbn bootstrap --oss
           
       - name: Start ES and Kibana
-        run: release-tools/scripts/setup_runners_service.sh docker --kibana; sleep 120
+        run: release-tools/scripts/setup_runners_service.sh docker --kibana
  
       - name: Run IT
         run: |
