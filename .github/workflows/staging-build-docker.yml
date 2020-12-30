@@ -5,7 +5,9 @@ on:
   #   - cron: '30 10 * * *'
   repository_dispatch:
     types: [staging-build-docker]
-     
+  push:
+    branches:
+      - "sec-kibana-IT"     
 jobs:
   # build-es-docker:
   #   name: Build ES Docker
@@ -671,7 +673,7 @@ jobs:
           yarn kbn bootstrap --oss
           
       - name: Start ES and Kibana
-        run: release-tools/scripts/setup_runners_service.sh docker --kibana
+        run: release-tools/scripts/setup_runners_service.sh docker --kibana; sleep 120
  
       - name: Run IT
         run: |
