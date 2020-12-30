@@ -110,6 +110,7 @@ then
   echo "path.repo: [\"$PWD/snapshots\"]" >> $ES_ROOT/config/elasticsearch.yml
   # Increase the number of allowed script compilations. The SQL integ tests use a lot of scripts.
   echo "script.context.field.max_compilations_rate: 1000/1m" >> $ES_ROOT/config/elasticsearch.yml
+  echo 'opendistro_security.unsupported.restapi.allow_securityconfig_modification: true' >> $ES_ROOT/config/elasticsearch.yml
 elif [ "$SETUP_DISTRO" = "docker" ]
 then
   echo "FROM opendistroforelasticsearch/opendistroforelasticsearch:$OD_VERSION" >> Dockerfile
