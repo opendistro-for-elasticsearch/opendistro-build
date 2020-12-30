@@ -558,7 +558,7 @@ jobs:
   #         yarn cy:run-with-security --config baseurl=http://localhost:5601
 
   Test-SEC-KIBANA:
-    needs: [build-es-artifacts, build-kibana-artifacts]
+    # needs: [build-es-artifacts, build-kibana-artifacts]
     runs-on: windows-latest
     name: Test-SEC-KIBANA
     strategy:
