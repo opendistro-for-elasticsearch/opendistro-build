@@ -5,9 +5,7 @@ on:
   #   - cron: '30 10 * * *'
   repository_dispatch:
     types: [staging-build-windows]
-  push:
-    branches:
-      - "sec-kibana-IT"  
+
 jobs:
   # build-es-artifacts:
   #   name: Build Windows ES Artifacts
@@ -580,7 +578,7 @@ jobs:
       - name: Retrieve plugin tags 
         run: |
           pip install PyYaml
-          echo "p_tag_ad=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/security-kibana-plugin)" >> $GITHUB_ENV
+          echo "p_tag_sec_kibana=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/security-kibana-plugin)" >> $GITHUB_ENV
           echo "es_version=$(release-tools/scripts/version-info.py --es)" >> $GITHUB_ENV
         shell: bash
 
@@ -595,7 +593,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           repository: opendistro-for-elasticsearch/security-kibana-plugin
-          ref: ${{env.p_tag_ad}}
+          ref: ${{env.p_tag_sec_kibana}}
           path: kibana/plugins/opendistro_security
       
       - name: Setup Java
