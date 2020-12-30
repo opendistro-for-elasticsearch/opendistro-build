@@ -576,7 +576,7 @@ jobs:
           
       - name: Retrieve plugin tags 
         run: |
-          pip install PyYaml
+          # pip install PyYaml
           echo "p_tag_sec_kibana=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/security-kibana-plugin)" >> $GITHUB_ENV
           echo "es_version=$(release-tools/scripts/version-info.py --es)" >> $GITHUB_ENV
         shell: bash
