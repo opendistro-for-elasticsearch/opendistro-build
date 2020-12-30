@@ -4,10 +4,7 @@ on:
   # schedule:
   #   - cron: '0 10 * * *'
   repository_dispatch:
-    types: [staging-build-rpm]
-  push:
-    branches:
-      - "sec-kibana-IT"   
+    types: [staging-build-rpm]  
 
 jobs:
   # plugin-availability:
