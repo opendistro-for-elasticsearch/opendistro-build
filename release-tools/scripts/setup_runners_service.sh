@@ -110,7 +110,6 @@ then
   echo "path.repo: [\"$PWD/snapshots\"]" >> $ES_ROOT/config/elasticsearch.yml
   # Increase the number of allowed script compilations. The SQL integ tests use a lot of scripts.
   echo "script.context.field.max_compilations_rate: 1000/1m" >> $ES_ROOT/config/elasticsearch.yml
-  echo 'opendistro_security.unsupported.restapi.allow_securityconfig_modification: true' >> $ES_ROOT/config/elasticsearch.yml
 elif [ "$SETUP_DISTRO" = "docker" ]
 then
   echo "FROM opendistroforelasticsearch/opendistroforelasticsearch:$OD_VERSION" >> Dockerfile
@@ -242,6 +241,7 @@ then
     sleep 30
     kill -9 `ps -ef | grep [e]lasticsearch | awk '{print $2}'`
     sed -i /^node.max_local_storage_nodes/d ./config/elasticsearch.yml
+    echo "opendistro_security.unsupported.restapi.allow_securityconfig_modification: true" >> ./config/elasticsearch.yml
     nohup ./opendistro-tar-install.sh > /dev/null 2>&1 &
     cd $KIBANA_ROOT
     nohup ./bin/kibana > /dev/null 2>&1 &
