@@ -5,7 +5,10 @@ on:
   #   - cron: '30 10 * * *'
   repository_dispatch:
     types: [staging-build-docker]
-         
+  push:
+    branches:
+      - "sec-kibana-IT"
+               
 jobs:
   # build-es-docker:
   #   name: Build ES Docker

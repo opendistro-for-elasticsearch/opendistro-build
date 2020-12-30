@@ -123,6 +123,7 @@ then
   sleep 30
   echo "Temp Solution to remove the wrong configuration. need be fixed in building stage"
   docker exec -t $DOCKER_NAME /bin/bash -c "sed -i /^node.max_local_storage_nodes/d /usr/share/elasticsearch/config/elasticsearch.yml"
+  docker exec -t $DOCKER_NAME /bin/bash -c "echo \"opendistro_security.unsupported.restapi.allow_securityconfig_modification: true\" >> /usr/share/elasticsearch/config/elasticsearch.yml"
   docker stop $DOCKER_NAME
 else
   sudo mkdir -p /home/repo
@@ -248,7 +249,6 @@ then
     nohup ./bin/kibana > /dev/null 2>&1 &
   elif [ "$SETUP_DISTRO" = "docker" ]
   then
-    docker exec -t $DOCKER_NAME /bin/bash -c "echo \"opendistro_security.unsupported.restapi.allow_securityconfig_modification: true\" >> /usr/share/elasticsearch/config/elasticsearch.yml"
     docker restart $DOCKER_NAME
     docker run -d --name $DOCKER_NAME_KIBANA --network="host" odfe-kibana-http:security
     docker ps
