@@ -686,5 +686,5 @@ jobs:
           # RUNNERS+="odfe-rpm-ad-kibana-nosec,odfe-rpm-sql-kibana-nosec,"
           # RUNNERS+="odfe-rpm-ad-kibana"
           RUNNERS="odfe-rpm-sec-kibana"
-          .github/scripts/setup_runners.sh terminate $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
+          release-tools/scripts/setup_runners.sh terminate $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
 
