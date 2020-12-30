@@ -70,20 +70,20 @@ jobs:
         echo "<h2>On-Demand Opendsitro Docker Image is Ready</h2>" >> Message.md
         echo "<h3>Docker Image: opendistroforelasticsearch/opendistroforelasticsearch:<VERSION-TAG></h3>" >> Message.md
     
-    - name: Send Email
-      uses: dawidd6/action-send-mail@master
-      with:
-        server_address: smtp.gmail.com
-        server_port: 465
-        username: ${{secrets.MAIL_USERNAME}}
-        password: ${{secrets.MAIL_PASSWORD}}
-        subject: Opendistro for Elasticsearch Build - On-Demand ODFE Image is Ready
-        # Read file contents as body:
-        body: file://Message.md
-        to: odfe-distribution-build@amazon.com
-        from: Opendistro Elasticsearch
-        # Optional content type:
-        content_type: text/html
+    # - name: Send Email
+    #   uses: dawidd6/action-send-mail@master
+    #   with:
+    #     server_address: smtp.gmail.com
+    #     server_port: 465
+    #     username: ${{secrets.MAIL_USERNAME}}
+    #     password: ${{secrets.MAIL_PASSWORD}}
+    #     subject: Opendistro for Elasticsearch Build - On-Demand ODFE Image is Ready
+    #     # Read file contents as body:
+    #     body: file://Message.md
+    #     to: odfe-distribution-build@amazon.com
+    #     from: Opendistro Elasticsearch
+    #     # Optional content type:
+    #     content_type: text/html
           
   build-kibana-docker:
     runs-on: [ubuntu-16.04]
@@ -132,20 +132,20 @@ jobs:
           echo "<h2>On-Demand Opendsitro Kibana Docker Image is Ready</h2>" >> Message.md
           echo "<h3>Docker Image: opendistroforelasticsearch/opendistroforelasticsearch-kibana:<VERSION-TAG></h3>" >> Message.md
           
-      - name: Send Email
-        uses: dawidd6/action-send-mail@master
-        with:
-          server_address: smtp.gmail.com
-          server_port: 465
-          username: ${{secrets.MAIL_USERNAME}}
-          password: ${{secrets.MAIL_PASSWORD}}
-          subject: Opendistro for Elasticsearch Build - On-Demand ODFE Kibana Image
-          # Read file contents as body:
-          body: file://Message.md
-          to: odfe-distribution-build@amazon.com
-          from: Opendistro Elasticsearch
-          # Optional content type:
-          content_type: text/html
+      # - name: Send Email
+      #   uses: dawidd6/action-send-mail@master
+      #   with:
+      #     server_address: smtp.gmail.com
+      #     server_port: 465
+      #     username: ${{secrets.MAIL_USERNAME}}
+      #     password: ${{secrets.MAIL_PASSWORD}}
+      #     subject: Opendistro for Elasticsearch Build - On-Demand ODFE Kibana Image
+      #     # Read file contents as body:
+      #     body: file://Message.md
+      #     to: odfe-distribution-build@amazon.com
+      #     from: Opendistro Elasticsearch
+      #     # Optional content type:
+      #     content_type: text/html
   
   Test-ISM-NoSec:
     needs: [build-es-docker]
