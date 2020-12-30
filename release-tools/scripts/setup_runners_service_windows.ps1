@@ -57,7 +57,8 @@ if ($SETUP_ACTION -eq "--es"){
   del .\$PACKAGE-$OD_VERSION\config\elasticsearch.yml
   move .\$PACKAGE-$OD_VERSION\config\elasticsearch.yml.new .\$PACKAGE-$OD_VERSION\config\elasticsearch.yml
   type .\$PACKAGE-$OD_VERSION\config\elasticsearch.yml
-
+  echo "opendistro_security.unsupported.restapi.allow_securityconfig_modification: true" >> .\$PACKAGE-$OD_VERSION\config\elasticsearch.yml
+  
   echo "running es"
   nohup .\$PACKAGE-$OD_VERSION\bin\elasticsearch.bat &
 
