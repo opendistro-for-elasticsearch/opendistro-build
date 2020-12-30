@@ -117,6 +117,7 @@ then
   echo "RUN echo \"path.repo: [\\\"/usr/share/elasticsearch\\\"]\" >> /usr/share/elasticsearch/config/elasticsearch.yml" >> Dockerfile
   # Increase the number of allowed script compilations. The SQL integ tests use a lot of scripts.
   echo "RUN echo \"script.context.field.max_compilations_rate: 1000/1m\" >> /usr/share/elasticsearch/config/elasticsearch.yml" >> Dockerfile
+  echo "RUN echo \"opendistro_security.unsupported.restapi.allow_securityconfig_modification: true\" >> /usr/share/elasticsearch/config/elasticsearch.yml" >> Dockerfile
   docker build -t odfe-http:security -f Dockerfile .
   sleep 5
   docker run -d -p 9200:9200 -d -p 9600:9600 -e "discovery.type=single-node" --name $DOCKER_NAME odfe-http:security
@@ -132,6 +133,7 @@ else
   sudo sed -i /^node.max_local_storage_nodes/d /etc/elasticsearch/elasticsearch.yml
   # Increase the number of allowed script compilations. The SQL integ tests use a lot of scripts.
   sudo echo "script.context.field.max_compilations_rate: 1000/1m" | sudo tee -a /etc/elasticsearch/elasticsearch.yml > /dev/null
+  sudo echo "opendistro_security.unsupported.restapi.allow_securityconfig_modification: true" | sudo tee -a /etc/elasticsearch/elasticsearch.yml > /dev/null
 fi
 
 if [ "$SETUP_ACTION" = "--es" ]
