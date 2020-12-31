@@ -2,7 +2,7 @@
 
 Open Distro for Elasticsearch 1.12.0 is now available for download.
 
-The release consists of Apache 2 licensed Elasticsearch version 7.10.0 and Kibana version 7.10.0. Plugins in the distribution include Alerting, Index Management, Performance Analyzer (with Root Cause Analysis Engine), Security, SQL, Machine Learning with k-NN, Job Schedular, Anomaly Detection, Kibana Notebooks, Reports, and Gantt Chart. Also, SQL JDBC/ODBC driver, SQL CLI Client, and PerfTop (a client for Performance Analyzer) are available for download now.
+The release consists of Apache 2 licensed Elasticsearch version 7.10.0 and Kibana version 7.10.0. Plugins in the distribution include Alerting, Index Management, Performance Analyzer (with Root Cause Analysis Engine), Security, SQL, Machine Learning with k-NN, Job Scheduler, Anomaly Detection, Kibana Notebooks, Reports, and Gantt Chart. Also, SQL JDBC/ODBC driver, SQL CLI Client, and PerfTop (a client for Performance Analyzer) are available for download now.
 
 ## Release Highlights
 
