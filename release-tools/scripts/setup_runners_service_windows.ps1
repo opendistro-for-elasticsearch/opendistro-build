@@ -82,6 +82,8 @@ if ($SETUP_ACTION -eq "--es-nosec" -Or $SETUP_ACTION -eq "--kibana-nosec"){
   echo "Overriding with elasticsearch.yml having no certificates"
   del .\$PACKAGE-$OD_VERSION\config\elasticsearch.yml
   aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/utils/elasticsearch.yml .\$PACKAGE-$OD_VERSION\config --quiet; echo $?
+  mkdir .\$PACKAGE-$OD_VERSION\snapshots
+  echo "path.repo: [\"$PACKAGE-$OD_VERSION\snapshots\"]" >> .\$PACKAGE-$OD_VERSION\config\elasticsearch.yml
 }
 
 if ($SETUP_ACTION -eq "--es-nosec"){
@@ -137,7 +139,7 @@ if ($SETUP_ACTION -eq "--kibana"){
 if ($SETUP_ACTION -eq "--kibana-nosec"){
   echo "removing kibana security"
   cd opendistroforelasticsearch-kibana
-  .\bin\kibana-plugin.bat remove opendistro_security
+  .\bin\kibana-plugin.bat remove opendistroSecurityKibana
   del .\config\kibana.yml
   aws s3 cp s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/utils/kibana-config-without-security/kibana.yml .\config --quiet; echo $?
 

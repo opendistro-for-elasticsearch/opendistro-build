@@ -14,13 +14,25 @@
 #                $EC2_INSTANCE_NAMES: <names of instances> (required, sep ",")
 #                $GITHUB_TOKEN: GitHub PAT with repo scope and Admin Access to $GIT_URL_REPO
 #
-# Requirements:  The env that runs this script must have its AWS IAM with these configurations
+# Requirements:  The env that runs this script must have its AWS resources with these configurations
+#
+#                1. Have an AWS user account with access to EC2 resource, remember the User ID
+#
+#                2. Create EC2 keypairs with name "odfe-release-runner"
+#
+#                3. Create EC2 Security Group with name "odfe-release-runner"
+#                   with inbound rules of 22/9200/9600/5601 from IP ranges that need access to the runner
+#
+#                4. Create IAM resources:
+#
+#                * IAM role with name "odfe-release-runner", and these policies attached to it:
+#                i.  AmazonEC2RoleforSSM
+#                ii. AmazonSSMManagedInstanceCore 
 #                
-#                * SSM Role
-#                AmazonEC2RoleforSSM
-#                AmazonSSMManagedInstanceCore 
-#                
-#                * EC2 User with FullAccess Policy requires these policies to attach to SSM Role
+#                * IAM user "opendistro-ec2-user", generate a pair of security credentials,
+#                  and these policies attached to it:
+#                i.  AmazonEC2FullAccess 
+#                ii. Custom policy using this json, I name it again to "odfe-release-runner"
 #                {
 #                    "Version": "2012-10-17",
 #                    "Statement": [
@@ -34,7 +46,7 @@
 #                            "Resource": [
 #                                "arn:aws:ssm:*:*:document/*",
 #                                "arn:aws:ec2:*:*:instance/*",
-#                                "arn:aws:iam::<User ID>:role/<SSM Role Name>"
+#                                "arn:aws:iam::<AWS User ID>:role/<IAM Role Name above>"
 #                            ]
 #                        },
 #                        {
@@ -46,8 +58,14 @@
 #                    ]
 #                }
 #
+#                5. awscli must "aws login" with the security credencial created for IAM user
+#                   in the step 4 above
+#
+#                6. If you change the above resources name from "odfe-release-runner" to "xyz",
+#                   please update "Variables / Parameters / Settings" section of this script
+#
 # Starting Date: 2020-07-27
-# Modified Date: 2020-09-01
+# Modified Date: 2020-10-07
 ###############################################################################################
 
 set -e
@@ -66,15 +84,15 @@ then
 fi
 
 SETUP_ACTION=$1
-SETUP_INSTANCE=`echo $2 | sed 's/,/ /g'`
-SETUP_TOKEN=$3
-SETUP_AMI_ID="ami-0d4131ed63328e32f"
-SETUP_AMI_USER="ec2-user"
-SETUP_INSTANCE_TYPE="m5.xlarge"
-SETUP_INSTANCE_SIZE=20 #GiB
-SETUP_KEYNAME="odfe-release-runner"
-SETUP_SECURITY_GROUP="odfe-release-runner"
-SETUP_IAM_NAME="odfe-release-runner"
+SETUP_RUNNER=`echo $2 | sed 's/,/ /g'`
+SETUP_GIT_TOKEN=$3
+EC2_AMI_ID="ami-086e8a98280780e63"
+EC2_AMI_USER="ec2-user"
+EC2_INSTANCE_TYPE="m5.xlarge"
+EC2_INSTANCE_SIZE=20 #GiB
+EC2_KEYPAIR="odfe-release-runner"
+EC2_SECURITYGROUP="odfe-release-runner"
+IAM_ROLE="odfe-release-runner"
 GIT_URL_API="https://api.github.com/repos"
 GIT_URL_BASE="https://github.com"
 GIT_URL_REPO="opendistro-for-elasticsearch/opendistro-build"
@@ -92,17 +110,17 @@ if [ "$SETUP_ACTION" = "run" ]
 then
 
   echo ""
-  echo "Run / Start instances and bootstrap runners [${SETUP_INSTANCE}]"
+  echo "Run / Start instances and bootstrap runners [${SETUP_RUNNER}]"
   echo ""
 
   # Provision VMs
-  for instance_name1 in $SETUP_INSTANCE
+  for instance_name1 in $SETUP_RUNNER
   do
     echo "[${instance_name1}]: Start provisioning vm"
-    aws ec2 run-instances --image-id $SETUP_AMI_ID --count 1 --instance-type $SETUP_INSTANCE_TYPE \
-                          --block-device-mapping DeviceName=/dev/xvda,Ebs={VolumeSize=$SETUP_INSTANCE_SIZE} \
-                          --key-name $SETUP_KEYNAME --security-groups $SETUP_SECURITY_GROUP \
-                          --iam-instance-profile Name=$SETUP_IAM_NAME \
+    aws ec2 run-instances --image-id $EC2_AMI_ID --count 1 --instance-type $EC2_INSTANCE_TYPE \
+                          --block-device-mapping DeviceName=/dev/xvda,Ebs={VolumeSize=$EC2_INSTANCE_SIZE} \
+                          --key-name $EC2_KEYPAIR --security-groups $EC2_SECURITYGROUP \
+                          --iam-instance-profile Name=$IAM_ROLE \
                           --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$instance_name1}]" > /dev/null 2>&1; echo $?
     sleep 1
   done
@@ -114,7 +132,7 @@ then
   sleep 120
 
   # Setup VMs to register as runners
-  for instance_name2 in $SETUP_INSTANCE
+  for instance_name2 in $SETUP_RUNNER
   do
     echo "[${instance_name2}]: Make change of the runner hostname"
     aws ssm send-command --targets Key=tag:Name,Values=$instance_name2 --document-name "AWS-RunShellScript" \
@@ -123,14 +141,14 @@ then
 
     echo "[${instance_name2}]: Get latest runner binary to server ${RUNNER_URL}"
     aws ssm send-command --targets Key=tag:Name,Values=$instance_name2 --document-name "AWS-RunShellScript" \
-                         --parameters '{"commands": ["#!/bin/bash", "sudo su - '${SETUP_AMI_USER}' -c \"mkdir -p '${RUNNER_DIR}' && cd '${RUNNER_DIR}' && wget -q '${RUNNER_URL}' && tar -xzf *.tar.gz && rm *.tar.gz \""]}' \
+                         --parameters '{"commands": ["#!/bin/bash", "sudo su - '${EC2_AMI_USER}' -c \"mkdir -p '${RUNNER_DIR}' && cd '${RUNNER_DIR}' && wget -q '${RUNNER_URL}' && tar -xzf *.tar.gz && rm *.tar.gz \""]}' \
                          --output text > /dev/null 2>&1; echo $?
 
     echo "[${instance_name2}]: Get runner token and bootstrap on Git"
-    instance_runner_token=`curl --silent -H "Authorization: token ${SETUP_TOKEN}" --request POST "${GIT_URL_API}/${GIT_URL_REPO}/actions/runners/registration-token" | jq -r .token`
+    instance_runner_token=`curl --silent -H "Authorization: token ${SETUP_GIT_TOKEN}" --request POST "${GIT_URL_API}/${GIT_URL_REPO}/actions/runners/registration-token" | jq -r .token`
     # Wait 10 seconds for untar of runner binary to complete
     aws ssm send-command --targets Key=tag:Name,Values=$instance_name2 --document-name "AWS-RunShellScript" \
-                         --parameters '{"commands": ["#!/bin/bash", "sudo su - '${SETUP_AMI_USER}' -c \"cd '${RUNNER_DIR}' && sleep 10 && ./config.sh --unattended --url '${GIT_URL_BASE}/${GIT_URL_REPO}' --labels '${instance_name2}' --token '${instance_runner_token}' && nohup ./run.sh &\""]}' \
+                         --parameters '{"commands": ["#!/bin/bash", "sudo su - '${EC2_AMI_USER}' -c \"cd '${RUNNER_DIR}' && sleep 10 && ./config.sh --unattended --url '${GIT_URL_BASE}/${GIT_URL_REPO}' --labels '${instance_name2}' --token '${instance_runner_token}' && nohup ./run.sh &\""]}' \
                          --output text > /dev/null 2>&1; echo $?
     sleep 5
   done
@@ -154,14 +172,14 @@ if [ "$SETUP_ACTION" = "terminate" ]
 then
 
   echo ""
-  echo "Terminate / Delete instances and remove runners [${SETUP_INSTANCE}]"
+  echo "Terminate / Delete instances and remove runners [${SETUP_RUNNER}]"
   echo ""
 
-  for instance_name3 in $SETUP_INSTANCE
+  for instance_name3 in $SETUP_RUNNER
   do
-    instance_runner_id_git=`curl --silent -H "Authorization: token ${SETUP_TOKEN}" --request GET "${GIT_URL_API}/${GIT_URL_REPO}/actions/runners" | jq ".runners[] | select(.name == \"${instance_name3}\") | .id"`
+    instance_runner_id_git=`curl --silent -H "Authorization: token ${SETUP_GIT_TOKEN}" --request GET "${GIT_URL_API}/${GIT_URL_REPO}/actions/runners" | jq ".runners[] | select(.name == \"${instance_name3}\") | .id"`
     echo "[${instance_name3}]: Unbootstrap runner from Git"
-    curl --silent -H "Authorization: token ${SETUP_TOKEN}" --request DELETE "${GIT_URL_API}/${GIT_URL_REPO}/actions/runners/${instance_runner_id_git}"; echo $?
+    curl --silent -H "Authorization: token ${SETUP_GIT_TOKEN}" --request DELETE "${GIT_URL_API}/${GIT_URL_REPO}/actions/runners/${instance_runner_id_git}"; echo $?
 
     instance_runner_id_ec2=`aws ec2 describe-instances --filters "Name=tag:Name,Values=$instance_name3" | jq -r '.Reservations[].Instances[] | select(.State.Code == 16) | .InstanceId'` # Only running instances
     echo "[${instance_name3}]: Remove tags Name"
