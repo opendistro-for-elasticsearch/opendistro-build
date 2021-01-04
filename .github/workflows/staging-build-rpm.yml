@@ -598,7 +598,7 @@ jobs:
         java: [14]
     steps:
       - uses: actions/checkout@v1
-      
+
       - name: Retrieve plugin tags 
         run: |
           echo "p_tag_sec_kibana=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/security-kibana-plugin)" >> $GITHUB_ENV
@@ -678,6 +678,6 @@ jobs:
           RUNNERS="odfe-rpm-ism-nosec,odfe-rpm-alerting-nosec,odfe-rpm-sql-nosec,odfe-rpm-knn-nosec,odfe-rpm-ad-nosec,"
           RUNNERS+="odfe-rpm-sql,odfe-rpm-ad,odfe-rpm-alerting,"
           RUNNERS+="odfe-rpm-ad-kibana-nosec,odfe-rpm-sql-kibana-nosec,"
-          RUNNERS+="odfe-rpm-ad-kibana, odfe-rpm-sec-kibana"
+          RUNNERS+="odfe-rpm-ad-kibana,odfe-rpm-sec-kibana"
           release-tools/scripts/setup_runners.sh terminate $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
 
