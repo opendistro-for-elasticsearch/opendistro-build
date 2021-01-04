@@ -181,6 +181,7 @@ jobs:
         run: |
           #!/bin/bash
           # Please add comma at the end of the RUNNERS strings
+          # Don't add space after commas
           RUNNERS="odfe-rpm-ism-nosec,odfe-rpm-alerting-nosec,odfe-rpm-sql-nosec,odfe-rpm-knn-nosec,odfe-rpm-ad-nosec,"
           RUNNERS+="odfe-rpm-sql,odfe-rpm-ad,odfe-rpm-alerting,"
           RUNNERS+="odfe-rpm-ad-kibana-nosec,odfe-rpm-sql-kibana-nosec,"
@@ -675,6 +676,7 @@ jobs:
         run: |
           #!/bin/bash
           # Please add comma at the end of the RUNNERS strings
+          # Don't add space after commas
           RUNNERS="odfe-rpm-ism-nosec,odfe-rpm-alerting-nosec,odfe-rpm-sql-nosec,odfe-rpm-knn-nosec,odfe-rpm-ad-nosec,"
           RUNNERS+="odfe-rpm-sql,odfe-rpm-ad,odfe-rpm-alerting,"
           RUNNERS+="odfe-rpm-ad-kibana-nosec,odfe-rpm-sql-kibana-nosec,"
