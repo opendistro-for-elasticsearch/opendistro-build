@@ -507,7 +507,7 @@ jobs:
       - name: Retrieve plugin tags 
         run: |
           echo "p_tag_gantt_chart=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/kibana-reports)" >> $GITHUB_ENV
-          echo "es_version=$(./bin/version-info --es)" >> $GITHUB_ENV
+          echo "es_version=$(release-tools/scripts/version-info.py --es)" >> $GITHUB_ENV
           
       - name: Checkout Kibana
         uses: actions/checkout@v2
