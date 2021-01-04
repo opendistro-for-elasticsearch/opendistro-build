@@ -548,7 +548,7 @@ jobs:
       
       - name: Bootstrap the plugin
         run: |
-          cd ./kibana/plugins/opendistroReportsKibana
+          cd ./kibana/plugins/gantt-chart
           yarn kbn bootstrap
 
       - name: Start ES and Kibana
