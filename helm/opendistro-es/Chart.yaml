@@ -13,7 +13,7 @@
 
 apiVersion: v1
 # Open Distro for Elasticsearch version
-appVersion: 1.10.1
+appVersion: 1.12.0
 description: 'Open Distro for Elasticsearch'
 engine: gotpl
 kubeVersion: ^1.10.0-0
@@ -26,4 +26,4 @@ name: opendistro-es
 sources:
 - https://pages.git.viasat.com/ATG/charts
 # Chart version
-version: 1.10.4
+version: 1.12.0

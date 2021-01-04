@@ -22,8 +22,8 @@
 
 set -e
 REPO_ROOT=`git rev-parse --show-toplevel`
-ES_VER=`$REPO_ROOT/bin/version-info --es`
-ODFE_VER=`$REPO_ROOT/bin/version-info --od`
+ES_VER=`$REPO_ROOT/release-tools/scripts/version-info.py --es`
+ODFE_VER=`$REPO_ROOT/release-tools/scripts/version-info.py --od`
 echo $ES_VER $ODFE_VER
 
 if [ "$#" -ne 2 ] || [ -z "$1" ] || [ -z "$2" ]
@@ -154,7 +154,7 @@ then
 sed -i "s/^echo \"cluster.name.*/echo \"cluster.name \: odfe-$ODFE_VER-$1-noauth\" \>\> \/etc\/elasticsearch\/elasticsearch.yml/g" $REPO_ROOT/userdata_$1.sh
 sed -i "/echo \"network.host/a echo \"opendistro_security.disabled: true\" \>\> \/etc\/elasticsearch\/elasticsearch.yml" $REPO_ROOT/userdata_$1.sh
 cat <<- EOF >> userdata_$1.sh
-sudo rm -rf /usr/share/kibana/plugins/opendistro_security
+sudo rm -rf /usr/share/kibana/plugins/opendistroSecurityKibana
 sudo sed -i /^opendistro_security/d /etc/kibana/kibana.yml
 sudo sed -i 's/https/http/' /etc/kibana/kibana.yml
 EOF
@@ -164,7 +164,7 @@ cat <<- EOF >> userdata_$1.sh
 sudo rm -rf plugins/opendistro_security
 sed -i /^opendistro_security/d config/elasticsearch.yml
 cd /opendistroforelasticsearch-kibana/
-sudo rm -rf plugins/opendistro_security
+sudo rm -rf plugins/opendistroSecurityKibana
 sed -i /^opendistro_security/d config/kibana.yml
 sed -i 's/https/http/' config/kibana.yml
 EOF

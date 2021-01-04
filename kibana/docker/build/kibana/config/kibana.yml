@@ -33,3 +33,4 @@ opendistro_security.cookie.secure: false
 newsfeed.enabled: false
 telemetry.optIn: false
 telemetry.enabled: false
+security.showInsecureClusterWarning: false

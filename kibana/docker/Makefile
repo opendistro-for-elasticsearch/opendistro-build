@@ -54,7 +54,7 @@ lint: venv
 
 build: dockerfile
 	docker pull centos:7
-	 $(FIGLET) "build: $(BUILD_TYPE)"; \
+	# $(FIGLET) "build: $(BUILD_TYPE)";
 	docker build -t $(IMAGE_TAG):$(OPENDISTRO_VERSION) \
 	  -f build/kibana/Dockerfile build/kibana; \
     docker tag $(IMAGE_TAG):$(OPENDISTRO_VERSION) $(IMAGE_TAG):$(OPENDISTRO_VERSION);
@@ -83,7 +83,8 @@ venv: requirements.txt
 	touch venv
 
 # Generate the Dockerfiles from Jinja2 templates.
-dockerfile: venv templates/Dockerfile.j2
+#dockerfile: venv templates/Dockerfile.j2
+dockerfile:
 	jinja2 \
 	  -D artifacts_url='$(ARTIFACTS_URL)' \
 	  -D version_tag='${OPENDISTRO_VERSION}' \

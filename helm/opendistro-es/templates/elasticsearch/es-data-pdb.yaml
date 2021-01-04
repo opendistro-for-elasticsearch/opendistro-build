@@ -12,7 +12,7 @@
 # permissions and limitations under the License.
 
 # @formatter:off
-{{- if and .Values.elasticsearch.data.podDisruptionBudget.enabled .Values.elasticsearch.data.enabled }}
+{{- if and .Values.elasticsearch.data.podDisruptionBudget.enabled .Values.elasticsearch.data.enabled .Values.elasticsearch.data.dedicatedPod.enabled }}
 apiVersion: policy/v1beta1
 kind: PodDisruptionBudget
 metadata:

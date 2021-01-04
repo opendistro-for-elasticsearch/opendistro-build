@@ -13,7 +13,6 @@
 # permissions and limitations under the License.
 
 # @formatter:off
-{{- if .Values.elasticsearch.data.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -34,5 +33,8 @@ spec:
     name: rca
   clusterIP: None
   selector:
+  {{- if .Values.elasticsearch.data.dedicatedPod.enabled }}
     role: data
-{{- end }}
+  {{- else }}
+    role: master
+  {{- end }}

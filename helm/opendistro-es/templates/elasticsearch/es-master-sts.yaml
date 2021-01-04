@@ -80,6 +80,9 @@ spec:
 {{- if .Values.elasticsearch.extraInitContainers }}
 {{ toYaml .Values.elasticsearch.extraInitContainers| indent 6 }}
 {{- end }}
+{{- if .Values.elasticsearch.master.extraInitContainers }}
+{{ toYaml .Values.elasticsearch.master.extraInitContainers| indent 6 }}
+{{- end }}
       containers:
       - name: elasticsearch
         securityContext:
@@ -93,9 +96,17 @@ spec:
         - name: node.master
           value: "true"
         - name: node.ingest
+        {{- if .Values.elasticsearch.client.dedicatedPod.enabled }}
           value: "false"
+        {{- else }}
+          value: "true"
+        {{- end }}
         - name: node.data
+        {{- if .Values.elasticsearch.data.dedicatedPod.enabled }}
           value: "false"
+        {{- else }}
+          value: "true"
+        {{- end }}
         - name: network.host
           value: "0.0.0.0"
     {{- if .Values.elasticsearch.transportKeyPassphrase.enabled}}
@@ -133,6 +144,10 @@ spec:
     {{- end }}
     {{- with .Values.elasticsearch.master.livenessProbe}}
         livenessProbe:
+{{ toYaml . | indent 10 }}
+    {{- end }}
+    {{- with .Values.elasticsearch.master.startupProbe}}
+        startupProbe:
 {{ toYaml . | indent 10 }}
     {{- end }}
         # Official Image from Open Distro Team
@@ -235,6 +250,9 @@ spec:
         {{- end }}
 {{- if .Values.elasticsearch.extraVolumeMounts }}
 {{ toYaml .Values.elasticsearch.extraVolumeMounts | indent 8 }}
+{{- end }}
+{{- if .Values.elasticsearch.master.extraContainers }}
+{{ toYaml .Values.elasticsearch.master.extraContainers | indent 6 }}
 {{- end }}
       volumes:
       - name: config

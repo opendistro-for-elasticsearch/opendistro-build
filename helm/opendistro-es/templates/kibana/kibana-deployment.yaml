@@ -37,8 +37,15 @@ spec:
         {{- if .Values.kibana.config }}
         checksum/config: {{ include (print .Template.BasePath "/kibana/kibana-config-secret.yaml") . | sha256sum | trunc 63 }}
         {{- end }}
+{{- if .Values.kibana.podAnnotations }}
+{{ toYaml .Values.kibana.podAnnotations | indent 8 }}
+{{- end }}
     spec:
 {{- include "opendistro-es.imagePullSecrets" . | indent 6 }}
+{{- if .Values.kibana.extraInitContainers }}
+      initContainers:
+{{ toYaml .Values.kibana.extraInitContainers | indent 8 }}
+{{- end }}
       containers:
       - env:
         - name: CLUSTER_NAME
@@ -86,6 +93,10 @@ spec:
         livenessProbe:
 {{ toYaml . | indent 10 }}
     {{- end }}
+    {{- with .Values.kibana.startupProbe}}
+        startupProbe:
+{{ toYaml . | indent 10 }}
+    {{- end }}
         resources:
 {{ toYaml .Values.kibana.resources | indent 12 }}
         name: {{ template "opendistro-es.fullname" . }}-kibana
@@ -117,8 +128,14 @@ spec:
             name: elasticsearch-certs
             subPath: {{ .Values.kibana.ssl.elasticsearch.existingCertSecretRootCASubPath }}
          {{- end }}
+{{- if .Values.kibana.extraVolumeMounts }}
+{{ toYaml .Values.kibana.extraVolumeMounts | indent 10 }}
+{{- end }}
         ports:
         - containerPort: {{ .Values.kibana.port }}
+{{- if .Values.kibana.extraContainers }}
+{{ toYaml .Values.kibana.extraContainers | indent 6 }}
+{{- end }}
       serviceAccountName: {{ template "opendistro-es.kibana.serviceAccountName" . }}
       volumes:
         {{- if .Values.kibana.config }}
@@ -136,6 +153,9 @@ spec:
           secret:
             secretName: {{ .Values.kibana.ssl.elasticsearch.existingCertSecret }}
         {{- end }}
+{{- if .Values.kibana.extraVolumes }}
+{{ toYaml .Values.kibana.extraVolumes | indent 8 }}
+{{- end }}
     {{- with .Values.kibana.nodeSelector }}
       nodeSelector:
 {{ toYaml . | indent 8 }}

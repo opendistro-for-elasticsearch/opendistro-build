@@ -1,0 +1,180 @@
+Description: Template for setting up IAM users for each plugin repository so they can publish artifacts into the staging bucket
+Parameters:
+  BucketName:
+    Type: String
+    Description: The name of the staging bucket
+    Default: staging.artifacts.opendistroforelasticsearch.amazon.com
+Resources:
+  Alerting:
+    Type: "AWS::IAM::User"
+    Properties:
+      UserName: Alerting
+      Policies:
+        - PolicyName: S3_Write_Access
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              Effect: Allow
+              Action: "s3:PutObject"
+              Resource:
+                - !Sub "arn:aws:s3:::${BucketName}/snapshot/elasticsearch-plugins/alerting/*"
+  AlertingKibana:
+    Type: "AWS::IAM::User"
+    Properties:
+      UserName: AlertingKibana
+      Policies:
+        - PolicyName: S3_Write_Access
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              Effect: Allow
+              Action: "s3:PutObject"
+              Resource:
+                - !Sub "arn:aws:s3:::${BucketName}/snapshot/kibana-plugins/alerting/*"
+  SQL:
+    Type: "AWS::IAM::User"
+    Properties:
+      UserName: SQL
+      Policies:
+        - PolicyName: S3_Write_Access
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              Effect: Allow
+              Action: "s3:PutObject"
+              Resource:
+                - !Sub "arn:aws:s3:::${BucketName}/snapshot/elasticsearch-plugins/sql/*"
+                - !Sub "arn:aws:s3:::${BucketName}/snapshot/kibana-plugins/sql-workbench/*"
+                - !Sub "arn:aws:s3:::${BucketName}/snapshot/clients/sqlcli/*"
+                - !Sub "arn:aws:s3:::${BucketName}/snapshot/clients/sqlodbc/*"
+                - !Sub "arn:aws:s3:::${BucketName}/snapshot/clients/sqljdbc/*"
+  KNN:
+    Type: "AWS::IAM::User"
+    Properties:
+      UserName: k-NN
+      Policies:
+        - PolicyName: S3_Write_Access
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              Effect: Allow
+              Action: "s3:PutObject"
+              Resource:
+                - !Sub "arn:aws:s3:::${BucketName}/snapshot/elasticsearch-plugins/knn/*"
+  JobScheduler:
+    Type: "AWS::IAM::User"
+    Properties:
+      UserName: JobScheduler
+      Policies:
+        - PolicyName: S3_Write_Access
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              Effect: Allow
+              Action: "s3:PutObject"
+              Resource:
+                - !Sub "arn:aws:s3:::${BucketName}/snapshot/elasticsearch-plugins/job-scheduler/*"
+  PerformanceAnalyzer:
+    Type: "AWS::IAM::User"
+    Properties:
+      UserName: PerformanceAnalyzer
+      Policies:
+        - PolicyName: S3_Write_Access
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              Effect: Allow
+              Action: "s3:PutObject"
+              Resource:
+                - !Sub "arn:aws:s3:::${BucketName}/snapshot/elasticsearch-plugins/performance-analyzer/*"
+  PerfTop:
+    Type: "AWS::IAM::User"
+    Properties:
+      UserName: PerfTop
+      Policies:
+        - PolicyName: S3_Write_Access
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              Effect: Allow
+              Action: "s3:PutObject"
+              Resource:
+                - !Sub "arn:aws:s3:::${BucketName}/snapshot/clients/perftop/*"
+  Security:
+    Type: "AWS::IAM::User"
+    Properties:
+      UserName: Security
+      Policies:
+        - PolicyName: S3_Write_Access
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              Effect: Allow
+              Action: "s3:PutObject"
+              Resource:
+                - !Sub "arn:aws:s3:::${BucketName}/snapshot/elasticsearch-plugins/security/*"
+  SecurityKibana:
+    Type: "AWS::IAM::User"
+    Properties:
+      UserName: SecurityKibana
+      Policies:
+        - PolicyName: S3_Write_Access
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              Effect: Allow
+              Action: "s3:PutObject"
+              Resource:
+                - !Sub "arn:aws:s3:::${BucketName}/snapshot/kibana-plugins/security/*"
+  IndexManagement:
+    Type: "AWS::IAM::User"
+    Properties:
+      UserName: IndexManagement
+      Policies:
+        - PolicyName: S3_Write_Access
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              Effect: Allow
+              Action: "s3:PutObject"
+              Resource:
+                - !Sub "arn:aws:s3:::${BucketName}/snapshot/elasticsearch-plugins/index-management/*"
+  IndexManagementKibana:
+    Type: "AWS::IAM::User"
+    Properties:
+      UserName: IndexManagementKibana
+      Policies:
+        - PolicyName: S3_Write_Access
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              Effect: Allow
+              Action: "s3:PutObject"
+              Resource:
+                - !Sub "arn:aws:s3:::${BucketName}/snapshot/kibana-plugins/index-management/*"
+  AnomalyDetection:
+    Type: "AWS::IAM::User"
+    Properties:
+      UserName: AnomalyDetection
+      Policies:
+        - PolicyName: S3_Write_Access
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              Effect: Allow
+              Action: "s3:PutObject"
+              Resource:
+                - !Sub "arn:aws:s3:::${BucketName}/snapshot/elasticsearch-plugins/anomaly-detection/*"
+  AnomalyDetectionKibana:
+    Type: "AWS::IAM::User"
+    Properties:
+      UserName: AnomalyDetectionKibana
+      Policies:
+        - PolicyName: S3_Write_Access
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              Effect: Allow
+              Action: "s3:PutObject"
+              Resource:
+                - !Sub "arn:aws:s3:::${BucketName}/snapshot/kibana-plugins/anomaly-detection/*"

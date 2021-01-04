@@ -1,16 +1,13 @@
 name: Build ES Docker
 
-on: 
-  #schedule:
-  #  - cron: '30 10 * * *'
+on:
+  # schedule:
+  #   - cron: '30 10 * * *'
   repository_dispatch:
     types: [staging-build-docker]
 
 jobs:
   build-es-docker:
-    strategy:
-      matrix:
-        java: [14]
     name: Build ES Docker
     runs-on: ubuntu-18.04
     steps:
@@ -23,10 +20,8 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
 
-    - name: Set Up JDK ${{ matrix.java }}
-      uses: actions/setup-java@v1
-      with:
-        java-version: ${{ matrix.java }}
+    - name: Install Required Packages
+      run: sudo pip3 install jinja2-cli
 
     - name: Starting ES Docker Build
       env:
@@ -37,7 +32,7 @@ jobs:
         ODFE_VER=`./bin/version-info --od`
         echo "ODFE VERSION $ODFE_VER"
         workdir=`pwd`
-        sudo apt-get install python-virtualenv
+        #sudo apt-get install python-virtualenv
         ./download_plugins.sh
         cd elasticsearch
         security=`ls docker/build/elasticsearch/plugins/|grep opendistro_security|wc -l`
@@ -61,8 +56,11 @@ jobs:
         DOCKER_NAME=odfe-test-$ODFE_VER
         echo "Docker Id is $image_id"
         docker tag $image_id opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER
+        docker tag $image_id opendistroforelasticsearch/opendistroforelasticsearch:latest
         docker images
         docker push opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER
+        docker push opendistroforelasticsearch/opendistroforelasticsearch:latest
+        docker logout
         #echo "<h2>The docker image opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER for ODFE has been created and uploaded to docker-hub</h2>" >> $workdir/Release.md
         cd ../../..
         ls -ltr
@@ -72,20 +70,20 @@ jobs:
         echo "<h2>On-Demand Opendsitro Docker Image is Ready</h2>" >> Message.md
         echo "<h3>Docker Image: opendistroforelasticsearch/opendistroforelasticsearch:<VERSION-TAG></h3>" >> Message.md
     
-    - name: Send Email
-      uses: dawidd6/action-send-mail@master
-      with:
-        server_address: smtp.gmail.com
-        server_port: 465
-        username: ${{secrets.MAIL_USERNAME}}
-        password: ${{secrets.MAIL_PASSWORD}}
-        subject: Opendistro for Elasticsearch Build - On-Demand ODFE Image is Ready
-        # Read file contents as body:
-        body: file://Message.md
-        to: odfe-distribution-build@amazon.com
-        from: Opendistro Elasticsearch
-        # Optional content type:
-        content_type: text/html
+    # - name: Send Email
+    #   uses: dawidd6/action-send-mail@master
+    #   with:
+    #     server_address: smtp.gmail.com
+    #     server_port: 465
+    #     username: ${{secrets.MAIL_USERNAME}}
+    #     password: ${{secrets.MAIL_PASSWORD}}
+    #     subject: Opendistro for Elasticsearch Build - On-Demand ODFE Image is Ready
+    #     # Read file contents as body:
+    #     body: file://Message.md
+    #     to: odfe-distribution-build@amazon.com
+    #     from: Opendistro Elasticsearch
+    #     # Optional content type:
+    #     content_type: text/html
           
   build-kibana-docker:
     runs-on: [ubuntu-16.04]
@@ -99,12 +97,15 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
+      - name: Install Required Packages
+        run: sudo pip3 install jinja2-cli
+
       - name: Build Kibana Docker
         env:
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
           DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
         run: |
-          sudo apt-get install python-virtualenv
+          #sudo apt-get install python-virtualenv
           ODFE_VER=`./bin/version-info --od`
           echo "ODFE VERSION $ODFE_VER"
           ./download_kibana_plugins.sh
@@ -120,41 +121,45 @@ jobs:
           kibana_image_id=`awk -F ' ' '{print $3}' kibana_id.out`
           echo "Docker Id is $kibana_image_id"
           docker tag $kibana_image_id opendistroforelasticsearch/opendistroforelasticsearch-kibana:$ODFE_VER
+          docker tag $kibana_image_id opendistroforelasticsearch/opendistroforelasticsearch-kibana:latest
           docker images
           docker push opendistroforelasticsearch/opendistroforelasticsearch-kibana:$ODFE_VER
+          docker push opendistroforelasticsearch/opendistroforelasticsearch-kibana:latest
+          docker logout
           
       - name: Create Email Message
         run: |
           echo "<h2>On-Demand Opendsitro Kibana Docker Image is Ready</h2>" >> Message.md
           echo "<h3>Docker Image: opendistroforelasticsearch/opendistroforelasticsearch-kibana:<VERSION-TAG></h3>" >> Message.md
           
-      - name: Send Email
-        uses: dawidd6/action-send-mail@master
-        with:
-          server_address: smtp.gmail.com
-          server_port: 465
-          username: ${{secrets.MAIL_USERNAME}}
-          password: ${{secrets.MAIL_PASSWORD}}
-          subject: Opendistro for Elasticsearch Build - On-Demand ODFE Kibana Image
-          # Read file contents as body:
-          body: file://Message.md
-          to: odfe-distribution-build@amazon.com
-          from: Opendistro Elasticsearch
-          # Optional content type:
-          content_type: text/html
+      # - name: Send Email
+      #   uses: dawidd6/action-send-mail@master
+      #   with:
+      #     server_address: smtp.gmail.com
+      #     server_port: 465
+      #     username: ${{secrets.MAIL_USERNAME}}
+      #     password: ${{secrets.MAIL_PASSWORD}}
+      #     subject: Opendistro for Elasticsearch Build - On-Demand ODFE Kibana Image
+      #     # Read file contents as body:
+      #     body: file://Message.md
+      #     to: odfe-distribution-build@amazon.com
+      #     from: Opendistro Elasticsearch
+      #     # Optional content type:
+      #     content_type: text/html
   
   Test-ISM-NoSec:
     needs: [build-es-docker]
     runs-on: [ubuntu-18.04]
     name: Test-ISM-NoSec
     strategy:
+      fail-fast: false
       matrix:
         java: [14]
     steps:
       - uses: actions/checkout@v1
 
       - name: Retrieve plugin tags 
-        run:  echo ::set-env name=p_tag_ism::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)
+        run:  echo "p_tag_ism=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)" >> $GITHUB_ENV
 
       - uses: actions/checkout@v1
         with:
@@ -178,13 +183,14 @@ jobs:
     runs-on: [ubuntu-18.04]
     name: Test-ALERTING-NoSec
     strategy:
+      fail-fast: false
       matrix:
         java: [14]
     steps:
       - uses: actions/checkout@v1
 
       - name: Retrieve plugin tags 
-        run:  echo ::set-env name=p_tag_alerting::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)
+        run:  echo "p_tag_alerting=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)" >> $GITHUB_ENV
 
       - uses: actions/checkout@v1
         with:
@@ -207,13 +213,14 @@ jobs:
     runs-on: [ubuntu-18.04]
     name: Test-SQL-NoSec
     strategy:
+      fail-fast: false
       matrix:
         java: [14]
     steps:
       - uses: actions/checkout@v1
 
       - name: Retrieve plugin tags 
-        run:  echo ::set-env name=p_tag_sql::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)
+        run:  echo "p_tag_sql=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)" >> $GITHUB_ENV
 
       - uses: actions/checkout@v1
         with:
@@ -236,12 +243,13 @@ jobs:
     runs-on: [ubuntu-18.04]
     name: Test-KNN-NoSec
     strategy:
+      fail-fast: false
       matrix:
         java: [14]
     steps:
       - uses: actions/checkout@v1
       - name: Retrieve plugin tags 
-        run:  echo ::set-env name=p_tag_knn::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/k-NN)
+        run:  echo "p_tag_knn=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/k-NN)" >> $GITHUB_ENV
       - uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/k-NN
@@ -261,13 +269,14 @@ jobs:
     runs-on: [ubuntu-18.04]
     name: Test-AD-NoSec
     strategy:
+      fail-fast: false
       matrix:
         java: [14]
     steps:
       - uses: actions/checkout@v1
 
       - name: Retrieve plugin tags 
-        run:  echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)
+        run:  echo "p_tag_ad=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)" >> $GITHUB_ENV
 
       - uses: actions/checkout@v1
         with:
@@ -283,20 +292,21 @@ jobs:
         run: |
           .github/scripts/setup_runners_service.sh docker --es-nosec
           export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../anomaly-detection; pwd
-          ./gradlew :integTestRunner --tests "com.amazon.opendistroforelasticsearch.ad.rest.*IT" --tests "com.amazon.opendistroforelasticsearch.ad.e2e.*IT" -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest"
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest"
 
   Test-SQL:
     needs: [build-es-docker]
     runs-on: [ubuntu-18.04]
     name: Test-SQL
     strategy:
+      fail-fast: false
       matrix:
         java: [14]
     steps:
       - uses: actions/checkout@v1
 
       - name: Retrieve plugin tags
-        run:  echo ::set-env name=p_tag_sql::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)
+        run:  echo "p_tag_sql=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)" >> $GITHUB_ENV
 
       - uses: actions/checkout@v1
         with:
@@ -319,13 +329,14 @@ jobs:
     runs-on: [ubuntu-18.04]
     name: Test-AD
     strategy:
+      fail-fast: false
       matrix:
         java: [14]
     steps:
       - uses: actions/checkout@v1
 
       - name: Retrieve plugin tags
-        run:  echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)
+        run:  echo "p_tag_ad=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)" >> $GITHUB_ENV
 
       - uses: actions/checkout@v1
         with:
@@ -341,20 +352,21 @@ jobs:
         run: |
           .github/scripts/setup_runners_service.sh docker --es
           export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../anomaly-detection; pwd
-          ./gradlew :integTestRunner --tests "com.amazon.opendistroforelasticsearch.ad.rest.*IT" --tests "com.amazon.opendistroforelasticsearch.ad.e2e.*IT" -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest" -Dhttps=true -Duser=admin -Dpassword=admin 
-          
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest" -Dhttps=true -Duser=admin -Dpassword=admin
+        
   Test-ALERTING:
     needs: [build-es-docker]
     runs-on: [ubuntu-18.04]
     name: Test-ALERTING
     strategy:
+      fail-fast: false
       matrix:
         java: [14]
     steps:
       - uses: actions/checkout@v1
 
       - name: Retrieve plugin tags 
-        run:  echo ::set-env name=p_tag_alerting::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)
+        run:  echo "p_tag_alerting=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)" >> $GITHUB_ENV
 
       - uses: actions/checkout@v1
         with:
@@ -370,13 +382,14 @@ jobs:
         run: |
           .github/scripts/setup_runners_service.sh docker --es
           export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../alerting/alerting; pwd
-          ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin
+          ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin -Dsecurity=true
 
   Test-AD-Kibana-NoSec:
     needs: [build-es-docker, build-kibana-docker]
     runs-on: [ubuntu-16.04]
     name: Test-AD-Kibana-NoSec
     strategy:
+      fail-fast: false
       matrix:
         java: [14]
     steps:
@@ -384,8 +397,8 @@ jobs:
       
       - name: Retrieve plugin tags 
         run: |
-          echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)
-          echo ::set-env name=es_version::$(./bin/version-info --es)
+          echo "p_tag_ad=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)" >> $GITHUB_ENV
+          echo "es_version=$(./bin/version-info --es)" >> $GITHUB_ENV
           
       - name: Checkout Kibana
         uses: actions/checkout@v2
@@ -409,8 +422,8 @@ jobs:
       - name: Get node and yarn versions
         id: node_yarn_versions
         run: |
-          echo ::set-env name=kibana_node_version::$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")
-          echo ::set-env name=kibana_yarn_version::$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")   
+          echo "kibana_node_version=$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV
+          echo "kibana_yarn_version=$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV   
       
       - name: Setup node
         uses: actions/setup-node@v1
@@ -433,16 +446,105 @@ jobs:
         run: .github/scripts/setup_runners_service.sh docker --kibana-nosec
           
       - name: run IT
-        uses: cypress-io/github-action@v1
+        uses: cypress-io/github-action@v2.5.0
         with:
           working-directory: kibana/plugins/anomaly-detection-kibana-plugin
           command: yarn cy:run --config baseurl=http://localhost:5601
          
+  Test-SQL-KIBANA-NoSec:
+    needs: [build-es-docker, build-kibana-docker]
+    runs-on: [ubuntu-16.04]
+    name: Test-SQL-KIBANA-NoSec
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [14]
+    steps:
+      - uses: actions/checkout@v1
+      - name: Set up AWS Cred
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Retrieve plugin tags 
+        run: |
+          echo "p_tag_sql_kibana=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)" >> $GITHUB_ENV
+          echo "es_version=$(./bin/version-info --es)" >> $GITHUB_ENV
+          
+      - name: Checkout Kibana
+        uses: actions/checkout@v2
+        with:
+          repository: opendistro-for-elasticsearch/kibana-oss
+          ref: ${{env.es_version}}
+          token: ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
+          path: kibana
+           
+      - uses: actions/checkout@v2
+        with:
+          repository: opendistro-for-elasticsearch/sql
+          ref: ${{env.p_tag_sql_kibana}}
+          path: kibana/plugins/sql
+      
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+      
+      - name: Get node and yarn versions
+        id: node_yarn_versions
+        run: |
+          echo "kibana_node_version=$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV
+          echo "kibana_yarn_version=$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV   
+      
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{env.kibana_node_version}}
+          registry-url: 'https://registry.npmjs.org'
+      
+      - name: Install correct yarn version for Kibana
+        run: |
+          npm uninstall -g yarn
+          echo "Installing yarn ${{ env.kibana_yarn_version }}"
+          npm i -g yarn@${{ env.kibana_yarn_version }}
+      
+      - name: Bootstrap the plugin
+        run: |
+          cd ./kibana/plugins
+          cp -rp sql/workbench .
+          rm -rf sql/
+          cd workbench
+
+      - name: Retry the bootstraps
+        # sql repo has a bug that you have to bootstrap at least twice to success
+        # this is a temp solution and they will try to fix it later
+        uses: nick-invision/retry@v1
+        with:
+          # 60 min timeouts as certain runners like windows may take 30+ min just to complete one bootstrap
+          timeout_minutes: 60
+          max_attempts: 3
+          command: cd ./kibana/plugins/workbench; pwd; yarn kbn bootstrap
+
+      - name: Start ES and Kibana
+        run: |
+          .github/scripts/setup_runners_service.sh docker --kibana-nosec
+          echo "load the indices"
+          curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/sql/master/integ-test/src/test/resources/accounts.json | curl -s -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/accounts/_bulk?pretty' --data-binary @- > /dev/null 2>&1
+          curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/sql/master/integ-test/src/test/resources/employee_nested.json | curl -s -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/employee_nested/_bulk?pretty' --data-binary @- > /dev/null 2>&1
+ 
+      - name: run IT
+        uses: cypress-io/github-action@v2.5.0
+        with:
+          working-directory: kibana/plugins/workbench
+          command: npx cypress run
+
   Test-AD-Kibana:
     needs: [build-es-docker, build-kibana-docker]
     runs-on: [ubuntu-16.04]
     name: Test-AD-Kibana
     strategy:
+      fail-fast: false
       matrix:
         java: [14]
     steps:
@@ -450,8 +552,8 @@ jobs:
       
       - name: Retrieve plugin tags 
         run: |
-          echo ::set-env name=p_tag_ad::$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)
-          echo ::set-env name=es_version::$(./bin/version-info --es)
+          echo "p_tag_ad=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)" >> $GITHUB_ENV
+          echo "es_version=$(./bin/version-info --es)" >> $GITHUB_ENV
           
       - name: Checkout Kibana
         uses: actions/checkout@v2
@@ -475,8 +577,8 @@ jobs:
       - name: Get node and yarn versions
         id: node_yarn_versions
         run: |
-          echo ::set-env name=kibana_node_version::$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")
-          echo ::set-env name=kibana_yarn_version::$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")   
+          echo "kibana_node_version=$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV
+          echo "kibana_yarn_version=$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV   
       
       - name: Setup node
         uses: actions/setup-node@v1
@@ -499,7 +601,8 @@ jobs:
         run: .github/scripts/setup_runners_service.sh docker --kibana
           
       - name: run IT
-        uses: cypress-io/github-action@v1
+        uses: cypress-io/github-action@v2.5.0
         with:
           working-directory: kibana/plugins/anomaly-detection-kibana-plugin
           command: yarn cy:run-with-security --config baseurl=http://localhost:5601
+
