@@ -35,8 +35,8 @@ sudo apt install $SETUP_PACKAGES -y || sudo yum install $SETUP_PACKAGES -y
 
 REPO_ROOT=`git rev-parse --show-toplevel`
 ROOT=`dirname $(realpath $0)`; cd $ROOT
-OD_VERSION=`python $REPO_ROOT/bin/version-info --od`
-ES_VERSION=`python $REPO_ROOT/bin/version-info --es`
+OD_VERSION=`python $REPO_ROOT/release-tools/scripts/version-info.py --od`
+ES_VERSION=`python $REPO_ROOT/release-tools/scripts/version-info.py --es`
 
 ES_PACKAGE_NAME="opendistroforelasticsearch-${OD_VERSION}"
 ES_ROOT="${ROOT}/odfe-testing/${ES_PACKAGE_NAME}"
@@ -123,6 +123,7 @@ then
   sleep 30
   echo "Temp Solution to remove the wrong configuration. need be fixed in building stage"
   docker exec -t $DOCKER_NAME /bin/bash -c "sed -i /^node.max_local_storage_nodes/d /usr/share/elasticsearch/config/elasticsearch.yml"
+  docker exec -t $DOCKER_NAME /bin/bash -c "echo \"opendistro_security.unsupported.restapi.allow_securityconfig_modification: true\" >> /usr/share/elasticsearch/config/elasticsearch.yml"
   docker stop $DOCKER_NAME
 else
   sudo mkdir -p /home/repo
@@ -132,6 +133,7 @@ else
   sudo sed -i /^node.max_local_storage_nodes/d /etc/elasticsearch/elasticsearch.yml
   # Increase the number of allowed script compilations. The SQL integ tests use a lot of scripts.
   sudo echo "script.context.field.max_compilations_rate: 1000/1m" | sudo tee -a /etc/elasticsearch/elasticsearch.yml > /dev/null
+  sudo echo "opendistro_security.unsupported.restapi.allow_securityconfig_modification: true" | sudo tee -a /etc/elasticsearch/elasticsearch.yml > /dev/null
 fi
 
 if [ "$SETUP_ACTION" = "--es" ]
@@ -241,6 +243,7 @@ then
     sleep 30
     kill -9 `ps -ef | grep [e]lasticsearch | awk '{print $2}'`
     sed -i /^node.max_local_storage_nodes/d ./config/elasticsearch.yml
+    echo "opendistro_security.unsupported.restapi.allow_securityconfig_modification: true" >> ./config/elasticsearch.yml
     nohup ./opendistro-tar-install.sh > /dev/null 2>&1 &
     cd $KIBANA_ROOT
     nohup ./bin/kibana > /dev/null 2>&1 &

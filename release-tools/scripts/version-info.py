@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 #
 # Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
@@ -26,7 +26,7 @@
 #                $VERSION_TYPE (required): --od | --od-prev | --od-next
 #                                          --es | --es-prev | --es-next
 #
-# Requirements:  Need to install PyYAML with pip3
+# Requirements:  Need to install PyYAML with pip
 #
 # Starting Date: 2019-05-15
 # Modified Date: 2020-11-16

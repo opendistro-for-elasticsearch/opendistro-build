@@ -39,7 +39,7 @@ python -m pip install --upgrade pip
 echo pip3 -version
 pip3 install awscli
 $PACKAGE="opendistroforelasticsearch"
-$OD_VERSION=$(python ./bin/version-info --od)
+$OD_VERSION=$(python release-tools/scripts/version-info.py --od)
 $S3_PACKAGE="odfe-"+$OD_VERSION+".zip"
 dir
 
@@ -115,6 +115,7 @@ if ($SETUP_ACTION -eq "--kibana"){
   cd ..
 
   echo "running es"
+  echo "opendistro_security.unsupported.restapi.allow_securityconfig_modification: true" >> .\$PACKAGE-$OD_VERSION\config\elasticsearch.yml
   nohup .\$PACKAGE-$OD_VERSION\bin\elasticsearch.bat &
 
   echo "running kibana"

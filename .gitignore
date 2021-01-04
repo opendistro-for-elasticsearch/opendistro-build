@@ -6,3 +6,7 @@ Thumbs.db
 
 __pycache__
 .pytest_cache
+
+.gradle/
+.settings/
+out.txt
