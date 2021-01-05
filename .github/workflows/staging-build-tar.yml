@@ -487,6 +487,7 @@ jobs:
   #       with:
   #         working-directory: kibana/plugins/workbench
   #         command: npx cypress run
+
   Test-Gantt-Chart-NoSec:
     # needs: [build-es-artifacts, build-kibana-artifacts]
     runs-on: [ubuntu-18.04]
@@ -506,7 +507,7 @@ jobs:
 
       - name: Retrieve plugin tags 
         run: |
-          echo "p_tag_gantt_chart=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/kibana-reports)" >> $GITHUB_ENV
+          echo "p_tag_gantt_chart=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/kibana-visualizations)" >> $GITHUB_ENV
           echo "es_version=$(release-tools/scripts/version-info.py --es)" >> $GITHUB_ENV
           
       - name: Checkout Kibana
@@ -552,7 +553,6 @@ jobs:
           cp -rp kibana-visualizations/gantt-chart .
           rm -rf kibana-visualizations/
           cd gantt-chart
-          gcc --version
           yarn kbn bootstrap
 
       - name: Start ES and Kibana
