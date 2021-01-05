@@ -94,6 +94,7 @@ kibana:
 
   service:
     type: ClusterIP
+    portName: kibana-svc
     annotations: {}
 
   config: {}

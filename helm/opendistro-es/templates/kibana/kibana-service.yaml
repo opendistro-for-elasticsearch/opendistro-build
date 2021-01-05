@@ -25,7 +25,7 @@ metadata:
   name: {{ template "opendistro-es.fullname" . }}-kibana-svc
 spec:
   ports:
-  - name: kibana-svc
+  - name: {{ .Values.kibana.service.portName }}
     port: {{ .Values.kibana.externalPort }}
     targetPort: {{ .Values.kibana.port }}
   selector:
