@@ -32,6 +32,7 @@ urls:
 # Warning:
 # Please do not change the plugin orders as they have dependencies
 # Please add a backslash ("/") at the end of the S3 URL
+# If there is a key match between plugin_spec and plugin_location_*, the corresponding value will be used; or else the "default" value will be used.
 
 plugins:
   - 
@@ -41,7 +42,7 @@ plugins:
     plugin_build: 
     plugin_spec: [noplatform_noarch_zip,noplatform_noarch_deb,noplatform_noarch_rpm]
     plugin_category: elasticsearch-plugins
-    plugin_location_staging: s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-plugins/sql/
+    plugin_location_staging: [default: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-plugins/sql/"]
     plugin_location_prod: [noplatform_noarch_zip: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/elasticsearch-plugins/opendistro-sql/",
                            noplatform_noarch_deb: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/debs/opendistro-sql/",
                            noplatform_noarch_rpm: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/rpms/opendistro-sql/"]
@@ -52,7 +53,7 @@ plugins:
     plugin_build: 
     plugin_spec: [noplatform_noarch_zip,noplatform_noarch_deb,noplatform_noarch_rpm]
     plugin_category: elasticsearch-plugins
-    plugin_location_staging: s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-plugins/alerting/
+    plugin_location_staging: [default: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-plugins/alerting/"]
     plugin_location_prod: [noplatform_noarch_zip: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/elasticsearch-plugins/opendistro-alerting/",
                            noplatform_noarch_deb: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/debs/opendistro-alerting/",
                            noplatform_noarch_rpm: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/rpms/opendistro-alerting/"]
@@ -63,7 +64,7 @@ plugins:
     plugin_build: 
     plugin_spec: [noplatform_noarch_zip,noplatform_noarch_deb,noplatform_noarch_rpm]
     plugin_category: elasticsearch-plugins
-    plugin_location_staging: s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-plugins/job-scheduler/
+    plugin_location_staging: [default: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-plugins/job-scheduler/"]
     plugin_location_prod: [noplatform_noarch_zip: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/elasticsearch-plugins/opendistro-job-scheduler/",
                            noplatform_noarch_deb: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/debs/opendistro-job-scheduler/",
                            noplatform_noarch_rpm: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/rpms/opendistro-job-scheduler/"]
@@ -74,7 +75,7 @@ plugins:
     plugin_build: 
     plugin_spec: [noplatform_noarch_zip,noplatform_noarch_deb,noplatform_noarch_rpm]
     plugin_category: elasticsearch-plugins
-    plugin_location_staging: s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-plugins/security/
+    plugin_location_staging: [default: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-plugins/security/"]
     plugin_location_prod: [noplatform_noarch_zip: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/elasticsearch-plugins/opendistro-security/",
                            noplatform_noarch_deb: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/debs/opendistro-security/",
                            noplatform_noarch_rpm: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/rpms/opendistro-security/"]
@@ -85,7 +86,7 @@ plugins:
     plugin_build: 
     plugin_spec: [noplatform_noarch_zip,noplatform_noarch_deb,noplatform_noarch_rpm]
     plugin_category: elasticsearch-plugins
-    plugin_location_staging: s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-plugins/performance-analyzer/
+    plugin_location_staging: [default: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-plugins/performance-analyzer/"]
     plugin_location_prod: [noplatform_noarch_zip: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/elasticsearch-plugins/performance-analyzer/",
                            noplatform_noarch_deb: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/debs/opendistro-performance-analyzer/",
                            noplatform_noarch_rpm: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/rpms/opendistro-performance-analyzer/"]
@@ -96,7 +97,7 @@ plugins:
     plugin_build: 
     plugin_spec: [noplatform_noarch_zip,noplatform_noarch_deb,noplatform_noarch_rpm]
     plugin_category: elasticsearch-plugins
-    plugin_location_staging: s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-plugins/index-management/
+    plugin_location_staging: [default: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-plugins/index-management/"]
     plugin_location_prod: [noplatform_noarch_zip: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/elasticsearch-plugins/opendistro-index-management/",
                            noplatform_noarch_deb: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/debs/opendistro-index-management/",
                            noplatform_noarch_rpm: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/rpms/opendistro-index-management/"]
@@ -107,7 +108,7 @@ plugins:
     plugin_build: 
     plugin_spec: [noplatform_noarch_zip,noplatform_noarch_deb,noplatform_noarch_rpm]
     plugin_category: elasticsearch-plugins
-    plugin_location_staging: s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-plugins/knn/
+    plugin_location_staging: [default: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-plugins/knn/"]
     plugin_location_prod: [noplatform_noarch_zip: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/elasticsearch-plugins/opendistro-knn/",
                            noplatform_noarch_deb: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/debs/opendistro-knn/",
                            noplatform_noarch_rpm: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/rpms/opendistro-knn/"]
@@ -118,7 +119,7 @@ plugins:
     plugin_build: 
     plugin_spec: [noplatform_noarch_zip,noplatform_noarch_deb,noplatform_noarch_rpm]
     plugin_category: elasticsearch-plugins
-    plugin_location_staging: s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-plugins/anomaly-detection/
+    plugin_location_staging: [default: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-plugins/anomaly-detection/"]
     plugin_location_prod: [noplatform_noarch_zip: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/elasticsearch-plugins/opendistro-anomaly-detection/",
                            noplatform_noarch_deb: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/debs/opendistro-anomaly-detection/",
                            noplatform_noarch_rpm: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/rpms/opendistro-anomaly-detection/"]
@@ -129,7 +130,7 @@ plugins:
     plugin_build: 
     plugin_spec: [linux_x64_zip,linux_x64_deb,linux_x64_rpm]
     plugin_category: opendistro-libs
-    plugin_location_staging: s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/opendistro-libs/knnlib/
+    plugin_location_staging: [default: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/opendistro-libs/knnlib/"]
     plugin_location_prod: [linux_x64_zip: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/opendistro-libs/opendistro-knnlib/",
                            linux_x64_deb: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/debs/opendistro-knnlib/",
                            linux_x64_rpm: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/rpms/opendistro-knnlib/"]
@@ -140,8 +141,8 @@ plugins:
     plugin_build: 
     plugin_spec: [noplatform_noarch_zip]
     plugin_category: kibana-plugins
-    plugin_location_staging: s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/kibana-plugins/query-workbench/
-    plugin_location_prod: [noplatform_noarch_zip: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/kibana-plugins/opendistro-query-workbench/"]
+    plugin_location_staging: [default: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/kibana-plugins/query-workbench/"]
+    plugin_location_prod: [default: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/kibana-plugins/opendistro-query-workbench/"]
   - 
     plugin_basename: opendistroAnomalyDetectionKibana
     plugin_git: opendistro-for-elasticsearch/anomaly-detection-kibana-plugin
@@ -149,8 +150,8 @@ plugins:
     plugin_build: 
     plugin_spec: [noplatform_noarch_zip]
     plugin_category: kibana-plugins
-    plugin_location_staging: s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/kibana-plugins/anomaly-detection/
-    plugin_location_prod: [noplatform_noarch_zip: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/kibana-plugins/opendistro-anomaly-detection/"]
+    plugin_location_staging: [default: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/kibana-plugins/anomaly-detection/"]
+    plugin_location_prod: [default: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/kibana-plugins/opendistro-anomaly-detection/"]
   - 
     plugin_basename: opendistroSecurityKibana
     plugin_git: opendistro-for-elasticsearch/security-kibana-plugin
@@ -158,8 +159,8 @@ plugins:
     plugin_build: 
     plugin_spec: [noplatform_noarch_zip]
     plugin_category: kibana-plugins
-    plugin_location_staging: s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/kibana-plugins/security/
-    plugin_location_prod: [noplatform_noarch_zip: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/kibana-plugins/opendistro-security/"]
+    plugin_location_staging: [default: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/kibana-plugins/security/"]
+    plugin_location_prod: [default: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/kibana-plugins/opendistro-security/"]
   - 
     plugin_basename: opendistroAlertingKibana
     plugin_git: opendistro-for-elasticsearch/alerting-kibana-plugin
@@ -167,8 +168,8 @@ plugins:
     plugin_build: 
     plugin_spec: [noplatform_noarch_zip]
     plugin_category: kibana-plugins
-    plugin_location_staging: s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/kibana-plugins/alerting/
-    plugin_location_prod: [noplatform_noarch_zip: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/kibana-plugins/opendistro-alerting/"]
+    plugin_location_staging: [default: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/kibana-plugins/alerting/"]
+    plugin_location_prod: [default: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/kibana-plugins/opendistro-alerting/"]
   - 
     plugin_basename: opendistroIndexManagementKibana
     plugin_git: opendistro-for-elasticsearch/index-management-kibana-plugin
@@ -176,8 +177,8 @@ plugins:
     plugin_build: 
     plugin_spec: [noplatform_noarch_zip]
     plugin_category: kibana-plugins
-    plugin_location_staging: s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/kibana-plugins/index-management/
-    plugin_location_prod: [noplatform_noarch_zip: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/kibana-plugins/opendistro-index-management/"]
+    plugin_location_staging: [default: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/kibana-plugins/index-management/"]
+    plugin_location_prod: [default: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/kibana-plugins/opendistro-index-management/"]
   - 
     plugin_basename: opendistroNotebooksKibana
     plugin_git: opendistro-for-elasticsearch/kibana-notebooks
@@ -185,8 +186,8 @@ plugins:
     plugin_build: 
     plugin_spec: [noplatform_noarch_zip]
     plugin_category: kibana-plugins
-    plugin_location_staging: s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/kibana-plugins/notebooks/
-    plugin_location_prod: [noplatform_noarch_zip: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/kibana-plugins/opendistro-notebooks/"]
+    plugin_location_staging: [default: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/kibana-plugins/notebooks/"]
+    plugin_location_prod: [default: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/kibana-plugins/opendistro-notebooks/"]
   - 
     plugin_basename: opendistroGanttChartKibana
     plugin_git: opendistro-for-elasticsearch/kibana-visualizations
@@ -194,8 +195,8 @@ plugins:
     plugin_build: 
     plugin_spec: [noplatform_noarch_zip]
     plugin_category: kibana-plugins
-    plugin_location_staging: s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/kibana-plugins/gantt-chart/
-    plugin_location_prod: [noplatform_noarch_zip: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/kibana-plugins/opendistro-gantt-chart/"]
+    plugin_location_staging: [default: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/kibana-plugins/gantt-chart/"]
+    plugin_location_prod: [default: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/kibana-plugins/opendistro-gantt-chart/"]
   - 
     plugin_basename: opendistroReportsKibana
     plugin_git: opendistro-for-elasticsearch/kibana-reports
@@ -203,7 +204,7 @@ plugins:
     plugin_build: 
     plugin_spec: [linux_x64_zip,linux_arm64_zip,windows_x64_zip]
     plugin_category: kibana-plugins
-    plugin_location_staging: s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/kibana-plugins/reports/
+    plugin_location_staging: [default: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/kibana-plugins/reports/"]
     plugin_location_prod: [linux_x64_zip: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/kibana-plugins/opendistro-reports/linux/x64/",
                            linux_arm64_zip: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/kibana-plugins/opendistro-reports/linux/arm64/",
                            windows_x64_zip: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/kibana-plugins/opendistro-reports/windows/x64/"]
@@ -214,8 +215,8 @@ plugins:
     plugin_build: 
     plugin_spec: [noplatform_noarch_zip]
     plugin_category: kibana-plugins
-    plugin_location_staging: s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/kibana-plugins/trace-analytics/
-    plugin_location_prod: [noplatform_noarch_zip: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/kibana-plugins/opendistro-trace-analytics/"]
+    plugin_location_staging: [default: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/kibana-plugins/trace-analytics/"]
+    plugin_location_prod: [default: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/kibana-plugins/opendistro-trace-analytics/"]
   - 
     plugin_basename: opendistro-sql-cli
     plugin_git: opendistro-for-elasticsearch/sql
@@ -223,9 +224,8 @@ plugins:
     plugin_build: 
     plugin_spec: [noplatform_noarch_tar.gz,noplatform_noarch_whl]
     plugin_category: elasticsearch-clients
-    plugin_location_staging: s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-clients/sql-cli/
-    plugin_location_prod: [noplatform_noarch_tar.gz: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/elasticsearch-clients/opendistro-sql-cli/",
-                           noplatform_noarch_whl: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/elasticsearch-clients/opendistro-sql-cli/"]
+    plugin_location_staging: [default: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-clients/sql-cli/"]
+    plugin_location_prod: [default: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/elasticsearch-clients/opendistro-sql-cli/"]
   - 
     plugin_basename: opendistro-sql-jdbc
     plugin_git: opendistro-for-elasticsearch/sql
@@ -233,8 +233,8 @@ plugins:
     plugin_build: 
     plugin_spec: [noplatform_noarch_jar]
     plugin_category: elasticsearch-clients
-    plugin_location_staging: s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-clients/sql-jdbc/
-    plugin_location_prod: [noplatform_noarch_jar: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/elasticsearch-clients/opendistro-sql-jdbc/"]
+    plugin_location_staging: [default: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-clients/sql-jdbc/"]
+    plugin_location_prod: [default: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/elasticsearch-clients/opendistro-sql-jdbc/"]
   - 
     plugin_basename: opendistro-sql-odbc
     plugin_git: opendistro-for-elasticsearch/sql
@@ -242,20 +242,32 @@ plugins:
     plugin_build: 
     plugin_spec: [macos_x64_pkg,windows_x86_msi,windows_x64_msi]
     plugin_category: elasticsearch-clients
-    plugin_location_staging: s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-clients/sql-odbc/
+    plugin_location_staging: [default: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-clients/sql-odbc/"]
     plugin_location_prod: [macos_x64_pkg: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/elasticsearch-clients/opendistro-sql-odbc/mac/",
                            windows_x86_msi: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/elasticsearch-clients/opendistro-sql-odbc/windows/",
                            windows_x64_msi: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/elasticsearch-clients/opendistro-sql-odbc/windows/"]
   - 
-    plugin_basename: perf-top
+    plugin_basename: opendistro-odfe-cli
+    plugin_git: opendistro-for-elasticsearch/odfe-cli
+    plugin_version: 1.0.0
+    plugin_build:
+    plugin_spec: [linux_x64_zip,linux_arm64_zip,macos_x64_zip,windows_x64_zip,windows_x86_zip]
+    plugin_category: elasticsearch-clients
+    plugin_location_staging: [linux_x64_zip: "s3://artifacts.learning/clients/odfe-cli/linux/",
+                              linux_arm64_zip: "s3://artifacts.learning/clients/odfe-cli/linux/",
+                              macos_x64_zip: "s3://artifacts.learning/clients/odfe-cli/mac",
+                              windows_x64_zip: "s3://artifacts.learning/clients/odfe-cli/windows/",
+                              windows_x86_zip: "s3://artifacts.learning/clients/odfe-cli/windows/"]
+    plugin_location_prod: [default: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/elasticsearch-clients/opendistro-cli/"]  
+  - 
+    plugin_basename: opendistro-perf-top
     plugin_git: opendistro-for-elasticsearch/perftop
     plugin_version: 1.12.0.0
     plugin_build: 
     plugin_spec: [linux_x64_zip,macos_x64_zip]
     plugin_category: elasticsearch-clients
-    plugin_location_staging: s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-clients/perftop/
-    plugin_location_prod: [linux_x64_zip: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/perftop/",
-                           macos_x64_zip: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/perftop/"]
+    plugin_location_staging: [default: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-clients/perftop/"]
+    plugin_location_prod: [default: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/perftop/"]
 
 
 
