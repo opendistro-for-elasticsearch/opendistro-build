@@ -552,6 +552,7 @@ jobs:
           cp -rp kibana-visualizations/gantt-chart .
           rm -rf kibana-visualizations/
           cd gantt-chart
+          gcc --version
           yarn kbn bootstrap
 
       - name: Start ES and Kibana
