@@ -3,10 +3,8 @@ name: Staging ODFE CLI
 on:
 #  schedule:
 #    - cron: '0 12 * * *'
-#  repository_dispatch:
-#    types: [staging-odfe-cli]
-  push:
-    branches: [sreekarj_V297534175]
+  repository_dispatch:
+    types: [staging-odfe-cli]
 
 jobs:
   Test-ODFE-CLI:
@@ -27,9 +25,12 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
       - uses: actions/checkout@v1
+      - name: Required Packages
+        run: ./release-tools/scripts/required_packages.sh
       - name: Retrieve plugin tags
         run: |
-          echo "p_tag_cli=$(yq  -r '.["plugins"]| to_entries[] | select(.value.plugin_basename == "opendistro-odfe-cli") | .value.plugin_version' ./release-tools/scripts/manifest.yml)" >> $GITHUB_ENV
+          yq --version
+          echo "p_tag_cli=$(./release-tools/scripts/manifest_parser.sh opendistro-odfe-cli plugin_version)" >> $GITHUB_ENV
       - name: Checkout odfe-cli
         uses: actions/checkout@v2
         with:
@@ -45,8 +46,6 @@ jobs:
           ODFE_PASSWORD : "admin"
         run: |
           #!/bin/bash
-          echo "GIT tag"
-          echo ${{env.p_tag_cli}}
           sed -i "s/^\(\s*image\s*:\s*\).*/\1opendistroforelasticsearch\/opendistroforelasticsearch:latest/" docker-compose.yml
           docker login --username $DOCKER_USER --password $DOCKER_PASS
           docker-compose up -d
