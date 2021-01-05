@@ -562,7 +562,7 @@ jobs:
         uses: cypress-io/github-action@v2.5.0
         with:
           working-directory: kibana/plugins/gantt-chart/gantt-chart
-          command: npx cypress run
+          command: npx cypress run --config baseurl=http://localhost:5601
 
   # Test-AD-KIBANA:
   #   needs: [build-es-artifacts, build-kibana-artifacts]
