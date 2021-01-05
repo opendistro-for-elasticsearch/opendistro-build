@@ -548,7 +548,10 @@ jobs:
       
       - name: Bootstrap the plugin
         run: |
-          cd ./kibana/plugins/gantt-chart
+          cd ./kibana/plugins
+          cp -rp kibana-visualizations/gantt-chart/ .
+          rm -rf kibana-visualizations/
+          cd gantt-chart
           yarn kbn bootstrap
 
       - name: Start ES and Kibana
@@ -561,8 +564,8 @@ jobs:
       - name: Run IT
         uses: cypress-io/github-action@v2.5.0
         with:
-          working-directory: kibana/plugins/gantt-chart/gantt-chart
-          command: npx cypress run --config baseurl=http://localhost:5601
+          working-directory: kibana/plugins/gantt-chart
+          command: npx cypress run
 
   # Test-AD-KIBANA:
   #   needs: [build-es-artifacts, build-kibana-artifacts]
