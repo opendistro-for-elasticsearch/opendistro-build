@@ -45,7 +45,8 @@ jobs:
           ODFE_PASSWORD : "admin"
         run: |
           #!/bin/bash
-          echo "GIT Tag = ${{env.p_tag_cli}}"
+          echo "GIT tag"
+          echo ${{env.p_tag_cli}}
           sed -i "s/^\(\s*image\s*:\s*\).*/\1opendistroforelasticsearch\/opendistroforelasticsearch:latest/" docker-compose.yml
           docker login --username $DOCKER_USER --password $DOCKER_PASS
           docker-compose up -d
