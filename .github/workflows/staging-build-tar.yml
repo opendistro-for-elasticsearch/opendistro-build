@@ -552,18 +552,18 @@ jobs:
           ls -ltr
           # yarn kbn bootstrap
 
-      - name: Start ES and Kibana
-        run: |
-          release-tools/scripts/setup_runners_service.sh zip --kibana-nosec
-          echo "load the indices"
-          curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/kibana-visualizations/main/gantt-chart/.cypress/utils/jaeger-sample.json | curl -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/jaeger/_bulk?pretty' --data-binary @-  > /dev/null 2>&1
-          curl -X POST "localhost:5601/api/saved_objects/index-pattern/jaeger"  -H 'kbn-xsrf: true' -H 'Content-Type: application/json' -d ' { "attributes": { "title": "jaeger" } } '
+      # - name: Start ES and Kibana
+      #   run: |
+      #     release-tools/scripts/setup_runners_service.sh zip --kibana-nosec
+      #     echo "load the indices"
+      #     curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/kibana-visualizations/main/gantt-chart/.cypress/utils/jaeger-sample.json | curl -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/jaeger/_bulk?pretty' --data-binary @-  > /dev/null 2>&1
+      #     curl -X POST "localhost:5601/api/saved_objects/index-pattern/jaeger"  -H 'kbn-xsrf: true' -H 'Content-Type: application/json' -d ' { "attributes": { "title": "jaeger" } } '
  
-      - name: Run IT
-        uses: cypress-io/github-action@v2.5.0
-        with:
-          working-directory: kibana/plugins/gantt-chart
-          command: npx cypress run
+      # - name: Run IT
+      #   uses: cypress-io/github-action@v2.5.0
+      #   with:
+      #     working-directory: kibana/plugins/gantt-chart
+      #     command: npx cypress run
 
   # Test-AD-KIBANA:
   #   needs: [build-es-artifacts, build-kibana-artifacts]
