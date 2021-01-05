@@ -242,7 +242,6 @@ plugins:
     plugin_build: 
     plugin_spec: [macos_x64_pkg,windows_x86_msi,windows_x64_msi]
     plugin_category: elasticsearch-clients
-    plugin_category: elasticsearch-clients
     plugin_location_staging: [default: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-clients/sql-odbc/"]
     plugin_location_prod: [macos_x64_pkg: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/elasticsearch-clients/opendistro-sql-odbc/mac/",
                            windows_x86_msi: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/elasticsearch-clients/opendistro-sql-odbc/windows/",
@@ -260,7 +259,6 @@ plugins:
                               windows_x64_zip: "s3://artifacts.learning/clients/odfe-cli/windows/",
                               windows_x86_zip: "s3://artifacts.learning/clients/odfe-cli/windows/"]
     plugin_location_prod: [default: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/elasticsearch-clients/opendistro-cli/"]  
-  
   - 
     plugin_basename: perf-top
     plugin_git: opendistro-for-elasticsearch/perftop
