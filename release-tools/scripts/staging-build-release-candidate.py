@@ -136,7 +136,7 @@ def main():
             print("Release bucket name : " + release_bucket_name)
             release_folder_path = release_candidate_location.replace(release_bucket_name,'')[1:]
             print("Release folder path : " + release_folder_path)
-            rc_folder_path = release_folder_path + "/" + odfe_version + "/" + "rc-build-" + str(run_number) + "/"
+            rc_folder_path = release_folder_path + odfe_version + "/" + "rc-build-" + str(run_number) + "/"
             print("Release candiate path : " + rc_folder_path)
             if not os.path.exists('downloads'):
                 os.makedirs('downloads')
