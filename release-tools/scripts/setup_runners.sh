@@ -64,8 +64,19 @@
 #                6. If you change the above resources name from "odfe-release-runner" to "xyz",
 #                   please update "Variables / Parameters / Settings" section of this script
 #
+#                7. Runner AMI requires installation of packages of these (java version can be different as gradle might request a higher version):
+#                   Debian:
+#                   sudo apt install -y curl wget unzip tar jq python python3 git awscli openjdk-8-jdk
+#                   sudo apt install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
+#
+#                   RedHat:
+#                   sudo yum install -y curl wget unzip tar jq python python3 git awscli java-8-openjdk
+#                   sudo yum install -y xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-devel GConf2 nss libXScrnSaver alsa-lib
+#
+#                8. AMI must be at least 16GB during the creation.
+#
 # Starting Date: 2020-07-27
-# Modified Date: 2020-10-07
+# Modified Date: 2020-10-21
 ###############################################################################################
 
 set -e
@@ -75,20 +86,50 @@ set -e
 #####################################
 
 # This script allows users to manually assign parameters
-if [ "$#" -ne 3 ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]
+if [ "$#" -lt 3 ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]
 then
-  echo "Please assign at 3 parameters when running this script"
-  echo "Example: $0 \$ACTION \$EC2_INSTANCE_NAMES(,) \$GITHUB_TOKEN"
-  echo "Example: $0 \"run\" \"odfe-rpm-ism,odfe-rpm-sql\" \"<GitHub PAT>\""
+  echo "Please assign at least 3 parameters when running this script"
+  echo "Example: $0 \$ACTION \$EC2_INSTANCE_NAMES(,) \$GITHUB_TOKEN, \$EC2_AMI_ID"
+  echo "Example (run must have 4 parameters): $0 \"run\" \"odfe-rpm-ism,odfe-rpm-sql\" \"<GitHub PAT>\" \"ami-*\""
+  echo "Example (terminate must have 3 parameters): $0 \"terminate\" \"odfe-rpm-ism,odfe-rpm-sql\" \"<GitHub PAT>\""
   exit 1
 fi
 
 SETUP_ACTION=$1
 SETUP_RUNNER=`echo $2 | sed 's/,/ /g'`
 SETUP_GIT_TOKEN=$3
-EC2_AMI_ID="ami-086e8a98280780e63"
-EC2_AMI_USER="ec2-user"
-EC2_INSTANCE_TYPE="m5.xlarge"
+
+# AMI on us-west-2
+# RPM al2     x64   ec2-user ami-086e8a98280780e63 jdk14 install by workflow
+# RPM centos7 x64   centos   ami-0f539dbfee9363756 jdk14 preinstall
+# RPM centos7 arm64 centos   ami-06fea6aecc7754b17 jdk13only preinstall RH drop support
+# RPM centos8 x64   centos   ami-00eb10a0990a90cbb jdk15 preinstall
+# RPM centos8 arm64 centos   ami-09c12fde01bdedc9b jdk15 preinstall
+# DEB ubu1804 arm64 ubuntu   ami-02e560bc36d1378d1 jdk14 preinstall
+EC2_AMI_ID=$4
+
+if [ "$SETUP_ACTION" = "run" ]
+then
+  if [ -z "$EC2_AMI_ID" ]
+  then
+    echo " \$EC2_AMI_ID is empty, please add a 4th parameter for the run "
+    exit 1
+  else
+    # This does not support MacOS now due to cumbersome descriptions
+    # MacOS sample: ami-00b3e436dc75183e0
+    # "PlatformDetails": "Linux/UNIX"
+    # "Architecture": "x86_64_mac"
+    EC2_AMI_PLATFORM=`aws ec2 describe-images --image-id $EC2_AMI_ID --query 'Images[*].PlatformDetails' --output text | awk -F '/' '{print $1}' | tr '[:upper:]' '[:lower:]'`
+    EC2_AMI_ARCH=`aws ec2 describe-images --image-id $EC2_AMI_ID --query 'Images[*].Architecture' --output text | sed 's/x86_64/x64/g'`
+    EC2_AMI_NAME=`aws ec2 describe-images --image-id $EC2_AMI_ID --query 'Images[*].Name' --output text | tr '[:upper:]' '[:lower:]'`
+    EC2_AMI_USER="ec2-user"; if echo $EC2_AMI_NAME | grep "centos"; then EC2_AMI_USER="centos"; elif echo $EC2_AMI_NAME | grep "ubuntu"; then EC2_AMI_USER="ubuntu"; fi
+    EC2_INSTANCE_TYPE="m5.xlarge"; if [ "$EC2_AMI_ARCH" = "arm64" ]; then EC2_INSTANCE_TYPE="m6g.xlarge"; fi
+    RUNNER_URL=`curl -s https://api.github.com/repos/actions/runner/releases/latest -H "Authorization: token $SETUP_GIT_TOKEN" | jq -r '.assets[].browser_download_url' | grep "$EC2_AMI_PLATFORM" | grep "$EC2_AMI_ARCH" | tail -n 1`
+    echo Provision $EC2_AMI_PLATFORM $EC2_AMI_ARCH $EC2_AMI_NAME $EC2_AMI_USER $EC2_INSTANCE_TYPE $RUNNER_URL
+  fi
+fi
+
+
 EC2_INSTANCE_SIZE=20 #GiB
 EC2_KEYPAIR="odfe-release-runner"
 EC2_SECURITYGROUP="odfe-release-runner"
@@ -96,8 +137,8 @@ IAM_ROLE="odfe-release-runner"
 GIT_URL_API="https://api.github.com/repos"
 GIT_URL_BASE="https://github.com"
 GIT_URL_REPO="opendistro-for-elasticsearch/opendistro-build"
-RUNNER_URL=`curl -s https://api.github.com/repos/actions/runner/releases/latest | jq -r '.assets[].browser_download_url' | grep linux-x64`
 RUNNER_DIR="actions-runner"
+
 
 echo "###############################################"
 echo "Start Running $0 $1 $2"
@@ -113,12 +154,15 @@ then
   echo "Run / Start instances and bootstrap runners [${SETUP_RUNNER}]"
   echo ""
 
+  # Get information
+  instance_root_device=`aws ec2 describe-images --image-id $EC2_AMI_ID --query 'Images[*].RootDeviceName' --output text`
+
   # Provision VMs
   for instance_name1 in $SETUP_RUNNER
   do
     echo "[${instance_name1}]: Start provisioning vm"
     aws ec2 run-instances --image-id $EC2_AMI_ID --count 1 --instance-type $EC2_INSTANCE_TYPE \
-                          --block-device-mapping DeviceName=/dev/xvda,Ebs={VolumeSize=$EC2_INSTANCE_SIZE} \
+                          --block-device-mapping DeviceName=$instance_root_device,Ebs={VolumeSize=$EC2_INSTANCE_SIZE} \
                           --key-name $EC2_KEYPAIR --security-groups $EC2_SECURITYGROUP \
                           --iam-instance-profile Name=$IAM_ROLE \
                           --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$instance_name1}]" > /dev/null 2>&1; echo $?
@@ -126,10 +170,10 @@ then
   done
 
   echo ""
-  echo "Sleep for 120 seconds for EC2 instances to start running"
+  echo "Sleep for 90 seconds for EC2 instances to start running"
   echo ""
 
-  sleep 120
+  sleep 90
 
   # Setup VMs to register as runners
   for instance_name2 in $SETUP_RUNNER
@@ -154,10 +198,10 @@ then
   done
 
   echo ""
-  echo "Wait for 60 seconds for runners to bootstrap on Git"
+  echo "Wait for 30 seconds for runners to bootstrap on Git"
   echo ""
 
-  sleep 60
+  sleep 30
 
   echo ""
   echo "All runners are online on Git"

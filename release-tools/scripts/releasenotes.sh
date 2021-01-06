@@ -22,8 +22,8 @@ set -e
 OLDIFS=$IFS
 REPO_ROOT=`git rev-parse --show-toplevel`
 ROOT=`dirname $(realpath $0)`;
-OD_VERSION=`python $REPO_ROOT/bin/version-info --od`
-ES_VERSION=`python $REPO_ROOT/bin/version-info --es`
+OD_VERSION=`python $REPO_ROOT/bin/version-info.sh --od`
+ES_VERSION=`python $REPO_ROOT/bin/version-info.sh --es`
 RELEASENOTES_ORIGURL="$ROOT/releasenotes-orig-urls.txt"
 RELEASENOTES_SORTURL="$ROOT/releasenotes-sort-urls.txt"
 RELEASENOTES_TEMPTXT="$ROOT/releasenotes-temp-text.tmp"
