@@ -643,7 +643,7 @@ jobs:
       - name: Run IT
         uses: cypress-io/github-action@v2.5.0
         with:
-          working-directory: kibana/plugins/gantt-chart
+          working-directory: kibana/plugins/kibana-notebooks
           command: npx cypress run
 
   # Test-AD-KIBANA:
