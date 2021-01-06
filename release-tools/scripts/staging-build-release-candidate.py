@@ -129,13 +129,14 @@ def main():
         with open('manifest.yml') as manifest:
             source = yaml.safe_load(manifest)
             run_number = sys.argv[1]
+            odfe_version = source.get('versions').get('ODFE').get('current')
             release_candidate_location = source.get('urls').get('ODFE').get('releases')[5:]
             print("Release candidate location : " + release_candidate_location )
             release_bucket_name  = release_candidate_location.split('/')[0]
             print("Release bucket name : " + release_bucket_name)
             release_folder_path = release_candidate_location.replace(release_bucket_name,'')[1:]
             print("Release folder path : " + release_folder_path)
-            rc_folder_path = release_folder_path + "rc-build-" + str(run_number) + "/"
+            rc_folder_path = release_folder_path + "/" + odfe_version + "/" + "rc-build-" + str(run_number) + "/"
             print("Release candiate path : " + rc_folder_path)
             if not os.path.exists('downloads'):
                 os.makedirs('downloads')

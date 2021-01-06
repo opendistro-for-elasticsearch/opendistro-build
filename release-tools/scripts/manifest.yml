@@ -27,7 +27,7 @@ urls:
   ODFE:
     prod: s3://artifacts.opendistroforelasticsearch.amazon.com/
     #snapshots: s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/
-    releases: s3://staging.artifacts.opendistroforelasticsearch.amazon.com/releases/1.12.0/
+    releases: s3://staging.artifacts.opendistroforelasticsearch.amazon.com/releases/
 
 # Warning:
 # Please do not change the plugin orders as they have dependencies
