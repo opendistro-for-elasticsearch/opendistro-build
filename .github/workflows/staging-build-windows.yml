@@ -549,7 +549,7 @@ jobs:
           cp -rp kibana-nb/kibana-notebooks .
           rm -rf kibana-nb
           cd kibana-notebooks
-          yarb kbn clean
+          yarn kbn clean
           yarn kbn bootstrap
         shell: bash
 
