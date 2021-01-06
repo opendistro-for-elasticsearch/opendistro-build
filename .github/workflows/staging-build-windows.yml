@@ -542,18 +542,17 @@ jobs:
           npm uninstall -g yarn
           echo "Installing yarn ${{ env.kibana_yarn_version }}"
           npm i -g yarn@${{ env.kibana_yarn_version }}
-        shell: bash
       
       - name: Bootstrap the plugin
         run: |
           cd ./kibana/plugins/
           cp -r kibana-nb/kibana-notebooks .
-          rm -rf kibana-nb/
+          rm -rf kibana-nb
           cd kibana-notebooks
           yarn kbn bootstrap
         shell: bash
 
-      - name: Run ES and kibana and IT (RUN IN ONE STEP OR WINDOWS BREAKS)
+      - name: Run ES and kibana and IT (RUN IN ONE STEP OR WINDOWS WILL BREAK)
         run: |
           release-tools\scripts\setup_runners_service_windows.ps1 --kibana-nosec
           cd ./kibana/plugins/kibana-notebooks
