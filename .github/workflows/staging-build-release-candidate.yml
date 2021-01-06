@@ -6,8 +6,6 @@ on:
 
 #  repository_dispatch:
 #    types: [staging-build-release-candidate]
-  push:
-    branches: [sreekarj_V300226520]
 
 jobs:
   Staging-Build-Release-Candidate:
