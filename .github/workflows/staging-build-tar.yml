@@ -5,9 +5,6 @@ on:
   #   - cron: '0 10 * * *'
   repository_dispatch:
     types: [staging-build-tar]
-  push:
-    branches:
-      - "gantt-chart"
  
 jobs:
   # plugin-availability:
