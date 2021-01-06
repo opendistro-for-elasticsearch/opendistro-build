@@ -291,4 +291,13 @@ plugins:
     release_candidate: true
     plugin_location_staging: [default: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-clients/perftop/"]
     plugin_location_prod: [default: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/perftop/"]
-
+- 
+    plugin_basename: opendistro-data-prepper
+    plugin_git: opendistro-for-elasticsearch/Data-Prepper
+    plugin_version: 0.7.0
+    plugin_build:
+    plugin_spec: [linux_x64_tar.gz,linux_x64_zip,macos_x64_tar.gz,macos_x64_zip]
+    plugin_category: elasticsearch-clients
+    release_candidate: false
+    plugin_location_staging: [default: "s3://artifacts.dataprepper.amazon.com/"]
+    plugin_location_prod: [default: "s3://artifacts.opendistroforelasticsearch.amazon.com/tarball/opendistroforelasticsearch-data-prepper/"]
