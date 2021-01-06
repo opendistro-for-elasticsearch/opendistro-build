@@ -546,7 +546,7 @@ jobs:
       - name: Bootstrap the plugin
         run: |
           cd ./kibana/plugins/
-          cp -r kibana-nb/kibana-notebooks .
+          cp -rp kibana-nb/kibana-notebooks .
           rm -rf kibana-nb
           cd kibana-notebooks
           yarn kbn bootstrap
