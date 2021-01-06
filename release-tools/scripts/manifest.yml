@@ -277,7 +277,7 @@ plugins:
     release_candidate: false
     plugin_location_staging: [linux_x64_zip: "s3://artifacts.learning/clients/odfe-cli/linux/",
                               linux_arm64_zip: "s3://artifacts.learning/clients/odfe-cli/linux/",
-                              macos_x64_zip: "s3://artifacts.learning/clients/odfe-cli/mac",
+                              macos_x64_zip: "s3://artifacts.learning/clients/odfe-cli/mac/",
                               windows_x64_zip: "s3://artifacts.learning/clients/odfe-cli/windows/",
                               windows_x86_zip: "s3://artifacts.learning/clients/odfe-cli/windows/"]
     plugin_location_prod: [default: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/elasticsearch-clients/opendistro-cli/"]  
