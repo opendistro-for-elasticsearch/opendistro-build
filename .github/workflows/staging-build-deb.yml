@@ -586,7 +586,7 @@ jobs:
           # command: npx cypress run
 
   Test-Kibana-Notebooks-NoSec:
-    needs: [sign-deb-artifacts]
+    # needs: [sign-deb-artifacts]
     runs-on: [ubuntu-18.04]
     name: Test-Kibana-Notebooks-NoSec
     strategy:
