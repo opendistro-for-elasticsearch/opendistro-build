@@ -488,10 +488,90 @@ jobs:
   #         working-directory: kibana/plugins/workbench
   #         command: npx cypress run
 
-  Test-Gantt-Chart-NoSec:
+  # Test-Gantt-Chart-NoSec:
+  #   # needs: [build-es-artifacts, build-kibana-artifacts]
+  #   runs-on: [ubuntu-18.04]
+  #   name: Test-Gantt-Chart-NoSec
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       java: [14]
+  #   steps:
+  #     - uses: actions/checkout@v1
+  #     - name: Set up AWS Cred
+  #       uses: aws-actions/configure-aws-credentials@v1
+  #       with:
+  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #         aws-region: us-east-1
+
+  #     - name: Retrieve plugin tags 
+  #       run: |
+  #         echo "p_tag_gantt_chart=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/kibana-visualizations)" >> $GITHUB_ENV
+  #         echo "es_version=$(release-tools/scripts/version-info.py --es)" >> $GITHUB_ENV
+          
+  #     - name: Checkout Kibana
+  #       uses: actions/checkout@v2
+  #       with:
+  #         repository: opendistro-for-elasticsearch/kibana-oss
+  #         ref: ${{env.es_version}}
+  #         token: ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
+  #         path: kibana
+           
+  #     - uses: actions/checkout@v2
+  #       with:
+  #         repository: opendistro-for-elasticsearch/kibana-visualizations
+  #         ref: ${{env.p_tag_gantt_chart}}
+  #         path: kibana/plugins/kibana-visualizations
+      
+  #     - name: Setup Java
+  #       uses: actions/setup-java@v1
+  #       with:
+  #         java-version: ${{ matrix.java }}
+      
+  #     - name: Get node and yarn versions
+  #       id: node_yarn_versions
+  #       run: |
+  #         echo "kibana_node_version=$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV
+  #         echo "kibana_yarn_version=$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV   
+      
+  #     - name: Setup node
+  #       uses: actions/setup-node@v1
+  #       with:
+  #         node-version: ${{env.kibana_node_version}}
+  #         registry-url: 'https://registry.npmjs.org'
+      
+  #     - name: Install correct yarn version for Kibana
+  #       run: |
+  #         npm uninstall -g yarn
+  #         echo "Installing yarn ${{ env.kibana_yarn_version }}"
+  #         npm i -g yarn@${{ env.kibana_yarn_version }}
+      
+  #     - name: Bootstrap the plugin
+  #       run: |
+  #         cd ./kibana/plugins/
+  #         cp -rp kibana-visualizations/gantt-chart .
+  #         rm -rf kibana-visualizations/
+  #         cd gantt-chart
+  #         yarn kbn bootstrap
+
+  #     - name: Start ES and Kibana
+  #       run: |
+  #         release-tools/scripts/setup_runners_service.sh zip --kibana-nosec
+  #         echo "load the indices"
+  #         curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/kibana-visualizations/main/gantt-chart/.cypress/utils/jaeger-sample.json | curl -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/jaeger/_bulk?pretty' --data-binary @-  > /dev/null 2>&1
+  #         curl -X POST "localhost:5601/api/saved_objects/index-pattern/jaeger"  -H 'kbn-xsrf: true' -H 'Content-Type: application/json' -d ' { "attributes": { "title": "jaeger" } } '
+ 
+  #     - name: Run IT
+  #       uses: cypress-io/github-action@v2.5.0
+  #       with:
+  #         working-directory: kibana/plugins/gantt-chart
+  #         command: npx cypress run
+
+  Test-Kibana-Notebooks-NoSec:
     # needs: [build-es-artifacts, build-kibana-artifacts]
     runs-on: [ubuntu-18.04]
-    name: Test-Gantt-Chart-NoSec
+    name: Test-Kibana-Notebooks-NoSec
     strategy:
       fail-fast: false
       matrix:
@@ -507,7 +587,7 @@ jobs:
 
       - name: Retrieve plugin tags 
         run: |
-          echo "p_tag_gantt_chart=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/kibana-visualizations)" >> $GITHUB_ENV
+          echo "p_tag_kib_nb=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/kibana-notebooks)" >> $GITHUB_ENV
           echo "es_version=$(release-tools/scripts/version-info.py --es)" >> $GITHUB_ENV
           
       - name: Checkout Kibana
@@ -520,9 +600,10 @@ jobs:
            
       - uses: actions/checkout@v2
         with:
-          repository: opendistro-for-elasticsearch/kibana-visualizations
-          ref: ${{env.p_tag_gantt_chart}}
-          path: kibana/plugins/kibana-visualizations
+          repository: opendistro-for-elasticsearch/kibana-notebooks
+          # ref: ${{env.p_tag_kib_nb}}
+          ref: dev
+          path: kibana/plugins/kibana-nb
       
       - name: Setup Java
         uses: actions/setup-java@v1
@@ -550,18 +631,15 @@ jobs:
       - name: Bootstrap the plugin
         run: |
           cd ./kibana/plugins/
-          cp -rp kibana-visualizations/gantt-chart .
-          rm -rf kibana-visualizations/
-          cd gantt-chart
+          cp -rp kibana-nb/kibana-notebooks .
+          rm -rf kibana-nb/
+          cd kibana-notebooks
           yarn kbn bootstrap
 
       - name: Start ES and Kibana
         run: |
-          release-tools/scripts/setup_runners_service.sh zip --kibana-nosec
-          echo "load the indices"
-          curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/kibana-visualizations/main/gantt-chart/.cypress/utils/jaeger-sample.json | curl -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/jaeger/_bulk?pretty' --data-binary @-  > /dev/null 2>&1
-          curl -X POST "localhost:5601/api/saved_objects/index-pattern/jaeger"  -H 'kbn-xsrf: true' -H 'Content-Type: application/json' -d ' { "attributes": { "title": "jaeger" } } '
- 
+          release-tools/scripts/setup_runners_service.sh zip --kibana-nosec 
+
       - name: Run IT
         uses: cypress-io/github-action@v2.5.0
         with:
