@@ -13,7 +13,7 @@
 # Requirements:  This script assumes java 14 is already installed on the servers
 #
 # Starting Date: 2020-07-27
-# Modified Date: 2020-08-02
+# Modified Date: 2021-01-06
 ###############################################################################################
 
 # Keep the pwsh script running even with errors
@@ -39,7 +39,7 @@ python -m pip install --upgrade pip
 echo pip3 -version
 pip3 install awscli
 $PACKAGE="opendistroforelasticsearch"
-$OD_VERSION=$(release-tools/scripts/version-info.sh --od)
+$OD_VERSION=$(bash release-tools/scripts/version-info.sh --od)
 $S3_PACKAGE="odfe-"+$OD_VERSION+".zip"
 dir
 
