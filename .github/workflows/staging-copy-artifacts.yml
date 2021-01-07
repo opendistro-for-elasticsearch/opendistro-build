@@ -4,7 +4,7 @@ on:
 #  schedule:
 #    - cron: '30 10 * * *' 
   repository_dispatch:
-    types: [staging-build-release-candidate]
+    types: [staging-copy-artifacts]
 
 jobs:
   Staging-Build-Release-Candidate:
