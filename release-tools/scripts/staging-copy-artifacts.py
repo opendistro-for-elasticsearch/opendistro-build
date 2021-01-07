@@ -11,7 +11,7 @@ Prerequisites:
                sudo pip install pyyaml
 
 Usage: 
-              ./staging-build-release-candidate.py $BUILD_NUMBER
+              ./staging-copy-artifacts.py $BUILD_NUMBER
 
 """
 import boto3
@@ -38,8 +38,18 @@ def download_file(filename,url):
 # Upload local file to the release folder
 def upload_plugin(plugin,release_bucket_name,plugin_category,rc_folder_path):
     try:
+        plg_new = ""
+        if "x86_64" in plugin:
+            plg_new = plugin.replace("x86_64","x64")
+            os.rename("downloads/"+plugin, "downloads/"+ plg_new)
+        if "aarch64" in plugin:
+            plg_new = plugin.replace("aarch64","arm64")
+            os.rename("downloads/"+plugin, "downloads/"+ plg_new)
+        if plg_new:
+            s3.upload_file("downloads/"+plg_new,release_bucket_name,rc_folder_path+plugin_category+'/'+plg_new)
+        else:
             s3.upload_file("downloads/"+plugin,release_bucket_name,rc_folder_path+plugin_category+'/'+plugin)
-            print("Upload completed : " + plugin)
+        print("Upload completed : " + plugin)
     except:
         raise
 
@@ -50,7 +60,7 @@ def create_release_folder(release_bucket_name,plugin_category,rc_folder_path):
         print(response)
         print("Release folder created : " + rc_folder_path + plugin_category + '/')
         if response.get('ResponseMetadata').get('HTTPStatusCode') != 200:
-            print("failed to create folder")
+            print("Failed to create folder")
             raise
         return "success"
     except:
@@ -64,7 +74,7 @@ def create_sha512(plugin_name):
             buf = file_name.read()
             hash_type.update(buf)
             checksum_file = open("downloads/"+plugin_name+".sha512", "w")
-            checksum_file.write(hash_type.hexdigest())
+            checksum_file.write(hash_type.hexdigest() + "  " + plugin_name)
             checksum_file.close()
             print("Plugin checksum : " + plugin_name+".sha512")
         return plugin_name+".sha512"
@@ -76,30 +86,39 @@ def create_sha512(plugin_name):
 def plugin_download(plugin_full_path,bucket_name):
     try:
         response = s3.download_file(bucket_name,plugin_full_path,"downloads/"+plugin_full_path.split('/')[-1])
-        print("download successful")
+        print("Download successful")
         return plugin_full_path.split('/')[-1]
     except:
         raise
 
 # Get the last modified plugin with specific name
-def get_latest_plugin(plugin_version,plugin_build,plugin_type,bucket_name,folder_path,key_word):
+def get_latest_plugin(plugin_version,plugin_build,bucket_name,folder_path,key_word):
     try:
         response = s3.list_objects_v2(Bucket=bucket_name, Prefix=folder_path)
+        platform = str(key_word).split('_')[0]
+        arch = str(key_word).split('_')[1]
+        plugin_type = str(key_word).split('_')[2]
+        print("Plugin version " + plugin_version)
+        print("Platform " + platform)
+        print("Arch " + arch)
+        print("plugin_type " + plugin_type)
         suffix = plugin_type
         key = ""
         for artifact in sorted(response['Contents'], key=lambda x: x['LastModified'], reverse=True):
             key = artifact['Key']
-            build_number = "-build-"+plugin_build
-            if key_word != "":
-                if plugin_version in key and build_number in key and key_word in key:
-                    if key.endswith(plugin_type):
-                        print("last modified plugin : " + key)
-                        break
+            if plugin_build is None:
+                build_number = "-build-"
             else:
-                if plugin_version in key and build_number in key:
-                    if key.endswith(plugin_type):
-                        print("last modified plugin : " + key)
-                        break
+                build_number = "-build-"+str(plugin_build)
+                print("Build number " + plugin_build)
+            if platform == "noplatform":
+                platform = ""
+            if arch == "noarch":
+                arch = ""
+            if plugin_version in key and build_number in key and platform in key and arch in key:
+                if key.endswith(plugin_type):
+                    print(key)
+                    break
         return key
     except:
         raise
@@ -110,64 +129,69 @@ def main():
         with open('manifest.yml') as manifest:
             source = yaml.safe_load(manifest)
             run_number = sys.argv[1]
-            release_candidate_location = source.get('releases').get('url')[5:]
-            print("Release candidate location : " + release_candidate_location)
-            release_bucket_name = source.get('releases').get('url').split('/')[2]
+            odfe_version = source.get('versions').get('ODFE').get('current')
+            release_candidate_location = source.get('urls').get('ODFE').get('releases')[5:]
+            print("Release candidate location : " + release_candidate_location )
+            release_bucket_name  = release_candidate_location.split('/')[0]
             print("Release bucket name : " + release_bucket_name)
-            release_folder_path = release_candidate_location.replace(release_bucket_name,'')[1:] + "/"
+            release_folder_path = release_candidate_location.replace(release_bucket_name,'')[1:]
             print("Release folder path : " + release_folder_path)
-            rc_folder_path = release_folder_path + "rc-" + str(run_number) + "/"
+            rc_folder_path = release_folder_path + odfe_version + "/" + "rc-build-" + str(run_number) + "/"
             print("Release candiate path : " + rc_folder_path)
             if not os.path.exists('downloads'):
                 os.makedirs('downloads')
-            for plugin in source.get('snapshots'):
+            for plugin in source.get('plugins'):
                 try:
-                    print("\n")
-                    print("Plugin : " )
-                    print(plugin)
-                    plugin_git_name = plugin.get('plugin_git')
-                    print("Plugin GIT name : " + plugin_git_name)
-                    plugin_version = plugin.get('plugin_version')
-                    print("Plugin full name : " + plugin_version)
-                    plugin_build = plugin.get('plugin_build')
-                    if plugin_build != "":
-                        print("Plugin Build number : " + plugin_build) 
-                    plugin_category = plugin.get('plugin_category')
-                    print("Plugin category " + plugin_category )
-                    plugin_location = plugin.get('plugin_location')[5:]
-                    print("Plugin location : " + plugin_location )
-                    bucket_name = plugin.get('plugin_location').split('/')[2]
-                    print("Bucket name : " + bucket_name )
-                    folder_path = plugin_location.replace(bucket_name,'')[1:] + "/"
-                    print("Folder path : " + folder_path)
-                    for plugin_type in plugin.get('plugin_type'):
-                        print("Plugin type : " + plugin_type)
-                        if not plugin.get('plugin_keyword'):
-                            latest_plugin = get_latest_plugin(plugin_version,plugin_build,plugin_type,bucket_name,folder_path,"")
+                    if plugin.get('release_candidate'):
+                        print("\n")
+                        plugin_name = plugin.get('plugin_basename')
+                        print("Plugin name : " + plugin_name)
+                        plugin_version = plugin.get('plugin_version')
+                        print("Plugin version : " + plugin_version)
+                        plugin_build = plugin.get('plugin_build')
+                        if plugin_build is not None:
+                            print("Plugin Build number : " + plugin_build) 
+                        plugin_category = plugin.get('plugin_category')
+                        print("Plugin category " + plugin_category )
+                        plg_loc = ""
+                        for spec in plugin.get('plugin_spec'):
+                            print(spec)
+                            match_found = False
+                            for plugin_loc in plugin.get('plugin_location_staging'):
+                                for key,value in plugin_loc.items():
+                                   if key == spec:
+                                        plg_loc = plugin_loc[key]
+                                        print(plg_loc)
+                                        match_found = True
+                                        break
+                            if not match_found:
+                                for key,value in plugin_loc.items():
+                                    if key == "default":
+                                        print("The default location will be used for staging")
+                                        plg_loc = plugin_loc["default"]
+                                        print(plg_loc)
+                            plugin_location = str(plg_loc)[5:]
+                            print("Plugin location : " + plugin_location )
+                            bucket_name = plugin_location.split('/')[0]
+                            print("Bucket name : " + bucket_name )
+                            folder_path = plugin_location.replace(bucket_name,'')[1:]
+                            print("Folder path : " + folder_path)
+                            latest_plugin = get_latest_plugin(plugin_version,plugin_build,bucket_name,folder_path,str(spec))
                             downloaded_plugin_name = plugin_download(latest_plugin,bucket_name)
                             plugin_checksum = create_sha512(downloaded_plugin_name)
                             status = create_release_folder(release_bucket_name,plugin_category,rc_folder_path)
                             if status == "success":
                                 upload_plugin(downloaded_plugin_name,release_bucket_name,plugin_category,rc_folder_path)
                                 upload_plugin(plugin_checksum,release_bucket_name,plugin_category,rc_folder_path)
-                        else:
-                            for key_word in plugin.get('plugin_keyword'):
-                                latest_plugin = get_latest_plugin(plugin_version,plugin_build,plugin_type,bucket_name,folder_path,key_word)
-                                downloaded_plugin_name = plugin_download(latest_plugin,bucket_name)
-                                plugin_checksum = create_sha512(downloaded_plugin_name)
-                                status = create_release_folder(release_bucket_name,plugin_category,rc_folder_path)
-                                if status == "success":
-                                    upload_plugin(downloaded_plugin_name,release_bucket_name,plugin_category,rc_folder_path)
-                                    upload_plugin(plugin_checksum,release_bucket_name,plugin_category,rc_folder_path)
-                except:
-                    print("Plugin move to release folder failed : " + plugin.get('plugin_git'))
+                except Exception as ex:
+                    print(ex)
                     
             # Parse ES url's for downloading to local and upload to release bucket
             print("Upload ES artifacts to release candidate\n")
             for es in source.get('urls').get('ES'):
-                element = es
-                url = source.get('urls').get('ES').get(element)
-                if url != "":
+                url = source.get('urls').get('ES').get(es)
+                if url is not None:
+                    print("URl " + url)
                     filename = url.split('/')[-1]
                     status_code = download_file(filename,url)
                     if status_code == 200:
@@ -178,10 +202,10 @@ def main():
 
             # Parse Kibana url's for downloading to local and upload to release bucket
             print("Upload Kibana artifacts to release candidate\n")
-            for es in source.get('urls').get('KIBANA'):
-                element = es
-                url = source.get('urls').get('KIBANA').get(element)
-                if url != "":
+            for kb in source.get('urls').get('KIBANA'):
+                url = source.get('urls').get('KIBANA').get(kb)
+                if url is not None:
+                    print("URl " + url)
                     filename = url.split('/')[-1]
                     status_code = download_file(filename,url)
                     if status_code == 200:
