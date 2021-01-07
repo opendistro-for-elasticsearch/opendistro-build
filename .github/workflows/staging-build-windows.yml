@@ -514,7 +514,7 @@ jobs:
            
       - uses: actions/checkout@v2
         with:
-          repository: opendistro-for-elasticsearch/kibana-notebooks
+          repository: gaiksaya/kibana-notebooks
           # ref: ${{env.p_tag_kib_nb}}
           ref: dev
           path: kibana/plugins/kibana-nb
@@ -544,6 +544,7 @@ jobs:
           npm i -g yarn@${{ env.kibana_yarn_version }}
           npm install
           npm install --save-dev @babel/core @babel/cli
+          npm run babel
           echo "Babel installed"
       
       - name: Bootstrap the plugin
@@ -552,7 +553,6 @@ jobs:
           cp -rp kibana-nb/kibana-notebooks .
           rm -rf kibana-nb
           cd kibana-notebooks
-          yarn cache clean
           yarn kbn bootstrap
         shell: bash
 
