@@ -200,22 +200,6 @@ jobs:
           java-version: 14
       - name: Required Packages
         run: release-tools/scripts/required_packages.sh
-      - name: Send mail
-        if: ${{ always() }}
-        uses: dawidd6/action-send-mail@master
-        with:
-          server_address: smtp.gmail.com
-          server_port: 465
-          username: ${{secrets.MAIL_USERNAME}}
-          password: ${{secrets.MAIL_PASSWORD}}
-          #subject: Opendistro for Elasticsearch Build - Daily Run (Plugin Status)
-          subject: ODFE Plugin Status
-          # Read file contents as body:
-          body: file:///tmp/message.md
-          to: odfe-release-process@amazon.com
-          from: Opendistro Elasticsearch
-          # Optional content type:
-          content_type: text/html
       - name: Retrieve plugin tags
         run: echo "p_tag_ism=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)" >> $GITHUB_ENV
       - uses: actions/checkout@v1
