@@ -21,7 +21,7 @@
 
 set -e
 ROOT=`dirname $(realpath $0)`;
-PLUGIN_LIST="$ROOT/manifest.yml"
+MANIFEST_FILE="$ROOT/manifest.yml"
 VERSION_TYPE=$1
 
 if [ -z "$VERSION_TYPE" ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]
@@ -36,27 +36,27 @@ fi
 case $VERSION_TYPE in
 
   --es)
-    yq eval '.versions.ES.current' $PLUGIN_LIST
+    yq eval '.versions.ES.current' $MANIFEST_FILE
     ;;
 
   --es-prev)
-    yq eval '.versions.ES.previous' $PLUGIN_LIST
+    yq eval '.versions.ES.previous' $MANIFEST_FILE
     ;;
 
   --es-next)
-    yq eval '.versions.ES.next' $PLUGIN_LIST
+    yq eval '.versions.ES.next' $MANIFEST_FILE
     ;;
 
   --od)
-    yq eval '.versions.ODFE.current' $PLUGIN_LIST
+    yq eval '.versions.ODFE.current' $MANIFEST_FILE
     ;;
 
   --od-prev)
-    yq eval '.versions.ODFE.previous' $PLUGIN_LIST
+    yq eval '.versions.ODFE.previous' $MANIFEST_FILE
     ;;
 
   --od-next)
-    yq eval '.versions.ODFE.next' $PLUGIN_LIST
+    yq eval '.versions.ODFE.next' $MANIFEST_FILE
     ;;
 
   *)
