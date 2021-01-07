@@ -6,14 +6,14 @@
 # Language:      Shell
 #
 # About:         Print the ES/KIBANA plugin names and git urls with correct dependency orders
-#                as defined in the $PLUGIN_LIST file
+#                as defined in the $MANIFEST_FILE file
 #
 # Usage:         ./plugins-info.sh $PLUGIN_CATEGORY $RETURN_TYPE
 #                $PLUGIN_CATEGORY : elasticsearch-plugins | kibana-plugins  (required)
 #                                 | elasticsearch-clients | opendistro-libs  (required)
 #                $RETURN_TYPE     : plugin_location* | plugin_git | plugin_version | plugin_build
 #                                   plugin_spec | ......
-#                                 ($PLUGIN_LIST file for more return types)
+#                                 ($MANIFEST_FILE file for more return types)
 #
 # Requirements:  Need to install yq (v4.0.0+) on your system:
 #                LINUX: pip3 install yq
@@ -25,7 +25,7 @@
 
 set -e
 ROOT=`dirname $(realpath $0)`;
-PLUGIN_LIST="$ROOT/manifest.yml"
+MANIFEST_FILE="$ROOT/manifest.yml"
 PLUGIN_CATEGORY=`echo $1 | tr '[:upper:]' '[:lower:]'`
 RETURN_TYPE=`echo $2 | tr '[:upper:]' '[:lower:]'`
 REQUIRE_INSTALL=`echo $3 | tr '[:upper:]' '[:lower:]'`
@@ -39,9 +39,9 @@ then
 fi
 
 # backup for yq v3.x.x version in case user cannot download yq v4.0.0+
-# yq r $PLUGIN_LIST "snapshots.(plugin_category==${PLUGIN_CATEGORY}).${RETURN_TYPE}"
+# yq r $MANIFEST_FILE "snapshots.(plugin_category==${PLUGIN_CATEGORY}).${RETURN_TYPE}"
 
 # yq v4.0.0+
-yq eval ".plugins.[] | select(.plugin_category == \"${PLUGIN_CATEGORY}\") | .${RETURN_TYPE}" $PLUGIN_LIST
+yq eval ".plugins.[] | select(.plugin_category == \"${PLUGIN_CATEGORY}\") | .${RETURN_TYPE}" $MANIFEST_FILE
 
 

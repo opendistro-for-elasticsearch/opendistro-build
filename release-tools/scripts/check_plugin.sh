@@ -104,7 +104,6 @@ do
     plugin_total=$((plugin_total+${#plugin_type_array[@]}))
     plugin_git=${PLUGINS_GIT_ARRAY[$pindex]}
 
-
     IFS=`echo -ne "\n\b"`
 
     for lindex in ${!plugin_spec_array[@]}
@@ -138,9 +137,6 @@ do
         echo "manifest yaml error, neither default nor specific location exist for plugin location"
         exit 1
       fi
-
-      #echo $plugin_bucket
-      #echo $plugin_path
 
       plugin_platform=${plugin_platform_array[$lindex]}; if [ "$plugin_platform" = "noplatform" ]; then plugin_platform="";  fi
       plugin_arch=${plugin_arch_array[$lindex]}; if [ "$plugin_arch" = "noarch" ]; then plugin_arch="";  fi
