@@ -542,6 +542,7 @@ jobs:
           npm uninstall -g yarn
           echo "Installing yarn ${{ env.kibana_yarn_version }}"
           npm i -g yarn@${{ env.kibana_yarn_version }}
+          npm install
           npm install --save-dev @babel/core @babel/cli
           echo "Babel installed"
       
