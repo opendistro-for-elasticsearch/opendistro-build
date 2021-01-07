@@ -60,7 +60,7 @@ def create_release_folder(release_bucket_name,plugin_category,rc_folder_path):
         print(response)
         print("Release folder created : " + rc_folder_path + plugin_category + '/')
         if response.get('ResponseMetadata').get('HTTPStatusCode') != 200:
-            print("failed to create folder")
+            print("Failed to create folder")
             raise
         return "success"
     except:
@@ -86,7 +86,7 @@ def create_sha512(plugin_name):
 def plugin_download(plugin_full_path,bucket_name):
     try:
         response = s3.download_file(bucket_name,plugin_full_path,"downloads/"+plugin_full_path.split('/')[-1])
-        print("download successful")
+        print("Download successful")
         return plugin_full_path.split('/')[-1]
     except:
         raise
@@ -147,7 +147,7 @@ def main():
                         plugin_name = plugin.get('plugin_basename')
                         print("Plugin name : " + plugin_name)
                         plugin_version = plugin.get('plugin_version')
-                        print("Plugin full name : " + plugin_version)
+                        print("Plugin version : " + plugin_version)
                         plugin_build = plugin.get('plugin_build')
                         if plugin_build is not None:
                             print("Plugin Build number : " + plugin_build) 
