@@ -542,6 +542,8 @@ jobs:
           npm uninstall -g yarn
           echo "Installing yarn ${{ env.kibana_yarn_version }}"
           npm i -g yarn@${{ env.kibana_yarn_version }}
+          npm install --save-dev @babel/core @babel/cli
+          echo "Babel installed"
       
       - name: Bootstrap the plugin
         run: |
@@ -550,7 +552,7 @@ jobs:
           rm -rf kibana-nb
           cd kibana-notebooks
           yarn cache clean
-          yarn kbn bootstrap --oss
+          yarn kbn bootstrap
         shell: bash
 
       - name: Run ES and kibana and IT (RUN IN ONE STEP OR WINDOWS WILL BREAK)
