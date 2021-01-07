@@ -544,7 +544,6 @@ jobs:
           npm i -g yarn@${{ env.kibana_yarn_version }}
           npm install
           npm install --save-dev @babel/core @babel/cli
-          npm run babel
           echo "Babel installed"
       
       - name: Bootstrap the plugin
@@ -553,6 +552,7 @@ jobs:
           cp -rp kibana-nb/kibana-notebooks .
           rm -rf kibana-nb
           cd kibana-notebooks
+          npm run babel
           yarn kbn bootstrap
         shell: bash
 
