@@ -11,7 +11,7 @@ Prerequisites:
                sudo pip install pyyaml
 
 Usage: 
-              ./staging-build-release-candidate.py $BUILD_NUMBER
+              ./staging-copy-artifacts.py $BUILD_NUMBER
 
 """
 import boto3
