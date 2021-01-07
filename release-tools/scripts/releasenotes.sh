@@ -14,7 +14,7 @@
 # Platform:      This script works on both GNU/LINUX and MacOS
 #
 # Starting Date: 2020-09-03
-# Modified Date: 2020-10-27
+# Modified Date: 2021-01-06
 ###############################################################################################
 
 set -e
@@ -22,8 +22,8 @@ set -e
 OLDIFS=$IFS
 REPO_ROOT=`git rev-parse --show-toplevel`
 ROOT=`dirname $(realpath $0)`;
-OD_VERSION=`python $REPO_ROOT/bin/version-info --od`
-ES_VERSION=`python $REPO_ROOT/bin/version-info --es`
+OD_VERSION=`$REPO_ROOT/bin/version-info.sh --od`
+ES_VERSION=`$REPO_ROOT/bin/version-info.sh --es`
 RELEASENOTES_ORIGURL="$ROOT/releasenotes-orig-urls.txt"
 RELEASENOTES_SORTURL="$ROOT/releasenotes-sort-urls.txt"
 RELEASENOTES_TEMPTXT="$ROOT/releasenotes-temp-text.tmp"

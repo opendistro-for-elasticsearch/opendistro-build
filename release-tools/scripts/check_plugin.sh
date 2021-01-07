@@ -19,7 +19,7 @@
 #                $ODFE_VERSION: x.y.z (optional)
 #
 # Starting Date: 2020-05-29
-# Modified Date: 2020-08-31
+# Modified Date: 2021-01-06
 ###############################################################################################
 
 # Please leave it commented as aws s3 will fail if no plugin presents
@@ -61,7 +61,7 @@ echo "#######################################"
 echo "ODFE_VERSION is: $ODFE_VERSION"
 if [ -z "$ODFE_VERSION" ]
 then
-  ODFE_VERSION=`$SCRIPTS_DIR/version-info.py --od`
+  ODFE_VERSION=`$SCRIPTS_DIR/version-info.sh --od`
   echo "Use default ODFE_VERSION: $ODFE_VERSION"
 fi
 echo "#######################################"
@@ -74,8 +74,9 @@ for plugin_category in $PLUGIN_CATEGORY
 do
   IFS=$OLDIFS
   PLUGINS_BASENAME_ARRAY=( `$SCRIPTS_DIR/plugins-info.sh $plugin_category plugin_basename` )
+  PLUGINS_IS_RC_ARRAY=( `$SCRIPTS_DIR/plugins-info.sh $plugin_category release_candidate` )
   PLUGINS_BUILD_ARRAY=( `$SCRIPTS_DIR/plugins-info.sh $plugin_category plugin_build` )
-  PLUGINS_LOCATION_ARRAY=( `$SCRIPTS_DIR/plugins-info.sh $plugin_category plugin_location_staging` )
+  IFS="]"; PLUGINS_LOCATION_ARRAY=( `$SCRIPTS_DIR/plugins-info.sh $plugin_category plugin_location_staging` ); IFS=$OLDIFS
   PLUGINS_SPEC_ARRAY=( `$SCRIPTS_DIR/plugins-info.sh $plugin_category plugin_spec | sed 's/\[//g;s/\]//g;s/ *//g'` )
   PLUGINS_GIT=`$SCRIPTS_DIR/plugins-info.sh $plugin_category plugin_git | tr '\n' ' '`
   plugin_total=0
@@ -88,13 +89,15 @@ do
   echo "Proceed to check ($plugin_category):"
   echo "#######################################"
 
-  for pindex in ${!PLUGINS_LOCATION_ARRAY[@]}
+  for pindex in ${!PLUGINS_BASENAME_ARRAY[@]}
   do
     IFS=$OLDIFS
+    plugin_is_rc=`echo ${PLUGINS_IS_RC_ARRAY[$pindex]}`; if [ "$plugin_is_rc" != "true" ]; then break; fi
     plugin_basename=`echo ${PLUGINS_BASENAME_ARRAY[$pindex]}`
     plugin_build=`echo ${PLUGINS_BUILD_ARRAY[$pindex]}`
-    plugin_bucket=`echo ${PLUGINS_LOCATION_ARRAY[$pindex]} | awk -F/ '{print $3}'`
-    plugin_path=`echo ${PLUGINS_LOCATION_ARRAY[$pindex]} | sed "s/^.*$plugin_bucket\///g"`
+    plugin_location_array1=( `echo ${PLUGINS_LOCATION_ARRAY[$pindex]} | sed 's/{/{"/g;s/:[ ]*"/"&/g;s/[][}{]//g;s/^/{/g;s/$/}/g' | jq -r '. | keys[]'` )
+    plugin_location_array2=( `echo ${PLUGINS_LOCATION_ARRAY[$pindex]} | sed 's/{/{"/g;s/:[ ]*"/"&/g;s/[][}{]//g;s/^/{/g;s/$/}/g' | jq -r '.[]'` )
+    plugin_spec_array=( `echo ${PLUGINS_SPEC_ARRAY[$pindex]} | tr ',' '\n'` )
     plugin_platform_array=( `echo ${PLUGINS_SPEC_ARRAY[$pindex]} | tr ',' '\n' | awk -F '_' '{print $1}'` )
     plugin_arch_array=( `echo ${PLUGINS_SPEC_ARRAY[$pindex]} | tr ',' '\n' | awk -F '_' '{print $2}'` )
     plugin_type_array=( `echo ${PLUGINS_SPEC_ARRAY[$pindex]} | tr ',' '\n' | awk -F '_' '{print $3}'` )
@@ -103,8 +106,38 @@ do
 
     IFS=`echo -ne "\n\b"`
 
-    for lindex in ${!plugin_platform_array[@]}
+    for lindex in ${!plugin_spec_array[@]}
     do
+      plugin_bucket=""
+      plugin_path=""
+      for sindex in ${!plugin_location_array1[@]}
+      do
+        if [ "${plugin_location_array1[$sindex]}" = "default" ]
+        then
+          plugin_location_default=${plugin_location_array2[$sindex]}
+          break
+        fi
+      done
+
+      for sindex in ${!plugin_location_array1[@]}
+      do
+        if [ "${plugin_spec_array[$lindex]}" = "${plugin_location_array1[$sindex]}" ]
+        then
+          plugin_bucket=`echo ${plugin_location_array2[$sindex]}  | awk -F/ '{print $3}'`
+          plugin_path=`echo ${plugin_location_array2[$sindex]} | sed "s/^.*$plugin_bucket\///g"`
+          break
+        fi
+      done
+
+      if [ -z "$plugin_bucket" ] && [ ! -z "$plugin_location_default" ]
+      then
+        plugin_bucket=`echo ${plugin_location_default}  | awk -F/ '{print $3}'`
+        plugin_path=`echo ${plugin_location_default} | sed "s/^.*$plugin_bucket\///g"`
+      else
+        echo "manifest yaml error, neither default nor specific location exist for plugin location"
+        exit 1
+      fi
+
       plugin_platform=${plugin_platform_array[$lindex]}; if [ "$plugin_platform" = "noplatform" ]; then plugin_platform="";  fi
       plugin_arch=${plugin_arch_array[$lindex]}; if [ "$plugin_arch" = "noarch" ]; then plugin_arch="";  fi
       plugin_type=${plugin_type_array[$lindex]}

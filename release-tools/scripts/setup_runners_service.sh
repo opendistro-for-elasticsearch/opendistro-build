@@ -14,7 +14,7 @@
 # Requirements:  This script assumes java 14 is already installed on the servers
 #
 # Starting Date: 2020-07-27
-# Modified Date: 2020-08-17
+# Modified Date: 2021-01-06
 ###############################################################################################
 
 # This script allows users to manually assign parameters
@@ -35,8 +35,8 @@ sudo apt install $SETUP_PACKAGES -y || sudo yum install $SETUP_PACKAGES -y
 
 REPO_ROOT=`git rev-parse --show-toplevel`
 ROOT=`dirname $(realpath $0)`; cd $ROOT
-OD_VERSION=`python $REPO_ROOT/release-tools/scripts/version-info.py --od`
-ES_VERSION=`python $REPO_ROOT/release-tools/scripts/version-info.py --es`
+OD_VERSION=`$REPO_ROOT/release-tools/scripts/version-info.sh --od`
+ES_VERSION=`$REPO_ROOT/release-tools/scripts/version-info.sh --es`
 
 ES_PACKAGE_NAME="opendistroforelasticsearch-${OD_VERSION}"
 ES_ROOT="${ROOT}/odfe-testing/${ES_PACKAGE_NAME}"
@@ -95,7 +95,7 @@ fi
 if [ "$SETUP_DISTRO" = "rpm" ]
 then
   sudo curl https://d3g5vo6xdbdb9a.cloudfront.net/yum/staging-opendistroforelasticsearch-artifacts.repo  -o /etc/yum.repos.d/staging-opendistroforelasticsearch-artifacts.repo
-  sudo yum update
+  sudo yum update -y
   sudo yum install $ES_PACKAGE_NAME -y
 fi
 

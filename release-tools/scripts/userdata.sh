@@ -22,8 +22,8 @@
 
 set -e
 REPO_ROOT=`git rev-parse --show-toplevel`
-ES_VER=`$REPO_ROOT/release-tools/scripts/version-info.py --es`
-ODFE_VER=`$REPO_ROOT/release-tools/scripts/version-info.py --od`
+ES_VER=`$REPO_ROOT/release-tools/scripts/version-info.sh --es`
+ODFE_VER=`$REPO_ROOT/release-tools/scripts/version-info.sh --od`
 echo $ES_VER $ODFE_VER
 
 if [ "$#" -ne 2 ] || [ -z "$1" ] || [ -z "$2" ]
