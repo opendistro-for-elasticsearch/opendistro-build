@@ -543,7 +543,7 @@ jobs:
           echo "Installing yarn ${{ env.kibana_yarn_version }}"
           npm i -g yarn@${{ env.kibana_yarn_version }}
           npm install
-          npm install --save-dev --global @babel/core @babel/cli
+          npm install --save-dev --global @babel/core @babel/cli babel-preset-es2015
       
       - name: Bootstrap the plugin
         run: |
