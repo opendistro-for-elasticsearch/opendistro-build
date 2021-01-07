@@ -14,7 +14,7 @@
 # Platform:      This script works on both GNU/LINUX and MacOS
 #
 # Starting Date: 2020-09-03
-# Modified Date: 2020-10-27
+# Modified Date: 2021-01-06
 ###############################################################################################
 
 set -e
