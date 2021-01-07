@@ -76,7 +76,7 @@
 #                8. AMI must be at least 16GB during the creation.
 #
 # Starting Date: 2020-07-27
-# Modified Date: 2020-10-21
+# Modified Date: 2021-01-06
 ###############################################################################################
 
 set -e
