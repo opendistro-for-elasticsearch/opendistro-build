@@ -552,6 +552,7 @@ jobs:
           rm -rf kibana-nb
           cd kibana-notebooks
           npm run babel
+          yarn cache clean
           yarn kbn bootstrap
         shell: bash
 
