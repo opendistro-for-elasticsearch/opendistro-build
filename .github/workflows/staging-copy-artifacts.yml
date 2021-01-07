@@ -1,4 +1,4 @@
-name: Staging Build Release Candidate
+name: Staging Copy Artifacts
 
 on:
 #  schedule:
@@ -7,7 +7,7 @@ on:
     types: [staging-copy-artifacts]
 
 jobs:
-  Staging-Build-Release-Candidate:
+  Staging-Copy-Artifacts:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v1
