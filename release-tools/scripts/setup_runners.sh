@@ -100,7 +100,7 @@ SETUP_RUNNER=`echo $2 | sed 's/,/ /g'`
 SETUP_GIT_TOKEN=$3
 
 # AMI on us-west-2
-# Distros     Arch  Username AMI-ID                JDK   Comments
+# Distro      Arch  Username AMI-ID                JDK   Comments
 # RPM-al2     x64   ec2-user ami-086e8a98280780e63 jdk14 install by workflow
 # RPM-centos7 x64   centos   ami-0f539dbfee9363756 jdk14 preinstall
 # RPM-centos7 arm64 centos   ami-06fea6aecc7754b17 jdk13 preinstall RH drop support
