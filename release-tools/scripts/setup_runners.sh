@@ -197,10 +197,10 @@ then
   done
 
   echo ""
-  echo "Wait for 60 seconds for runners to bootstrap on Git"
+  echo "Wait for 90 seconds for runners to bootstrap on Git"
   echo ""
 
-  sleep 60
+  sleep 90
 
   echo ""
   echo "All runners are online on Git"
