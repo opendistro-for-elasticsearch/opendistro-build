@@ -1,8 +1,10 @@
 name: Prod Sync ODFE CLI Artifacts
 
 on:
-  repository_dispatch:
-    types: [prod-sync-odfe-cli]
+#  repository_dispatch:
+#    types: [prod-sync-odfe-cli]
+  push:
+    branches: [sreekarj_V297534175]
 
 jobs:
   sync-odfe-cli-artifacts-prod:
@@ -22,10 +24,8 @@ jobs:
       run: |
         #!/bin/bash
         S3_BUCKET_PROD="artifacts.opendistroforelasticsearch.amazon.com"
-        S3_BUCKET_PLUGIN="artifacts.learning"
+        S3_BUCKET_PLUGIN="staging.artifacts.opendistroforelasticsearch.amazon.com"
         TAG_VERSION="$(./release-tools/scripts/manifest_parser.sh opendistro-odfe-cli plugin_version)"
-        aws s3 sync s3://$S3_BUCKET_PLUGIN/clients/odfe-cli/linux/ s3://$S3_BUCKET_PROD/downloads/elasticsearch-clients/opendistro-cli/ --exclude "*" --include "odfe-cli-${TAG_VERSION}*" --quiet 
-        aws s3 sync s3://$S3_BUCKET_PLUGIN/clients/odfe-cli/mac/ s3://$S3_BUCKET_PROD/downloads/elasticsearch-clients/opendistro-cli/ --exclude "*" --include "odfe-cli-${TAG_VERSION}*" --quiet
-        aws s3 sync s3://$S3_BUCKET_PLUGIN/clients/odfe-cli/windows/ s3://$S3_BUCKET_PROD/downloads/elasticsearch-clients/opendistro-cli/ --exclude "*" --include "odfe-cli-${TAG_VERSION}*" --quiet
+        aws s3 sync s3://$S3_BUCKET_PLUGIN/snapshots/elasticsearch-clients/opendistro-cli/ s3://$S3_BUCKET_PROD/downloads/elasticsearch-clients/opendistro-cli/ --exclude "*" --include "odfe-cli-${TAG_VERSION}*" --quiet 
         aws s3 ls s3://$S3_BUCKET_PROD/downloads/elasticsearch-clients/opendistro-cli/ | grep $TAG_VERSION
         aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/elasticsearch-clients/opendistro-cli/*"
