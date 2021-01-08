@@ -30,7 +30,7 @@ jobs:
       - name: Retrieve plugin tags
         run: |
           yq --version
-          echo "p_tag_cli=$(./release-tools/scripts/manifest_parser.sh opendistro-odfe-cli plugin_version)" >> $GITHUB_ENV
+          echo "p_tag_cli=$(./release-tools/scripts/plugin_parser.sh opendistro-odfe-cli plugin_version)" >> $GITHUB_ENV
       - name: Checkout odfe-cli
         uses: actions/checkout@v2
         with:

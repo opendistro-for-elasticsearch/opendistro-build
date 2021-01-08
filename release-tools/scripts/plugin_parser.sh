@@ -3,7 +3,7 @@
 ###### Information ############################################################################
 # About:         Retrieve the value for Plugin specific key from the Manifest file
 #
-# Usage:         ./manifest_parser.sh $plugin_name $key
+# Usage:         ./plugin_parser.sh $plugin_name $key
 ###############################################################################################
 
 set -e
