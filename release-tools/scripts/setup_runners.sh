@@ -66,12 +66,14 @@
 #
 #                7. Runner AMI requires installation of packages of these (java version can be different as gradle might request a higher version):
 #                   Debian:
-#                   sudo apt install -y curl wget unzip tar jq python python3 git awscli openjdk-8-jdk
+#                   sudo apt install -y curl wget unzip tar jq python python3 git awscli openjdk-14-jdk
 #                   sudo apt install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
 #
 #                   RedHat:
-#                   sudo yum install -y curl wget unzip tar jq python python3 git awscli java-8-openjdk
+#                   sudo yum install -y curl wget unzip tar jq python python3 git awscli java-latest-openjdk
 #                   sudo yum install -y xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-devel GConf2 nss libXScrnSaver alsa-lib
+#
+#                   Also you need to install java devel if you want to compile library (e.g. knnlib)
 #
 #                8. AMI must be at least 16GB during the creation.
 #
@@ -124,8 +126,8 @@ SETUP_GIT_TOKEN=$3
 # AMI on us-west-2
 # Distro      Arch  Username AMI-ID                Java  Comments
 # RPM-al2     x64   ec2-user ami-086e8a98280780e63 none  need to install jdk by workflow
-# RPM-centos8 x64   centos   ami-0229abfc674729878 jdk15 preinstall
-# RPM-centos8 arm64 centos   ami-0b37f0d7e6c9e3b90 jdk15 preinstall
+# RPM-centos8 x64   centos   ami-011f59f50bac33376 jdk15 preinstall
+# RPM-centos8 arm64 centos   ami-0ed17173ab64255b1 jdk15 preinstall
 # DEB-ubu1804 arm64 ubuntu   ami-02e560bc36d1378d1 jdk14 preinstall
 EC2_AMI_ID=$4
 
