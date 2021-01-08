@@ -101,11 +101,9 @@ SETUP_GIT_TOKEN=$3
 
 # AMI on us-west-2
 # Distro      Arch  Username AMI-ID                Java  Comments
-# RPM-al2     x64   ec2-user ami-086e8a98280780e63 jdk14 install by workflow
-# RPM-centos7 x64   centos   ami-0f539dbfee9363756 jdk14 preinstall
-# RPM-centos7 arm64 centos   ami-06fea6aecc7754b17 jdk13 preinstall RH drop support
-# RPM-centos8 x64   centos   ami-00eb10a0990a90cbb jdk15 preinstall
-# RPM-centos8 arm64 centos   ami-09c12fde01bdedc9b jdk15 preinstall
+# RPM-al2     x64   ec2-user ami-086e8a98280780e63 none  need to install jdk by workflow
+# RPM-centos8 x64   centos   ami-0229abfc674729878 jdk15 preinstall
+# RPM-centos8 arm64 centos   ami-0b37f0d7e6c9e3b90 jdk15 preinstall
 # DEB-ubu1804 arm64 ubuntu   ami-02e560bc36d1378d1 jdk14 preinstall
 EC2_AMI_ID=$4
 
