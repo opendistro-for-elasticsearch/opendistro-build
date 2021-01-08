@@ -62,5 +62,5 @@ jobs:
           aws s3 sync s3://$S3_BUCKET_PLUGIN/clients/odfe-cli/linux/ s3://$S3_BUCKET_STAGING/snapshots/elasticsearch-clients/opendistro-cli/ --exclude "*" --include "odfe-cli-${{env.p_tag_cli}}*" --quiet 
           aws s3 sync s3://$S3_BUCKET_PLUGIN/clients/odfe-cli/mac/ s3://$S3_BUCKET_STAGING/snapshots/elasticsearch-clients/opendistro-cli/ --exclude "*" --include "odfe-cli-${{env.p_tag_cli}}*" --quiet
           aws s3 sync s3://$S3_BUCKET_PLUGIN/clients/odfe-cli/windows/ s3://$S3_BUCKET_STAGING/snapshots/elasticsearch-clients/opendistro-cli/ --exclude "*" --include "odfe-cli-${{env.p_tag_cli}}*" --quiet
-          aws s3 ls s3://$S3_BUCKET_STAGING/snapshots/elasticsearch-clients/opendistro-cli/ | grep $TAG_VERSION
+          aws s3 ls s3://$S3_BUCKET_STAGING/snapshots/elasticsearch-clients/opendistro-cli/ | grep ${{env.p_tag_cli}}
 
