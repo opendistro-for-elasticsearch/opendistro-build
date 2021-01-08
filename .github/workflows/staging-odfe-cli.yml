@@ -3,8 +3,10 @@ name: Staging ODFE CLI
 on:
 #  schedule:
 #    - cron: '0 12 * * *'
-  repository_dispatch:
-    types: [staging-odfe-cli]
+#  repository_dispatch:
+#    types: [staging-odfe-cli]
+  push:
+    branches: [sreekarj_V297534175]
 
 jobs:
   Test-ODFE-CLI:
@@ -17,8 +19,8 @@ jobs:
       - name: Set up AWS Cred
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
       - name: Setup Go
         uses: actions/setup-go@v2
@@ -53,4 +55,13 @@ jobs:
           go clean -testcache;
           go test -tags=integration ./it;
           docker logout
+      - name: Move artifacts to Staging
+        run: |
+          S3_BUCKET_STAGING="artifacts.opendistroforelasticsearch.amazon.com"
+          S3_BUCKET_PLUGIN="artifacts.learning"
+          TAG_VERSION="$(./release-tools/scripts/manifest_parser.sh opendistro-odfe-cli plugin_version)"
+          aws s3 sync s3://$S3_BUCKET_PLUGIN/clients/odfe-cli/linux/ s3://$S3_BUCKET_STAGING/snapshots/elasticsearch-clients/opendistro-cli/ --exclude "*" --include "odfe-cli-${TAG_VERSION}*" --quiet 
+          aws s3 sync s3://$S3_BUCKET_PLUGIN/clients/odfe-cli/mac/ s3://$S3_BUCKET_STAGING/snapshots/elasticsearch-clients/opendistro-cli/ --exclude "*" --include "odfe-cli-${TAG_VERSION}*" --quiet
+          aws s3 sync s3://$S3_BUCKET_PLUGIN/clients/odfe-cli/windows/ s3://$S3_BUCKET_STAGING/snapshots/elasticsearch-clients/opendistro-cli/ --exclude "*" --include "odfe-cli-${TAG_VERSION}*" --quiet
+          aws s3 ls s3://$S3_BUCKET_STAGING/snapshots/elasticsearch-clients/opendistro-cli/ | grep $TAG_VERSION
 
