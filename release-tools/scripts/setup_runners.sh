@@ -170,6 +170,7 @@ echo "###############################################"
 ###############################################
 if [ "$SETUP_ACTION" = "run" ]
 then
+  echo "GIT_URL_REPO $GIT_URL_REPO"
 
   echo ""
   echo "Run / Start instances and bootstrap runners [${SETUP_RUNNER}]"
@@ -235,6 +236,7 @@ fi
 ###################################################
 if [ "$SETUP_ACTION" = "terminate" ]
 then
+  echo "GIT_URL_REPO $GIT_URL_REPO"
 
   echo ""
   echo "Terminate / Delete instances and remove runners [${SETUP_RUNNER}]"
