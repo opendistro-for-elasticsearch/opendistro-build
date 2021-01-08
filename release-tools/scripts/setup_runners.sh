@@ -75,8 +75,10 @@
 #
 #                8. AMI must be at least 16GB during the creation.
 #
+#                9. You can use `export GIT_UTL_REPO="opendistro-for-elasticsearch/opendistro-build"` or similar to set the Git Repo of the runner
+#
 # Starting Date: 2020-07-27
-# Modified Date: 2021-01-06
+# Modified Date: 2021-01-09
 ###############################################################################################
 
 set -e
@@ -92,6 +94,7 @@ then
   echo "Example: $0 \$ACTION \$EC2_INSTANCE_NAMES(,) \$GITHUB_TOKEN, \$EC2_AMI_ID"
   echo "Example (run must have 4 parameters): $0 \"run\" \"odfe-rpm-ism,odfe-rpm-sql\" \"<GitHub PAT>\" \"ami-*\""
   echo "Example (terminate must have 3 parameters): $0 \"terminate\" \"odfe-rpm-ism,odfe-rpm-sql\" \"<GitHub PAT>\""
+  echo "You can use \`export GIT_UTL_REPO=\"opendistro-for-elasticsearch/opendistro-build\"\` or similar to set the Git Repo of the runner"
   exit 1
 fi
 
@@ -135,7 +138,7 @@ EC2_SECURITYGROUP="odfe-release-runner"
 IAM_ROLE="odfe-release-runner"
 GIT_URL_API="https://api.github.com/repos"
 GIT_URL_BASE="https://github.com"
-GIT_URL_REPO="opendistro-for-elasticsearch/opendistro-build"
+GIT_URL_REPO=${GIT_URL_REPO:-opendistro-for-elasticsearch/opendistro-build}
 RUNNER_DIR="actions-runner"
 
 
