@@ -1,0 +1,60 @@
+name: Process RPM Artifacts
+
+on:
+  # schedule:
+  #   - cron: '0 10 * * *'
+  repository_dispatch:
+    types: [staging-build-rpm]
+  push:
+    branches: [setup-runners-V301153385]
+
+jobs:
+  Provision-Runners:
+    name: Provision-Runners
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v1
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_EC2_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_EC2_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
+      - name: AWS Cli Processing
+        run: |
+          #!/bin/bash
+          # Please add comma at the end of the RUNNERS strings
+          # Don't add space after commas
+          RUNNERS+="odfe-rpm-ad-kibana"
+          release-tools/scripts/setup_runners.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }} ami-09c12fde01bdedc9b
+
+  Test-AD-KIBANA:
+    needs: [Provision-Runners]
+    runs-on: [self-hosted, Linux, ARM64, odfe-rpm-ad-kibana]
+    name: Test-AD-KIBANA
+    steps:
+      - uses: actions/checkout@v1
+      - name: run IT
+        run: date && hostname
+
+#  CleanUp-Runners:
+#    needs: [Test-AD-KIBANA]
+#    if: always()
+#    name: CleanUp-Runners
+#    runs-on: ubuntu-18.04
+#    steps:
+#      - uses: actions/checkout@v1
+#      - name: Configure AWS Credentials
+#        uses: aws-actions/configure-aws-credentials@v1
+#        with:
+#          aws-access-key-id: ${{ secrets.AWS_EC2_ACCESS_KEY_ID }}
+#          aws-secret-access-key: ${{ secrets.AWS_EC2_SECRET_ACCESS_KEY }}
+#          aws-region: us-west-2
+#      - name: AWS Cli Processing
+#        run: |
+#          #!/bin/bash
+#          # Please add comma at the end of the RUNNERS strings
+#          # Don't add space after commas
+#          RUNNERS+="odfe-rpm-ad-kibana"
+#          release-tools/scripts/setup_runners.sh terminate $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
+#
