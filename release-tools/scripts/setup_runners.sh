@@ -171,10 +171,10 @@ then
   done
 
   echo ""
-  echo "Sleep for 90 seconds for EC2 instances to start running"
+  echo "Sleep for 120 seconds for EC2 instances to start running"
   echo ""
 
-  sleep 90
+  sleep 120
 
   # Setup VMs to register as runners
   for instance_name2 in $SETUP_RUNNER
@@ -202,10 +202,10 @@ then
   done
 
   echo ""
-  echo "Wait for 30 seconds for runners to bootstrap on Git"
+  echo "Wait for 60 seconds for runners to bootstrap on Git"
   echo ""
 
-  sleep 30
+  sleep 60
 
   echo ""
   echo "All runners are online on Git"
