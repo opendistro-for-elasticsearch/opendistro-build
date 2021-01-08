@@ -1,12 +1,10 @@
 name: Staging ODFE CLI
 
 on:
-#  schedule:
-#    - cron: '0 12 * * *'
-#  repository_dispatch:
-#    types: [staging-odfe-cli]
-  push:
-    branches: [sreekarj_V297534175]
+  schedule:
+    - cron: '0 12 * * *'
+  repository_dispatch:
+    types: [staging-odfe-cli]
 
 jobs:
   Test-ODFE-CLI:
