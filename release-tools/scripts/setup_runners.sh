@@ -183,21 +183,18 @@ then
     aws ssm send-command --targets Key=tag:Name,Values=$instance_name2 --document-name "AWS-RunShellScript" \
                          --parameters '{"commands": ["#!/bin/bash", "sudo hostnamectl set-hostname '${instance_name2}'"]}' \
                          --output text
-                         #--output text > /dev/null 2>&1; echo $?
 
     echo "[${instance_name2}]: Get latest runner binary to server ${RUNNER_URL}"
     aws ssm send-command --targets Key=tag:Name,Values=$instance_name2 --document-name "AWS-RunShellScript" \
                          --parameters '{"commands": ["#!/bin/bash", "sudo su - '${EC2_AMI_USER}' -c \"mkdir -p '${RUNNER_DIR}' && cd '${RUNNER_DIR}' && wget -q '${RUNNER_URL}' && tar -xzf *.tar.gz && rm *.tar.gz \""]}' \
                          --output text
-                         #--output text > /dev/null 2>&1; echo $?
 
     echo "[${instance_name2}]: Get runner token and bootstrap on Git"
     instance_runner_token=`curl --silent -H "Authorization: token ${SETUP_GIT_TOKEN}" --request POST "${GIT_URL_API}/${GIT_URL_REPO}/actions/runners/registration-token" | jq -r .token`
     # Wait 10 seconds for untar of runner binary to complete
     aws ssm send-command --targets Key=tag:Name,Values=$instance_name2 --document-name "AWS-RunShellScript" \
-                         --parameters '{"commands": ["#!/bin/bash", "sudo su - '${EC2_AMI_USER}' -c \"cd '${RUNNER_DIR}' && sleep 30 && ./config.sh --unattended --url '${GIT_URL_BASE}/${GIT_URL_REPO}' --labels '${instance_name2}' --token '${instance_runner_token}' && nohup ./run.sh &\""]}' \
+                         --parameters '{"commands": ["#!/bin/bash", "sudo su - '${EC2_AMI_USER}' -c \"sleep 30 && cd '${RUNNER_DIR}' && ./config.sh --unattended --url '${GIT_URL_BASE}/${GIT_URL_REPO}' --labels '${instance_name2}' --token '${instance_runner_token}' && nohup ./run.sh &\""]}' \
                          --output text
-                         #--output text > /dev/null 2>&1; echo $?
     sleep 5
   done
 
