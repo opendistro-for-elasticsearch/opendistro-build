@@ -77,6 +77,25 @@
 #
 #                9. You can use `export GIT_UTL_REPO="opendistro-for-elasticsearch/opendistro-build"` or similar to set the Git Repo of the runner
 #
+#                10. JDK & SSM Agent
+#                    You should find a way to install JDK14 or later on the server
+#                    Dibian with: sudo add-apt-repository ppa:openjdk-r/ppa
+#                    RedHat with: https://fedoraproject.org/wiki/EPEL
+#                    
+#                    Also, you need to install ssm agent
+#                    on non-al2 machine due to ssm RunCommand requires that
+#                    https://docs.aws.amazon.com/systems-manager/latest/userguide/sysman-manual-agent-install.html
+#                    
+#                    us-west-2
+#                    RPM x64: https://s3.us-west-2.amazonaws.com/amazon-ssm-us-west-2/latest/linux_amd64/amazon-ssm-agent.rpm
+#                    RPM arm64: https://s3.us-west-2.amazonaws.com/amazon-ssm-us-west-2/latest/linux_arm64/amazon-ssm-agent.rpm
+#                    DEB x64: https://s3.us-west-2.amazonaws.com/amazon-ssm-us-west-2/latest/debian_amd64/amazon-ssm-agent.deb
+#                    DEB arm64: https://s3.us-west-2.amazonaws.com/amazon-ssm-us-west-2/latest/debian_arm64/amazon-ssm-agent.deb
+#                    yum or dpkg then systemctl enable/start amazon-ssm-agent
+#
+#                11. You also need to set the user of the GitHub Token to have ADMIN access of the GitHub Repo
+#                    So that runner can be successfully bootstrapped to action tab in settings.
+#
 # Starting Date: 2020-07-27
 # Modified Date: 2021-01-09
 ###############################################################################################
