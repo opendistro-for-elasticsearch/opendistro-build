@@ -66,17 +66,40 @@
 #
 #                7. Runner AMI requires installation of packages of these (java version can be different as gradle might request a higher version):
 #                   Debian:
-#                   sudo apt install -y curl wget unzip tar jq python python3 git awscli openjdk-8-jdk
+#                   sudo apt install -y curl wget unzip tar jq python python3 git awscli openjdk-14-jdk
 #                   sudo apt install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
 #
 #                   RedHat:
-#                   sudo yum install -y curl wget unzip tar jq python python3 git awscli java-8-openjdk
+#                   sudo yum install -y curl wget unzip tar jq python python3 git awscli java-latest-openjdk
 #                   sudo yum install -y xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-devel GConf2 nss libXScrnSaver alsa-lib
+#
+#                   Also you need to install java devel if you want to compile library (e.g. knnlib)
 #
 #                8. AMI must be at least 16GB during the creation.
 #
+#                9. You can use `export GIT_UTL_REPO="opendistro-for-elasticsearch/opendistro-build"` or similar to set the Git Repo of the runner
+#
+#                10. JDK & SSM Agent
+#                    You should find a way to install JDK14 or later on the server
+#                    Dibian with: sudo add-apt-repository ppa:openjdk-r/ppa
+#                    RedHat with: https://fedoraproject.org/wiki/EPEL
+#                    
+#                    Also, you need to install ssm agent
+#                    on non-al2 machine due to ssm RunCommand requires that
+#                    https://docs.aws.amazon.com/systems-manager/latest/userguide/sysman-manual-agent-install.html
+#                    
+#                    us-west-2
+#                    RPM x64: https://s3.us-west-2.amazonaws.com/amazon-ssm-us-west-2/latest/linux_amd64/amazon-ssm-agent.rpm
+#                    RPM arm64: https://s3.us-west-2.amazonaws.com/amazon-ssm-us-west-2/latest/linux_arm64/amazon-ssm-agent.rpm
+#                    DEB x64: https://s3.us-west-2.amazonaws.com/amazon-ssm-us-west-2/latest/debian_amd64/amazon-ssm-agent.deb
+#                    DEB arm64: https://s3.us-west-2.amazonaws.com/amazon-ssm-us-west-2/latest/debian_arm64/amazon-ssm-agent.deb
+#                    yum or dpkg then systemctl enable/start amazon-ssm-agent
+#
+#                11. You also need to set the user of the GitHub Token to have ADMIN access of the GitHub Repo
+#                    So that runner can be successfully bootstrapped to action tab in settings.
+#
 # Starting Date: 2020-07-27
-# Modified Date: 2021-01-06
+# Modified Date: 2021-01-09
 ###############################################################################################
 
 set -e
@@ -92,6 +115,7 @@ then
   echo "Example: $0 \$ACTION \$EC2_INSTANCE_NAMES(,) \$GITHUB_TOKEN, \$EC2_AMI_ID"
   echo "Example (run must have 4 parameters): $0 \"run\" \"odfe-rpm-ism,odfe-rpm-sql\" \"<GitHub PAT>\" \"ami-*\""
   echo "Example (terminate must have 3 parameters): $0 \"terminate\" \"odfe-rpm-ism,odfe-rpm-sql\" \"<GitHub PAT>\""
+  echo "You can use \`export GIT_UTL_REPO=\"opendistro-for-elasticsearch/opendistro-build\"\` or similar to set the Git Repo of the runner"
   exit 1
 fi
 
@@ -102,8 +126,8 @@ SETUP_GIT_TOKEN=$3
 # AMI on us-west-2
 # Distro      Arch  Username AMI-ID                Java  Comments
 # RPM-al2     x64   ec2-user ami-086e8a98280780e63 none  need to install jdk by workflow
-# RPM-centos8 x64   centos   ami-0229abfc674729878 jdk15 preinstall
-# RPM-centos8 arm64 centos   ami-0b37f0d7e6c9e3b90 jdk15 preinstall
+# RPM-centos8 x64   centos   ami-011f59f50bac33376 jdk15 preinstall
+# RPM-centos8 arm64 centos   ami-0ed17173ab64255b1 jdk15 preinstall
 # DEB-ubu1804 arm64 ubuntu   ami-02e560bc36d1378d1 jdk14 preinstall
 EC2_AMI_ID=$4
 
@@ -135,7 +159,7 @@ EC2_SECURITYGROUP="odfe-release-runner"
 IAM_ROLE="odfe-release-runner"
 GIT_URL_API="https://api.github.com/repos"
 GIT_URL_BASE="https://github.com"
-GIT_URL_REPO="opendistro-for-elasticsearch/opendistro-build"
+GIT_URL_REPO=${GIT_URL_REPO:-opendistro-for-elasticsearch/opendistro-build}
 RUNNER_DIR="actions-runner"
 
 
@@ -148,6 +172,7 @@ echo "###############################################"
 ###############################################
 if [ "$SETUP_ACTION" = "run" ]
 then
+  echo "GIT_URL_REPO $GIT_URL_REPO"
 
   echo ""
   echo "Run / Start instances and bootstrap runners [${SETUP_RUNNER}]"
@@ -197,10 +222,10 @@ then
   done
 
   echo ""
-  echo "Wait for 60 seconds for runners to bootstrap on Git"
+  echo "Wait for 90 seconds for runners to bootstrap on Git"
   echo ""
 
-  sleep 60
+  sleep 90
 
   echo ""
   echo "All runners are online on Git"
@@ -213,6 +238,7 @@ fi
 ###################################################
 if [ "$SETUP_ACTION" = "terminate" ]
 then
+  echo "GIT_URL_REPO $GIT_URL_REPO"
 
   echo ""
   echo "Terminate / Delete instances and remove runners [${SETUP_RUNNER}]"
