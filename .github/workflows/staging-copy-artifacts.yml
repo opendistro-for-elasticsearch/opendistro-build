@@ -3,10 +3,8 @@ name: Staging Copy Artifacts
 on:
 #  schedule:
 #    - cron: '30 10 * * *' 
-#  repository_dispatch:
-#    types: [staging-copy-artifacts]
-  push:
-    branches: [sreekarj_V303549183]
+  repository_dispatch:
+    types: [staging-copy-artifacts]
 
 jobs:
   Staging-Copy-Artifacts:
