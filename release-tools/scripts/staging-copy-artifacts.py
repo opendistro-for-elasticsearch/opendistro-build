@@ -92,7 +92,7 @@ def plugin_download(plugin_full_path,bucket_name):
         raise
 
 # Get the last modified plugin with specific name
-def get_latest_plugin(plugin_version,plugin_build,bucket_name,folder_path,key_word):
+def get_latest_plugin(plugin_name,plugin_version,plugin_build,bucket_name,folder_path,key_word):
     try:
         response = s3.list_objects_v2(Bucket=bucket_name, Prefix=folder_path)
         platform = str(key_word).split('_')[0]
@@ -115,7 +115,7 @@ def get_latest_plugin(plugin_version,plugin_build,bucket_name,folder_path,key_wo
                 platform = ""
             if arch == "noarch":
                 arch = ""
-            if plugin_version in key and build_number in key and platform in key and arch in key:
+            if plugin_name in key and plugin_version in key and build_number in key and platform in key and arch in key:
                 if key.endswith(plugin_type):
                     print(key)
                     break
@@ -176,7 +176,7 @@ def main():
                             print("Bucket name : " + bucket_name )
                             folder_path = plugin_location.replace(bucket_name,'')[1:]
                             print("Folder path : " + folder_path)
-                            latest_plugin = get_latest_plugin(plugin_version,plugin_build,bucket_name,folder_path,str(spec))
+                            latest_plugin = get_latest_plugin(plugin_name,plugin_version,plugin_build,bucket_name,folder_path,str(spec))
                             downloaded_plugin_name = plugin_download(latest_plugin,bucket_name)
                             plugin_checksum = create_sha512(downloaded_plugin_name)
                             status = create_release_folder(release_bucket_name,plugin_category,rc_folder_path)
