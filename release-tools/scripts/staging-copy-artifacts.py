@@ -121,8 +121,8 @@ def get_latest_plugin(plugin_name,plugin_version,plugin_build,bucket_name,folder
                     plugin_list.append(key)
                     print(key)
         plugin_list.sort()
-        print("The artifact selected " + str(plugin_list[0]))
-        return key
+        print("The artifact selected " + str(plugin_list[-1]))
+        return str(plugin_list[-1])
     except:
         raise
 
