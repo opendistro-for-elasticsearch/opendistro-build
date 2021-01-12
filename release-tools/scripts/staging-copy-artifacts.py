@@ -20,6 +20,7 @@ import sys
 import yaml
 import hashlib
 import requests
+import re
 
 s3 = boto3.client('s3')
 
@@ -104,7 +105,8 @@ def get_latest_plugin(plugin_name,plugin_version,plugin_build,bucket_name,folder
         print("plugin_type " + plugin_type)
         suffix = plugin_type
         key = ""
-        plugin_list = []
+        temp = 0
+        plg = ""
         for artifact in sorted(response['Contents'], key=lambda x: x['LastModified'], reverse=True):
             key = artifact['Key']
             if plugin_build is None:
@@ -118,11 +120,17 @@ def get_latest_plugin(plugin_name,plugin_version,plugin_build,bucket_name,folder
                 arch = ""
             if plugin_name in key and plugin_version in key and build_number in key and platform in key and arch in key:
                 if key.endswith(plugin_type):
-                    plugin_list.append(key)
                     print(key)
-        plugin_list.sort()
-        print("The artifact selected " + str(plugin_list[-1]))
-        return str(plugin_list[-1])
+                    tmp=key.split('-build-')[1]
+                    bld_no=re.split("[-_.]",tmp)[0]
+                    print("build number")
+                    print(bld_no)
+                    if bld_no.isdigit():
+                        if float(bld_no) > float(temp):
+                            plg = key
+                            temp = bld_no
+        print("Plugin selected " + plg)
+        return plg
     except:
         raise
 
