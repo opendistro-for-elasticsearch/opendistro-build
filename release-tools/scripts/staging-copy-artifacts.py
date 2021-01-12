@@ -104,6 +104,7 @@ def get_latest_plugin(plugin_name,plugin_version,plugin_build,bucket_name,folder
         print("plugin_type " + plugin_type)
         suffix = plugin_type
         key = ""
+        plugin_list = []
         for artifact in sorted(response['Contents'], key=lambda x: x['LastModified'], reverse=True):
             key = artifact['Key']
             if plugin_build is None:
@@ -117,8 +118,10 @@ def get_latest_plugin(plugin_name,plugin_version,plugin_build,bucket_name,folder
                 arch = ""
             if plugin_name in key and plugin_version in key and build_number in key and platform in key and arch in key:
                 if key.endswith(plugin_type):
+                    plugin_list.append(key)
                     print(key)
-                    break
+        plugin_list.sort()
+        print("The artifact selected " + str(plugin_list[0]))
         return key
     except:
         raise
