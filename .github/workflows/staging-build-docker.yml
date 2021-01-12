@@ -21,7 +21,7 @@ jobs:
         aws-region: us-east-1
 
     - name: Install Required Packages
-      run: sudo pip3 install jinja2-cli
+      run: sudo pip3 install jinja2-cli && release-tools/scripts/required_packages.sh
 
     - name: Starting ES Docker Build
       env:
@@ -29,11 +29,11 @@ jobs:
         DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
       run: |
         echo "Executing On-demand Build for ES Docker Image"
-        ODFE_VER=`./bin/version-info --od`
+        ODFE_VER=`./release-tools/scripts/version-info.sh --od`
         echo "ODFE VERSION $ODFE_VER"
         workdir=`pwd`
         #sudo apt-get install python-virtualenv
-        ./download_plugins.sh
+        ./release-tools/scripts/docker_download_plugins.sh
         cd elasticsearch
         security=`ls docker/build/elasticsearch/plugins/|grep opendistro_security|wc -l`
         
@@ -106,7 +106,7 @@ jobs:
           DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
         run: |
           #sudo apt-get install python-virtualenv
-          ODFE_VER=`./bin/version-info --od`
+          ODFE_VER=`./release-tools/scripts/version-info.sh --od`
           echo "ODFE VERSION $ODFE_VER"
           ./download_kibana_plugins.sh
           cd kibana
@@ -398,7 +398,7 @@ jobs:
       - name: Retrieve plugin tags 
         run: |
           echo "p_tag_ad=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)" >> $GITHUB_ENV
-          echo "es_version=$(./bin/version-info --es)" >> $GITHUB_ENV
+          echo "es_version=$(./release-tools/scripts/version-info.sh --es)" >> $GITHUB_ENV
           
       - name: Checkout Kibana
         uses: actions/checkout@v2
@@ -470,7 +470,7 @@ jobs:
       - name: Retrieve plugin tags 
         run: |
           echo "p_tag_sql_kibana=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)" >> $GITHUB_ENV
-          echo "es_version=$(./bin/version-info --es)" >> $GITHUB_ENV
+          echo "es_version=$(./release-tools/scripts/version-info.sh --es)" >> $GITHUB_ENV
           
       - name: Checkout Kibana
         uses: actions/checkout@v2
@@ -553,7 +553,7 @@ jobs:
       - name: Retrieve plugin tags 
         run: |
           echo "p_tag_ad=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)" >> $GITHUB_ENV
-          echo "es_version=$(./bin/version-info --es)" >> $GITHUB_ENV
+          echo "es_version=$(./release-tools/scripts/version-info.sh --es)" >> $GITHUB_ENV
           
       - name: Checkout Kibana
         uses: actions/checkout@v2
@@ -620,7 +620,7 @@ jobs:
       - name: Retrieve plugin tags 
         run: |
           echo "p_tag_sec_kibana=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/security-kibana-plugin)" >> $GITHUB_ENV
-          echo "es_version=$(release-tools/scripts/version-info.py --es)" >> $GITHUB_ENV
+          echo "es_version=$(release-tools/scripts/version-info.sh --es)" >> $GITHUB_ENV
 
       - name: Checkout Kibana
         uses: actions/checkout@v2
