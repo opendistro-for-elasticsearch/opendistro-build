@@ -3,8 +3,11 @@ name: Process Debian Artifacts
 on:
   # schedule:
   #   - cron: '0 10 * * *'
-  repository_dispatch:
-    types: [staging-build-deb]
+  # repository_dispatch:
+  #   types: [staging-build-deb]
+  push:
+    branches:
+      - "gantt-chart"
 
 jobs:
   # plugin-availability:
