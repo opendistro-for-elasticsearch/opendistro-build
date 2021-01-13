@@ -518,8 +518,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           repository: opendistro-for-elasticsearch/kibana-notebooks
-          # ref: ${{env.p_tag_kib_nb}}
-          ref: dev
+          ref: ${{env.p_tag_kib_nb}}
           path: kibana/plugins/kibana-nb
       
       - name: Setup Java
