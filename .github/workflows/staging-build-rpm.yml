@@ -3,11 +3,8 @@ name: Process RPM Artifacts
 on:
   # schedule:
   #   - cron: '0 10 * * *'
-  # repository_dispatch:
-  #   types: [staging-build-rpm]
-  push:
-    branches:
-      - "gantt-chart"
+  repository_dispatch:
+    types: [staging-build-rpm]
 
 jobs:
   # plugin-availability:
