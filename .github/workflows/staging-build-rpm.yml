@@ -3,8 +3,11 @@ name: Process RPM Artifacts
 on:
   # schedule:
   #   - cron: '0 10 * * *'
-  repository_dispatch:
-    types: [staging-build-rpm]
+  # repository_dispatch:
+  #   types: [staging-build-rpm]
+  push:
+    branches:
+      - "gantt-chart"
 
 jobs:
   # plugin-availability:
@@ -567,7 +570,7 @@ jobs:
       - name: Retrieve plugin tags 
         run: |
           echo "p_tag_kib_nb=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/kibana-notebooks)" >> $GITHUB_ENV
-          echo "es_version=$(release-tools/scripts/version-info.py --es)" >> $GITHUB_ENV
+          echo "es_version=$(release-tools/scripts/version-info.sh --es)" >> $GITHUB_ENV
           
       - name: Checkout Kibana
         uses: actions/checkout@v2
