@@ -74,7 +74,7 @@ rm -rf install4j_unix_8_0_4.tar.gz
 aws s3 cp s3://odfe-windows/ODFE-Kibana.install4j . --quiet ; echo $0
 
  #Build the exe
-install4j8.0.4/bin/install4jc -d $TARGET_DIR -D sourcedir=./$PACKAGE_NAME,version=$OD_VERSION --license="L-M8-AMAZON_DEVELOPMENT_CENTER_INDIA_PVT_LTD#50047687020001-3rhvir3mkx479#484b6" ./ODFE-Kibana.install4j
+install4j8.0.4/bin/install4jc -d $TARGET_DIR -D sourcedir=./$PACKAGE_NAME,version=$OD_VERSION --license=$install4j_license ./ODFE-Kibana.install4j
 ls -ltr $TARGET_DIR
 
 # Copy to s3
