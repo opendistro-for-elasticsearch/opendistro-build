@@ -12,7 +12,7 @@
 #                $OD_VERSION: ODFE Version (optional)
 #
 # Starting Date: 2020-06-17
-# Modified Date: 2020-08-09
+# Modified Date: 2021-01-06
 ###############################################################################################
 
 set -e
@@ -39,7 +39,7 @@ GIT_REPONAMES=$1
 OLDIFS=$IFS
 
 # Avoid issues when running on windows
-OD_VERSION=`$SCRIPTS_DIR/version-info.py --od`
+OD_VERSION=`$SCRIPTS_DIR/version-info.sh --od`
 
 # Use Major.Minor only to check available tags
 if [ "$USE_PATCH_VERSION" -eq 0 ]

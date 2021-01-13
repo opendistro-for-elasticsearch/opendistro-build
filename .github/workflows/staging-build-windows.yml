@@ -26,6 +26,8 @@ jobs:
         java-version: 14
 
     - name: Build Windows
+      env:
+        install4j_license: ${{ secrets.INSTALL4J_LICENSE }}
       run: ./elasticsearch/windows/opendistro-windows-build.sh
         
   build-kibana-artifacts:
@@ -46,6 +48,8 @@ jobs:
         java-version: 14
 
     - name: Build Kibana
+      env:
+        install4j_license: ${{ secrets.INSTALL4J_LICENSE }}
       run: ./kibana/windows/opendistro-windows-kibana-build.sh
 
   Test-ISM-NoSec:

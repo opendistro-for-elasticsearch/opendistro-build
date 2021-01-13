@@ -20,7 +20,7 @@ jobs:
           aws-region: us-east-1
 
       - name: Run check_plugin scripts
-        run: .github/scripts/check_plugin.sh "elasticsearch_rpm,kibana_zip"; exit `cat /tmp/plugin_status.check`
+        run: release-tools/scripts/check_plugin.sh "elasticsearch_rpm,kibana_zip"; exit `cat /tmp/plugin_status.check`
 
   build-es-artifacts:
     needs: [plugin-availability]
@@ -186,7 +186,7 @@ jobs:
           RUNNERS+="odfe-rpm-sql,odfe-rpm-ad,odfe-rpm-alerting,"
           RUNNERS+="odfe-rpm-ad-kibana-nosec,odfe-rpm-sql-kibana-nosec,"
           RUNNERS+="odfe-rpm-ad-kibana,odfe-rpm-sec-kibana,odfe-rpm-kibana-nb-nosec"
-          release-tools/scripts/setup_runners.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
+          release-tools/scripts/setup_runners.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }} ami-086e8a98280780e63
 
   Test-ISM-NoSec:
     needs: [Provision-Runners]
@@ -198,15 +198,17 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 14
+      - name: Required Packages
+        run: release-tools/scripts/required_packages.sh
       - name: Retrieve plugin tags
-        run: echo "p_tag_ism=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)" >> $GITHUB_ENV
+        run: echo "p_tag_ism=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)" >> $GITHUB_ENV
       - uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/index-management
           ref: ${{env.p_tag_ism}}
       - name: IT for ISM NoSec
         run: |
-          .github/scripts/setup_runners_service.sh rpm --es-nosec
+          release-tools/scripts/setup_runners_service.sh rpm --es-nosec
           export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../index-management; pwd
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
 
@@ -220,15 +222,17 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 14
+      - name: Required Packages
+        run: release-tools/scripts/required_packages.sh
       - name: Retrieve plugin tags
-        run: echo "p_tag_alerting=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)" >> $GITHUB_ENV
+        run: echo "p_tag_alerting=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)" >> $GITHUB_ENV
       - uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/alerting
           ref: ${{env.p_tag_alerting}}
       - name: IT for ALERTING NoSec
         run: |
-          .github/scripts/setup_runners_service.sh rpm --es-nosec
+          release-tools/scripts/setup_runners_service.sh rpm --es-nosec
           export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../alerting/alerting; pwd
           ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
 
@@ -242,15 +246,17 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 14
+      - name: Required Packages
+        run: release-tools/scripts/required_packages.sh
       - name: Retrieve plugin tags
-        run: echo "p_tag_sql=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)" >> $GITHUB_ENV
+        run: echo "p_tag_sql=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)" >> $GITHUB_ENV
       - uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/sql
           ref: ${{env.p_tag_sql}}
       - name: IT for SQL NoSec
         run: |
-          .github/scripts/setup_runners_service.sh rpm --es-nosec
+          release-tools/scripts/setup_runners_service.sh rpm --es-nosec
           export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../sql; pwd
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
 
@@ -264,15 +270,17 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 14
+      - name: Required Packages
+        run: release-tools/scripts/required_packages.sh
       - name: Retrieve plugin tags
-        run: echo "p_tag_knn=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/k-NN)" >> $GITHUB_ENV
+        run: echo "p_tag_knn=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/k-NN)" >> $GITHUB_ENV
       - uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/k-NN
           ref: ${{env.p_tag_knn}}
       - name: IT for KNN NoSec
         run: |
-          .github/scripts/setup_runners_service.sh rpm --es-nosec
+          release-tools/scripts/setup_runners_service.sh rpm --es-nosec
           export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../k-NN; pwd
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
 
@@ -286,15 +294,17 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 14
+      - name: Required Packages
+        run: release-tools/scripts/required_packages.sh
       - name: Retrieve plugin tags
-        run: echo "p_tag_ad=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)" >> $GITHUB_ENV
+        run: echo "p_tag_ad=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)" >> $GITHUB_ENV
       - uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/anomaly-detection
           ref: ${{env.p_tag_ad}}
       - name: IT for AD NoSec
         run: |
-          .github/scripts/setup_runners_service.sh rpm --es-nosec
+          release-tools/scripts/setup_runners_service.sh rpm --es-nosec
           export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../anomaly-detection; pwd
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest"
 
@@ -308,15 +318,17 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 14
+      - name: Required Packages
+        run: release-tools/scripts/required_packages.sh
       - name: Retrieve plugin tags
-        run: echo "p_tag_sql=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)" >> $GITHUB_ENV
+        run: echo "p_tag_sql=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)" >> $GITHUB_ENV
       - uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/sql
           ref: ${{env.p_tag_sql}}
       - name: IT for SQL
         run: |
-          .github/scripts/setup_runners_service.sh rpm --es
+          release-tools/scripts/setup_runners_service.sh rpm --es
           export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../sql; pwd
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin
 
@@ -330,15 +342,17 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 14
+      - name: Required Packages
+        run: release-tools/scripts/required_packages.sh
       - name: Retrieve plugin tags
-        run: echo "p_tag_ad=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)" >> $GITHUB_ENV
+        run: echo "p_tag_ad=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)" >> $GITHUB_ENV
       - uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/anomaly-detection
           ref: ${{env.p_tag_ad}}
       - name: IT for AD
         run: |
-          .github/scripts/setup_runners_service.sh rpm --es
+          release-tools/scripts/setup_runners_service.sh rpm --es
           export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../anomaly-detection; pwd
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest" -Dhttps=true -Duser=admin -Dpassword=admin
   
@@ -352,15 +366,17 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 14
+      - name: Required Packages
+        run: release-tools/scripts/required_packages.sh
       - name: Retrieve plugin tags
-        run: echo "p_tag_alerting=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)" >> $GITHUB_ENV
+        run: echo "p_tag_alerting=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)" >> $GITHUB_ENV
       - uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/alerting
           ref: ${{env.p_tag_alerting}}
       - name: IT for Alerting
         run: |
-          .github/scripts/setup_runners_service.sh rpm --es
+          release-tools/scripts/setup_runners_service.sh rpm --es
           export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../alerting/alerting; pwd
           ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin -Dsecurity=true
         
@@ -375,10 +391,13 @@ jobs:
         with:
           java-version: 14
 
+      - name: Required Packages
+        run: release-tools/scripts/required_packages.sh
+
       - name: Retrieve plugin tags
         run: |
           echo "es_version_kibana=$(./bin/version-info --es)" >> $GITHUB_ENV
-          echo "p_tag_ad_kibana=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)" >> $GITHUB_ENV
+          echo "p_tag_ad_kibana=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)" >> $GITHUB_ENV
 
       - name: Checkout Kibana
         uses: actions/checkout@v2
@@ -423,7 +442,7 @@ jobs:
           yarn kbn bootstrap
 
       - name: Start ES and Kibana
-        run: .github/scripts/setup_runners_service.sh rpm --kibana-nosec
+        run: release-tools/scripts/setup_runners_service.sh rpm --kibana-nosec
 
       - name: run IT
         uses: cypress-io/github-action@v2.5.0
@@ -446,9 +465,11 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
+      - name: Required Packages
+        run: release-tools/scripts/required_packages.sh
       - name: Retrieve plugin tags 
         run: |
-          echo "p_tag_sql_kibana=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)" >> $GITHUB_ENV
+          echo "p_tag_sql_kibana=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)" >> $GITHUB_ENV
           echo "es_version=$(./bin/version-info --es)" >> $GITHUB_ENV
           
       - name: Checkout Kibana
@@ -511,7 +532,7 @@ jobs:
 
       - name: Start ES and Kibana
         run: |
-          .github/scripts/setup_runners_service.sh rpm --kibana-nosec
+          release-tools/scripts/setup_runners_service.sh rpm --kibana-nosec
           echo "load the indices"
           curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/sql/master/integ-test/src/test/resources/accounts.json | curl -s -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/accounts/_bulk?pretty' --data-binary @- > /dev/null 2>&1
           curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/sql/master/integ-test/src/test/resources/employee_nested.json | curl -s -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/employee_nested/_bulk?pretty' --data-binary @- > /dev/null 2>&1
@@ -613,10 +634,13 @@ jobs:
         with:
           java-version: 14
 
+      - name: Required Packages
+        run: release-tools/scripts/required_packages.sh
+
       - name: Retrieve plugin tags
         run: |
           echo "es_version_kibana=$(./bin/version-info --es)" >> $GITHUB_ENV
-          echo "p_tag_ad_kibana=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)" >> $GITHUB_ENV
+          echo "p_tag_ad_kibana=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)" >> $GITHUB_ENV
 
       - name: Checkout Kibana
         uses: actions/checkout@v2
@@ -661,7 +685,7 @@ jobs:
           yarn kbn bootstrap
 
       - name: Start ES and Kibana
-        run: .github/scripts/setup_runners_service.sh rpm --kibana
+        run: release-tools/scripts/setup_runners_service.sh rpm --kibana
 
       - name: run IT
         uses: cypress-io/github-action@v2.5.0
@@ -679,6 +703,9 @@ jobs:
         java: [14]
     steps:
       - uses: actions/checkout@v1
+
+      - name: Required Packages
+        run: release-tools/scripts/required_packages.sh
 
       - name: Retrieve plugin tags 
         run: |
