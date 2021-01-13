@@ -28,6 +28,7 @@ urls:
     prod: s3://artifacts.opendistroforelasticsearch.amazon.com/
     #snapshots: s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/
     releases: s3://staging.artifacts.opendistroforelasticsearch.amazon.com/releases/
+    releases_final_build: 
 
 # Warning:
 # Please do not change the plugin orders as they have dependencies
