@@ -35,7 +35,7 @@ jobs:
         #sudo apt-get install python-virtualenv
         ./release-tools/scripts/docker_download_plugins.sh
         cd elasticsearch
-        security=`ls docker/build/elasticsearch/plugins/|grep opendistro_security|wc -l`
+        security=`ls docker/build/elasticsearch/plugins/ | grep security | wc -l`
         
         if [ $security -gt 0 ]
         then
