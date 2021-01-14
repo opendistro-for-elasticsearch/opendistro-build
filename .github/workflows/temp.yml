@@ -24,9 +24,12 @@ jobs:
           aws-region: us-east-1
 
       - name: Install yq
-        shell: bash
         run: |
+          pip install wget
+          pwd
+          ls -ltr
           wget https://github.com/mikefarah/yq/releases/download/v4.3.2/yq_windows_386.exe
+          dir
           Start-Process -Wait -FilePath C:\yq_windows_386.exe -Argument "/silent" -PassThru
           yq --version
 
