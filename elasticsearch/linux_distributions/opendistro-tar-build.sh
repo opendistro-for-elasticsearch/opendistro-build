@@ -136,10 +136,9 @@ rm -rf $PACKAGE_NAME-$OD_VERSION
 # Upload to S3
 ls -ltr $TARGET_DIR
 tar_artifact=`ls $TARGET_DIR/*.tar.gz`
-echo "##### $tar_artifact"
 tar_checksum_artifact=`ls $TARGET_DIR/*.tar.gz.sha512`
-echo "s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/$S3_RELEASE_BUILD/odfe/"
-#aws s3 cp $tar_artifact s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/$S3_RELEASE_BUILD/odfe/
-#aws s3 cp $tar_checksum_artifact s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/$S3_RELEASE_BUILD/odfe/
+echo "Staging destination : s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/odfe/"
+aws s3 cp $tar_artifact s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/odfe/
+aws s3 cp $tar_checksum_artifact s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/odfe/
 ##aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/*"
 
