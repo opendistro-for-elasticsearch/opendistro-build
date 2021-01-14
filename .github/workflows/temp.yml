@@ -25,6 +25,8 @@ jobs:
 
       - name: Install yq
         run: .github/workflows/wget.ps1
+        env:
+          yq: D:\a\opendistro-build\opendistro-build\yq.exe
 
       - name: Retrieve plugin tags 
         run: |
