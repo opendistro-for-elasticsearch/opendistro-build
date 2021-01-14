@@ -24,14 +24,8 @@ jobs:
           aws-region: us-east-1
 
       - name: Install yq
-        run: |
-          pip install wget
-          pwd
-          dir
-          wget https://github.com/mikefarah/yq/releases/download/v4.3.2/yq_windows_386.exe
-          dir
-          Start-Process -Wait -FilePath C:\yq_windows_386.exe -Argument "/silent" -PassThru
-          yq --version
+        shell: pwsh
+        run: .github/workflows/wget.ps1
 
       - name: Retrieve plugin tags 
         run: |
