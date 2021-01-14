@@ -18,25 +18,34 @@ set -e
 
 REPO_ROOT=`git rev-parse --show-toplevel`
 ROOT=`dirname $(realpath $0)`; echo $ROOT; cd $ROOT
-ES_VERSION=`$REPO_ROOT/bin/version-info --es`; echo ES_VERSION: $ES_VERSION
-OD_VERSION=`$REPO_ROOT/bin/version-info --od`; echo OD_VERSION: $OD_VERSION
-IS_CUT=`$REPO_ROOT/bin/version-info --is-cut`; echo IS_CUT: $IS_CUT
-S3_BUCKET="artifacts.opendistroforelasticsearch.amazon.com"
-ARTIFACTS_URL="https://d3g5vo6xdbdb9a.cloudfront.net"
+MANIFEST_FILE=$REPO_ROOT/release-tools/scripts/manifest.yml
+ES_VERSION=`$REPO_ROOT/release-tools/scripts/version-info.sh --es`; echo ES_VERSION: $ES_VERSION
+OD_VERSION=`$REPO_ROOT/release-tools/scripts/version-info.sh --od`; echo OD_VERSION: $OD_VERSION
+S3_RELEASE_BASEURL=`yq eval '.urls.ODFE.releases' $MANIFEST_FILE`
+S3_RELEASE_FINAL_BUILD=`yq eval '.urls.ODFE.releases_final_build' $MANIFEST_FILE | sed 's/\///g'`
+S3_RELEASE_BUCKET=`echo $S3_RELEASE_BASEURL | awk -F '/' '{print $3}'`
 PACKAGE_NAME="opendistroforelasticsearch"
 TARGET_DIR="$ROOT/target"
 plugin_version=$OD_VERSION
-knnlib_version=$OD_VERSION # knnlib version only for tar distros here
+# knnlib version only for tar distros here
+knnlib_version=`$REPO_ROOT/release-tools/scripts/plugin_parser.sh opendistro-knnlib plugin_version`; echo knnlib_version: $knnlib_version 
 
 # Please DO NOT change the orders, they have dependencies
-PLUGINS=`$REPO_ROOT/bin/plugins-info elasticsearch zip --require-install-true`
+PLUGINS=`$REPO_ROOT/release-tools/scripts/plugins-info.sh elasticsearch-plugins plugin_basename`
 PLUGINS_ARRAY=( $PLUGINS )
-CUT_VERSIONS=`$REPO_ROOT/bin/plugins-info elasticsearch cutversion --require-install-true`
-CUT_VERSIONS_ARRAY=( $CUT_VERSIONS )
+PLUGIN_PATH=`yq eval '.urls.ODFE.releases' $MANIFEST_FILE | sed "s/^.*$S3_RELEASE_BUCKET\///g"`
 
 basedir="${ROOT}/${PACKAGE_NAME}-${OD_VERSION}/plugins"
 
 echo $ROOT
+
+if [ -z "$S3_RELEASE_FINAL_BUILD" ]
+then
+  S3_RELEASE_BUILD=`aws s3api list-objects --bucket $S3_RELEASE_BUCKET --prefix "${PLUGIN_PATH}${OD_VERSION}" --query 'Contents[].[Key]' --output text | awk -F '/' '{print $3}' | uniq | tail -n 1`
+  echo Latest: $S3_RELEASE_BUILD
+else
+  echo Final: $S3_RELEASE_BUILD
+fi
 
 if [ -z "$PLUGINS" ]; then
   echo "Provide plugin list to install (separated by space)"
@@ -54,65 +63,68 @@ tar -xzf elasticsearch-oss-$ES_VERSION-linux-x86_64.tar.gz --strip-components=1 
 cp -v opendistro-tar-install.sh $PACKAGE_NAME-$OD_VERSION
 
 # Install Plugin
+rm -rf /tmp/plugins
+mkdir -p /tmp/plugins
+
 for index in ${!PLUGINS_ARRAY[@]}
 do
-  if [ "$IS_CUT" = "true" ]
-  then
-    plugin_version=${CUT_VERSIONS_ARRAY[$index]}
-  fi
+  plugin_latest=`aws s3api list-objects --bucket $S3_RELEASE_BUCKET --prefix "${PLUGIN_PATH}${OD_VERSION}/$S3_RELEASE_BUILD/elasticsearch-plugins" --query 'Contents[].[Key]' --output text | grep -v sha512 | grep ${PLUGINS_ARRAY[$index]} | grep zip | sort | tail -n 1`
 
-  plugin_path=${PLUGINS_ARRAY[$index]}
-  plugin_latest=`aws s3api list-objects --bucket $S3_BUCKET --prefix "downloads/elasticsearch-plugins/${plugin_path}-${plugin_version}" --query 'Contents[].[Key]' --output text | sort | tail -n 1`
-
-  if [ "$plugin_path" != "none" ]
+  if [ ! -z "$plugin_latest" ]
   then
-    echo "installing $plugin_latest"
-    $PACKAGE_NAME-$OD_VERSION/bin/elasticsearch-plugin install --batch "${ARTIFACTS_URL}/${plugin_latest}"; \
+    echo "downloading $plugin_latest"
+    echo `echo $plugin_latest | awk -F '/' '{print $NF}'` >> /tmp/plugins/plugins.list
+    plugin_path=${PLUGINS_ARRAY[$index]}
+    echo "plugin path:  $plugin_path"
+    aws s3 cp "s3://${S3_RELEASE_BUCKET}/${plugin_latest}" "/tmp/plugins" --quiet; echo $?
+    rc_candiate=`$REPO_ROOT/release-tools/scripts/plugin_parser.sh $index release_candidate`
+    if $rc_candiate
+    then
+      plugin=`echo $plugin_latest | awk -F '/' '{print $NF}'`
+      echo "installing $plugin"
+      $PACKAGE_NAME-$OD_VERSION/bin/elasticsearch-plugin install --batch file:/tmp/plugins/$plugin; \
+    fi
   fi
 done
+
 
 # List Plugins
 echo "List available plugins"
 ls -lrt $basedir
 
 # Move performance-analyzer-rca folder
-cp -r $PACKAGE_NAME-$OD_VERSION/plugins/opendistro_performance_analyzer/performance-analyzer-rca $PACKAGE_NAME-$OD_VERSION
-chmod -R 755 ${PACKAGE_NAME}-${OD_VERSION}/performance-analyzer-rca
+perf_dir=`ls -p $basedir | grep performance`
+rca_dir=`ls -p $basedir/$perf_dir | grep rca/`
+cp -r $PACKAGE_NAME-$OD_VERSION/plugins/$perf_dir$rca_dir $PACKAGE_NAME-$OD_VERSION
+chmod -R 755 ${PACKAGE_NAME}-${OD_VERSION}/$rca_dir
+
 # Move agent script directly into ES_HOME/bin
-mv $PACKAGE_NAME-$OD_VERSION/bin/opendistro_performance_analyzer/performance-analyzer-agent-cli $PACKAGE_NAME-$OD_VERSION/bin
+perf_analyzer=`ls -p $PACKAGE_NAME-$OD_VERSION/bin/ | grep performance`
+mv $PACKAGE_NAME-$OD_VERSION/bin/$perf_analyzer/performance-analyzer-agent-cli $PACKAGE_NAME-$OD_VERSION/bin
 rm -rf $PACKAGE_NAME-$OD_VERSION/bin/opendistro_performance_analyzer
+
 # Make sure the data folder exists and is writable
 mkdir -p ${PACKAGE_NAME}-${OD_VERSION}/data
 chmod 755 ${PACKAGE_NAME}-${OD_VERSION}/data/
 
 # Download Knn lib
-# Get knnlib artifact information from plugins.json
-plugin_array_noinstall=( `$REPO_ROOT/bin/plugins-info elasticsearch zip --require-install-false` )
-cutversion_array_noinstall=( `$REPO_ROOT/bin/plugins-info elasticsearch cutversion --require-install-false` )
-for index_noinstall in ${!plugin_array_noinstall[@]}
-do
-  if echo ${plugin_array_noinstall[$index_noinstall]} | grep -qi "knnlib"
-  then
-  knnlib_path=${plugin_array_noinstall[$index_noinstall]}
-
-    if [ "$IS_CUT" = "true" ]
-    then
-      knnlib_version=${cutversion_array_noinstall[$index_noinstall]}
-      break
-    fi
-  fi
-done
-knnlib_latest=`aws s3api list-objects --bucket $S3_BUCKET --prefix "downloads/${knnlib_path}-${knnlib_version}" --query 'Contents[].[Key]' --output text | sort | tail -n 1`
-echo "downloading $knnlib_latest"
-aws s3 cp "s3://artifacts.opendistroforelasticsearch.amazon.com/${knnlib_latest}" ./
-unzip opendistro-knnlib*.zip
-mkdir -p $PACKAGE_NAME-$OD_VERSION/plugins/opendistro-knn/knn-lib/ 
-mv -v opendistro-knnlib*/libKNNIndex*.so $PACKAGE_NAME-$OD_VERSION/plugins/opendistro-knn/knn-lib/ 
+# Get knnlib artifact information from Manifest
+knnlib_is_rc=`$REPO_ROOT/release-tools/scripts/plugin_parser.sh opendistro-knnlib release_candidate`
+if $knnlib_is_rc
+then
+ echo ""
+ knnlib_latest=`aws s3api list-objects --bucket $S3_RELEASE_BUCKET --prefix "${PLUGIN_PATH}${OD_VERSION}/$S3_RELEASE_BUILD/opendistro-libs/" --query 'Contents[].[Key]' --output text | grep -v sha512 | grep opendistro-knnlib | grep zip | sort | tail -n 1`
+ echo "downloading $knnlib_latest"
+ aws s3 cp "s3://${S3_RELEASE_BUCKET}/$knnlib_latest" ./
+ unzip opendistro-knnlib*.zip
+ mkdir -p $PACKAGE_NAME-$OD_VERSION/plugins/opendistro-knn/knn-lib/
+ mv -v opendistro-knnlib*/libKNNIndex*.so $PACKAGE_NAME-$OD_VERSION/plugins/opendistro-knn/knn-lib/
+fi
 
 # Tar generation
 echo "generating tar"
 tar -czf $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz $PACKAGE_NAME-$OD_VERSION
-#tar -tavf $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz
+tar -tavf $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz
 cd $TARGET_DIR
 shasum -a 512 $PACKAGE_NAME-$OD_VERSION.tar.gz > $PACKAGE_NAME-$OD_VERSION.tar.gz.sha512
 shasum -a 512 -c $PACKAGE_NAME-$OD_VERSION.tar.gz.sha512
@@ -124,8 +136,10 @@ rm -rf $PACKAGE_NAME-$OD_VERSION
 # Upload to S3
 ls -ltr $TARGET_DIR
 tar_artifact=`ls $TARGET_DIR/*.tar.gz`
+echo "##### $tar_artifact"
 tar_checksum_artifact=`ls $TARGET_DIR/*.tar.gz.sha512`
-aws s3 cp $tar_artifact s3://$S3_BUCKET/downloads/tarball/opendistro-elasticsearch/
-aws s3 cp $tar_checksum_artifact s3://$S3_BUCKET/downloads/tarball/opendistro-elasticsearch/
-aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/*"
+echo "s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/$S3_RELEASE_BUILD/odfe/"
+#aws s3 cp $tar_artifact s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/$S3_RELEASE_BUILD/odfe/
+#aws s3 cp $tar_checksum_artifact s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/$S3_RELEASE_BUILD/odfe/
+##aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/*"
 
