@@ -24,7 +24,10 @@ jobs:
           aws-region: us-east-1
 
       - name: Install yq
-        run: pip install yq && yq --version
+        run: |
+          ver
+          wget https://github.com/mikefarah/yq/releases/download/v4.3.2/yq_windows_386.exe -O /usr/bin/yq && chmod +x /usr/bin/yq
+          yq --version
 
       - name: Retrieve plugin tags 
         run: |
