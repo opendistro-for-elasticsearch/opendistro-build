@@ -24,7 +24,6 @@ jobs:
           aws-region: us-east-1
 
       - name: Install yq
-        shell: pwsh
         run: .github/workflows/wget.ps1
 
       - name: Retrieve plugin tags 
