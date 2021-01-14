@@ -27,7 +27,7 @@ jobs:
         run: |
           pip install wget
           pwd
-          ls -ltr
+          dir
           wget https://github.com/mikefarah/yq/releases/download/v4.3.2/yq_windows_386.exe
           dir
           Start-Process -Wait -FilePath C:\yq_windows_386.exe -Argument "/silent" -PassThru
