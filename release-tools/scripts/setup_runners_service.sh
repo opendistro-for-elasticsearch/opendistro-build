@@ -53,7 +53,6 @@ S3_RELEASE_BASEURL=`yq eval '.urls.ODFE.releases' $MANIFEST_FILE`
 S3_RELEASE_FINAL_BUILD=`yq eval '.urls.ODFE.releases_final_build' $MANIFEST_FILE | sed 's/\///g'`
 S3_RELEASE_BUCKET=`echo $S3_RELEASE_BASEURL | awk -F '/' '{print $3}'`
 PLUGIN_PATH=`yq eval '.urls.ODFE.releases' $MANIFEST_FILE | sed "s/^.*$S3_RELEASE_BUCKET\///g"`
-#S3_BUCKET="artifacts.opendistroforelasticsearch.amazon.com"
 
 #####################################################################################################
 
@@ -74,7 +73,6 @@ if [ "$SETUP_DISTRO" = "zip" ]
 then
   mkdir -p $ES_ROOT
   aws s3 cp s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/odfe/$ES_PACKAGE_NAME.tar.gz . --quiet; echo $?
-  ##aws s3 cp s3://$S3_BUCKET/downloads/tarball/opendistro-elasticsearch/$ES_PACKAGE_NAME.tar.gz . --quiet; echo $?
   tar -zxf $ES_PACKAGE_NAME.tar.gz -C $ES_ROOT --strip-components 1
 fi
 
@@ -229,7 +227,6 @@ then
   then
     mkdir -p $KIBANA_ROOT
     aws s3 cp s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/odfe/$KIBANA_PACKAGE_NAME-$OD_VERSION.tar.gz . --quiet; echo $?
-    ##aws s3 cp s3://$S3_BUCKET/downloads/tarball/$KIBANA_PACKAGE_NAME/$KIBANA_PACKAGE_NAME-$OD_VERSION.tar.gz . --quiet; echo $?
     tar -zxf $KIBANA_PACKAGE_NAME-$OD_VERSION.tar.gz -C $KIBANA_ROOT --strip-components 1
   elif [ "$SETUP_DISTRO" = "docker" ]
   then
