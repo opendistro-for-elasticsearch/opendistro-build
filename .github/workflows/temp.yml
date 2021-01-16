@@ -6,8 +6,23 @@ on:
       - "gantt-chart"
 
 jobs:
+  Set-Env:
+    name: Set-Env
+    runs-on: ubuntu-latest
+    outputs:
+      es_version: ${{ steps.req.outputs.es_version }}
+      p_tag_kib_nb: ${{ steps.req.outputs.p_tag_kib_nb }}
+    steps:
+      - uses: actions/checkout@v1
+      - name: Required packages
+        id: req
+        run: |
+          release-tools/scripts/required_packages.sh
+          echo ::set-output name=es_version::$(release-tools/scripts/version-info.sh --es)
+          echo ::set-output name=p_tag_kib_nb::$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/kibana-notebooks)
 
   Test-Kibana-Notebooks-NoSec:
+    needs: [Set-Env]
     runs-on: windows-latest
     name: Test-Kibana-Notebooks-NoSec
     strategy:
@@ -22,31 +37,20 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
-
-      - name: Install yq
-        run: .github/workflows/wget.ps1
-        env:
-          yq: D:\a\opendistro-build\opendistro-build\yq.exe
-
-      - name: Retrieve plugin tags 
-        run: |
-          pip install PyYaml
-          echo "p_tag_kib_nb=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/kibana-notebooks)" >> $GITHUB_ENV
-          echo "es_version=$(release-tools/scripts/version-info.sh --es)" >> $GITHUB_ENV
-        shell: bash
           
       - name: Checkout Kibana
         uses: actions/checkout@v2
         with:
           repository: opendistro-for-elasticsearch/kibana-oss
-          ref: ${{env.es_version}}
+          ref: ${{needs.Set-Env.outputs.es_version}}
           token: ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
           path: kibana
            
       - uses: actions/checkout@v2
         with:
           repository: opendistro-for-elasticsearch/kibana-notebooks
-          ref: ${{env.p_tag_kib_nb}}
+          # ref: ${{needs.Set-Env.outputs.p_tag_kib_nb}}
+          ref: dev
           path: kibana/plugins/kibana-nb
       
       - name: Setup Java
