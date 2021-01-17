@@ -1,5 +1,5 @@
 {{- if .Values.certmanager.enabled }}
-apiVersion: cert-manager.io/v1alpha2
+apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: {{ template "opendistro-es.fullname" . }}-ca
@@ -8,19 +8,21 @@ metadata:
 spec:
   secretName: {{ template "opendistro-es.fullname" . }}-ca-cert
   duration: {{ .Values.certmanager.ca.duration }}
-  keySize: {{ .Values.certmanager.ca.keySize }}
   renewBefore: {{ .Values.certmanager.ca.renewBefore }}
-  keyAlgorithm: rsa
-  keyEncoding: pkcs8
+  privateKey:
+    algorithm: RSA
+    encoding: PKCS8
+    size: {{ .Values.certmanager.ca.keySize }}
   isCA: true
   commonName: {{ .Values.certmanager.ca.commonName }}
   usages:
 {{- if .Values.certmanager.ca.usages }}
 {{ toYaml .Values.certmanager.ca.usages| indent 2 }}
 {{- end }}
-  organization:
+  subject:
+    organizations:
 {{- if .Values.certmanager.ca.organization }}
-{{ toYaml .Values.certmanager.ca.organization| indent 2 }}
+{{ toYaml .Values.certmanager.ca.organization| indent 4 }}
 {{- end }}
   issuerRef:
     name: {{ template "opendistro-es.fullname" . }}-selfsigned

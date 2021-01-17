@@ -1,6 +1,6 @@
 {{- if .Values.certmanager.enabled }}
 {{- if .Values.certmanager.elasticsearch.transport.enabled }}
-apiVersion: cert-manager.io/v1alpha2
+apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: {{ template "opendistro-es.fullname" . }}-transport
@@ -9,18 +9,20 @@ metadata:
 spec:
   secretName: {{ .Values.elasticsearch.ssl.transport.existingCertSecret }}
   duration: {{ .Values.certmanager.elasticsearch.transport.duration }}
-  keySize: {{ .Values.certmanager.elasticsearch.transport.keySize }}
-  keyAlgorithm: rsa
-  keyEncoding: pkcs8
+  privateKey:
+    size: {{ .Values.certmanager.elasticsearch.transport.keySize }}
+    algorithm: RSA
+    encoding: PKCS8
   renewBefore: {{ .Values.certmanager.elasticsearch.transport.renewBefore }}
   usages:
 {{- if .Values.certmanager.elasticsearch.transport.usages }}
 {{ toYaml .Values.certmanager.elasticsearch.transport.usages| indent 2 }}
 {{- end }}
   commonName: {{ .Values.certmanager.elasticsearch.transport.commonName }}
-  organization:
+  subject:
+    organizations:
 {{- if .Values.certmanager.elasticsearch.transport.organization }}
-{{ toYaml .Values.certmanager.elasticsearch.transport.organization| indent 2 }}
+{{ toYaml .Values.certmanager.elasticsearch.transport.organization| indent 4 }}
 {{- end }}
   issuerRef:
     name: {{ template "opendistro-es.fullname" . }}-ca
@@ -28,7 +30,7 @@ spec:
 {{-  end }}
 {{- if .Values.certmanager.elasticsearch.admin.enabled }}
 ---
-apiVersion: cert-manager.io/v1alpha2
+apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: {{ template "opendistro-es.fullname" . }}-admin
@@ -37,18 +39,20 @@ metadata:
 spec:
   secretName: {{ .Values.elasticsearch.ssl.admin.existingCertSecret }}
   duration: {{ .Values.certmanager.elasticsearch.admin.duration }}
-  keySize: {{ .Values.certmanager.elasticsearch.admin.keySize }}
-  keyAlgorithm: rsa
-  keyEncoding: pkcs8
+  privateKey:
+    size: {{ .Values.certmanager.elasticsearch.admin.keySize }}
+    algorithm: RSA
+    encoding: PKCS8
   renewBefore: {{ .Values.certmanager.elasticsearch.admin.renewBefore }}
   usages:
 {{- if .Values.certmanager.elasticsearch.admin.usages }}
 {{ toYaml .Values.certmanager.elasticsearch.admin.usages| indent 2 }}
 {{- end }}
   commonName: {{ .Values.certmanager.elasticsearch.admin.commonName }}
-  organization:
+  subject:
+    organizations:
 {{- if .Values.certmanager.elasticsearch.admin.organization }}
-{{ toYaml .Values.certmanager.elasticsearch.admin.organization| indent 2 }}
+{{ toYaml .Values.certmanager.elasticsearch.admin.organization| indent 4 }}
 {{- end }}
   issuerRef:
     name: {{ template "opendistro-es.fullname" . }}-ca
