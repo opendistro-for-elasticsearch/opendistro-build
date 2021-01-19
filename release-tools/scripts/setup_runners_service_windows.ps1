@@ -39,7 +39,7 @@ python -m pip install --upgrade pip
 echo pip3 -version
 pip3 install awscli
 $PACKAGE="opendistroforelasticsearch"
-$OD_VERSION=$(bash release-tools/scripts/version-info.sh --od)
+$OD_VERSION=$args[1]
 $S3_PACKAGE="odfe-"+$OD_VERSION+".zip"
 dir
 

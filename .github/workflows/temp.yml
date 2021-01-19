@@ -91,7 +91,7 @@ jobs:
 
       - name: Run ES and kibana and IT (RUN IN ONE STEP OR WINDOWS WILL BREAK)
         run: |
-          release-tools\scripts\setup_runners_service_windows.ps1 --kibana-nosec
+          release-tools\scripts\setup_runners_service_windows.ps1 --kibana-nosec 1.12.0
           cd ./kibana/plugins/kibana-notebooks
           npx cypress run
 
