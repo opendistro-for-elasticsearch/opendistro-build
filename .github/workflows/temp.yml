@@ -50,7 +50,7 @@ jobs:
         with:
           repository: opendistro-for-elasticsearch/kibana-notebooks
           # ref: ${{needs.Set-Env.outputs.p_tag_kib_nb}}
-          ref: dev
+          ref: 438634f043e2f940faf6d4f5c4adbfc03f8d371a
           path: kibana/plugins/kibana-nb
       
       - name: Setup Java
