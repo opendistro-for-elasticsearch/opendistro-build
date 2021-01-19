@@ -28,25 +28,39 @@ set -e
 # Initialize directories
 REPO_ROOT=`git rev-parse --show-toplevel`
 ROOT=`dirname $(realpath $0)`; echo $ROOT; cd $ROOT
-ES_VERSION=`$REPO_ROOT/bin/version-info --es`; echo ES_VERSION: $ES_VERSION
-OD_VERSION=`$REPO_ROOT/bin/version-info --od`; echo OD_VERSION: $OD_VERSION
-IS_CUT=`$REPO_ROOT/bin/version-info --is-cut`; echo IS_CUT: $IS_CUT
+MANIFEST_FILE=$REPO_ROOT/release-tools/scripts/manifest.yml
+ES_VERSION=`$REPO_ROOT/release-tools/scripts/version-info.sh --es`; echo ES_VERSION: $ES_VERSION
+OD_VERSION=`$REPO_ROOT/release-tools/scripts/version-info.sh --od`; echo OD_VERSION: $OD_VERSION
+S3_RELEASE_BASEURL=`yq eval '.urls.ODFE.releases' $MANIFEST_FILE`
+S3_RELEASE_FINAL_BUILD=`yq eval '.urls.ODFE.releases_final_build' $MANIFEST_FILE | sed 's/\///g'`
+S3_RELEASE_BUCKET=`echo $S3_RELEASE_BASEURL | awk -F '/' '{print $3}'`
 PACKAGE_TYPE=$1
-S3_BUCKET="artifacts.opendistroforelasticsearch.amazon.com"
-ARTIFACTS_URL="https://d3g5vo6xdbdb9a.cloudfront.net"
 PACKAGE_NAME="opendistroforelasticsearch-kibana"
 TARGET_DIR="$ROOT/target"
 plugin_version=$OD_VERSION
 
 # Please DO NOT change the orders, they have dependencies
-PLUGINS=`$REPO_ROOT/bin/plugins-info kibana zip --require-install-true`
+PLUGINS=`$REPO_ROOT/release-tools/scripts/plugins-info.sh kibana-plugins plugin_basename`
 PLUGINS_ARRAY=($PLUGINS )
-CUT_VERSIONS=`$REPO_ROOT/bin/plugins-info kibana cutversion --require-install-true`
-CUT_VERSIONS_ARRAY=( $CUT_VERSIONS )
+PLUGIN_PATH=`yq eval '.urls.ODFE.releases' $MANIFEST_FILE | sed "s/^.*$S3_RELEASE_BUCKET\///g"`
 
 basedir="${ROOT}/${PACKAGE_NAME}/plugins"
 
 echo $ROOT
+
+if [ -z "$S3_RELEASE_FINAL_BUILD" ]
+then
+  S3_RELEASE_BUILD=`aws s3api list-objects --bucket $S3_RELEASE_BUCKET --prefix "${PLUGIN_PATH}${OD_VERSION}" --query 'Contents[].[Key]' --output text | awk -F '/' '{print $3}' | uniq | tail -n 1`
+  echo Latest: $S3_RELEASE_BUILD
+else
+  S3_RELEASE_BUILD=$S3_RELEASE_FINAL_BUILD
+  echo Final: $S3_RELEASE_BUILD
+fi
+
+if [ -z "$PLUGINS" ]; then
+  echo "Provide plugin list to install (separated by space)"
+  exit 1
+fi
 
 if [ -z "$PLUGINS" ]; then
   echo "Provide plugin list to install (separated by space)"
@@ -67,21 +81,28 @@ mkdir $PACKAGE_NAME
 echo "Downloading kibana oss"
 curl -Ls "https://artifacts.elastic.co/downloads/kibana/kibana-oss-$ES_VERSION-linux-x86_64.tar.gz" | tar --strip-components=1 -zxf - --directory $PACKAGE_NAME
 
+
 # Install required plugins
 echo "installing open distro plugins"
+rm -rf /tmp/plugins
+mkdir -p /tmp/plugins
 for index in ${!PLUGINS_ARRAY[@]}
 do
-  if [ "$IS_CUT" = "true" ]
+  plugin_latest=`aws s3api list-objects --bucket $S3_RELEASE_BUCKET --prefix "${PLUGIN_PATH}${OD_VERSION}/$S3_RELEASE_BUILD/kibana-plugins" --query 'Contents[].[Key]' --output text | grep -v sha512 |grep ${PLUGINS_ARRAY[$index]} |grep zip |sort | tail -n 1`
+  if [ ! -z "$plugin_latest" ]
   then
-    plugin_version=${CUT_VERSIONS_ARRAY[$index]}
-  fi
-  plugin_path=${PLUGINS_ARRAY[$index]}
-  plugin_latest=`aws s3api list-objects --bucket $S3_BUCKET --prefix "downloads/kibana-plugins/${plugin_path}-${plugin_version}" --query 'Contents[].[Key]' --output text | sort | tail -n 1`
-
-  if [ "$plugin_path" != "none" ]
-  then
-    echo "installing $plugin_latest"
-    $PACKAGE_NAME/bin/kibana-plugin --allow-root install "${ARTIFACTS_URL}/${plugin_latest}"
+    echo "downloading $plugin_latest"
+    echo `echo $plugin_latest | awk -F '/' '{print $NF}'` >> /tmp/plugins/plugins.list
+    plugin_path=${PLUGINS_ARRAY[$index]}
+    echo "plugin path:  $plugin_path"
+    aws s3 cp "s3://${S3_RELEASE_BUCKET}/${plugin_latest}" "/tmp/plugins" --quiet; echo $?
+    rc_candiate=`$REPO_ROOT/release-tools/scripts/plugin_parser.sh $index release_candidate`
+    if $rc_candiate
+    then
+      plugin=`echo $plugin_latest | awk -F '/' '{print $NF}'`
+      echo "installing $plugin"
+      $PACKAGE_NAME/bin/kibana-plugin --allow-root install file:/tmp/plugins/$plugin
+    fi
   fi
 done
 
@@ -132,8 +153,8 @@ if [ $# -eq 0 ] || [ "$PACKAGE_TYPE" = "rpm" ]; then
       # Upload to S3
       ls -ltr $TARGET_DIR
       rpm_artifact=`ls $TARGET_DIR/*.rpm`
-      aws s3 cp $rpm_artifact s3://$S3_BUCKET/downloads/rpms/opendistroforelasticsearch-kibana/
-      aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/*"
+      aws s3 cp $rpm_artifact s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/odfe/
+#      aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/*"
 
 fi
 
@@ -174,8 +195,7 @@ if [ $# -eq 0 ] || [ "$PACKAGE_TYPE" = "deb" ]; then
       # Upload to S3
       ls -ltr $TARGET_DIR
       deb_artifact=`ls $TARGET_DIR/*.deb`
-      aws s3 cp $deb_artifact s3://$S3_BUCKET/downloads/debs/opendistroforelasticsearch-kibana/
-      aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/*"
+      aws s3 cp $deb_artifact s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/odfe/
 
 fi
 
@@ -185,7 +205,6 @@ if [ $# -eq 0 ] || [ "$PACKAGE_TYPE" = "tar" ]; then
   rm -rf $TARGET_DIR/*tar*
   echo "generating tar"
   tar -czf $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz $PACKAGE_NAME
-  #tar -tzvf $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz
   cd $TARGET_DIR
   shasum -a 512 $PACKAGE_NAME-$OD_VERSION.tar.gz > $PACKAGE_NAME-$OD_VERSION.tar.gz.sha512
   shasum -a 512 -c $PACKAGE_NAME-$OD_VERSION.tar.gz.sha512
@@ -197,8 +216,8 @@ if [ $# -eq 0 ] || [ "$PACKAGE_TYPE" = "tar" ]; then
   ls -ltr $TARGET_DIR
   tar_artifact=`ls $TARGET_DIR/*.tar.gz`
   tar_checksum_artifact=`ls $TARGET_DIR/*.tar.gz.sha512`
-  aws s3 cp $tar_artifact s3://$S3_BUCKET/downloads/tarball/opendistroforelasticsearch-kibana/
-  aws s3 cp $tar_checksum_artifact s3://$S3_BUCKET/downloads/tarball/opendistroforelasticsearch-kibana/
-  aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/*"
+  echo "Staging destination : s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/odfe/"
+  aws s3 cp $tar_artifact s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/odfe/
+  aws s3 cp $tar_checksum_artifact s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/odfe/
 
 fi
