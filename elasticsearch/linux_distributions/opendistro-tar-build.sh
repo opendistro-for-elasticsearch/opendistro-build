@@ -44,6 +44,7 @@ then
   S3_RELEASE_BUILD=`aws s3api list-objects --bucket $S3_RELEASE_BUCKET --prefix "${PLUGIN_PATH}${OD_VERSION}" --query 'Contents[].[Key]' --output text | awk -F '/' '{print $3}' | uniq | tail -n 1`
   echo Latest: $S3_RELEASE_BUILD
 else
+  S3_RELEASE_BUILD=$S3_RELEASE_BUILD
   echo Final: $S3_RELEASE_BUILD
 fi
 
@@ -73,7 +74,6 @@ do
   if [ ! -z "$plugin_latest" ]
   then
     echo "downloading $plugin_latest"
-    echo `echo $plugin_latest | awk -F '/' '{print $NF}'` >> /tmp/plugins/plugins.list
     plugin_path=${PLUGINS_ARRAY[$index]}
     echo "plugin path:  $plugin_path"
     aws s3 cp "s3://${S3_RELEASE_BUCKET}/${plugin_latest}" "/tmp/plugins" --quiet; echo $?
@@ -112,19 +112,18 @@ chmod 755 ${PACKAGE_NAME}-${OD_VERSION}/data/
 knnlib_is_rc=`$REPO_ROOT/release-tools/scripts/plugin_parser.sh opendistro-knnlib release_candidate`
 if $knnlib_is_rc
 then
- echo ""
- knnlib_latest=`aws s3api list-objects --bucket $S3_RELEASE_BUCKET --prefix "${PLUGIN_PATH}${OD_VERSION}/$S3_RELEASE_BUILD/opendistro-libs/" --query 'Contents[].[Key]' --output text | grep -v sha512 | grep opendistro-knnlib | grep zip | sort | tail -n 1`
- echo "downloading $knnlib_latest"
- aws s3 cp "s3://${S3_RELEASE_BUCKET}/$knnlib_latest" ./
- unzip opendistro-knnlib*.zip
- mkdir -p $PACKAGE_NAME-$OD_VERSION/plugins/opendistro-knn/knn-lib/
- mv -v opendistro-knnlib*/libKNNIndex*.so $PACKAGE_NAME-$OD_VERSION/plugins/opendistro-knn/knn-lib/
+  echo ""
+  knnlib_latest=`aws s3api list-objects --bucket $S3_RELEASE_BUCKET --prefix "${PLUGIN_PATH}${OD_VERSION}/$S3_RELEASE_BUILD/opendistro-libs/" --query 'Contents[].[Key]' --output text | grep -v sha512 | grep opendistro-knnlib | grep zip | sort | tail -n 1`
+  echo "downloading $knnlib_latest"
+  aws s3 cp "s3://${S3_RELEASE_BUCKET}/$knnlib_latest" ./
+  unzip opendistro-knnlib*.zip
+  mkdir -p $PACKAGE_NAME-$OD_VERSION/plugins/opendistro-knn/knn-lib/
+  mv -v opendistro-knnlib*/libKNNIndex*.so $PACKAGE_NAME-$OD_VERSION/plugins/opendistro-knn/knn-lib/
 fi
 
 # Tar generation
 echo "generating tar"
 tar -czf $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz $PACKAGE_NAME-$OD_VERSION
-tar -tavf $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz
 cd $TARGET_DIR
 shasum -a 512 $PACKAGE_NAME-$OD_VERSION.tar.gz > $PACKAGE_NAME-$OD_VERSION.tar.gz.sha512
 shasum -a 512 -c $PACKAGE_NAME-$OD_VERSION.tar.gz.sha512
