@@ -24,8 +24,8 @@ BUILD_DATE := $(shell date +'%y.%m.%d')
 
 OPENDISTRO_REGISTRY ?= amazon
 
-ES_VERSION ?= $(shell ../../bin/version-info --es)
-OPENDISTRO_VERSION ?= $(shell ../../bin/version-info --od)
+ES_VERSION ?= $(shell ../../release-tools/scripts/version-info.sh --es)
+OPENDISTRO_VERSION ?= $(shell ../../release-tools/scripts/version-info.sh --od)
 OPENDISTRO_PLUGIN_VERSION ?= $(OPENDISTRO_VERSION).0.zip
 IMAGE_TAG ?= $(OPENDISTRO_REGISTRY)/opendistro-for-elasticsearch-kibana
 ARTIFACTS_URL='https://d3g5vo6xdbdb9a.cloudfront.net/downloads/kibana'

@@ -97,7 +97,7 @@ ENV BUST_CACHE {{ bust_cache }}
 
 # Install the required modules
 #RUN for plugin_path in {{ plugin_url_paths }}; do \
-RUN for plugin_path in `cat /tmp/plugins/plugins.list`; do \
+RUN for plugin_path in `cat /tmp/plugins/plugins_elasticsearch.list`; do \
       elasticsearch-plugin install --batch file:/tmp/plugins/$plugin_path; \
     done
 
