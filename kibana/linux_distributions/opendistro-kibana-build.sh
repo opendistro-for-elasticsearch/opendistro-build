@@ -53,6 +53,7 @@ then
   S3_RELEASE_BUILD=`aws s3api list-objects --bucket $S3_RELEASE_BUCKET --prefix "${PLUGIN_PATH}${OD_VERSION}" --query 'Contents[].[Key]' --output text | awk -F '/' '{print $3}' | uniq | tail -n 1`
   echo Latest: $S3_RELEASE_BUILD
 else
+  S3_RELEASE_BUILD=$S3_RELEASE_FINAL_BUILD
   echo Final: $S3_RELEASE_BUILD
 fi
 
