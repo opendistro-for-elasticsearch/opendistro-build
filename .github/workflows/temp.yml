@@ -19,6 +19,7 @@ jobs:
         run: |
           release-tools/scripts/required_packages.sh
           echo ::set-output name=es_version::$(release-tools/scripts/version-info.sh --es)
+          echo ::set-output name=od_version::$(release-tools/scripts/version-info.sh --od)
           echo ::set-output name=p_tag_kib_nb::$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/kibana-notebooks)
 
   Test-Kibana-Notebooks-NoSec:
@@ -91,7 +92,7 @@ jobs:
 
       - name: Run ES and kibana and IT (RUN IN ONE STEP OR WINDOWS WILL BREAK)
         run: |
-          release-tools\scripts\setup_runners_service_windows.ps1 --kibana-nosec 1.12.0
+          release-tools\scripts\setup_runners_service_windows.ps1 --kibana-nosec ${{needs.Set-Env.outputs.od_version}}
           cd ./kibana/plugins/kibana-notebooks
           npx cypress run
 
