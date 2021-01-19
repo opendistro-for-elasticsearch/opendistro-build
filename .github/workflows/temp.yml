@@ -23,7 +23,7 @@ jobs:
           echo ::set-output name=es_version::$(release-tools/scripts/version-info.sh --es)
           echo ::set-output name=od_version::$(release-tools/scripts/version-info.sh --od)
           echo ::set-output name=p_tag_kib_nb::$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/kibana-notebooks)
-          echo "p_tag_alerting=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)" >> $GITHUB_ENV
+          echo "p_tag_alerting=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)" >> $GITHUB_ENV
 
   Test-Kibana-Notebooks-NoSec:
     needs: [Set-Env]
