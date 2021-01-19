@@ -23,7 +23,7 @@
 # setup user parameters
 $SETUP_ACTION=$args[0]
 $OD_VERSION=$args[1]
-if (!$SETUP_ACTION) {
+if (!$SETUP_ACTION -or !$OD_VERSION) {
   echo "Please enter 2 parameters: --es | --es-nosec | --kibana | --kibana-nosec 1.12.0"
   echo "Example: $0 --es-nosec 1.12.0"
   exit 1

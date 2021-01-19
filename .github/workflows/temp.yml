@@ -12,6 +12,8 @@ jobs:
     outputs:
       es_version: ${{ steps.req.outputs.es_version }}
       p_tag_kib_nb: ${{ steps.req.outputs.p_tag_kib_nb }}
+      od_version: ${{ steps.req.outputs.od_version }}
+      p_tag_alerting: ${{env.p_tag_alerting}}
     steps:
       - uses: actions/checkout@v1
       - name: Required packages
@@ -21,6 +23,7 @@ jobs:
           echo ::set-output name=es_version::$(release-tools/scripts/version-info.sh --es)
           echo ::set-output name=od_version::$(release-tools/scripts/version-info.sh --od)
           echo ::set-output name=p_tag_kib_nb::$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/kibana-notebooks)
+          echo "p_tag_alerting=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)" >> $GITHUB_ENV
 
   Test-Kibana-Notebooks-NoSec:
     needs: [Set-Env]
@@ -82,6 +85,7 @@ jobs:
       
       - name: Bootstrap the plugin
         run: |
+          echo "alerting tag is: ${{needs.Set-Env.outputs.p_tag_alerting}}"
           cd ./kibana/plugins/
           cp -rp kibana-nb/kibana-notebooks .
           rm -rf kibana-nb
