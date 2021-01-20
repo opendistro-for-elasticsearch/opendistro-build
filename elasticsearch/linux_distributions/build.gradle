@@ -30,7 +30,7 @@ ext {
 
     new ByteArrayOutputStream().withStream { os1 ->
       def result1 = exec {
-        executable = '../../bin/version-info'
+        executable = '../../release-tools/scripts/version-info.sh'
         args = ['--es']
         standardOutput = os1
       }
@@ -41,7 +41,7 @@ ext {
 
     new ByteArrayOutputStream().withStream { os2 ->
       def result2 = exec {
-        executable = '../../bin/version-info'
+        executable = '../../release-tools/scripts/version-info.sh'
         args = ['--od']
         standardOutput = os2
       }
@@ -56,8 +56,8 @@ ext {
 
     new ByteArrayOutputStream().withStream { os3 ->
       def result3 = exec {
-        executable = '../../bin/plugins-info'
-        args = ['elasticsearch', 'rpm', '--require-install-true']
+        executable = '../../release-tools/scripts/plugins-info.sh'
+        args = ['elasticsearch-plugins', 'plugin_basename']
         standardOutput = os3
       }
       ext.plugin_names = os3.toString()
@@ -65,57 +65,34 @@ ext {
 
     new ByteArrayOutputStream().withStream { os4 ->
       def result4 = exec {
-        executable = '../../bin/plugins-info'
-        args = ['elasticsearch', 'git', '--require-install-true']
+        executable = '../../release-tools/scripts/plugins-info.sh'
+        args = ['elasticsearch-plugins', 'plugin_version']
         standardOutput = os4
       }
-      ext.plugin_git = os4.toString().replaceAll("\n", ",")
+      ext.plugin_versions = os4.toString()
     }
 
     new ByteArrayOutputStream().withStream { os5 ->
       def result5 = exec {
-        executable = '../../bin/version-info'
-        args = ['--is-cut']
+        executable = '../../release-tools/scripts/version-info.sh'
+        args = ['--od-next']
         standardOutput = os5
       }
-      ext.is_cut = os5.toString().trim()
+      ext.plugin_versions_next = os5.toString().trim() + ".0"
     }
-    println("is_cut: " + ext.is_cut)
-
-   if (ext.is_cut.equals("true")) {
-      new ByteArrayOutputStream().withStream { os6 ->
-        def result6 = exec {
-          executable = '../../bin/plugins-info'
-          args = ['elasticsearch', 'cutversion', '--require-install-true']
-          standardOutput = os6
-        }
-        ext.plugin_versions = os6.toString()
-        println("Version is cut")
+    
+    new ByteArrayOutputStream().withStream { os6 ->
+      def result6 = exec {
+        executable = '../../release-tools/scripts/plugins-info.sh'
+        args = ['elasticsearch-plugins', 'release_candidate']
+        standardOutput = os6
       }
-    }
-    else {
-      new ByteArrayOutputStream().withStream { os7 ->
-        def result7 = exec {
-          executable = '../../.github/scripts/plugin_tag.sh'
-          args = [ext.plugin_git, opendistroVersion]
-          standardOutput = os7
-        }
-        ext.plugin_versions = os7.toString().replaceAll("v", "")
-        println("Version not cut")
-      }
-    }
-
-    new ByteArrayOutputStream().withStream { os8 ->
-      def result8 = exec {
-        executable = '../../bin/version-info'
-        args = ['--od-next']
-        standardOutput = os8
-      }
-      ext.plugin_versions_next = os8.toString().trim() + ".0"
+      ext.plugin_rc = os6.toString()
     }
 
     pname_arr = ext.plugin_names.split("\n").toList()
     pver_arr = ext.plugin_versions.split("\n").toList()
+    prc_arr = ext.plugin_rc.split("\n").toList()
     pver_next = ext.plugin_versions_next
 
 }
@@ -137,8 +114,9 @@ ospackage {
       String pluginName = pname_arr[i].substring(pname_arr[i].lastIndexOf("/") + 1).trim()
       String pluginVersion = pver_arr[i].trim()
       String pluginVersionNext = pver_next.trim()
+      String pluginIsRC = prc_arr[i].trim()
 
-      if (!pluginName.contains("none")) {
+      if (!pluginName.contains("none") && pluginIsRC ) {
         println(pluginName + ": >= " + pluginVersion + " | < " + pluginVersionNext)
         requires(pluginName, pluginVersion, GREATER | EQUAL)
         requires(pluginName, pluginVersionNext, LESS)
@@ -160,7 +138,7 @@ ospackage {
 }
 
 buildRpm() {
-    arch = 'NOARCH'
+    arch = 'x86_64'
     archiveName "${packageName}-${version}.rpm"
 }
 
