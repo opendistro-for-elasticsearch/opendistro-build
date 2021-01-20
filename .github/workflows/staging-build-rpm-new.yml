@@ -60,7 +60,7 @@ jobs:
           ./gradlew buildRpm --console=plain -Dbuild.snapshot=false -b ./build.gradle
           rpm_artifact=`ls build/distributions/*.rpm`
           ls -ltr build/distributions/*.rpm
-          aws s3 cp $rpm_artifact $S3_RELEASE_BASEURL$OD_VERSION/odfe
+          aws s3 cp $rpm_artifact $S3_RELEASE_BASEURL$OD_VERSION/odfe/
           #aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/*"
 
           echo "RPM creation for ES completed"
