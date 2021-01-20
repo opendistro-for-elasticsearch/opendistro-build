@@ -2,8 +2,8 @@
 
 ARCH=`uname -p | tr '[:upper:]' '[:lower:]'`; echo $ARCH
 PLATFORM=`uname -s | tr '[:upper:]' '[:lower:]'`; echo $PLATFORM
-DEB_PKGS="curl wget unzip tar jq python python3 git awscli"
-RPM_PKGS="curl wget unzip tar jq python python3 git awscli"
+DEB_PKGS="sudo curl wget unzip tar jq python python3 git awscli"
+RPM_PKGS="sudo curl wget unzip tar jq python python3 git awscli"
 
 echo "This script is to installed the required packages for GitHub Runners"
 
