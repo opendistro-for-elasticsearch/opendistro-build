@@ -153,8 +153,7 @@ if [ $# -eq 0 ] || [ "$PACKAGE_TYPE" = "rpm" ]; then
       # Upload to S3
       ls -ltr $TARGET_DIR
       rpm_artifact=`ls $TARGET_DIR/*.rpm`
-      #aws s3 cp $rpm_artifact s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/odfe/
-#      aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/*"
+      aws s3 cp $rpm_artifact s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/odfe/
 
 fi
 
@@ -195,7 +194,7 @@ if [ $# -eq 0 ] || [ "$PACKAGE_TYPE" = "deb" ]; then
       # Upload to S3
       ls -ltr $TARGET_DIR
       deb_artifact=`ls $TARGET_DIR/*.deb`
-      #aws s3 cp $deb_artifact s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/odfe/
+      aws s3 cp $deb_artifact s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/odfe/
 
 fi
 
