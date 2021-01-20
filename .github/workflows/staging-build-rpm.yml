@@ -185,7 +185,7 @@ jobs:
           RUNNERS="odfe-rpm-ism-nosec,odfe-rpm-alerting-nosec,odfe-rpm-sql-nosec,odfe-rpm-knn-nosec,odfe-rpm-ad-nosec,"
           RUNNERS+="odfe-rpm-sql,odfe-rpm-ad,odfe-rpm-alerting,"
           RUNNERS+="odfe-rpm-ad-kibana-nosec,odfe-rpm-sql-kibana-nosec,"
-          RUNNERS+="odfe-rpm-ad-kibana,odfe-rpm-sec-kibana"
+          RUNNERS+="odfe-rpm-ad-kibana,odfe-rpm-sec-kibana,odfe-rpm-kibana-nb-nosec"
           release-tools/scripts/setup_runners.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }} ami-086e8a98280780e63
 
   Test-ISM-NoSec:
@@ -542,7 +542,90 @@ jobs:
         with:
           working-directory: kibana/plugins/workbench
           command: npx cypress run
+
+  Test-Kibana-Notebooks-NoSec:
+    needs: [Provision-Runners]
+    runs-on: [self-hosted, Linux, X64, odfe-rpm-kibana-nb-nosec]
+    name: Test-Kibana-Notebooks-NoSec
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [14]
+    steps:
+      - uses: actions/checkout@v1
+      - name: Set up AWS Cred
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Install required packages
+        run: release-tools/scripts/required_packages.sh
+
+      - name: Retrieve plugin tags 
+        run: |
+          echo "p_tag_kib_nb=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/kibana-notebooks)" >> $GITHUB_ENV
+          echo "es_version=$(release-tools/scripts/version-info.sh --es)" >> $GITHUB_ENV
           
+      - name: Checkout Kibana
+        uses: actions/checkout@v2
+        with:
+          repository: opendistro-for-elasticsearch/kibana-oss
+          ref: ${{env.es_version}}
+          token: ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
+          path: kibana
+           
+      - uses: actions/checkout@v2
+        with:
+          repository: opendistro-for-elasticsearch/kibana-notebooks
+          ref: ${{env.p_tag_kib_nb}
+          path: kibana/plugins/kibana-nb
+      
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+      
+      - name: Get node and yarn versions
+        id: node_yarn_versions
+        run: |
+          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
+          . ~/.nvm/nvm.sh
+          nvm install node
+          echo "kibana_node_version=$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV
+          echo "kibana_yarn_version=$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV   
+      
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{env.kibana_node_version}}
+          registry-url: 'https://registry.npmjs.org'
+      
+      - name: Install correct yarn version for Kibana
+        run: |
+          npm uninstall -g yarn
+          echo "Installing yarn ${{ env.kibana_yarn_version }}"
+          npm i -g yarn@${{ env.kibana_yarn_version }}
+      
+      - name: Bootstrap the plugin
+        run: |
+          cd ./kibana/plugins/
+          cp -rp kibana-nb/kibana-notebooks .
+          rm -rf kibana-nb/
+          cd kibana-notebooks
+          yarn kbn bootstrap
+
+      - name: Start ES and Kibana
+        run: |
+          release-tools/scripts/setup_runners_service.sh rpm --kibana-nosec 
+
+      - name: Run IT
+        uses: cypress-io/github-action@v2.5.0
+        with:
+          working-directory: kibana/plugins/kibana-notebooks
+          command: npx cypress run
+
   Test-AD-KIBANA:
     needs: [Provision-Runners]
     runs-on: [self-hosted, Linux, X64, odfe-rpm-ad-kibana]
@@ -687,7 +770,7 @@ jobs:
           yarn test:jest_server
 
   CleanUp-Runners:
-    needs: [Test-ISM-NoSec, Test-ALERTING-NoSec, Test-SQL-NoSec, Test-KNN-NoSec, Test-AD-NoSec, Test-SQL, Test-AD, Test-ALERTING, Test-AD-KIBANA-NoSec, Test-SQL-KIBANA-NoSec, Test-AD-KIBANA, Test-SEC-KIBANA]
+    needs: [Test-ISM-NoSec, Test-ALERTING-NoSec, Test-SQL-NoSec, Test-KNN-NoSec, Test-AD-NoSec, Test-SQL, Test-AD, Test-ALERTING, Test-AD-KIBANA-NoSec, Test-SQL-KIBANA-NoSec, Test-AD-KIBANA, Test-SEC-KIBANA, Test-Kibana-Notebooks-NoSec]
     if: always()
     name: CleanUp-Runners
     runs-on: ubuntu-18.04
@@ -707,6 +790,6 @@ jobs:
           RUNNERS="odfe-rpm-ism-nosec,odfe-rpm-alerting-nosec,odfe-rpm-sql-nosec,odfe-rpm-knn-nosec,odfe-rpm-ad-nosec,"
           RUNNERS+="odfe-rpm-sql,odfe-rpm-ad,odfe-rpm-alerting,"
           RUNNERS+="odfe-rpm-ad-kibana-nosec,odfe-rpm-sql-kibana-nosec,"
-          RUNNERS+="odfe-rpm-ad-kibana,odfe-rpm-sec-kibana"
+          RUNNERS+="odfe-rpm-ad-kibana,odfe-rpm-sec-kibana,odfe-rpm-kibana-nb-nosec"
           release-tools/scripts/setup_runners.sh terminate $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
 

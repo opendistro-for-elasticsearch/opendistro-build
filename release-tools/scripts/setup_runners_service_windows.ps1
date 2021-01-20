@@ -7,7 +7,7 @@
 #
 # About:         Setup ES/KIBANA for integTests on Windows based ODFE distros w/wo Security
 #
-# Usage:         ./setup_runners_service_windows.ps1 $SETUP_ACTION
+# Usage:         ./setup_runners_service_windows.ps1 $SETUP_ACTION $ODFE_VERSION
 #                $SETUP_ACTION: --es | --es-nosec | --kibana | --kibana-nosec (required)
 #
 # Requirements:  This script assumes java 14 is already installed on the servers
@@ -22,14 +22,16 @@
 
 # setup user parameters
 $SETUP_ACTION=$args[0]
-if (!$SETUP_ACTION) {
-  echo "Please enter 1 parameter: --es | --es-nosec | --kibana | --kibana-nosec"
+$OD_VERSION=$args[1]
+if (!$SETUP_ACTION -or !$OD_VERSION) {
+  echo "Please enter 2 parameters: --es | --es-nosec | --kibana | --kibana-nosec 1.x.x"
+  echo "Example: $0 --es-nosec 1.x.x"
   exit 1
 }
 
 echo "############################################################"
 echo "Setup ES/KIBANA to start with YES/NO security configurations"
-echo "User enters $SETUP_ACTION"
+echo "User enters $SETUP_ACTION $OD_VERSION"
 echo "############################################################"
 
 echo "setup es"
@@ -39,7 +41,6 @@ python -m pip install --upgrade pip
 echo pip3 -version
 pip3 install awscli
 $PACKAGE="opendistroforelasticsearch"
-$OD_VERSION=$(bash release-tools/scripts/version-info.sh --od)
 $S3_PACKAGE="odfe-"+$OD_VERSION+".zip"
 dir
 
