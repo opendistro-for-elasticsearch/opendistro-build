@@ -65,7 +65,7 @@ jobs:
       p_tag_alerting: ${{env.p_tag_alerting}}
       p_tag_sql: ${{env.p_tag_sql}}
       p_tag_ad: ${{env.p_tag_ad}}
-      p_tag_ad_kibana: $${env.p_tag_ad_kibana}
+      p_tag_ad_kibana: ${{env.p_tag_ad_kibana}}
       p_tag_kib_nb: ${{env.p_tag_kib_nb}}
       p_tag_sec_kibana: ${{env.p_tag_sec_kibana}}
     steps:
@@ -75,7 +75,7 @@ jobs:
           release-tools/scripts/required_packages.sh
           echo "es_version=$(release-tools/scripts/version-info.sh --es)" >> $GITHUB_ENV
           echo "od_version=$(release-tools/scripts/version-info.sh --od)" >> $GITHUB_ENV
-          echo "p_tag_ism=$(release-toolsscripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)" >> $GITHUB_ENV
+          echo "p_tag_ism=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)" >> $GITHUB_ENV
           echo "p_tag_alerting=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)" >> $GITHUB_ENV
           echo "p_tag_sql=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)" >> $GITHUB_ENV
           echo "p_tag_ad=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)" >> $GITHUB_ENV
