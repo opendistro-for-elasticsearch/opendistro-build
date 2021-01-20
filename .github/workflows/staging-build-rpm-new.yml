@@ -37,8 +37,8 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
       - name: Required Packages
         run: |
@@ -52,7 +52,7 @@ jobs:
           set -u
           export JAVA_HOME=/openjdk12
           export PATH=$JAVA_HOME:$PATH
-          OD_VERSION=`$REPO_ROOT/release-tools/scripts/version-info.sh --od`
+          OD_VERSION=`./release-tools/scripts/version-info.sh --od`
           S3_RELEASE_BASEURL=`yq eval '.urls.ODFE.releases' release-tools/scripts/manifest.yml`
           cd elasticsearch/linux_distributions
           apt update -y
@@ -76,8 +76,8 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
       - name: Required Packages
         run: |
