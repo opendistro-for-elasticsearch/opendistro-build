@@ -6,7 +6,7 @@
 
 set -e
 CATEGORY=$1; echo CATEGORY $CATEGORY; if [ -z "$CATEGORY" ]; then echo "Please enter plugin category as parameter: elasticsearch/kibana"; exit 1; fi
-ARCHTECTURE=$2; echo ARCHITECTURE $ARCHITECTURE
+ARCHTECTURE="x64"; if [ ! -z "$2" ]; then ARCHITECTURE=$2; fi; echo ARCHITECTURE $ARCHITECTURE
 REPO_ROOT=`git rev-parse --show-toplevel`
 ROOT=`dirname $(realpath $0)`; echo $ROOT; cd $ROOT
 MANIFEST_FILE=$ROOT/manifest.yml
@@ -43,7 +43,7 @@ do
                    | grep -v sha512 | grep ${PLUGINS_ARRAY[$index]} | grep zip | grep linux | grep "$ARCHITECTURE" | sort | tail -n 1`
   else
     plugin_latest=`aws s3api list-objects --bucket $S3_RELEASE_BUCKET --prefix "${PLUGIN_PATH}${OD_VERSION}/${S3_RELEASE_BUILD}/${CATEGORY}-plugins" --query 'Contents[].[Key]' --output text \
-                   | grep -v sha512 | grep ${PLUGINS_ARRAY[$index]} | grep zip | grep "$ARCHITECTURE" | sort | tail -n 1`
+                   | grep -v sha512 | grep ${PLUGINS_ARRAY[$index]} | grep zip | sort | tail -n 1`
   fi
 
   if [ ! -z "$plugin_latest" ]
