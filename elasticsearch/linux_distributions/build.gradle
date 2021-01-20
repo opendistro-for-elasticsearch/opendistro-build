@@ -138,12 +138,12 @@ ospackage {
 }
 
 buildRpm() {
-    arch = 'NOARCH'
+    arch = 'x86_64'
     archiveName "${packageName}-${version}.rpm"
 }
 
 buildDeb() {
-    arch = 'x64'
+    arch = 'amd64'
     archiveName "${packageName}-${version}.deb"
 }
 
