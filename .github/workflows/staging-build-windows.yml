@@ -5,9 +5,12 @@ on:
   #   - cron: '30 10 * * *'
   repository_dispatch:
     types: [staging-build-windows]
+  push:
+    branches: [separation-staging-P40553676]
 
 jobs:
   build-es-artifacts:
+    #needs: [Get-versions]
     name: Build Windows ES Artifacts
     runs-on: ubuntu-18.04
     steps:
@@ -16,14 +19,17 @@ jobs:
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
 
-    - name: Set up JDK
+    - name: Set Up JDK
       uses: actions/setup-java@v1
       with:
         java-version: 14
+
+    - name: Required Packages
+      run: ./release-tools/scripts/required_packages.sh
 
     - name: Build Windows
       env:
@@ -38,14 +44,17 @@ jobs:
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
 
-    - name: Set up JDK
+    - name: Set Up JDK
       uses: actions/setup-java@v1
       with:
         java-version: 14
+
+    - name: Required Packages
+      run: ./release-tools/scripts/required_packages.sh
 
     - name: Build Kibana
       env:
@@ -54,7 +63,7 @@ jobs:
 
   Get-versions:
     name: Get-versions
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     outputs:
       es_version: ${{ env.es_version }}
       od_version: ${{ env.od_version }}
@@ -97,8 +106,8 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
       - name: Set Up JDK ${{ matrix.java }}
@@ -132,8 +141,8 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
       - name: Set Up JDK 
         uses: actions/setup-java@v1
@@ -166,8 +175,8 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
       - name: Set Up JDK 
         uses: actions/setup-java@v1
@@ -200,8 +209,8 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
       - name: Set Up JDK 
         uses: actions/setup-java@v1
@@ -234,8 +243,8 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
       - name: Set Up JDK 
         uses: actions/setup-java@v1
@@ -268,8 +277,8 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
       - name: Set Up JDK 
         uses: actions/setup-java@v1
@@ -303,8 +312,8 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
       - name: Set Up JDK 
@@ -335,8 +344,8 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
       - name: Set Up JDK 
         uses: actions/setup-java@v1
@@ -404,8 +413,8 @@ jobs:
       - name: Set up AWS Cred
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
           
       - name: Checkout Kibana
@@ -489,8 +498,8 @@ jobs:
       - name: Set up AWS Cred
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
           
       - name: Checkout Kibana
@@ -559,8 +568,8 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
       - name: Set Up JDK 
         uses: actions/setup-java@v1
@@ -628,8 +637,8 @@ jobs:
       - name: Set up AWS Cred
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
       - name: Checkout Kibana

@@ -1,8 +1,8 @@
 name: Staging ODFE CLI
 
 on:
-  schedule:
-    - cron: '0 12 * * *'
+#  schedule:
+#    - cron: '0 12 * * *'
   repository_dispatch:
     types: [staging-odfe-cli]
 
@@ -57,8 +57,8 @@ jobs:
         run: |
           S3_BUCKET_STAGING="staging.artifacts.opendistroforelasticsearch.amazon.com"
           S3_BUCKET_PLUGIN="artifacts.learning"
-          aws s3 sync s3://$S3_BUCKET_PLUGIN/clients/odfe-cli/linux/ s3://$S3_BUCKET_STAGING/snapshots/elasticsearch-clients/opendistro-cli/ --exclude "*" --include "odfe-cli-${{env.p_tag_cli}}*" --quiet 
-          aws s3 sync s3://$S3_BUCKET_PLUGIN/clients/odfe-cli/mac/ s3://$S3_BUCKET_STAGING/snapshots/elasticsearch-clients/opendistro-cli/ --exclude "*" --include "odfe-cli-${{env.p_tag_cli}}*" --quiet
-          aws s3 sync s3://$S3_BUCKET_PLUGIN/clients/odfe-cli/windows/ s3://$S3_BUCKET_STAGING/snapshots/elasticsearch-clients/opendistro-cli/ --exclude "*" --include "odfe-cli-${{env.p_tag_cli}}*" --quiet
+          aws s3 sync s3://$S3_BUCKET_PLUGIN/clients/odfe-cli/linux/ s3://$S3_BUCKET_STAGING/snapshots/elasticsearch-clients/opendistro-cli/ --exclude "*" --include "opendistro-odfe-cli-${{env.p_tag_cli}}*" --quiet 
+          aws s3 sync s3://$S3_BUCKET_PLUGIN/clients/odfe-cli/mac/ s3://$S3_BUCKET_STAGING/snapshots/elasticsearch-clients/opendistro-cli/ --exclude "*" --include "opendistro-odfe-cli-${{env.p_tag_cli}}*" --quiet
+          aws s3 sync s3://$S3_BUCKET_PLUGIN/clients/odfe-cli/windows/ s3://$S3_BUCKET_STAGING/snapshots/elasticsearch-clients/opendistro-cli/ --exclude "*" --include "opendistro-odfe-cli-${{env.p_tag_cli}}*" --quiet
           aws s3 ls s3://$S3_BUCKET_STAGING/snapshots/elasticsearch-clients/opendistro-cli/ | grep ${{env.p_tag_cli}}
 
