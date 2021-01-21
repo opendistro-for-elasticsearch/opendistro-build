@@ -26,9 +26,10 @@ S3_RELEASE_FINAL_BUILD=`yq eval '.urls.ODFE.releases_final_build' $MANIFEST_FILE
 S3_RELEASE_BUCKET=`echo $S3_RELEASE_BASEURL | awk -F '/' '{print $3}'`
 PACKAGE_NAME="opendistroforelasticsearch"
 TARGET_DIR="$ROOT/target"
-plugin_version=$OD_VERSION
 PLATFORM="linux"; if [ ! -z "$1" ]; then PLATFORM=$1; fi; echo PLATFORM $PLATFORM
-ARCHTECTURE="x64"; if [ ! -z "$2" ]; then ARCHITECTURE=$2; fi; echo ARCHITECTURE $ARCHITECTURE
+ARCHITECTURE="x64"; if [ ! -z "$2" ]; then ARCHITECTURE=$2; fi; echo ARCHITECTURE $ARCHITECTURE
+ES_URL=`yq eval '.urls.ES.'$PLATFORM'_'$ARCHITECTURE'' $MANIFEST_FILE`
+ES_ARTIFACT=`echo $ES_URL | awk -F '/' '{print $6}'`
 
 # knnlib version only for tar distros here
 knnlib_version=`$REPO_ROOT/release-tools/scripts/plugin_parser.sh opendistro-knnlib plugin_version`; echo knnlib_version: $knnlib_version 
@@ -62,8 +63,9 @@ mkdir $TARGET_DIR
 
 # Downloading ES oss
 echo "Downloading ES oss"
-wget -nv https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$ES_VERSION-linux-x86_64.tar.gz ; echo $?
-tar -xzf elasticsearch-oss-$ES_VERSION-linux-x86_64.tar.gz --strip-components=1 --directory "${PACKAGE_NAME}-${OD_VERSION}" && rm -rf elasticsearch-oss-$ES_VERSION-linux-x86_64.tar.gz
+#wget -nv https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$ES_VERSION-linux-x86_64.tar.gz ; echo $?
+wget -nv $ES_URL; echo $?
+tar -xzf $ES_ARTIFACT --strip-components=1 --directory "${PACKAGE_NAME}-${OD_VERSION}" && rm -rf $ES_ARTIFACT
 cp -v opendistro-tar-install.sh $PACKAGE_NAME-$OD_VERSION
 
 # Install Plugin
@@ -72,7 +74,7 @@ mkdir -p /tmp/plugins
 
 for index in ${!PLUGINS_ARRAY[@]}
 do
-  plugin_latest=`aws s3api list-objects --bucket $S3_RELEASE_BUCKET --prefix "${PLUGIN_PATH}${OD_VERSION}/$S3_RELEASE_BUILD/elasticsearch-plugins" --query 'Contents[].[Key]' --output text | grep -v sha512 | grep ${PLUGINS_ARRAY[$index]} | grep zip | sort | tail -n 1`
+  plugin_latest=`(aws s3api list-objects --bucket $S3_RELEASE_BUCKET --prefix "${PLUGIN_PATH}${OD_VERSION}/$S3_RELEASE_BUILD/elasticsearch-plugins" --query 'Contents[].[Key]' --output text | grep -v sha512 | grep ${PLUGINS_ARRAY[$index]} | grep zip) || (echo None)` 
   plugin_counts=`echo $plugin_latest | sed 's/.zip[ ]*/.zip\n/g' | sed '/^$/d' | wc -l`
   
   if [ "$plugin_counts" -gt 1 ]
@@ -80,7 +82,7 @@ do
     plugin_latest=`echo $plugin_latest | sed 's/.zip[ ]*/.zip\n/g' | sed '/^$/d' | grep "$PLATFORM" | grep "$ARCHITECTURE"`
   fi
   
-  if [ ! -z "$plugin_latest" ]
+  if [ "$plugin_latest" != "None" ]
   then
     echo "downloading $plugin_latest"
     plugin_path=${PLUGINS_ARRAY[$index]}
@@ -128,12 +130,12 @@ fi
 
 # Tar generation
 echo "generating tar"
-tar -czf $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz $PACKAGE_NAME-$OD_VERSION
+tar -czf $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION-$PLATFORM-$ARCHITECTURE.tar.gz $PACKAGE_NAME-$OD_VERSION
 cd $TARGET_DIR
-shasum -a 512 $PACKAGE_NAME-$OD_VERSION.tar.gz > $PACKAGE_NAME-$OD_VERSION.tar.gz.sha512
-shasum -a 512 -c $PACKAGE_NAME-$OD_VERSION.tar.gz.sha512
+shasum -a 512 $PACKAGE_NAME-$OD_VERSION-$PLATFORM-$ARCHITECTURE.tar.gz > $PACKAGE_NAME-$OD_VERSION-$PLATFORM-$ARCHITECTURE.tar.gz.sha512
+shasum -a 512 -c $PACKAGE_NAME-$OD_VERSION-$PLATFORM-$ARCHITECTURE.tar.gz.sha512
 echo " CHECKSUM FILE: "
-echo "$(cat $PACKAGE_NAME-$OD_VERSION.tar.gz.sha512)"
+echo "$(cat $PACKAGE_NAME-$OD_VERSION-$PLATFORM-$ARCHITECTURE.tar.gz.sha512)"
 cd $ROOT
 rm -rf $PACKAGE_NAME-$OD_VERSION
 

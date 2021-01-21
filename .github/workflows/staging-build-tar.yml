@@ -3,8 +3,10 @@ name: Process TAR Artifacts
 on:
   # schedule:
   #   - cron: '0 10 * * *'
-  repository_dispatch:
-    types: [staging-build-tar]
+#  repository_dispatch:
+#    types: [staging-build-tar]
+  push:
+    branches: [sreekarj_tar_new]
  
 jobs:
   plugin-availability:
@@ -66,7 +68,7 @@ jobs:
           apt-get install sudo -y
           ./release-tools/scripts/required_packages.sh
       - name: Build Kibana
-        run: apt install -y jq; ./kibana/linux_distributions/opendistro-kibana-build.sh tar linux x64
+        run: apt install -y jq; ./kibana/linux_distributions/opendistro-kibana-build.sh tar
 
   Test-ISM-NoSec:
     needs: [build-es-artifacts]
