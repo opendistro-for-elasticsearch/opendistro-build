@@ -38,6 +38,8 @@ PACKAGE_TYPE=$1
 PACKAGE_NAME="opendistroforelasticsearch-kibana"
 TARGET_DIR="$ROOT/target"
 plugin_version=$OD_VERSION
+PLATFORM="linux"; if [ ! -z "$2" ]; then PLATFORM=$2; fi; echo CATEGORY $PLATFORM
+ARCHTECTURE="x64"; if [ ! -z "$3" ]; then ARCHITECTURE=$3; fi; echo ARCHITECTURE $ARCHITECTURE
 
 # Please DO NOT change the orders, they have dependencies
 PLUGINS=`$REPO_ROOT/release-tools/scripts/plugins-info.sh kibana-plugins plugin_basename`
@@ -62,10 +64,6 @@ if [ -z "$PLUGINS" ]; then
   exit 1
 fi
 
-if [ -z "$PLUGINS" ]; then
-  echo "Provide plugin list to install (separated by space)"
-  exit 1
-fi
 
 # If the input is set, but it's set to neither rpm nor deb, then exit.
 if [ -n $PACKAGE_TYPE ] && [ "$PACKAGE_TYPE" != "rpm" ] && [ "$PACKAGE_TYPE" != "deb" ] && [ "$PACKAGE_TYPE" != "tar" ]; then
@@ -89,6 +87,13 @@ mkdir -p /tmp/plugins
 for index in ${!PLUGINS_ARRAY[@]}
 do
   plugin_latest=`aws s3api list-objects --bucket $S3_RELEASE_BUCKET --prefix "${PLUGIN_PATH}${OD_VERSION}/$S3_RELEASE_BUILD/kibana-plugins" --query 'Contents[].[Key]' --output text | grep -v sha512 |grep ${PLUGINS_ARRAY[$index]} |grep zip |sort | tail -n 1`
+  plugin_counts=`echo $plugin_latest | sed 's/.zip[ ]*/.zip\n/g' | sed '/^$/d' | wc -l`
+
+  if [ "$plugin_counts" -gt 1 ]
+  then
+    plugin_latest=`echo $plugin_latest | sed 's/.zip[ ]*/.zip\n/g' | sed '/^$/d' | grep "$PLATFORM" | grep "$ARCHITECTURE"`
+  fi
+
   if [ ! -z "$plugin_latest" ]
   then
     echo "downloading $plugin_latest"
@@ -97,12 +102,9 @@ do
     echo "plugin path:  $plugin_path"
     aws s3 cp "s3://${S3_RELEASE_BUCKET}/${plugin_latest}" "/tmp/plugins" --quiet; echo $?
     rc_candiate=`$REPO_ROOT/release-tools/scripts/plugin_parser.sh $index release_candidate`
-    if $rc_candiate
-    then
-      plugin=`echo $plugin_latest | awk -F '/' '{print $NF}'`
-      echo "installing $plugin"
-      $PACKAGE_NAME/bin/kibana-plugin --allow-root install file:/tmp/plugins/$plugin
-    fi
+    plugin=`echo $plugin_latest | awk -F '/' '{print $NF}'`
+    echo "installing $plugin"
+    $PACKAGE_NAME/bin/kibana-plugin --allow-root install file:/tmp/plugins/$plugin
   fi
 done
 
