@@ -44,8 +44,7 @@ do
 
   if [ "$plugin_counts" -gt 1 ]
   then
-    plugin_latest=`aws s3api list-objects --bucket $S3_RELEASE_BUCKET --prefix "${PLUGIN_PATH}${OD_VERSION}/${S3_RELEASE_BUILD}/${CATEGORY}-plugins" --query 'Contents[].[Key]' --output text \
-                   | grep -v sha512 | grep ${PLUGINS_ARRAY[$index]} | grep zip | grep "$PLATFORM" | grep "$ARCHITECTURE"`
+    plugin_latest=`echo $plugin_latest | sed 's/.zip[ ]*/.zip\n/g' | sed '/^$/d' | grep "$PLATFORM" | grep "$ARCHITECTURE"`
   fi
 
   if [ ! -z "$plugin_latest" ]
