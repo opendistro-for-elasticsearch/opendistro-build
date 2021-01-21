@@ -5,124 +5,121 @@ on:
   #   - cron: '30 10 * * *'
   repository_dispatch:
     types: [staging-build-docker]
-  push:
-    branches:
-      - "docker-staging"
 
 jobs:
-  # build-es-docker:
-  #   name: Build ES Docker
-  #   runs-on: ubuntu-18.04
-  #   steps:
-  #   - uses: actions/checkout@v1
+  build-es-docker:
+    name: Build ES Docker
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v1
        
-  #   - name: Configure AWS
-  #     uses: aws-actions/configure-aws-credentials@v1
-  #     with:
-  #       aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
-  #       aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
-  #       aws-region: us-east-1
+    - name: Configure AWS
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
 
-  #   - name: Install Required Packages
-  #     run: sudo pip3 install jinja2-cli && release-tools/scripts/required_packages.sh
+    - name: Install Required Packages
+      run: sudo pip3 install jinja2-cli && release-tools/scripts/required_packages.sh
 
-  #   - name: Starting ES Docker Build
-  #     env:
-  #       DOCKER_USER: ${{ secrets.DOCKER_USER }}
-  #       DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
-  #     run: |
-  #       echo "Executing On-demand Build for ES Docker Image"
-  #       ODFE_VER=`./release-tools/scripts/version-info.sh --od`
-  #       echo "ODFE VERSION $ODFE_VER"
-  #       workdir=`pwd`
-  #       ./release-tools/scripts/docker_download_plugins.sh elasticsearch
-  #       cd elasticsearch/docker
-  #       make build
+    - name: Starting ES Docker Build
+      env:
+        DOCKER_USER: ${{ secrets.DOCKER_USER }}
+        DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
+      run: |
+        echo "Executing On-demand Build for ES Docker Image"
+        ODFE_VER=`./release-tools/scripts/version-info.sh --od`
+        echo "ODFE VERSION $ODFE_VER"
+        workdir=`pwd`
+        ./release-tools/scripts/docker_download_plugins.sh elasticsearch
+        cd elasticsearch/docker
+        make build
         
-  #       echo "******************************"
-  #       echo "Login to Docker"
-  #       echo "******************************"
-  #       docker login --username $DOCKER_USER --password $DOCKER_PASS
-  #       docker images|grep "amazon/opendistro-for-elasticsearch" > docker_id.out
-  #       image_id=`awk -F ' ' '{print $3}' docker_id.out`
-  #       DOCKER_NAME=odfe-test-$ODFE_VER
-  #       echo "Docker Id is $image_id"
-  #       docker tag $image_id opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER
-  #       docker tag $image_id opendistroforelasticsearch/opendistroforelasticsearch:latest
-  #       docker images
-  #       docker push opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER
-  #       docker push opendistroforelasticsearch/opendistroforelasticsearch:latest
-  #       docker logout
-  #       #echo "<h2>The docker image opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER for ODFE has been created and uploaded to docker-hub</h2>" >> $workdir/Release.md
-  #       cd ../../..
-  #       ls -ltr
+        echo "******************************"
+        echo "Login to Docker"
+        echo "******************************"
+        docker login --username $DOCKER_USER --password $DOCKER_PASS
+        docker images|grep "amazon/opendistro-for-elasticsearch" > docker_id.out
+        image_id=`awk -F ' ' '{print $3}' docker_id.out`
+        DOCKER_NAME=odfe-test-$ODFE_VER
+        echo "Docker Id is $image_id"
+        docker tag $image_id opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER
+        docker tag $image_id opendistroforelasticsearch/opendistroforelasticsearch:latest
+        docker images
+        docker push opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER
+        docker push opendistroforelasticsearch/opendistroforelasticsearch:latest
+        docker logout
+        #echo "<h2>The docker image opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER for ODFE has been created and uploaded to docker-hub</h2>" >> $workdir/Release.md
+        cd ../../..
+        ls -ltr
     
-  #   - name: Create Email Message
-  #     run: |
-  #       echo "<h2>On-Demand Opendsitro Docker Image is Ready</h2>" >> Message.md
-  #       echo "<h3>Docker Image: opendistroforelasticsearch/opendistroforelasticsearch:<VERSION-TAG></h3>" >> Message.md
+    - name: Create Email Message
+      run: |
+        echo "<h2>On-Demand Opendsitro Docker Image is Ready</h2>" >> Message.md
+        echo "<h3>Docker Image: opendistroforelasticsearch/opendistroforelasticsearch:<VERSION-TAG></h3>" >> Message.md
     
-  #   # - name: Send Email
-  #   #   uses: dawidd6/action-send-mail@master
-  #   #   with:
-  #   #     server_address: smtp.gmail.com
-  #   #     server_port: 465
-  #   #     username: ${{secrets.MAIL_USERNAME}}
-  #   #     password: ${{secrets.MAIL_PASSWORD}}
-  #   #     subject: Opendistro for Elasticsearch Build - On-Demand ODFE Image is Ready
-  #   #     # Read file contents as body:
-  #   #     body: file://Message.md
-  #   #     to: odfe-distribution-build@amazon.com
-  #   #     from: Opendistro Elasticsearch
-  #   #     # Optional content type:
-  #   #     content_type: text/html
+    # - name: Send Email
+    #   uses: dawidd6/action-send-mail@master
+    #   with:
+    #     server_address: smtp.gmail.com
+    #     server_port: 465
+    #     username: ${{secrets.MAIL_USERNAME}}
+    #     password: ${{secrets.MAIL_PASSWORD}}
+    #     subject: Opendistro for Elasticsearch Build - On-Demand ODFE Image is Ready
+    #     # Read file contents as body:
+    #     body: file://Message.md
+    #     to: odfe-distribution-build@amazon.com
+    #     from: Opendistro Elasticsearch
+    #     # Optional content type:
+    #     content_type: text/html
           
-  # build-kibana-docker:
-  #   runs-on: [ubuntu-16.04]
-  #   name: Build Kibana Docker
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: Configure AWS Credentials
-  #       uses: aws-actions/configure-aws-credentials@v1
-  #       with:
-  #         aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
-  #         aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
-  #         aws-region: us-east-1
+  build-kibana-docker:
+    runs-on: [ubuntu-16.04]
+    name: Build Kibana Docker
+    steps:
+      - uses: actions/checkout@v2
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
 
-  #     - name: Install Required Packages
-  #       run: sudo pip3 install jinja2-cli && release-tools/scripts/required_packages.sh
+      - name: Install Required Packages
+        run: sudo pip3 install jinja2-cli && release-tools/scripts/required_packages.sh
 
-  #     - name: Build Kibana Docker
-  #       env:
-  #         DOCKER_USER: ${{ secrets.DOCKER_USER }}
-  #         DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
-  #       run: |
-  #         #sudo apt-get install python-virtualenv
-  #         ODFE_VER=`./release-tools/scripts/version-info.sh --od`
-  #         echo "ODFE VERSION $ODFE_VER"
-  #         ./release-tools/scripts/docker_download_plugins.sh kibana
-  #         cd kibana
-  #         cd docker
-  #         make build
+      - name: Build Kibana Docker
+        env:
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}
+          DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
+        run: |
+          #sudo apt-get install python-virtualenv
+          ODFE_VER=`./release-tools/scripts/version-info.sh --od`
+          echo "ODFE VERSION $ODFE_VER"
+          ./release-tools/scripts/docker_download_plugins.sh kibana
+          cd kibana
+          cd docker
+          make build
           
-  #         echo "******************************"
-  #         echo "Uploading Kibana Docker"
-  #         echo "******************************"
-  #         docker login --username $DOCKER_USER --password $DOCKER_PASS
-  #         docker images|grep "amazon/opendistro-for-elasticsearch-kibana" > kibana_id.out
-  #         kibana_image_id=`awk -F ' ' '{print $3}' kibana_id.out`
-  #         echo "Docker Id is $kibana_image_id"
-  #         docker tag $kibana_image_id opendistroforelasticsearch/opendistroforelasticsearch-kibana:$ODFE_VER
-  #         docker tag $kibana_image_id opendistroforelasticsearch/opendistroforelasticsearch-kibana:latest
-  #         docker images
-  #         docker push opendistroforelasticsearch/opendistroforelasticsearch-kibana:$ODFE_VER
-  #         docker push opendistroforelasticsearch/opendistroforelasticsearch-kibana:latest
-  #         docker logout
+          echo "******************************"
+          echo "Uploading Kibana Docker"
+          echo "******************************"
+          docker login --username $DOCKER_USER --password $DOCKER_PASS
+          docker images|grep "amazon/opendistro-for-elasticsearch-kibana" > kibana_id.out
+          kibana_image_id=`awk -F ' ' '{print $3}' kibana_id.out`
+          echo "Docker Id is $kibana_image_id"
+          docker tag $kibana_image_id opendistroforelasticsearch/opendistroforelasticsearch-kibana:$ODFE_VER
+          docker tag $kibana_image_id opendistroforelasticsearch/opendistroforelasticsearch-kibana:latest
+          docker images
+          docker push opendistroforelasticsearch/opendistroforelasticsearch-kibana:$ODFE_VER
+          docker push opendistroforelasticsearch/opendistroforelasticsearch-kibana:latest
+          docker logout
           
-  #     - name: Create Email Message
-  #       run: |
-  #         echo "<h2>On-Demand Opendsitro Kibana Docker Image is Ready</h2>" >> Message.md
-  #         echo "<h3>Docker Image: opendistroforelasticsearch/opendistroforelasticsearch-kibana:<VERSION-TAG></h3>" >> Message.md
+      - name: Create Email Message
+        run: |
+          echo "<h2>On-Demand Opendsitro Kibana Docker Image is Ready</h2>" >> Message.md
+          echo "<h3>Docker Image: opendistroforelasticsearch/opendistroforelasticsearch-kibana:<VERSION-TAG></h3>" >> Message.md
           
       # - name: Send Email
       #   uses: dawidd6/action-send-mail@master
@@ -140,7 +137,7 @@ jobs:
       #     content_type: text/html
   
   Test-ISM-NoSec:
-    # # needs: [build-es-docker]
+    needs: [build-es-docker]
     runs-on: [ubuntu-18.04]
     name: Test-ISM-NoSec
     strategy:
@@ -174,7 +171,7 @@ jobs:
           
 
   Test-ALERTING-NoSec:
-    # needs: [build-es-docker]
+    needs: [build-es-docker]
     runs-on: [ubuntu-18.04]
     name: Test-ALERTING-NoSec
     strategy:
@@ -207,7 +204,7 @@ jobs:
           ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
           
   Test-SQL-NoSec:
-    # needs: [build-es-docker]
+    needs: [build-es-docker]
     runs-on: [ubuntu-18.04]
     name: Test-SQL-NoSec
     strategy:
@@ -240,7 +237,7 @@ jobs:
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
   
   Test-KNN-NoSec:
-    # needs: [build-es-docker]
+    needs: [build-es-docker]
     runs-on: [ubuntu-18.04]
     name: Test-KNN-NoSec
     strategy:
@@ -273,7 +270,7 @@ jobs:
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
    
   Test-AD-NoSec:
-    # needs: [build-es-docker]
+    needs: [build-es-docker]
     runs-on: [ubuntu-18.04]
     name: Test-AD-NoSec
     strategy:
@@ -306,7 +303,7 @@ jobs:
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest"
 
   Test-SQL:
-    # needs: [build-es-docker]
+    needs: [build-es-docker]
     runs-on: [ubuntu-18.04]
     name: Test-SQL
     strategy:
@@ -339,7 +336,7 @@ jobs:
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin
 
   Test-AD:
-    # needs: [build-es-docker]
+    needs: [build-es-docker]
     runs-on: [ubuntu-18.04]
     name: Test-AD
     strategy:
@@ -372,7 +369,7 @@ jobs:
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest" -Dhttps=true -Duser=admin -Dpassword=admin
         
   Test-ALERTING:
-    # needs: [build-es-docker]
+    needs: [build-es-docker]
     runs-on: [ubuntu-18.04]
     name: Test-ALERTING
     strategy:
@@ -384,7 +381,7 @@ jobs:
 
       - name: Install Required Packages
         run: release-tools/scripts/required_packages.sh
-        
+
       - name: Retrieve plugin tags 
         run:  echo "p_tag_alerting=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)" >> $GITHUB_ENV
 
@@ -405,7 +402,7 @@ jobs:
           ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin -Dsecurity=true
 
   Test-AD-Kibana-NoSec:
-    # needs: [build-es-docker, build-kibana-docker]
+    needs: [build-es-docker, build-kibana-docker]
     runs-on: [ubuntu-16.04]
     name: Test-AD-Kibana-NoSec
     strategy:
@@ -475,7 +472,7 @@ jobs:
           command: yarn cy:run --config baseurl=http://localhost:5601
          
   Test-SQL-KIBANA-NoSec:
-    # needs: [build-es-docker, build-kibana-docker]
+    needs: [build-es-docker, build-kibana-docker]
     runs-on: [ubuntu-16.04]
     name: Test-SQL-KIBANA-NoSec
     strategy:
@@ -567,7 +564,7 @@ jobs:
           command: npx cypress run
 
   Test-Kibana-Notebooks-NoSec:
-    # needs: [build-es-docker, build-kibana-docker]
+    needs: [build-es-docker, build-kibana-docker]
     runs-on: [ubuntu-18.04]
     name: Test-Kibana-Notebooks-NoSec
     strategy:
@@ -603,8 +600,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           repository: opendistro-for-elasticsearch/kibana-notebooks
-          # ref: ${{env.p_tag_kib_nb}}
-          ref: dev
+          ref: ${{env.p_tag_kib_nb}}
           path: kibana/plugins/kibana-nb
       
       - name: Setup Java
@@ -649,7 +645,7 @@ jobs:
           command: npx cypress run
 
   Test-AD-Kibana:
-    # needs: [build-es-docker, build-kibana-docker]
+    needs: [build-es-docker, build-kibana-docker]
     runs-on: [ubuntu-16.04]
     name: Test-AD-Kibana
     strategy:
@@ -719,7 +715,7 @@ jobs:
           command: yarn cy:run-with-security --config baseurl=http://localhost:5601
 
   Test-SEC-KIBANA:
-    # needs: [build-es-docker, build-kibana-docker]
+    needs: [build-es-docker, build-kibana-docker]
     runs-on: [ubuntu-16.04]
     name: Test-SEC-KIBANA
     strategy:
