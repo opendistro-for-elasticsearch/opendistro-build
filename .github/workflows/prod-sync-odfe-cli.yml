@@ -1,0 +1,29 @@
+name: Prod Sync ODFE CLI Artifacts
+
+on:
+  repository_dispatch:
+    types: [prod-sync-odfe-cli]
+
+jobs:
+  sync-odfe-cli-artifacts-prod:
+    name: sync-odfe-cli-artifacts-prod
+    runs-on: [ubuntu-18.04]
+    steps:
+    - uses: actions/checkout@v1
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+    - name: Required Packages
+      run: ./release-tools/scripts/required_packages.sh
+    - name: S3 sync artifacts
+      run: |
+        #!/bin/bash
+        S3_BUCKET_PROD="artifacts.opendistroforelasticsearch.amazon.com"
+        S3_BUCKET_STAGING="staging.artifacts.opendistroforelasticsearch.amazon.com"
+        TAG_VERSION="$(./release-tools/scripts/plugin_parser.sh opendistro-odfe-cli plugin_version)"
+        aws s3 sync s3://$S3_BUCKET_STAGING/snapshots/elasticsearch-clients/opendistro-cli/ s3://$S3_BUCKET_PROD/downloads/elasticsearch-clients/opendistro-cli/ --exclude "*" --include "odfe-cli-${TAG_VERSION}*" --quiet 
+        aws s3 ls s3://$S3_BUCKET_PROD/downloads/elasticsearch-clients/opendistro-cli/ | grep $TAG_VERSION
+        aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/elasticsearch-clients/opendistro-cli/*"

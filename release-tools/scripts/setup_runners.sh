@@ -64,8 +64,42 @@
 #                6. If you change the above resources name from "odfe-release-runner" to "xyz",
 #                   please update "Variables / Parameters / Settings" section of this script
 #
+#                7. Runner AMI requires installation of packages of these (java version can be different as gradle might request a higher version):
+#                   Debian:
+#                   sudo apt install -y curl wget unzip tar jq python python3 git awscli openjdk-14-jdk
+#                   sudo apt install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
+#
+#                   RedHat:
+#                   sudo yum install -y curl wget unzip tar jq python python3 git awscli java-latest-openjdk
+#                   sudo yum install -y xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-devel GConf2 nss libXScrnSaver alsa-lib
+#
+#                   Also you need to install java devel if you want to compile library (e.g. knnlib)
+#
+#                8. AMI must be at least 16GB during the creation.
+#
+#                9. You can use `export GIT_UTL_REPO="opendistro-for-elasticsearch/opendistro-build"` or similar to set the Git Repo of the runner
+#
+#                10. JDK & SSM Agent
+#                    You should find a way to install JDK14 or later on the server
+#                    Dibian with: sudo add-apt-repository ppa:openjdk-r/ppa
+#                    RedHat with: https://fedoraproject.org/wiki/EPEL
+#                    
+#                    Also, you need to install ssm agent
+#                    on non-al2 machine due to ssm RunCommand requires that
+#                    https://docs.aws.amazon.com/systems-manager/latest/userguide/sysman-manual-agent-install.html
+#                    
+#                    us-west-2
+#                    RPM x64: https://s3.us-west-2.amazonaws.com/amazon-ssm-us-west-2/latest/linux_amd64/amazon-ssm-agent.rpm
+#                    RPM arm64: https://s3.us-west-2.amazonaws.com/amazon-ssm-us-west-2/latest/linux_arm64/amazon-ssm-agent.rpm
+#                    DEB x64: https://s3.us-west-2.amazonaws.com/amazon-ssm-us-west-2/latest/debian_amd64/amazon-ssm-agent.deb
+#                    DEB arm64: https://s3.us-west-2.amazonaws.com/amazon-ssm-us-west-2/latest/debian_arm64/amazon-ssm-agent.deb
+#                    yum or dpkg then systemctl enable/start amazon-ssm-agent
+#
+#                11. You also need to set the user of the GitHub Token to have ADMIN access of the GitHub Repo
+#                    So that runner can be successfully bootstrapped to action tab in settings.
+#
 # Starting Date: 2020-07-27
-# Modified Date: 2020-10-07
+# Modified Date: 2021-01-09
 ###############################################################################################
 
 set -e
@@ -75,29 +109,59 @@ set -e
 #####################################
 
 # This script allows users to manually assign parameters
-if [ "$#" -ne 3 ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]
+if [ "$#" -lt 3 ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]
 then
-  echo "Please assign at 3 parameters when running this script"
-  echo "Example: $0 \$ACTION \$EC2_INSTANCE_NAMES(,) \$GITHUB_TOKEN"
-  echo "Example: $0 \"run\" \"odfe-rpm-ism,odfe-rpm-sql\" \"<GitHub PAT>\""
+  echo "Please assign at least 3 parameters when running this script"
+  echo "Example: $0 \$ACTION \$EC2_INSTANCE_NAMES(,) \$GITHUB_TOKEN, \$EC2_AMI_ID"
+  echo "Example (run must have 4 parameters): $0 \"run\" \"odfe-rpm-ism,odfe-rpm-sql\" \"<GitHub PAT>\" \"ami-*\""
+  echo "Example (terminate must have 3 parameters): $0 \"terminate\" \"odfe-rpm-ism,odfe-rpm-sql\" \"<GitHub PAT>\""
+  echo "You can use \`export GIT_UTL_REPO=\"opendistro-for-elasticsearch/opendistro-build\"\` or similar to set the Git Repo of the runner"
   exit 1
 fi
 
 SETUP_ACTION=$1
 SETUP_RUNNER=`echo $2 | sed 's/,/ /g'`
 SETUP_GIT_TOKEN=$3
-EC2_AMI_ID="ami-086e8a98280780e63"
-EC2_AMI_USER="ec2-user"
-EC2_INSTANCE_TYPE="m5.xlarge"
+
+# AMI on us-west-2
+# Distro      Arch  Username AMI-ID                Java  Comments
+# RPM-al2     x64   ec2-user ami-086e8a98280780e63 none  need to install jdk by workflow
+# RPM-centos8 x64   centos   ami-011f59f50bac33376 jdk15 preinstall
+# RPM-centos8 arm64 centos   ami-0ed17173ab64255b1 jdk15 preinstall
+# DEB-ubu1804 arm64 ubuntu   ami-02e560bc36d1378d1 jdk14 preinstall
+EC2_AMI_ID=$4
+
+if [ "$SETUP_ACTION" = "run" ]
+then
+  if [ -z "$EC2_AMI_ID" ]
+  then
+    echo " \$EC2_AMI_ID is empty, please add a 4th parameter for the run "
+    exit 1
+  else
+    # This does not support MacOS now due to cumbersome descriptions
+    # MacOS sample: ami-00b3e436dc75183e0
+    # "PlatformDetails": "Linux/UNIX"
+    # "Architecture": "x86_64_mac"
+    EC2_AMI_PLATFORM=`aws ec2 describe-images --image-id $EC2_AMI_ID --query 'Images[*].PlatformDetails' --output text | awk -F '/' '{print $1}' | tr '[:upper:]' '[:lower:]'`
+    EC2_AMI_ARCH=`aws ec2 describe-images --image-id $EC2_AMI_ID --query 'Images[*].Architecture' --output text | sed 's/x86_64/x64/g'`
+    EC2_AMI_NAME=`aws ec2 describe-images --image-id $EC2_AMI_ID --query 'Images[*].Name' --output text | tr '[:upper:]' '[:lower:]'`
+    EC2_AMI_USER="ec2-user"; if echo $EC2_AMI_NAME | grep "centos"; then EC2_AMI_USER="centos"; elif echo $EC2_AMI_NAME | grep "ubuntu"; then EC2_AMI_USER="ubuntu"; fi
+    EC2_INSTANCE_TYPE="m5.xlarge"; if [ "$EC2_AMI_ARCH" = "arm64" ]; then EC2_INSTANCE_TYPE="m6g.xlarge"; fi
+    RUNNER_URL=`curl -s https://api.github.com/repos/actions/runner/releases/latest -H "Authorization: token $SETUP_GIT_TOKEN" | jq -r '.assets[].browser_download_url' | grep "$EC2_AMI_PLATFORM" | grep "$EC2_AMI_ARCH" | tail -n 1`
+    echo Provision $EC2_AMI_PLATFORM $EC2_AMI_ARCH $EC2_AMI_NAME $EC2_AMI_USER $EC2_INSTANCE_TYPE $RUNNER_URL
+  fi
+fi
+
+
 EC2_INSTANCE_SIZE=20 #GiB
 EC2_KEYPAIR="odfe-release-runner"
 EC2_SECURITYGROUP="odfe-release-runner"
 IAM_ROLE="odfe-release-runner"
 GIT_URL_API="https://api.github.com/repos"
 GIT_URL_BASE="https://github.com"
-GIT_URL_REPO="opendistro-for-elasticsearch/opendistro-build"
-RUNNER_URL=`curl -s https://api.github.com/repos/actions/runner/releases/latest | jq -r '.assets[].browser_download_url' | grep linux-x64`
+GIT_URL_REPO=${GIT_URL_REPO:-opendistro-for-elasticsearch/opendistro-build}
 RUNNER_DIR="actions-runner"
+
 
 echo "###############################################"
 echo "Start Running $0 $1 $2"
@@ -108,17 +172,21 @@ echo "###############################################"
 ###############################################
 if [ "$SETUP_ACTION" = "run" ]
 then
+  echo "GIT_URL_REPO $GIT_URL_REPO"
 
   echo ""
   echo "Run / Start instances and bootstrap runners [${SETUP_RUNNER}]"
   echo ""
+
+  # Get information
+  instance_root_device=`aws ec2 describe-images --image-id $EC2_AMI_ID --query 'Images[*].RootDeviceName' --output text`
 
   # Provision VMs
   for instance_name1 in $SETUP_RUNNER
   do
     echo "[${instance_name1}]: Start provisioning vm"
     aws ec2 run-instances --image-id $EC2_AMI_ID --count 1 --instance-type $EC2_INSTANCE_TYPE \
-                          --block-device-mapping DeviceName=/dev/xvda,Ebs={VolumeSize=$EC2_INSTANCE_SIZE} \
+                          --block-device-mapping DeviceName=$instance_root_device,Ebs={VolumeSize=$EC2_INSTANCE_SIZE} \
                           --key-name $EC2_KEYPAIR --security-groups $EC2_SECURITYGROUP \
                           --iam-instance-profile Name=$IAM_ROLE \
                           --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$instance_name1}]" > /dev/null 2>&1; echo $?
@@ -148,16 +216,16 @@ then
     instance_runner_token=`curl --silent -H "Authorization: token ${SETUP_GIT_TOKEN}" --request POST "${GIT_URL_API}/${GIT_URL_REPO}/actions/runners/registration-token" | jq -r .token`
     # Wait 10 seconds for untar of runner binary to complete
     aws ssm send-command --targets Key=tag:Name,Values=$instance_name2 --document-name "AWS-RunShellScript" \
-                         --parameters '{"commands": ["#!/bin/bash", "sudo su - '${EC2_AMI_USER}' -c \"cd '${RUNNER_DIR}' && sleep 10 && ./config.sh --unattended --url '${GIT_URL_BASE}/${GIT_URL_REPO}' --labels '${instance_name2}' --token '${instance_runner_token}' && nohup ./run.sh &\""]}' \
+                         --parameters '{"commands": ["#!/bin/bash", "sudo su - '${EC2_AMI_USER}' -c \"sleep 30 && cd '${RUNNER_DIR}' && ./config.sh --unattended --url '${GIT_URL_BASE}/${GIT_URL_REPO}' --labels '${instance_name2}' --token '${instance_runner_token}' && nohup ./run.sh &\""]}' \
                          --output text > /dev/null 2>&1; echo $?
     sleep 5
   done
 
   echo ""
-  echo "Wait for 60 seconds for runners to bootstrap on Git"
+  echo "Wait for 90 seconds for runners to bootstrap on Git"
   echo ""
 
-  sleep 60
+  sleep 90
 
   echo ""
   echo "All runners are online on Git"
@@ -170,6 +238,7 @@ fi
 ###################################################
 if [ "$SETUP_ACTION" = "terminate" ]
 then
+  echo "GIT_URL_REPO $GIT_URL_REPO"
 
   echo ""
   echo "Terminate / Delete instances and remove runners [${SETUP_RUNNER}]"

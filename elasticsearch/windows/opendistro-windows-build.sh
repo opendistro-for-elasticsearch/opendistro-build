@@ -68,7 +68,7 @@ aws s3 cp s3://odfe-windows/ODFE.install4j .
 echo $?
 
 # Build the exe
-install4j8.0.4/bin/install4jc -d $TARGET_DIR -D sourcedir=./$PACKAGE_NAME-$OD_VERSION,version=$OD_VERSION --license="L-M8-AMAZON_DEVELOPMENT_CENTER_INDIA_PVT_LTD#50047687020001-3rhvir3mkx479#484b6" ./ODFE.install4j
+install4j8.0.4/bin/install4jc -d $TARGET_DIR -D sourcedir=./$PACKAGE_NAME-$OD_VERSION,version=$OD_VERSION --license=$install4j_license ./ODFE.install4j
 
 # List installed plugins
 ls -ltr $TARGET_DIR

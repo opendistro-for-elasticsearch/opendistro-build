@@ -34,7 +34,6 @@ RUN rm -rf /tmp/plugins && mkdir /tmp/plugins
 ADD plugins /tmp/plugins/
 
 RUN curl -Ls {{ kibana_url }}/{{ tarball }} | tar --strip-components=1 -zxf - && \
-    #for plugin in `ls /tmp/plugins/`; do \
     for plugin in `cat /tmp/plugins/plugins_kibana.list`; do \
         kibana-plugin install --allow-root file:/tmp/plugins/$plugin ; \
     done && \

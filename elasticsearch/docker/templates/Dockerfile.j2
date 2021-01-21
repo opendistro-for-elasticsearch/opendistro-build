@@ -76,30 +76,20 @@ USER 0
 RUN cp -rp /usr/share/elasticsearch/jdk /opt/jdk
 ENV JAVA_HOME /opt/jdk
 ENV PATH $PATH:$JAVA_HOME/bin
-RUN java -version
+RUN java -version && echo CURR_DIR && pwd
 
 # Compile the C-library for kNN
 USER 1000
 RUN set -ex; \
-
-   export KNN_VERSION=`git ls-remote --tags "https://github.com/opendistro-for-elasticsearch/k-NN" v* | grep $(echo {{version_tag}} | sed -E "s/.[0-9]+$//g") | grep -oh "v[0-9.]*" | sort | tail -n 1` \
- \
+    export KNN_VERSION=`git ls-remote --tags "https://github.com/opendistro-for-elasticsearch/k-NN" v* | grep $(echo {{version_tag}} | sed -E "s/.[0-9]+$//g") | grep -oh "v[0-9.]*" | sort | tail -n 1` \
     && git ls-remote --tags https://github.com/opendistro-for-elasticsearch/k-NN.git v* \
- \
     && echo KNN_VERSION $KNN_VERSION \
- \
     && git clone --recursive --branch $KNN_VERSION https://github.com/opendistro-for-elasticsearch/k-NN.git /usr/share/elasticsearch/k-NN \
- \
     && cd /usr/share/elasticsearch/k-NN/jni \
- \
     && sed -i 's/-march=native/-march=x86-64/g' external/nmslib/similarity_search/CMakeLists.txt \
-\
     && cmake . \
- \
     && make \
- \
     && mkdir /tmp/jni/ && cp release/*.so /tmp/jni/ && ls -ltr /tmp/jni/ \
- \
     && rm -rf /usr/share/elasticsearch/k-NN
 
 # Bust cache for wgets
@@ -107,17 +97,22 @@ ENV BUST_CACHE {{ bust_cache }}
 
 # Install the required modules
 #RUN for plugin_path in {{ plugin_url_paths }}; do \
-RUN for plugin_path in `cat /tmp/plugins/plugins.list`; do \
+RUN for plugin_path in `cat /tmp/plugins/plugins_elasticsearch.list`; do \
       elasticsearch-plugin install --batch file:/tmp/plugins/$plugin_path; \
     done
 
 # Pull performance analyzer agent(RCA) from the plugin directory out into ESHOME and make the agent executable.
-RUN if [ -d plugins/opendistro_performance_analyzer/performance-analyzer-rca ]; then \
-     mv plugins/opendistro_performance_analyzer/performance-analyzer-rca ./ && \
-     chmod 755 performance-analyzer-rca/pa_bin/performance-analyzer-agent; fi
+RUN perf_dir=`ls -p plugins/ | grep performance`; \
+    rca_dir=`ls -p plugins/$perf_dir | grep rca/`; \
+    perf_rca_dir=plugins/$perf_dir$rca_dir; \
+    echo perf_rca_dir $perf_rca_dir; \
+    if [ -d "$perf_rca_dir" ]; then \
+    mv -v $perf_rca_dir ./ && \
+    chmod 755 performance-analyzer-rca/pa_bin/performance-analyzer-agent; fi
+
 # Make the certificate installer script executable. This script has to be executed before ES is started.
-RUN security=`ls /tmp/plugins/|grep opendistro_security|wc -l` && \
-    if [ $security -gt 0 ]; then chmod +x /usr/share/elasticsearch/plugins/opendistro_security/tools/install_demo_configuration.sh; \
+RUN security=`ls -p plugins/ | grep security` && \
+    if [ ! -z "$security" ]; then chmod +x plugins/$security/tools/install_demo_configuration.sh; echo "Security plugin installed"; \
     else echo "Security plugin is not yet installed"; fi
 
 COPY --chown=1000:0 elasticsearch.yml log4j2.properties config/
@@ -128,8 +123,8 @@ USER 0
 RUN chown -R elasticsearch:0 . && \
     chmod -R g=u /usr/share/elasticsearch
 
-RUN pfa=`ls /tmp/plugins/|grep opendistro_performance_analyzer|wc -l` && \ 
-    if [ $pfa -gt 0 ]; then chmod 755 /usr/share/elasticsearch/plugins/opendistro_performance_analyzer/pa_bin/performance-analyzer-agent; \
+RUN pfa=`ls -p plugins/ | grep performance` && \ 
+    if [ ! -z "$pfa" ]; then chmod 755 plugins/$pfa/pa_bin/performance-analyzer-agent; echo "Performance Analyzer plugin installed"; \
     else echo "Performace Analyzer plugin is not yet installed"; fi
 
 RUN chmod -R 755 /dev/shm

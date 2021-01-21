@@ -14,7 +14,7 @@
 # Requirements:  This script assumes java 14 is already installed on the servers
 #
 # Starting Date: 2020-07-27
-# Modified Date: 2020-08-17
+# Modified Date: 2021-01-06
 ###############################################################################################
 
 # This script allows users to manually assign parameters
@@ -35,8 +35,9 @@ sudo apt install $SETUP_PACKAGES -y || sudo yum install $SETUP_PACKAGES -y
 
 REPO_ROOT=`git rev-parse --show-toplevel`
 ROOT=`dirname $(realpath $0)`; cd $ROOT
-OD_VERSION=`python $REPO_ROOT/release-tools/scripts/version-info.py --od`
-ES_VERSION=`python $REPO_ROOT/release-tools/scripts/version-info.py --es`
+ES_VERSION=`$REPO_ROOT/release-tools/scripts/version-info.sh --es`; echo ES_VERSION: $ES_VERSION
+OD_VERSION=`$REPO_ROOT/release-tools/scripts/version-info.sh --od`; echo OD_VERSION: $OD_VERSION
+MANIFEST_FILE=$REPO_ROOT/release-tools/scripts/manifest.yml
 
 ES_PACKAGE_NAME="opendistroforelasticsearch-${OD_VERSION}"
 ES_ROOT="${ROOT}/odfe-testing/${ES_PACKAGE_NAME}"
@@ -48,7 +49,10 @@ DOCKER_NAME_KIBANA="Test-Docker-Kibana-${OD_VERSION}"
 DOCKER_NAME_NoSec="Test-Docker-${OD_VERSION}-NoSec"
 DOCKER_NAME_KIBANA_NoSec="Test-Docker-Kibana-${OD_VERSION}-NoSec"
 
-S3_BUCKET="artifacts.opendistroforelasticsearch.amazon.com"
+S3_RELEASE_BASEURL=`yq eval '.urls.ODFE.releases' $MANIFEST_FILE`
+S3_RELEASE_FINAL_BUILD=`yq eval '.urls.ODFE.releases_final_build' $MANIFEST_FILE | sed 's/\///g'`
+S3_RELEASE_BUCKET=`echo $S3_RELEASE_BASEURL | awk -F '/' '{print $3}'`
+PLUGIN_PATH=`yq eval '.urls.ODFE.releases' $MANIFEST_FILE | sed "s/^.*$S3_RELEASE_BUCKET\///g"`
 
 #####################################################################################################
 
@@ -68,7 +72,7 @@ sudo chmod -R 777 /dev/shm
 if [ "$SETUP_DISTRO" = "zip" ]
 then
   mkdir -p $ES_ROOT
-  aws s3 cp s3://$S3_BUCKET/downloads/tarball/opendistro-elasticsearch/$ES_PACKAGE_NAME.tar.gz . --quiet; echo $?
+  aws s3 cp s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/odfe/$ES_PACKAGE_NAME.tar.gz . --quiet; echo $?
   tar -zxf $ES_PACKAGE_NAME.tar.gz -C $ES_ROOT --strip-components 1
 fi
 
@@ -95,7 +99,7 @@ fi
 if [ "$SETUP_DISTRO" = "rpm" ]
 then
   sudo curl https://d3g5vo6xdbdb9a.cloudfront.net/yum/staging-opendistroforelasticsearch-artifacts.repo  -o /etc/yum.repos.d/staging-opendistroforelasticsearch-artifacts.repo
-  sudo yum update
+  sudo yum update -y
   sudo yum install $ES_PACKAGE_NAME -y
 fi
 
@@ -222,7 +226,7 @@ then
   if [ "$SETUP_DISTRO" = "zip" ]
   then
     mkdir -p $KIBANA_ROOT
-    aws s3 cp s3://$S3_BUCKET/downloads/tarball/$KIBANA_PACKAGE_NAME/$KIBANA_PACKAGE_NAME-$OD_VERSION.tar.gz . --quiet; echo $?
+    aws s3 cp s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/odfe/$KIBANA_PACKAGE_NAME-$OD_VERSION.tar.gz . --quiet; echo $?
     tar -zxf $KIBANA_PACKAGE_NAME-$OD_VERSION.tar.gz -C $KIBANA_ROOT --strip-components 1
   elif [ "$SETUP_DISTRO" = "docker" ]
   then
