@@ -4,9 +4,10 @@
 # Script will download even when artifacts are not fully available
 # Requires yq v4.0.0+
 
-set -e
+#set -e
 CATEGORY=$1; echo CATEGORY $CATEGORY; if [ -z "$CATEGORY" ]; then echo "Please enter plugin category as parameter: elasticsearch/kibana"; exit 1; fi
-ARCHTECTURE="x64"; if [ ! -z "$2" ]; then ARCHITECTURE=$2; fi; echo ARCHITECTURE $ARCHITECTURE
+PLATFORM="linux"; if [ ! -z "$2" ]; then PLATFORM=$2; fi; echo PLATFORM $PLATFORM
+ARCHITECTURE="x64"; if [ ! -z "$3" ]; then ARCHITECTURE=$3; fi; echo ARCHITECTURE $ARCHITECTURE
 REPO_ROOT=`git rev-parse --show-toplevel`
 ROOT=`dirname $(realpath $0)`; echo $ROOT; cd $ROOT
 MANIFEST_FILE=$ROOT/manifest.yml
@@ -37,13 +38,13 @@ mkdir -p $PLUGIN_DIR
 
 for index in ${!PLUGINS_ARRAY[@]}
 do
-  if echo ${PLUGINS_ARRAY[$index]} | grep -i reports
+  plugin_latest=`aws s3api list-objects --bucket $S3_RELEASE_BUCKET --prefix "${PLUGIN_PATH}${OD_VERSION}/${S3_RELEASE_BUILD}/${CATEGORY}-plugins" --query 'Contents[].[Key]' --output text \
+                 | grep -v sha512 | grep ${PLUGINS_ARRAY[$index]} | grep zip`
+  plugin_counts=`echo $plugin_latest | sed 's/.zip[ ]*/.zip\n/g' | sed '/^$/d' | wc -l`
+
+  if [ "$plugin_counts" -gt 1 ]
   then
-    plugin_latest=`aws s3api list-objects --bucket $S3_RELEASE_BUCKET --prefix "${PLUGIN_PATH}${OD_VERSION}/${S3_RELEASE_BUILD}/${CATEGORY}-plugins" --query 'Contents[].[Key]' --output text \
-                   | grep -v sha512 | grep ${PLUGINS_ARRAY[$index]} | grep zip | grep linux | grep "$ARCHITECTURE" | sort | tail -n 1`
-  else
-    plugin_latest=`aws s3api list-objects --bucket $S3_RELEASE_BUCKET --prefix "${PLUGIN_PATH}${OD_VERSION}/${S3_RELEASE_BUILD}/${CATEGORY}-plugins" --query 'Contents[].[Key]' --output text \
-                   | grep -v sha512 | grep ${PLUGINS_ARRAY[$index]} | grep zip | sort | tail -n 1`
+    plugin_latest=`echo $plugin_latest | sed 's/.zip[ ]*/.zip\n/g' | sed '/^$/d' | grep "$PLATFORM" | grep "$ARCHITECTURE"`
   fi
 
   if [ ! -z "$plugin_latest" ]
