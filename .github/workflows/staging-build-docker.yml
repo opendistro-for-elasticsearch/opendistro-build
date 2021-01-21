@@ -32,19 +32,8 @@ jobs:
         ODFE_VER=`./release-tools/scripts/version-info.sh --od`
         echo "ODFE VERSION $ODFE_VER"
         workdir=`pwd`
-        #sudo apt-get install python-virtualenv
         ./release-tools/scripts/docker_download_plugins.sh elasticsearch
-        cd elasticsearch
-        security=`ls docker/build/elasticsearch/plugins/ | grep security | wc -l`
-        
-        if [ $security -gt 0 ]
-        then
-           echo "Security plugin is available"
-        else
-           echo "Security plugin is NOT available"
-        fi
-        
-        cd docker
+        cd elasticsearch/docker
         make build
         
         echo "******************************"
@@ -61,7 +50,6 @@ jobs:
         docker push opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER
         docker push opendistroforelasticsearch/opendistroforelasticsearch:latest
         docker logout
-        #echo "<h2>The docker image opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER for ODFE has been created and uploaded to docker-hub</h2>" >> $workdir/Release.md
         cd ../../..
         ls -ltr
     
@@ -105,7 +93,6 @@ jobs:
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
           DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
         run: |
-          #sudo apt-get install python-virtualenv
           ODFE_VER=`./release-tools/scripts/version-info.sh --od`
           echo "ODFE VERSION $ODFE_VER"
           ./release-tools/scripts/docker_download_plugins.sh kibana
@@ -158,6 +145,9 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
+      - name: Install Required Packages
+        run: release-tools/scripts/required_packages.sh
+ 
       - name: Retrieve plugin tags 
         run:  echo "p_tag_ism=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)" >> $GITHUB_ENV
 
@@ -189,6 +179,9 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
+      - name: Install Required Packages
+        run: release-tools/scripts/required_packages.sh
+
       - name: Retrieve plugin tags 
         run:  echo "p_tag_alerting=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)" >> $GITHUB_ENV
 
@@ -219,6 +212,9 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
+      - name: Install Required Packages
+        run: release-tools/scripts/required_packages.sh
+
       - name: Retrieve plugin tags 
         run:  echo "p_tag_sql=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)" >> $GITHUB_ENV
 
@@ -248,16 +244,23 @@ jobs:
         java: [14]
     steps:
       - uses: actions/checkout@v1
+
+      - name: Install Required Packages
+        run: release-tools/scripts/required_packages.sh
+            
       - name: Retrieve plugin tags 
         run:  echo "p_tag_knn=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/k-NN)" >> $GITHUB_ENV
+
       - uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/k-NN
           ref: ${{env.p_tag_knn}}
+
       - name: Setup Java
         uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.java }}
+
       - name: IT
         run: |
           release-tools/scripts/setup_runners_service.sh docker --es-nosec
@@ -274,6 +277,9 @@ jobs:
         java: [14]
     steps:
       - uses: actions/checkout@v1
+
+      - name: Install Required Packages
+        run: release-tools/scripts/required_packages.sh
 
       - name: Retrieve plugin tags 
         run:  echo "p_tag_ad=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)" >> $GITHUB_ENV
@@ -305,6 +311,9 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
+      - name: Install Required Packages
+        run: release-tools/scripts/required_packages.sh
+
       - name: Retrieve plugin tags
         run:  echo "p_tag_sql=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)" >> $GITHUB_ENV
 
@@ -334,6 +343,9 @@ jobs:
         java: [14]
     steps:
       - uses: actions/checkout@v1
+
+      - name: Install Required Packages
+        run: release-tools/scripts/required_packages.sh
 
       - name: Retrieve plugin tags
         run:  echo "p_tag_ad=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)" >> $GITHUB_ENV
@@ -365,6 +377,9 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
+      - name: Install Required Packages
+        run: release-tools/scripts/required_packages.sh
+
       - name: Retrieve plugin tags 
         run:  echo "p_tag_alerting=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)" >> $GITHUB_ENV
 
@@ -394,11 +409,14 @@ jobs:
         java: [14]
     steps:
       - uses: actions/checkout@v1
-      
+
+      - name: Install Required Packages
+        run: release-tools/scripts/required_packages.sh
+
       - name: Retrieve plugin tags 
         run: |
           echo "p_tag_ad=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)" >> $GITHUB_ENV
-          echo "es_version=$(./release-tools/scripts/version-info.sh --es)" >> $GITHUB_ENV
+          echo "es_version=$(release-tools/scripts/version-info.sh --es)" >> $GITHUB_ENV
           
       - name: Checkout Kibana
         uses: actions/checkout@v2
@@ -461,6 +479,10 @@ jobs:
         java: [14]
     steps:
       - uses: actions/checkout@v1
+
+      - name: Install Required Packages
+        run: release-tools/scripts/required_packages.sh
+
       - name: Set up AWS Cred
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -470,7 +492,7 @@ jobs:
       - name: Retrieve plugin tags 
         run: |
           echo "p_tag_sql_kibana=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)" >> $GITHUB_ENV
-          echo "es_version=$(./release-tools/scripts/version-info.sh --es)" >> $GITHUB_ENV
+          echo "es_version=$(release-tools/scripts/version-info.sh --es)" >> $GITHUB_ENV
           
       - name: Checkout Kibana
         uses: actions/checkout@v2
@@ -549,15 +571,16 @@ jobs:
         java: [14]
     steps:
       - uses: actions/checkout@v1
+
+      - name: Install Required Packages
+        run: release-tools/scripts/required_packages.sh
+
       - name: Set up AWS Cred
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
-
-      - name: Install required packages
-        run: release-tools/scripts/required_packages.sh
 
       - name: Retrieve plugin tags 
         run: |
@@ -629,11 +652,14 @@ jobs:
         java: [14]
     steps:
       - uses: actions/checkout@v1
-      
+
+      - name: Install Required Packages
+        run: release-tools/scripts/required_packages.sh
+
       - name: Retrieve plugin tags 
         run: |
           echo "p_tag_ad=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)" >> $GITHUB_ENV
-          echo "es_version=$(./release-tools/scripts/version-info.sh --es)" >> $GITHUB_ENV
+          echo "es_version=$(release-tools/scripts/version-info.sh --es)" >> $GITHUB_ENV
           
       - name: Checkout Kibana
         uses: actions/checkout@v2
@@ -696,7 +722,10 @@ jobs:
         java: [14]
     steps:
       - uses: actions/checkout@v1
-          
+
+      - name: Install Required Packages
+        run: release-tools/scripts/required_packages.sh
+
       - name: Retrieve plugin tags 
         run: |
           echo "p_tag_sec_kibana=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/security-kibana-plugin)" >> $GITHUB_ENV
