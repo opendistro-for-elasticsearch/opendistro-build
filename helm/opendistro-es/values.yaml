@@ -301,7 +301,7 @@ elasticsearch:
     #   command: ['do', 'something']
 
     service:
-      portname: master-svc
+      portName: master-svc
 
   data:
     enabled: true
@@ -372,7 +372,7 @@ elasticsearch:
     #              role: data
     podAnnotations: {}
     service:
-      portnames:
+      portNames:
         http: http
         transport: transport
         metrics: metrics
@@ -400,7 +400,7 @@ elasticsearch:
 
         # # Annotation to create internal only ELB
         # service.beta.kubernetes.io/aws-load-balancer-internal: 0.0.0.0/0
-      portnames:
+      portNames:
         http: http
         transport: transport
         metrics: metrics
