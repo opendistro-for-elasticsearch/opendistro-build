@@ -140,7 +140,7 @@ jobs:
       #     content_type: text/html
   
   Test-ISM-NoSec:
-    # needs: [build-es-docker]
+    # # needs: [build-es-docker]
     runs-on: [ubuntu-18.04]
     name: Test-ISM-NoSec
     strategy:
@@ -174,7 +174,7 @@ jobs:
           
 
   Test-ALERTING-NoSec:
-    needs: [build-es-docker]
+    # needs: [build-es-docker]
     runs-on: [ubuntu-18.04]
     name: Test-ALERTING-NoSec
     strategy:
@@ -207,7 +207,7 @@ jobs:
           ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
           
   Test-SQL-NoSec:
-    needs: [build-es-docker]
+    # needs: [build-es-docker]
     runs-on: [ubuntu-18.04]
     name: Test-SQL-NoSec
     strategy:
@@ -240,7 +240,7 @@ jobs:
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
   
   Test-KNN-NoSec:
-    needs: [build-es-docker]
+    # needs: [build-es-docker]
     runs-on: [ubuntu-18.04]
     name: Test-KNN-NoSec
     strategy:
@@ -268,7 +268,7 @@ jobs:
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
    
   Test-AD-NoSec:
-    needs: [build-es-docker]
+    # needs: [build-es-docker]
     runs-on: [ubuntu-18.04]
     name: Test-AD-NoSec
     strategy:
@@ -299,7 +299,7 @@ jobs:
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest"
 
   Test-SQL:
-    needs: [build-es-docker]
+    # needs: [build-es-docker]
     runs-on: [ubuntu-18.04]
     name: Test-SQL
     strategy:
@@ -330,7 +330,7 @@ jobs:
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin
 
   Test-AD:
-    needs: [build-es-docker]
+    # needs: [build-es-docker]
     runs-on: [ubuntu-18.04]
     name: Test-AD
     strategy:
@@ -361,7 +361,7 @@ jobs:
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest" -Dhttps=true -Duser=admin -Dpassword=admin
         
   Test-ALERTING:
-    needs: [build-es-docker]
+    # needs: [build-es-docker]
     runs-on: [ubuntu-18.04]
     name: Test-ALERTING
     strategy:
@@ -392,7 +392,7 @@ jobs:
           ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin -Dsecurity=true
 
   Test-AD-Kibana-NoSec:
-    needs: [build-es-docker, build-kibana-docker]
+    # needs: [build-es-docker, build-kibana-docker]
     runs-on: [ubuntu-16.04]
     name: Test-AD-Kibana-NoSec
     strategy:
@@ -462,7 +462,7 @@ jobs:
           command: yarn cy:run --config baseurl=http://localhost:5601
          
   Test-SQL-KIBANA-NoSec:
-    needs: [build-es-docker, build-kibana-docker]
+    # needs: [build-es-docker, build-kibana-docker]
     runs-on: [ubuntu-16.04]
     name: Test-SQL-KIBANA-NoSec
     strategy:
@@ -554,7 +554,7 @@ jobs:
           command: npx cypress run
 
   Test-Kibana-Notebooks-NoSec:
-    needs: [build-es-docker, build-kibana-docker]
+    # needs: [build-es-docker, build-kibana-docker]
     runs-on: [ubuntu-18.04]
     name: Test-Kibana-Notebooks-NoSec
     strategy:
@@ -636,7 +636,7 @@ jobs:
           command: npx cypress run
 
   Test-AD-Kibana:
-    needs: [build-es-docker, build-kibana-docker]
+    # needs: [build-es-docker, build-kibana-docker]
     runs-on: [ubuntu-16.04]
     name: Test-AD-Kibana
     strategy:
@@ -706,7 +706,7 @@ jobs:
           command: yarn cy:run-with-security --config baseurl=http://localhost:5601
 
   Test-SEC-KIBANA:
-    needs: [build-es-docker, build-kibana-docker]
+    # needs: [build-es-docker, build-kibana-docker]
     runs-on: [ubuntu-16.04]
     name: Test-SEC-KIBANA
     strategy:
@@ -718,7 +718,7 @@ jobs:
 
       - name: Install Required Packages
         run: release-tools/scripts/required_packages.sh
-            
+
       - name: Retrieve plugin tags 
         run: |
           echo "p_tag_sec_kibana=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/security-kibana-plugin)" >> $GITHUB_ENV
