@@ -154,7 +154,6 @@ if [ $# -eq 0 ] || [ "$PACKAGE_TYPE" = "rpm" ]; then
       ls -ltr $TARGET_DIR
       rpm_artifact=`ls $TARGET_DIR/*.rpm`
       aws s3 cp $rpm_artifact s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/odfe/
-#      aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/*"
 
 fi
 
