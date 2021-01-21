@@ -50,7 +50,6 @@ jobs:
         docker push opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER
         docker push opendistroforelasticsearch/opendistroforelasticsearch:latest
         docker logout
-        #echo "<h2>The docker image opendistroforelasticsearch/opendistroforelasticsearch:$ODFE_VER for ODFE has been created and uploaded to docker-hub</h2>" >> $workdir/Release.md
         cd ../../..
         ls -ltr
     
@@ -94,7 +93,6 @@ jobs:
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
           DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
         run: |
-          #sudo apt-get install python-virtualenv
           ODFE_VER=`./release-tools/scripts/version-info.sh --od`
           echo "ODFE VERSION $ODFE_VER"
           ./release-tools/scripts/docker_download_plugins.sh kibana
