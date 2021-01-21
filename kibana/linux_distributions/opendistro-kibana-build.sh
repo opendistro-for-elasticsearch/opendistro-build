@@ -38,7 +38,7 @@ PACKAGE_TYPE=$1
 PACKAGE_NAME="opendistroforelasticsearch-kibana"
 TARGET_DIR="$ROOT/target"
 plugin_version=$OD_VERSION
-PLATFORM="linux"; if [ ! -z "$2" ]; then PLATFORM=$2; fi; echo CATEGORY $PLATFORM
+PLATFORM="linux"; if [ ! -z "$2" ]; then PLATFORM=$2; fi; echo PLATFORM $PLATFORM
 ARCHTECTURE="x64"; if [ ! -z "$3" ]; then ARCHITECTURE=$3; fi; echo ARCHITECTURE $ARCHITECTURE
 
 # Please DO NOT change the orders, they have dependencies
@@ -91,7 +91,11 @@ do
 
   if [ "$plugin_counts" -gt 1 ]
   then
+    echo "multiple plugins"
+    echo $plugin_latest
     plugin_latest=`echo $plugin_latest | sed 's/.zip[ ]*/.zip\n/g' | sed '/^$/d' | grep "$PLATFORM" | grep "$ARCHITECTURE"`
+    echo "after filter"
+    echo $plugin_latest
   fi
 
   if [ ! -z "$plugin_latest" ]

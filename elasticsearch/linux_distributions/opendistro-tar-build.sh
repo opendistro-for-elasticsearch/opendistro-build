@@ -27,7 +27,7 @@ S3_RELEASE_BUCKET=`echo $S3_RELEASE_BASEURL | awk -F '/' '{print $3}'`
 PACKAGE_NAME="opendistroforelasticsearch"
 TARGET_DIR="$ROOT/target"
 plugin_version=$OD_VERSION
-PLATFORM="linux"; if [ ! -z "$1" ]; then PLATFORM=$1; fi; echo CATEGORY $PLATFORM
+PLATFORM="linux"; if [ ! -z "$1" ]; then PLATFORM=$1; fi; echo PLATFORM $PLATFORM
 ARCHTECTURE="x64"; if [ ! -z "$2" ]; then ARCHITECTURE=$2; fi; echo ARCHITECTURE $ARCHITECTURE
 
 # knnlib version only for tar distros here

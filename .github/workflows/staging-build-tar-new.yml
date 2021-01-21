@@ -1,0 +1,72 @@
+name: Process TAR Artifacts
+
+on:
+  # schedule:
+  #   - cron: '0 10 * * *'
+#  repository_dispatch:
+#    types: [staging-build-tar]
+  push:
+    branches: [sreekarj_tar_new]
+ 
+jobs:
+  plugin-availability:
+    name: Check Plugin Availability
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v1
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Required Packages
+        run: ./release-tools/scripts/required_packages.sh
+      - name: Run check_plugin scripts
+        run: ./release-tools/scripts/check_plugin.sh "elasticsearch_zip,kibana_zip"; exit `cat /tmp/plugin_status.check`
+
+  build-es-artifacts:
+    needs: [plugin-availability]
+    name: Build ES Artifacts
+    runs-on: ubuntu-18.04
+    container:
+      image: opendistroforelasticsearch/multijava08101112-git:v1
+    steps:
+    - uses: actions/checkout@v1
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+    - name: Required Packages
+      run: |
+        apt-get update
+        apt-get install sudo -y
+        ./release-tools/scripts/required_packages.sh
+    - name: Build tar
+      run: apt install -y jq unzip; set -u; export JAVA_HOME=/openjdk12; export PATH=$JAVA_HOME:$PATH; ./elasticsearch/linux_distributions/opendistro-tar-build.sh
+
+
+  build-kibana-artifacts:
+    needs: [plugin-availability]
+    name: Build Kibana Artifacts
+    runs-on: [ubuntu-18.04]
+    container:
+        image: opendistroforelasticsearch/jsenv:v1
+    steps:
+      - uses: actions/checkout@v1
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Required Packages
+        run: |
+          apt-get update
+          apt-get install sudo -y
+          ./release-tools/scripts/required_packages.sh
+      - name: Build Kibana
+        run: apt install -y jq; ./kibana/linux_distributions/opendistro-kibana-build.sh tar linux x64
+
