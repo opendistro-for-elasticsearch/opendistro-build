@@ -249,18 +249,23 @@ jobs:
         java: [14]
     steps:
       - uses: actions/checkout@v1
+
       - name: Install Required Packages
-        run: release-tools/scripts/required_packages.sh      
+        run: release-tools/scripts/required_packages.sh
+            
       - name: Retrieve plugin tags 
         run:  echo "p_tag_knn=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/k-NN)" >> $GITHUB_ENV
+
       - uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/k-NN
           ref: ${{env.p_tag_knn}}
+
       - name: Setup Java
         uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.java }}
+
       - name: IT
         run: |
           release-tools/scripts/setup_runners_service.sh docker --es-nosec
@@ -277,8 +282,10 @@ jobs:
         java: [14]
     steps:
       - uses: actions/checkout@v1
+
       - name: Install Required Packages
         run: release-tools/scripts/required_packages.sh
+
       - name: Retrieve plugin tags 
         run:  echo "p_tag_ad=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)" >> $GITHUB_ENV
 
@@ -308,8 +315,10 @@ jobs:
         java: [14]
     steps:
       - uses: actions/checkout@v1
+
       - name: Install Required Packages
         run: release-tools/scripts/required_packages.sh
+
       - name: Retrieve plugin tags
         run:  echo "p_tag_sql=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)" >> $GITHUB_ENV
 
@@ -339,8 +348,10 @@ jobs:
         java: [14]
     steps:
       - uses: actions/checkout@v1
+
       - name: Install Required Packages
         run: release-tools/scripts/required_packages.sh
+
       - name: Retrieve plugin tags
         run:  echo "p_tag_ad=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)" >> $GITHUB_ENV
 
@@ -370,8 +381,10 @@ jobs:
         java: [14]
     steps:
       - uses: actions/checkout@v1
+
       - name: Install Required Packages
         run: release-tools/scripts/required_packages.sh
+        
       - name: Retrieve plugin tags 
         run:  echo "p_tag_alerting=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)" >> $GITHUB_ENV
 
