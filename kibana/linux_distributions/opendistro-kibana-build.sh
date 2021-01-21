@@ -88,7 +88,8 @@ for index in ${!PLUGINS_ARRAY[@]}
 do
   plugin_latest=`aws s3api list-objects --bucket $S3_RELEASE_BUCKET --prefix "${PLUGIN_PATH}${OD_VERSION}/$S3_RELEASE_BUILD/kibana-plugins" --query 'Contents[].[Key]' --output text | grep -v sha512 |grep ${PLUGINS_ARRAY[$index]} |grep zip |sort | tail -n 1`
   plugin_counts=`echo $plugin_latest | sed 's/.zip[ ]*/.zip\n/g' | sed '/^$/d' | wc -l`
-
+  echo "plugin : "$plugin_latest
+  echo "count : "$plugin_counts
   if [ "$plugin_counts" -gt 1 ]
   then
     echo "multiple plugins"
