@@ -24,7 +24,8 @@ metadata:
   namespace: {{ .Release.Namespace }}
 spec:
   ports:
-    - port: 9300
+    - name: {{- .Values.elasticsearch.master.service.portname }}
+      port: 9300
       protocol: TCP
   clusterIP: None
   selector:

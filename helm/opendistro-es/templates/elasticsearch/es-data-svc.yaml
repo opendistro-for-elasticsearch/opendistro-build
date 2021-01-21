@@ -24,13 +24,13 @@ metadata:
 spec:
   ports:
   - port: 9300
-    name: transport
+    name: {{ .Values.elasticsearch.data.service.portnames.transport }}
   - port: 9200
-    name: http
+    name: {{ .Values.elasticsearch.data.service.portnames.http }}
   - port: 9600
-    name: metrics
+    name: {{ .Values.elasticsearch.data.service.portnames.metrics }}
   - port: 9650
-    name: rca
+    name: {{ .Values.elasticsearch.data.service.portnames.rca }}
   clusterIP: None
   selector:
   {{- if .Values.elasticsearch.data.dedicatedPod.enabled }}

@@ -300,6 +300,9 @@ elasticsearch:
     #   image: busybox
     #   command: ['do', 'something']
 
+    service:
+      portname: master-svc
+
   data:
     enabled: true
     ## Enables dedicated statefulset for data. Otherwise master nodes as data storage
@@ -368,6 +371,12 @@ elasticsearch:
     #            matchLabels:
     #              role: data
     podAnnotations: {}
+    service:
+      portnames:
+        http: http
+        transport: transport
+        metrics: metrics
+        rca: rca
 
   client:
     enabled: true
@@ -391,6 +400,11 @@ elasticsearch:
 
         # # Annotation to create internal only ELB
         # service.beta.kubernetes.io/aws-load-balancer-internal: 0.0.0.0/0
+      portnames:
+        http: http
+        transport: transport
+        metrics: metrics
+        rca: rca
     replicas: 1
     javaOpts: "-Xms512m -Xmx512m"
     ingress:

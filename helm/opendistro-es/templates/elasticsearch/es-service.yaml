@@ -25,13 +25,13 @@ metadata:
   namespace: {{ .Release.Namespace }}
 spec:
   ports:
-    - name: http
+    - name: {{ .Values.elasticsearch.client.service.portnames.http }}
       port: 9200
-    - name: transport
+    - name: {{ .Values.elasticsearch.client.service.portnames.transport }}
       port: 9300
-    - name: metrics
+    - name: {{ .Values.elasticsearch.client.service.portnames.metrics }}
       port: 9600
-    - name: rca
+    - name: {{ .Values.elasticsearch.client.service.portnames.rca }}
       port: 9650
   selector:
   {{- if .Values.elasticsearch.client.dedicatedPod.enabled }}
