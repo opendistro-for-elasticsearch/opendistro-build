@@ -37,7 +37,9 @@ S3_RELEASE_BUCKET=`echo $S3_RELEASE_BASEURL | awk -F '/' '{print $3}'`
 PACKAGE_TYPE=$1
 PACKAGE_NAME="opendistroforelasticsearch-kibana"
 TARGET_DIR="$ROOT/target"
-plugin_version=$OD_VERSION
+PLATFORM="linux"; if [ ! -z "$2" ]; then PLATFORM=$2; fi; echo PLATFORM $PLATFORM
+ARCHITECTURE="x64"; if [ ! -z "$3" ]; then ARCHITECTURE=$3; fi; echo ARCHITECTURE $ARCHITECTURE
+KIBANA_URL=`yq eval '.urls.KIBANA.'$PLATFORM'_'$ARCHITECTURE'' $MANIFEST_FILE`
 
 # Please DO NOT change the orders, they have dependencies
 PLUGINS=`$REPO_ROOT/release-tools/scripts/plugins-info.sh kibana-plugins plugin_basename`
@@ -62,10 +64,6 @@ if [ -z "$PLUGINS" ]; then
   exit 1
 fi
 
-if [ -z "$PLUGINS" ]; then
-  echo "Provide plugin list to install (separated by space)"
-  exit 1
-fi
 
 # If the input is set, but it's set to neither rpm nor deb, then exit.
 if [ -n $PACKAGE_TYPE ] && [ "$PACKAGE_TYPE" != "rpm" ] && [ "$PACKAGE_TYPE" != "deb" ] && [ "$PACKAGE_TYPE" != "tar" ]; then
@@ -79,8 +77,7 @@ mkdir $PACKAGE_NAME
 
 # Downloading Kibana oss
 echo "Downloading kibana oss"
-curl -Ls "https://artifacts.elastic.co/downloads/kibana/kibana-oss-$ES_VERSION-linux-x86_64.tar.gz" | tar --strip-components=1 -zxf - --directory $PACKAGE_NAME
-
+curl -Ls $KIBANA_URL | tar --strip-components=1 -zxf - --directory $PACKAGE_NAME
 
 # Install required plugins
 echo "installing open distro plugins"
@@ -88,21 +85,22 @@ rm -rf /tmp/plugins
 mkdir -p /tmp/plugins
 for index in ${!PLUGINS_ARRAY[@]}
 do
-  plugin_latest=`aws s3api list-objects --bucket $S3_RELEASE_BUCKET --prefix "${PLUGIN_PATH}${OD_VERSION}/$S3_RELEASE_BUILD/kibana-plugins" --query 'Contents[].[Key]' --output text | grep -v sha512 |grep ${PLUGINS_ARRAY[$index]} |grep zip |sort | tail -n 1`
-  if [ ! -z "$plugin_latest" ]
+  plugin_latest=`(aws s3api list-objects --bucket $S3_RELEASE_BUCKET --prefix "${PLUGIN_PATH}${OD_VERSION}/$S3_RELEASE_BUILD/kibana-plugins" --query 'Contents[].[Key]' --output text | grep -v sha512 |grep ${PLUGINS_ARRAY[$index]} |grep zip) || (echo None)`
+  plugin_counts=`echo $plugin_latest | sed 's/.zip[ ]*/.zip\n/g' | sed '/^$/d' | wc -l`
+  if [ "$plugin_counts" -gt 1 ]
+  then
+    plugin_latest=`echo $plugin_latest | sed 's/.zip[ ]*/.zip\n/g' | sed '/^$/d' | grep "$PLATFORM" | grep "$ARCHITECTURE"`
+  fi
+
+  if [ "$plugin_latest" != "None" ]
   then
     echo "downloading $plugin_latest"
-    echo `echo $plugin_latest | awk -F '/' '{print $NF}'` >> /tmp/plugins/plugins.list
     plugin_path=${PLUGINS_ARRAY[$index]}
     echo "plugin path:  $plugin_path"
-    aws s3 cp "s3://${S3_RELEASE_BUCKET}/${plugin_latest}" "/tmp/plugins" --quiet; echo $?
-    rc_candiate=`$REPO_ROOT/release-tools/scripts/plugin_parser.sh $index release_candidate`
-    if $rc_candiate
-    then
-      plugin=`echo $plugin_latest | awk -F '/' '{print $NF}'`
-      echo "installing $plugin"
-      $PACKAGE_NAME/bin/kibana-plugin --allow-root install file:/tmp/plugins/$plugin
-    fi
+    aws s3 cp "s3://${S3_RELEASE_BUCKET}/$plugin_latest" "/tmp/plugins" --quiet; echo $?
+    plugin=`echo $plugin_latest | awk -F '/' '{print $NF}'`
+    echo "installing $plugin"
+    $PACKAGE_NAME/bin/kibana-plugin --allow-root install file:/tmp/plugins/$plugin
   fi
 done
 
@@ -203,12 +201,12 @@ if [ $# -eq 0 ] || [ "$PACKAGE_TYPE" = "tar" ]; then
   # Generating tar
   rm -rf $TARGET_DIR/*tar*
   echo "generating tar"
-  tar -czf $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION.tar.gz $PACKAGE_NAME
+  tar -czf $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION-$PLATFORM-$ARCHITECTURE.tar.gz $PACKAGE_NAME
   cd $TARGET_DIR
-  shasum -a 512 $PACKAGE_NAME-$OD_VERSION.tar.gz > $PACKAGE_NAME-$OD_VERSION.tar.gz.sha512
-  shasum -a 512 -c $PACKAGE_NAME-$OD_VERSION.tar.gz.sha512
+  shasum -a 512 $PACKAGE_NAME-$OD_VERSION-$PLATFORM-$ARCHITECTURE.tar.gz > $PACKAGE_NAME-$OD_VERSION-$PLATFORM-$ARCHITECTURE.tar.gz.sha512
+  shasum -a 512 -c $PACKAGE_NAME-$OD_VERSION-$PLATFORM-$ARCHITECTURE.tar.gz.sha512
   echo " CHECKSUM FILE "
-  echo "$(cat $PACKAGE_NAME-$OD_VERSION.tar.gz.sha512)"
+  echo "$(cat $PACKAGE_NAME-$OD_VERSION-$PLATFORM-$ARCHITECTURE.tar.gz.sha512)"
   cd $ROOT
 
   # Upload to S3
