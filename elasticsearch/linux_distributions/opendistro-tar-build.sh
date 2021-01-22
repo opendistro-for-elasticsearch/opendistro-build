@@ -63,7 +63,6 @@ mkdir $TARGET_DIR
 
 # Downloading ES oss
 echo "Downloading ES oss"
-#wget -nv https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$ES_VERSION-linux-x86_64.tar.gz ; echo $?
 wget -nv $ES_URL; echo $?
 tar -xzf $ES_ARTIFACT --strip-components=1 --directory "${PACKAGE_NAME}-${OD_VERSION}" && rm -rf $ES_ARTIFACT
 cp -v opendistro-tar-install.sh $PACKAGE_NAME-$OD_VERSION

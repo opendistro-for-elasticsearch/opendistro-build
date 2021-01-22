@@ -77,7 +77,6 @@ mkdir $PACKAGE_NAME
 
 # Downloading Kibana oss
 echo "Downloading kibana oss"
-#curl -Ls "https://artifacts.elastic.co/downloads/kibana/kibana-oss-$ES_VERSION-linux-x86_64.tar.gz" | tar --strip-components=1 -zxf - --directory $PACKAGE_NAME
 curl -Ls $KIBANA_URL | tar --strip-components=1 -zxf - --directory $PACKAGE_NAME
 
 # Install required plugins
