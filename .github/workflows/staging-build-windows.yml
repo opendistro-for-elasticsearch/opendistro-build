@@ -5,61 +5,58 @@ on:
   #   - cron: '30 10 * * *'
   repository_dispatch:
     types: [staging-build-windows]
-  push:
-    branches:
-      - "windows-test"
 
 jobs:
-  # build-es-artifacts:
-  #   name: Build Windows ES Artifacts
-  #   runs-on: ubuntu-18.04
-  #   steps:
-  #   - uses: actions/checkout@v1
+  build-es-artifacts:
+    name: Build Windows ES Artifacts
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v1
 
-  #   - name: Configure AWS Credentials
-  #     uses: aws-actions/configure-aws-credentials@v1
-  #     with:
-  #       aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
-  #       aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
-  #       aws-region: us-east-1
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
 
-  #   - name: Set Up JDK
-  #     uses: actions/setup-java@v1
-  #     with:
-  #       java-version: 14
+    - name: Set Up JDK
+      uses: actions/setup-java@v1
+      with:
+        java-version: 14
 
-  #   - name: Required Packages
-  #     run: ./release-tools/scripts/required_packages.sh
+    - name: Required Packages
+      run: ./release-tools/scripts/required_packages.sh
 
-  #   - name: Build Windows
-  #     env:
-  #       install4j_license: ${{ secrets.INSTALL4J_LICENSE }}
-  #     run: ./elasticsearch/windows/opendistro-windows-build.sh
+    - name: Build Windows
+      env:
+        install4j_license: ${{ secrets.INSTALL4J_LICENSE }}
+      run: ./elasticsearch/windows/opendistro-windows-build.sh
         
-  # build-kibana-artifacts:
-  #   name: Build Kibana Artifacts
-  #   runs-on: [ubuntu-18.04]
-  #   steps:
-  #   - uses: actions/checkout@v1
-  #   - name: Configure AWS Credentials
-  #     uses: aws-actions/configure-aws-credentials@v1
-  #     with:
-  #       aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
-  #       aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
-  #       aws-region: us-east-1
+  build-kibana-artifacts:
+    name: Build Kibana Artifacts
+    runs-on: [ubuntu-18.04]
+    steps:
+    - uses: actions/checkout@v1
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
 
-  #   - name: Set Up JDK
-  #     uses: actions/setup-java@v1
-  #     with:
-  #       java-version: 14
+    - name: Set Up JDK
+      uses: actions/setup-java@v1
+      with:
+        java-version: 14
 
-  #   - name: Required Packages
-  #     run: ./release-tools/scripts/required_packages.sh
+    - name: Required Packages
+      run: ./release-tools/scripts/required_packages.sh
 
-  #   - name: Build Kibana
-  #     env:
-  #       install4j_license: ${{ secrets.INSTALL4J_LICENSE }}
-  #     run: ./kibana/windows/opendistro-windows-kibana-build.sh
+    - name: Build Kibana
+      env:
+        install4j_license: ${{ secrets.INSTALL4J_LICENSE }}
+      run: ./kibana/windows/opendistro-windows-kibana-build.sh
 
   Get-versions:
     name: Get-versions
@@ -90,8 +87,7 @@ jobs:
           echo "p_tag_sec_kibana=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/security-kibana-plugin)" >> $GITHUB_ENV
 
   Test-ISM-NoSec:
-    # needs: [build-es-artifacts, build-kibana-artifacts, Get-versions]
-    needs: [Get-versions]
+    needs: [build-es-artifacts, build-kibana-artifacts, Get-versions]
     runs-on: windows-2019
     name: Test-ISM-NoSec
     strategy:
@@ -126,8 +122,7 @@ jobs:
           ./gradlew.bat integTest -D tests.rest.cluster=localhost:9200 -D tests.cluster=localhost:9200 -D tests.clustername=es-integrationtest --stacktrace          
 
   Test-ALERTING-NoSec:
-    # needs: [build-es-artifacts, build-kibana-artifacts, Get-versions]
-    needs: [Get-versions]
+    needs: [build-es-artifacts, build-kibana-artifacts, Get-versions]
     runs-on: windows-2019
     name: Test-ALERTING-NoSec
     strategy:
@@ -161,8 +156,7 @@ jobs:
           ..\gradlew.bat integTest -D tests.rest.cluster=localhost:9200 -D tests.cluster=localhost:9200 -D tests.clustername=es-integrationtest --stacktrace
 
   Test-SQL-NoSec:
-    # needs: [build-es-artifacts, build-kibana-artifacts, Get-versions]
-    needs: [Get-versions]
+    needs: [build-es-artifacts, build-kibana-artifacts, Get-versions]
     runs-on: windows-2019
     name: Test-SQL-NoSec
     strategy:
@@ -196,8 +190,7 @@ jobs:
           .\gradlew.bat integTest -D tests.rest.cluster=localhost:9200 -D tests.cluster=localhost:9200 -D tests.clustername=es-integrationtest --stacktrace
         
   Test-AD-NoSec:
-    # needs: [build-es-artifacts, build-kibana-artifacts, Get-versions]
-    needs: [Get-versions]
+    needs: [build-es-artifacts, build-kibana-artifacts, Get-versions]
     runs-on: windows-2019
     name: Test-AD-NoSec
     strategy:
@@ -231,8 +224,7 @@ jobs:
           .\gradlew.bat integTest -D tests.rest.cluster=localhost:9200 -D tests.cluster=localhost:9200 -D tests.clustername="es-integrationtest"
 
   Test-SQL:
-    # needs: [build-es-artifacts, build-kibana-artifacts, Get-versions]
-    needs: [Get-versions]
+    needs: [build-es-artifacts, build-kibana-artifacts, Get-versions]
     runs-on: windows-2019
     name: Test-SQL
     strategy:
@@ -266,8 +258,7 @@ jobs:
           .\gradlew.bat integTest -D tests.rest.cluster=localhost:9200 -D tests.cluster=localhost:9200 -D tests.clustername=es-integrationtest -D https=true -D user=admin -D password=admin --stacktrace
 
   Test-AD:
-    # needs: [build-es-artifacts, build-kibana-artifacts, Get-versions]
-    needs: [Get-versions]
+    needs: [build-es-artifacts, build-kibana-artifacts, Get-versions]
     runs-on: windows-2019
     name: Test-AD
     strategy:
@@ -300,8 +291,7 @@ jobs:
           .\gradlew.bat integTest -D tests.rest.cluster=localhost:9200 -D tests.cluster=localhost:9200 -D tests.clustername="es-integrationtest" -D https=true -D user=admin -D password=admin
 
   Test-ALERTING:
-    # needs: [build-es-artifacts, build-kibana-artifacts, Get-versions]
-    needs: [Get-versions]
+    needs: [build-es-artifacts, build-kibana-artifacts, Get-versions]
     runs-on: windows-2019
     name: Test-ALERTING
     strategy:
@@ -339,8 +329,7 @@ jobs:
         
 
   Test-AD-KIBANA-NoSec:
-    # needs: [build-es-artifacts, build-kibana-artifacts, Get-versions]
-    needs: [Get-versions]
+    needs: [build-es-artifacts, build-kibana-artifacts, Get-versions]
     runs-on: windows-2019
     name: Test-AD-KIBANA-NoSec
     strategy:
@@ -409,8 +398,7 @@ jobs:
           yarn cy:run-with-security --config baseurl=http://localhost:5601
 
   Test-SQL-KIBANA-NoSec:
-    # needs: [build-es-artifacts, build-kibana-artifacts, Get-versions]
-    needs: [Get-versions]
+    needs: [build-es-artifacts, build-kibana-artifacts, Get-versions]
     runs-on: windows-2019
     name: Test-SQL-KIBANA-NoSec
     strategy:
@@ -495,8 +483,7 @@ jobs:
           npx cypress run
 
   Test-Kibana-Notebooks-NoSec:
-    # needs: [build-es-artifacts, build-kibana-artifacts, Get-versions]
-    needs: [Get-versions]
+    needs: [build-es-artifacts, build-kibana-artifacts, Get-versions]
     runs-on: windows-2019
     name: Test-Kibana-Notebooks-NoSec
     strategy:
@@ -563,8 +550,7 @@ jobs:
           npx cypress run
 
   Test-AD-KIBANA:
-    # needs: [build-es-artifacts, build-kibana-artifacts, Get-versions]
-    needs: [Get-versions]
+    needs: [build-es-artifacts, build-kibana-artifacts, Get-versions]
     runs-on: windows-2019
     name: Test-AD-KIBANA
     strategy:
@@ -633,8 +619,7 @@ jobs:
           yarn cy:run-with-security --config baseurl=http://localhost:5601
 
   Test-SEC-KIBANA:
-    # needs: [build-es-artifacts, build-kibana-artifacts, Get-versions]
-    needs: [Get-versions]
+    needs: [build-es-artifacts, build-kibana-artifacts, Get-versions]
     runs-on: windows-2019
     name: Test-SEC-KIBANA
     strategy:
