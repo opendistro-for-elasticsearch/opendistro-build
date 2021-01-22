@@ -7,14 +7,13 @@
 #
 # About:         Setup ES/KIBANA for integTests on Windows based ODFE distros w/wo Security
 #
-# Usage:         ./setup_runners_service_windows.ps1 $SETUP_ACTION $ODFE_VERSION $ARCH
+# Usage:         ./setup_runners_service_windows.ps1 $SETUP_ACTION $OD_VERSION $ARCH
 #                $SETUP_ACTION: --es | --es-nosec | --kibana | --kibana-nosec (required)
-#                $ODFE
+#                $OD_VERSION: 1.x.x | 1.12.0 (required)
+#                $ARCH: x64 | arm64 (optional defaults to x64)
 #
 # Requirements:  This script assumes java 14 is already installed on the servers
 #
-# Starting Date: 2020-07-27
-# Modified Date: 2021-01-06
 ###############################################################################################
 
 # Keep the pwsh script running even with errors
@@ -31,13 +30,14 @@ if ($args[2]){
 echo ARCHITECTURE: $ARCH
 if (!$SETUP_ACTION -or !$OD_VERSION) {
   echo "Please enter 2 parameters: --es | --es-nosec | --kibana | --kibana-nosec 1.x.x ARCH (optional defaults to x64)"
-  echo "Example: $0 --es-nosec 1.x.x arm64"
+  echo "Example: $0 --es-nosec 1.12.0"
+  echo "Example: $0 --es 1.12.0 arm64"
   exit 1
 }
 
 echo "############################################################"
 echo "Setup ES/KIBANA to start with YES/NO security configurations"
-echo "User enters $SETUP_ACTION $OD_VERSION"
+echo "User enters $SETUP_ACTION $OD_VERSION $ARCH"
 echo "############################################################"
 
 echo "setup es"
