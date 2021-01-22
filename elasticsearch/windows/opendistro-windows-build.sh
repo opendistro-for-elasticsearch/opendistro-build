@@ -103,7 +103,7 @@ aws s3 cp s3://$S3_RELEASE_BUCKET/odfe-windows/ODFE.install4j .
 echo $?
 
 # Build the exe
-install4j8.0.4/bin/install4jc -d $TARGET_DIR -D sourcedir=$WORK_DIR,version=$OD_VERSION --license=$install4j_license ./ODFE.install4j
+install4j8.0.4/bin/install4jc -d $TARGET_DIR -D sourcedir=./$WORK_DIR,version=$OD_VERSION --license=$install4j_license ./ODFE.install4j
 mv -v $TARGET_DIR/*.exe $TARGET_DIR/opendistroforelasticsearch-$OD_VERSION-$PLATFORM-$ARCHITECTURE.exe
 
 # List installed plugins
