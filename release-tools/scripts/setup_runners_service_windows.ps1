@@ -70,8 +70,6 @@ if ($SETUP_ACTION -eq "--es"){
 
   echo "Waiting for 160 seconds"
   ping -n 160 127.0.0.1 >.\out.txt
-  #curl -XGET https://localhost:9200 -u admin:admin --insecure
-  #curl -XGET https://localhost:9200/_cluster/health?pretty -u admin:admin --insecure
 
   echo "es started"
   exit 0
@@ -99,8 +97,6 @@ if ($SETUP_ACTION -eq "--es-nosec"){
 
   echo "Waiting for 160 seconds"
   ping -n 160 127.0.0.1 >.\out.txt
-  #curl -XGET http://localhost:9200
-  #curl -XGET http://localhost:9200/_cluster/health?pretty
 
   echo "es-nosec started"
   exit 0
@@ -132,10 +128,6 @@ if ($SETUP_ACTION -eq "--kibana"){
 
   echo "Waiting for 160 seconds"
   ping -n 160 127.0.0.1 >.\out.txt
-  #curl -XGET https://localhost:9200 -u admin:admin --insecure
-  #curl -XGET https://localhost:9200/_cluster/health?pretty -u admin:admin --insecure
-  #curl -v -XGET https://localhost:5601 --insecure
-  #curl -v -XGET https://localhost:5601/api/status --insecure
 
   echo "kibana started"
   exit 0
@@ -163,10 +155,6 @@ if ($SETUP_ACTION -eq "--kibana-nosec"){
 
   echo "Waiting for 160 seconds"
   ping -n 160 127.0.0.1 >.\out.txt
-  #curl -XGET http://localhost:9200
-  #curl -XGET http://localhost:9200/_cluster/health?pretty
-  #curl -v -XGET http://localhost:5601
-  #curl -v -XGET http://localhost:5601/api/status
 
   echo "kibana-nosec started"
   exit 0
