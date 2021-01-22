@@ -505,7 +505,7 @@ jobs:
         with:
           repository: opendistro-for-elasticsearch/kibana-notebooks
           ref: ${{needs.Get-versions.outputs.p_tag_kib_nb}}
-          path: kibana/plugins/kibana-nb
+          path: kibana/plugins/kibana-notebooks
       
       - name: Setup Java
         uses: actions/setup-java@v1
@@ -533,10 +533,7 @@ jobs:
       
       - name: Bootstrap the plugin
         run: |
-          cd ./kibana/plugins/
-          cp -rp kibana-nb/kibana-notebooks .
-          rm -rf kibana-nb
-          cd kibana-notebooks
+          cd ./kibana/plugins/kibana-notebooks
           yarn kbn bootstrap
         shell: bash
 
