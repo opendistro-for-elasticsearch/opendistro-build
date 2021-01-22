@@ -5,8 +5,6 @@ on:
   #   - cron: '30 10 * * *'
   repository_dispatch:
     types: [staging-build-windows]
-  push:
-    branches: [separation-staging-P40553676]
 
 jobs:
   build-es-artifacts:
