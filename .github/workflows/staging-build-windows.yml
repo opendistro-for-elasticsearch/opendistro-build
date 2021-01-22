@@ -8,7 +8,6 @@ on:
 
 jobs:
   build-es-artifacts:
-    #needs: [Get-versions]
     name: Build Windows ES Artifacts
     runs-on: ubuntu-18.04
     steps:
