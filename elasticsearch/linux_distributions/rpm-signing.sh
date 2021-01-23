@@ -88,7 +88,7 @@ find $REPO_RPMSDIR -name *.rpm | xargs -n1 -I{} cp {} $REPO_YUMDIR/noarch
 # createrepo 0.10.0+ has removed support of --deltas
 # See their changelog and this ticket for more information
 # https://bugzilla.redhat.com/show_bug.cgi?id=1538650
-# Many repos will force a higher installation despite specifying 0.9.9 due to
+# Many repos will force a higher version during installation despite specifying 0.9.9 due to
 # Package createrepo is obsoleted by createrepo_c, trying to install createrepo_c-0.12.2-2...... instead
 # sudo yum list createrepo --showduplicates
 # sudo yum install -y createrepo-0.9.9* # This doesnt work as 0.12.0 will still install as of 20200121
