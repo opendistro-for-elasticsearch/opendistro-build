@@ -14,10 +14,19 @@ S3_RELEASE_BUCKET=`echo $S3_RELEASE_BASEURL | awk -F '/' '{print $3}'`
 S3_RELEASE_FINAL_BUILD=`yq eval '.urls.ODFE.releases_final_build' $MANIFEST_FILE | sed 's/\///g'`
 PLUGIN_PATH=`yq eval '.urls.ODFE.releases' $MANIFEST_FILE | sed "s/^.*$S3_RELEASE_BUCKET\///g"`
 PASSPHRASE=$1; if [ -z "$PASSPHRASE" ]; then echo "Please enter passphrase as a parameter"; exit 1; fi
+ACTION=$2; if [ ! -z "$ACTION" ]; then echo "About to sync staging to prod repo! Wait for 30 seconds"; sleep 30; fi
 
 REPO_BASEDIR="$ROOT/artifacts-repo"
 REPO_YUMDIR="$REPO_BASEDIR/yum"
 REPO_RPMSDIR="$REPO_BASEDIR/rpms"
+
+if [ "$ACTION" = "prod-sync" ]
+then
+  aws s3 sync ${S3_PROD_BASEURL}yum/staging/ ${S3_PROD_BASEURL}yum/ --quiet; echo $?
+  aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/yum/*"
+  exit 0
+fi
+
 
 if [ -z "$S3_RELEASE_FINAL_BUILD" ]
 then
@@ -55,15 +64,22 @@ echo "%_gpg /usr/bin/gpg" >> ~/.rpmmacros
 # Setup a directory structure on your local machine that mimics the one in S3.
 mkdir -p $REPO_YUMDIR/
 mkdir -p $REPO_RPMSDIR/
-#cd $REPO_BASEDIR/
 
 # Sync the remote yum repo to your local directory. *Before you do this, ensure you export the correct set of AWS credentials.*
 echo "Sync yum"
 aws s3 sync ${S3_PROD_BASEURL}yum/staging/ $REPO_YUMDIR/ --quiet; echo $?
-#aws s3 sync ${S3_PROD_BASEURL}yum/staging-new/ $REPO_YUMDIR/ --quiet; echo $?
 echo "Sync rpms"
 aws s3 sync ${S3_RELEASE_BASEURL}${OD_VERSION}/${S3_RELEASE_BUILD}/elasticsearch-plugins/ $REPO_RPMSDIR/ --exclude "*" --include "*.rpm"  --quiet; echo $?
+aws s3 sync ${S3_RELEASE_BASEURL}${OD_VERSION}/${S3_RELEASE_BUILD}/opendistro-libs/ $REPO_RPMSDIR/ --exclude "*" --include "*.rpm"  --quiet; echo $?
 aws s3 sync ${S3_RELEASE_BASEURL}${OD_VERSION}/odfe/ $REPO_RPMSDIR/ --exclude "*" --include "*.rpm"  --quiet; echo $?
+
+
+# Rename rpms to remove build numbers
+for pkg in `ls $REPO_RPMSDIR | grep -i build`
+do
+  mv $REPO_RPMSDIR/$pkg $REPO_RPMSDIR/`echo $pkg | sed 's/-build-[0-9]*//g'`
+done
+
 echo $REPO_YUMDIR/; ls -l $REPO_YUMDIR/
 echo $REPO_RPMSDIR/; ls -l $REPO_RPMSDIR/
 df -h
@@ -76,7 +92,7 @@ for rpm_package in `ls $REPO_RPMSDIR/`
 do
   echo "Signing $rpm_package"
   ./rpm-addsign.exp $REPO_RPMSDIR/$rpm_package $PASSPHRASE
-  echo "Signing complete"
+  echo "Signing complete #################################"
 done
 
 # Verify the signing
@@ -104,7 +120,5 @@ gpg --detach-sign --armor --batch --yes  --passphrase $PASSPHRASE $REPO_YUMDIR/n
 echo "Sync rpms back to the repo"
 aws s3 sync $REPO_YUMDIR/ ${S3_PROD_BASEURL}yum/staging/ --quiet; echo $?
 aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/yum/staging/*"
-#aws s3 sync $REPO_YUMDIR/ ${S3_PROD_BASEURL}yum/staging-new/ --quiet; echo $?
-#aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/yum/staging-new/*"
 
 
