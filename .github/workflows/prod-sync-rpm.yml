@@ -20,7 +20,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: (New) Sync artifacts from staging to prod repo
+      - name: (New) (PROD) Sync artifacts from staging to prod repo
         run: rpm-signing.sh passphrase prod-sync
 
 #      - name: (OLD) Sign And Upload Artifacts

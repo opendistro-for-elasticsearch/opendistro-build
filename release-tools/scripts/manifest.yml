@@ -249,7 +249,7 @@ plugins:
     plugin_location_staging: [default: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/kibana-plugins/trace-analytics/"]
     plugin_location_prod: [default: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/kibana-plugins/opendistro-trace-analytics/"]
   - 
-    plugin_basename: opendistro-sql-cli
+    plugin_basename: odfe-sql-cli
     plugin_git: opendistro-for-elasticsearch/sql
     plugin_version: 1.12.0.0
     plugin_build: 

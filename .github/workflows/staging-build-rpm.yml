@@ -126,32 +126,33 @@ jobs:
           repository: opendistro-for-elasticsearch/opendistro-infra
           ref: jenkins-test
           token: ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
+      - name: Required Packages
+        run: ./release-tools/scripts/required_packages.sh
       - name: Build Centos Docker Image
         env:
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
           DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
         run: |
-          ES_VER=`./bin/version-info --es`
-          ODFE_VER=`./bin/version-info --od`
+          OD_VERSION=`./release-tools/scripts/version-info.sh --od`
           cd elasticsearch/linux_distributions
           cd ../../..
           cd opendistro-infra/scripts/dockerfiles/tests/elasticsearch
-          docker build --build-arg VER=$ODFE_VER -t opendistroforelasticsearch/elasticsearch-test-centos:$ODFE_VER -f opendistro.elasticsearch.test.centos.Dockerfile .
+          docker build --build-arg VER=$OD_VERSION -t opendistroforelasticsearch/elasticsearch-test-centos:$OD_VERSION -f opendistro.elasticsearch.test.centos.Dockerfile .
           
           cd ../kibana
-          docker build -t opendistroforelasticsearch/kibana-test-centos:$ODFE_VER -f opendistro.kibana.test.centos.Dockerfile .
+          docker build -t opendistroforelasticsearch/kibana-test-centos:$OD_VERSION -f opendistro.kibana.test.centos.Dockerfile .
           
           echo "******************************"
           echo "Login to Docker"
           echo "******************************"
           docker login --username $DOCKER_USER --password $DOCKER_PASS
           
-          docker push opendistroforelasticsearch/elasticsearch-test-centos:$ODFE_VER
-          docker tag opendistroforelasticsearch/elasticsearch-test-centos:$ODFE_VER opendistroforelasticsearch/elasticsearch-test-centos:latest
+          docker push opendistroforelasticsearch/elasticsearch-test-centos:$OD_VERSION
+          docker tag opendistroforelasticsearch/elasticsearch-test-centos:$OD_VERSION opendistroforelasticsearch/elasticsearch-test-centos:latest
           docker push opendistroforelasticsearch/elasticsearch-test-centos:latest
           sleep 5
-          docker push opendistroforelasticsearch/kibana-test-centos:$ODFE_VER
-          docker tag opendistroforelasticsearch/kibana-test-centos:$ODFE_VER opendistroforelasticsearch/kibana-test-centos:latest
+          docker push opendistroforelasticsearch/kibana-test-centos:$OD_VERSION
+          docker tag opendistroforelasticsearch/kibana-test-centos:$OD_VERSION opendistroforelasticsearch/kibana-test-centos:latest
           docker push opendistroforelasticsearch/kibana-test-centos:latest
 
           docker logout
@@ -408,7 +409,7 @@ jobs:
 
       - name: Retrieve plugin tags
         run: |
-          echo "es_version_kibana=$(./bin/version-info --es)" >> $GITHUB_ENV
+          echo "es_version_kibana=$(release-tools/scripts/version-info.sh --es)" >> $GITHUB_ENV
           echo "p_tag_ad_kibana=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)" >> $GITHUB_ENV
 
       - name: Checkout Kibana
@@ -482,7 +483,7 @@ jobs:
       - name: Retrieve plugin tags 
         run: |
           echo "p_tag_sql_kibana=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)" >> $GITHUB_ENV
-          echo "es_version=$(./bin/version-info --es)" >> $GITHUB_ENV
+          echo "es_version=$(release-tools/scripts/version-info.sh --es)" >> $GITHUB_ENV
           
       - name: Checkout Kibana
         uses: actions/checkout@v2
@@ -591,7 +592,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           repository: opendistro-for-elasticsearch/kibana-notebooks
-          ref: ${{env.p_tag_kib_nb}
+          ref: ${{env.p_tag_kib_nb}}
           path: kibana/plugins/kibana-notebooks
       
       - name: Setup Java
@@ -651,7 +652,7 @@ jobs:
 
       - name: Retrieve plugin tags
         run: |
-          echo "es_version_kibana=$(./bin/version-info --es)" >> $GITHUB_ENV
+          echo "es_version_kibana=$(release-tools/scripts/version-info.sh --es)" >> $GITHUB_ENV
           echo "p_tag_ad_kibana=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)" >> $GITHUB_ENV
 
       - name: Checkout Kibana
@@ -722,7 +723,7 @@ jobs:
       - name: Retrieve plugin tags 
         run: |
           echo "p_tag_sec_kibana=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/security-kibana-plugin)" >> $GITHUB_ENV
-          echo "es_version=$(release-tools/scripts/version-info.py --es)" >> $GITHUB_ENV
+          echo "es_version=$(release-tools/scripts/version-info.sh --es)" >> $GITHUB_ENV
 
       - name: Checkout Kibana
         uses: actions/checkout@v2
