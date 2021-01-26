@@ -24,12 +24,10 @@ OD_VERSION=`$REPO_ROOT/release-tools/scripts/version-info.sh --od`; echo OD_VERS
 S3_RELEASE_BASEURL=`yq eval '.urls.ODFE.releases' $MANIFEST_FILE`
 S3_RELEASE_FINAL_BUILD=`yq eval '.urls.ODFE.releases_final_build' $MANIFEST_FILE | sed 's/\///g'`
 S3_RELEASE_BUCKET=`echo $S3_RELEASE_BASEURL | awk -F '/' '{print $3}'`
-PACKAGE_NAME="opendistroforelasticsearch"
-TARGET_DIR="$ROOT/target"
 PLATFORM="linux"; if [ ! -z "$1" ]; then PLATFORM=$1; fi; echo PLATFORM $PLATFORM
 ARCHITECTURE="x64"; if [ ! -z "$2" ]; then ARCHITECTURE=$2; fi; echo ARCHITECTURE $ARCHITECTURE
 ES_URL=`yq eval '.urls.ES.'$PLATFORM'_'$ARCHITECTURE'' $MANIFEST_FILE`
-ES_ARTIFACT=`echo $ES_URL | awk -F '/' '{print $6}'`
+ES_ARTIFACT=`basename $ES_URL`
 
 # knnlib version only for tar distros here
 knnlib_version=`$REPO_ROOT/release-tools/scripts/plugin_parser.sh opendistro-knnlib plugin_version`; echo knnlib_version: $knnlib_version 
@@ -38,8 +36,10 @@ knnlib_version=`$REPO_ROOT/release-tools/scripts/plugin_parser.sh opendistro-knn
 PLUGINS=`$REPO_ROOT/release-tools/scripts/plugins-info.sh elasticsearch-plugins plugin_basename`
 PLUGINS_ARRAY=( $PLUGINS )
 PLUGIN_PATH=`yq eval '.urls.ODFE.releases' $MANIFEST_FILE | sed "s/^.*$S3_RELEASE_BUCKET\///g"`
-
-basedir="${ROOT}/${PACKAGE_NAME}-${OD_VERSION}/plugins"
+PACKAGE_NAME="opendistroforelasticsearch"
+WORK_DIR="${PACKAGE_NAME}-${OD_VERSION}"
+TARGET_DIR="$ROOT/target"
+basedir="${ROOT}/$WORK_DIR/plugins"
 
 echo $ROOT
 
@@ -58,14 +58,14 @@ if [ -z "$PLUGINS" ]; then
 fi
 
 # Prepare target directories
-mkdir ${PACKAGE_NAME}-${OD_VERSION}
+mkdir $WORK_DIR
 mkdir $TARGET_DIR
 
 # Downloading ES oss
 echo "Downloading ES oss"
 wget -nv $ES_URL; echo $?
-tar -xzf $ES_ARTIFACT --strip-components=1 --directory "${PACKAGE_NAME}-${OD_VERSION}" && rm -rf $ES_ARTIFACT
-cp -v opendistro-tar-install.sh $PACKAGE_NAME-$OD_VERSION
+tar -xzf $ES_ARTIFACT --strip-components=1 --directory "$WORK_DIR" && rm -rf $ES_ARTIFACT
+cp -v opendistro-tar-install.sh $WORK_DIR
 
 # Install Plugin
 rm -rf /tmp/plugins
@@ -89,7 +89,7 @@ do
     aws s3 cp "s3://${S3_RELEASE_BUCKET}/${plugin_latest}" "/tmp/plugins" --quiet; echo $?
     plugin=`echo $plugin_latest | awk -F '/' '{print $NF}'`
     echo "installing $plugin"
-    $PACKAGE_NAME-$OD_VERSION/bin/elasticsearch-plugin install --batch file:/tmp/plugins/$plugin; \
+    $WORK_DIR/bin/elasticsearch-plugin install --batch file:/tmp/plugins/$plugin; \
   fi
 done
 
@@ -101,42 +101,44 @@ ls -lrt $basedir
 # Move performance-analyzer-rca folder
 perf_dir=`ls -p $basedir | grep performance`
 rca_dir=`ls -p $basedir/$perf_dir | grep rca/`
-cp -r $PACKAGE_NAME-$OD_VERSION/plugins/$perf_dir$rca_dir $PACKAGE_NAME-$OD_VERSION
-chmod -R 755 ${PACKAGE_NAME}-${OD_VERSION}/$rca_dir
+cp -r $WORK_DIR/plugins/$perf_dir$rca_dir $WORK_DIR
+chmod -R 755 $WORK_DIR/$rca_dir
 
 # Move agent script directly into ES_HOME/bin
-perf_analyzer=`ls -p $PACKAGE_NAME-$OD_VERSION/bin/ | grep performance`
-mv $PACKAGE_NAME-$OD_VERSION/bin/$perf_analyzer/performance-analyzer-agent-cli $PACKAGE_NAME-$OD_VERSION/bin
-rm -rf $PACKAGE_NAME-$OD_VERSION/bin/opendistro_performance_analyzer
+perf_analyzer=`ls -p $WORK_DIR/bin/ | grep performance`
+mv $WORK_DIR/bin/$perf_analyzer/performance-analyzer-agent-cli $WORK_DIR/bin
+rm -rf $WORK_DIR/bin/opendistro_performance_analyzer
 
 # Make sure the data folder exists and is writable
-mkdir -p ${PACKAGE_NAME}-${OD_VERSION}/data
-chmod 755 ${PACKAGE_NAME}-${OD_VERSION}/data/
+mkdir -p $WORK_DIR/data
+chmod 755 $WORK_DIR/data/
 
 # Download Knn lib
 # Get knnlib artifact information from Manifest
-knnlib_is_rc=`$REPO_ROOT/release-tools/scripts/plugin_parser.sh opendistro-knnlib release_candidate`
+knnlib_is_rc=`$REPO_ROOT/release-tools/scripts/plugin_parser.sh opendistro-knnlib release_candidate`; echo knnlib_is_rc $knnlib_is_rc
+knnlib_basename=`$REPO_ROOT/release-tools/scripts/plugin_parser.sh opendistro-knnlib plugin_basename`; echo knnlib_basename $knnlib_basename
 if $knnlib_is_rc
 then
   echo ""
-  knnlib_latest=`aws s3api list-objects --bucket $S3_RELEASE_BUCKET --prefix "${PLUGIN_PATH}${OD_VERSION}/$S3_RELEASE_BUILD/opendistro-libs/" --query 'Contents[].[Key]' --output text | grep -v sha512 | grep opendistro-knnlib | grep zip | sort | tail -n 1`
+  knnlib_latest=`aws s3api list-objects --bucket $S3_RELEASE_BUCKET --prefix "${PLUGIN_PATH}${OD_VERSION}/$S3_RELEASE_BUILD/opendistro-libs/" --query 'Contents[].[Key]' --output text \
+                 | grep -v sha512 | grep "$knnlib_basename" | grep zip | grep "$PLATFORM" | grep "$ARCHITECTURE"`
   echo "downloading $knnlib_latest"
   aws s3 cp "s3://${S3_RELEASE_BUCKET}/$knnlib_latest" ./
-  unzip opendistro-knnlib*.zip
-  mkdir -p $PACKAGE_NAME-$OD_VERSION/plugins/opendistro-knn/knn-lib/
-  mv -v opendistro-knnlib*/libKNNIndex*.so $PACKAGE_NAME-$OD_VERSION/plugins/opendistro-knn/knn-lib/
+  unzip ${knnlib_basename}*.zip
+  mkdir -p $WORK_DIR/plugins/opendistro-knn/knn-lib/
+  mv -v opendistro-knnlib*/libKNNIndex*.so $WORK_DIR/plugins/opendistro-knn/knn-lib/
 fi
 
 # Tar generation
 echo "generating tar"
-tar -czf $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION-$PLATFORM-$ARCHITECTURE.tar.gz $PACKAGE_NAME-$OD_VERSION
+tar -czf $TARGET_DIR/$WORK_DIR-$PLATFORM-$ARCHITECTURE.tar.gz $WORK_DIR
 cd $TARGET_DIR
-shasum -a 512 $PACKAGE_NAME-$OD_VERSION-$PLATFORM-$ARCHITECTURE.tar.gz > $PACKAGE_NAME-$OD_VERSION-$PLATFORM-$ARCHITECTURE.tar.gz.sha512
-shasum -a 512 -c $PACKAGE_NAME-$OD_VERSION-$PLATFORM-$ARCHITECTURE.tar.gz.sha512
+shasum -a 512 $WORK_DIR-$PLATFORM-$ARCHITECTURE.tar.gz > $WORK_DIR-$PLATFORM-$ARCHITECTURE.tar.gz.sha512
+shasum -a 512 -c $WORK_DIR-$PLATFORM-$ARCHITECTURE.tar.gz.sha512
 echo " CHECKSUM FILE: "
-echo "$(cat $PACKAGE_NAME-$OD_VERSION-$PLATFORM-$ARCHITECTURE.tar.gz.sha512)"
+echo "$(cat $WORK_DIR-$PLATFORM-$ARCHITECTURE.tar.gz.sha512)"
 cd $ROOT
-rm -rf $PACKAGE_NAME-$OD_VERSION
+rm -rf $WORK_DIR
 
 # Upload to S3
 ls -ltr $TARGET_DIR
