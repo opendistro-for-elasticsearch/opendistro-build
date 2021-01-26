@@ -149,7 +149,7 @@ plugins:
     plugin_git: opendistro-for-elasticsearch/k-NN
     plugin_version: 1.12.0.0
     plugin_build: 
-    plugin_spec: [linux_x64_zip,linux_x64_deb,linux_x64_rpm]
+    plugin_spec: [linux_x64_zip,linux_x64_deb,linux_x64_rpm,linux-arm64-zip]
     plugin_category: opendistro-libs
     release_candidate: true
     plugin_location_staging: [default: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/opendistro-libs/knnlib/"]
