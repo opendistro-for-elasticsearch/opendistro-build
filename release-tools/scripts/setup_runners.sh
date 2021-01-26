@@ -128,7 +128,7 @@ SETUP_GIT_TOKEN=$3
 # RPM-al2     x64   ec2-user ami-086e8a98280780e63 none  need to install jdk by workflow
 # RPM-centos8 x64   centos   ami-011f59f50bac33376 jdk15 preinstall
 # RPM-centos8 arm64 centos   ami-0ed17173ab64255b1 jdk15 preinstall
-# DEB-ubu1804 arm64 ubuntu   ami-02e560bc36d1378d1 jdk14 preinstall
+# DEB-ubu1804 arm64 ubuntu   ami-055197d43e4ec7482 jdk14 preinstall disable daily updates
 EC2_AMI_ID=$4
 
 if [ "$SETUP_ACTION" = "run" ]
@@ -197,7 +197,8 @@ then
   echo "Sleep for 120 seconds for EC2 instances to start running"
   echo ""
 
-  sleep 120
+  #sleep 120
+  sleep 60
 
   # Setup VMs to register as runners
   for instance_name2 in $SETUP_RUNNER
@@ -225,7 +226,8 @@ then
   echo "Wait for 90 seconds for runners to bootstrap on Git"
   echo ""
 
-  sleep 90
+  #sleep 90
+  sleep 60
 
   echo ""
   echo "All runners are online on Git"

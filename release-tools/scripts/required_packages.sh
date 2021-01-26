@@ -22,6 +22,12 @@ then
 elif [ "$ARCH" = "x86" ] || [ "$ARCH" = "i386" ]
 then
   sudo wget -nv https://github.com/mikefarah/yq/releases/download/v${YQ_VERSION}/yq_${PLATFORM}_386 -O /usr/bin/yq && sudo chmod +x /usr/bin/yq
+elif [ "$ARCH" = "aarch64" ] || [ "$ARCH" = "arm64" ]
+then
+  sudo wget -nv https://github.com/mikefarah/yq/releases/download/v${YQ_VERSION}/yq_${PLATFORM}_arm64 -O /usr/bin/yq && sudo chmod +x /usr/bin/yq
+elif [ "$ARCH" = "aarch" ] || [ "$ARCH" = "arm" ]
+then
+  sudo wget -nv https://github.com/mikefarah/yq/releases/download/v${YQ_VERSION}/yq_${PLATFORM}_arm -O /usr/bin/yq && sudo chmod +x /usr/bin/yq
 else
   sudo wget -nv https://github.com/mikefarah/yq/releases/download/v${YQ_VERSION}/yq_${PLATFORM}_${ARCH} -O /usr/bin/yq && sudo chmod +x /usr/bin/yq
 fi

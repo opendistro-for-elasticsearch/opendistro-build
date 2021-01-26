@@ -77,6 +77,7 @@ mkdir $PACKAGE_NAME
 
 # Downloading Kibana oss
 echo "Downloading kibana oss"
+basename $KIBANA_URL
 curl -Ls $KIBANA_URL | tar --strip-components=1 -zxf - --directory $PACKAGE_NAME
 
 # Install required plugins

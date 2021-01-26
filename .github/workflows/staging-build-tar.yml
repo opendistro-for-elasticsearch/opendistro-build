@@ -24,7 +24,7 @@ jobs:
         run: ./release-tools/scripts/check_plugin.sh "elasticsearch_zip,kibana_zip"; exit `cat /tmp/plugin_status.check`
 
   build-es-artifacts:
-    needs: [plugin-availability]
+    #needs: [plugin-availability]
     name: Build ES Artifacts
     runs-on: ubuntu-18.04
     container:
@@ -43,7 +43,7 @@ jobs:
         apt-get install sudo -y
         ./release-tools/scripts/required_packages.sh
     - name: Build tar
-      run: apt install -y jq unzip; set -u; export JAVA_HOME=/openjdk12; export PATH=$JAVA_HOME:$PATH; ./elasticsearch/linux_distributions/opendistro-tar-build.sh
+      run: set -u; export JAVA_HOME=/openjdk12; export PATH=$JAVA_HOME:$PATH; ./elasticsearch/linux_distributions/opendistro-tar-build.sh
 
 
   build-kibana-artifacts:
@@ -66,7 +66,7 @@ jobs:
           apt-get install sudo -y
           ./release-tools/scripts/required_packages.sh
       - name: Build Kibana
-        run: apt install -y jq; ./kibana/linux_distributions/opendistro-kibana-build.sh tar
+        run: ./kibana/linux_distributions/opendistro-kibana-build.sh tar
 
   Test-ISM-NoSec:
     needs: [build-es-artifacts]
