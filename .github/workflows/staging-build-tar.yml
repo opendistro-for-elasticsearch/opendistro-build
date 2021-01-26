@@ -24,7 +24,7 @@ jobs:
         run: ./release-tools/scripts/check_plugin.sh "elasticsearch_zip,kibana_zip"; exit `cat /tmp/plugin_status.check`
 
   build-es-artifacts:
-    #needs: [plugin-availability]
+    needs: [plugin-availability]
     name: Build ES Artifacts
     runs-on: ubuntu-18.04
     container:
