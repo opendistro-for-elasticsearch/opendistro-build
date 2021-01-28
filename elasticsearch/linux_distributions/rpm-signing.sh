@@ -22,7 +22,7 @@ REPO_RPMSDIR="$REPO_BASEDIR/rpms"
 
 if [ "$ACTION" = "prod-sync" ]
 then
-  aws s3 sync ${S3_PROD_BASEURL}yum/staging/ ${S3_PROD_BASEURL}yum/ --quiet; echo $?
+  aws s3 sync ${S3_PROD_BASEURL}staging/yum/ ${S3_PROD_BASEURL}yum/ --quiet; echo $?
   aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/yum/*"
   exit 0
 fi
@@ -67,7 +67,7 @@ mkdir -p $REPO_RPMSDIR/
 
 # Sync the remote yum repo to your local directory. *Before you do this, ensure you export the correct set of AWS credentials.*
 echo "Sync yum"
-aws s3 sync ${S3_PROD_BASEURL}yum/staging/ $REPO_YUMDIR/ --quiet; echo $?
+aws s3 sync ${S3_PROD_BASEURL}staging/yum/ $REPO_YUMDIR/ --quiet; echo $?
 echo "Sync rpms"
 aws s3 sync ${S3_RELEASE_BASEURL}${OD_VERSION}/${S3_RELEASE_BUILD}/elasticsearch-plugins/ $REPO_RPMSDIR/ --exclude "*" --include "*.rpm"  --quiet; echo $?
 aws s3 sync ${S3_RELEASE_BASEURL}${OD_VERSION}/${S3_RELEASE_BUILD}/opendistro-libs/ $REPO_RPMSDIR/ --exclude "*" --include "*.rpm"  --quiet; echo $?
@@ -118,7 +118,7 @@ createrepo -v --update --deltas $REPO_YUMDIR/noarch --max-delta-rpm-size=1000000
 gpg --detach-sign --armor --batch --yes  --passphrase $PASSPHRASE $REPO_YUMDIR/noarch/repodata/repomd.xml
 
 echo "Sync rpms back to the repo"
-aws s3 sync $REPO_YUMDIR/ ${S3_PROD_BASEURL}yum/staging/ --quiet; echo $?
-aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/yum/staging/*"
+aws s3 sync $REPO_YUMDIR/ ${S3_PROD_BASEURL}staging/yum/ --quiet; echo $?
+aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/staging/yum/*"
 
 
