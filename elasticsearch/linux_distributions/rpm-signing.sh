@@ -45,7 +45,9 @@ aws s3 cp s3://opendistro-docs/github-actions/pgp-private-key . --quiet
 aws s3 cp s3://opendistro-docs/github-actions/pgp-public-key . --quiet
 
 # Import pgp keys
+# Our keys only work with gpg1 not gpg2+
 echo "import pgp keys"
+gpg --version
 gpg --quiet --import pgp-public-key
 gpg --quiet --allow-secret-key-import --import pgp-private-key
 

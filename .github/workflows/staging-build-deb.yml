@@ -97,106 +97,79 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Sign Deb Artifacts
+      - name: Required Packages
+        run: |
+          apt-get update
+          apt-get install sudo -y
+          ./release-tools/scripts/required_packages.sh
+
+      - name: (NEW) Sign Deb Artifacts
         env:
           passphrase: ${{ secrets.PASSPHRASE }}
-        run: |
+        run: ./elasticsearch/linux_distributions/deb-signing.sh $passphrase x64
 
-          echo "deb http://repo.aptly.info/ squeeze main" | sudo tee -a /etc/apt/sources.list.d/aptly.list
-          sudo apt-get install -y gnupg1
-          sudo apt install -y gpgv1
-          alias gpg=gpg1
-          wget -qO - https://www.aptly.info/pubkey.txt | sudo apt-key add -
-
-          sudo apt-get update -y
-          sudo apt-get install -y aptly
-          aws s3 cp s3://opendistro-docs/github-actions/pgp-public-key .
-          aws s3 cp s3://opendistro-docs/github-actions/pgp-private-key .
-
-          aptly repo create -distribution=stable -component=main odfe-release
-
-          mkdir -p downloads/debs
-          aws s3 sync s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/debs downloads/debs
-          aptly repo add odfe-release downloads
-
-          aptly repo show -with-packages odfe-release
-          aptly snapshot create opendistroforelasticsearch from repo odfe-release
-          aptly snapshot list
-
-          gpg --import pgp-public-key
-          gpg --allow-secret-key-import --import pgp-private-key
-          echo "Printing Secret List"
-          ls -ltr ~/.gnupg/
-          gpg --list-secret
-
-          aptly publish snapshot -batch=true -passphrase=$passphrase opendistroforelasticsearch
-
-          aws s3 sync ~/.aptly/public/ s3://artifacts.opendistroforelasticsearch.amazon.com/staging/apt
-
-          aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/staging/apt/*"
-
-  Build-ES-and-Kibana-Ubuntu-Docker:
-    needs: [sign-deb-artifacts]
-    runs-on: [ubuntu-18.04]
-    name: Build ubuntu image for Sanity Testing
-    steps:
-      - uses: actions/checkout@v1
-      - name: Checkout Opendistro-Infra
-        uses: actions/checkout@v1
-        with:
-          repository: opendistro-for-elasticsearch/opendistro-infra
-          ref: jenkins-test
-          token: ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
-      - name: Build Ubuntu Docker Image
-        env:
-          DOCKER_USER: ${{ secrets.DOCKER_USER }}
-          DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
-        run: |
-          ES_VER=`./bin/version-info --es`
-          ODFE_VER=`./bin/version-info --od`
-          cd elasticsearch/linux_distributions
-          cd ../../..
-          cd opendistro-infra/scripts/dockerfiles/tests/elasticsearch
-          docker build --build-arg VER=$ES_VER -t opendistroforelasticsearch/elasticsearch-test-ubuntu:$ODFE_VER -f opendistro.elasticsearch.test.ubuntu.Dockerfile .
-          
-          cd ../kibana
-          docker build -t opendistroforelasticsearch/kibana-test-ubuntu:$ODFE_VER -f opendistro.kibana.test.ubuntu.Dockerfile .
-          
-          echo "******************************"
-          echo "Login to Docker"
-          echo "******************************"
-          docker login --username $DOCKER_USER --password $DOCKER_PASS
-          
-          docker push opendistroforelasticsearch/elasticsearch-test-ubuntu:$ODFE_VER
-          docker tag opendistroforelasticsearch/elasticsearch-test-ubuntu:$ODFE_VER opendistroforelasticsearch/elasticsearch-test-ubuntu:latest
-          docker push opendistroforelasticsearch/elasticsearch-test-ubuntu:latest
-          sleep 5
-          docker push opendistroforelasticsearch/kibana-test-ubuntu:$ODFE_VER
-          docker tag opendistroforelasticsearch/kibana-test-ubuntu:$ODFE_VER opendistroforelasticsearch/kibana-test-ubuntu:latest
-          docker push opendistroforelasticsearch/kibana-test-ubuntu:latest
-
-          docker logout
-
-      - name: Create Email Message
-        run: |
-          echo "<h2>Docker Images for Ubuntu Are Ready</h2>" >> Message.md
-          echo "<h3> ES Image for Ubuntu Testing: opendistroforelasticsearch/elasticsearch-test-ubuntu:Version-Tag </h3>" >> Message.md
-          echo "<h3> Kibana Image for Ubuntu Testing: opendistroforelasticsearch/kibana-test-ubuntu:Version-Tag </h3>" >> Message.md
-
-      - name: Send Mail
-        uses: dawidd6/action-send-mail@master
-        with:
-          server_address: smtp.gmail.com
-          server_port: 465
-          username: ${{secrets.MAIL_USERNAME}}
-          password: ${{secrets.MAIL_PASSWORD}}
-          subject: Opendistro for Elasticsearch Build - Debian Images For Testing
-          # Read file contents as body:
-          body: file://Message.md
-          to: odfe-distribution-build@amazon.com
-          from: Opendistro Elasticsearch
-          # Optional content type:
-          content_type: text/html
+#  Build-ES-and-Kibana-Ubuntu-Docker:
+#    needs: [sign-deb-artifacts]
+#    runs-on: [ubuntu-18.04]
+#    name: Build ubuntu image for Sanity Testing
+#    steps:
+#      - uses: actions/checkout@v1
+#      - name: Checkout Opendistro-Infra
+#        uses: actions/checkout@v1
+#        with:
+#          repository: opendistro-for-elasticsearch/opendistro-infra
+#          ref: jenkins-test
+#          token: ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
+#      - name: Build Ubuntu Docker Image
+#        env:
+#          DOCKER_USER: ${{ secrets.DOCKER_USER }}
+#          DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
+#        run: |
+#          ES_VER=`./bin/version-info --es`
+#          ODFE_VER=`./bin/version-info --od`
+#          cd elasticsearch/linux_distributions
+#          cd ../../..
+#          cd opendistro-infra/scripts/dockerfiles/tests/elasticsearch
+#          docker build --build-arg VER=$ES_VER -t opendistroforelasticsearch/elasticsearch-test-ubuntu:$ODFE_VER -f opendistro.elasticsearch.test.ubuntu.Dockerfile .
+#          
+#          cd ../kibana
+#          docker build -t opendistroforelasticsearch/kibana-test-ubuntu:$ODFE_VER -f opendistro.kibana.test.ubuntu.Dockerfile .
+#          
+#          echo "******************************"
+#          echo "Login to Docker"
+#          echo "******************************"
+#          docker login --username $DOCKER_USER --password $DOCKER_PASS
+#          
+#          docker push opendistroforelasticsearch/elasticsearch-test-ubuntu:$ODFE_VER
+#          docker tag opendistroforelasticsearch/elasticsearch-test-ubuntu:$ODFE_VER opendistroforelasticsearch/elasticsearch-test-ubuntu:latest
+#          docker push opendistroforelasticsearch/elasticsearch-test-ubuntu:latest
+#          sleep 5
+#          docker push opendistroforelasticsearch/kibana-test-ubuntu:$ODFE_VER
+#          docker tag opendistroforelasticsearch/kibana-test-ubuntu:$ODFE_VER opendistroforelasticsearch/kibana-test-ubuntu:latest
+#          docker push opendistroforelasticsearch/kibana-test-ubuntu:latest
+#
+#          docker logout
+#
+#      - name: Create Email Message
+#        run: |
+#          echo "<h2>Docker Images for Ubuntu Are Ready</h2>" >> Message.md
+#          echo "<h3> ES Image for Ubuntu Testing: opendistroforelasticsearch/elasticsearch-test-ubuntu:Version-Tag </h3>" >> Message.md
+#          echo "<h3> Kibana Image for Ubuntu Testing: opendistroforelasticsearch/kibana-test-ubuntu:Version-Tag </h3>" >> Message.md
+#
+#      - name: Send Mail
+#        uses: dawidd6/action-send-mail@master
+#        with:
+#          server_address: smtp.gmail.com
+#          server_port: 465
+#          username: ${{secrets.MAIL_USERNAME}}
+#          password: ${{secrets.MAIL_PASSWORD}}
+#          subject: Opendistro for Elasticsearch Build - Debian Images For Testing
+#          # Read file contents as body:
+#          body: file://Message.md
+#          to: odfe-distribution-build@amazon.com
+#          from: Opendistro Elasticsearch
+#          # Optional content type:
+#          content_type: text/html
 
   Test-ISM-NoSec:
     needs: [sign-deb-artifacts]
