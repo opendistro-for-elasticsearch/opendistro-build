@@ -145,6 +145,18 @@ plugins:
                            noplatform_noarch_deb: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/debs/opendistro-reports-scheduler/",
                            noplatform_noarch_rpm: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/rpms/opendistro-reports-scheduler/"]
   - 
+    plugin_basename: opendistro-asynchronous-search
+    plugin_git: opendistro-for-elasticsearch/asynchronous-search
+    plugin_version: 1.12.0.0
+    plugin_build: 
+    plugin_spec: [noplatform_noarch_zip,noplatform_noarch_deb,noplatform_noarch_rpm]
+    plugin_category: elasticsearch-plugins
+    release_candidate: true
+    plugin_location_staging: [default: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-plugins/asynchronous-search/"]
+    plugin_location_prod: [noplatform_noarch_zip: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/elasticsearch-plugins/opendistro-asynchronous-search/",
+                           noplatform_noarch_deb: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/debs/opendistro-asynchronous-search/",
+                           noplatform_noarch_rpm: "s3://artifacts.opendistroforelasticsearch.amazon.com/downloads/rpms/opendistro-asynchronous-search/"]
+  - 
     plugin_basename: opendistro-knnlib
     plugin_git: opendistro-for-elasticsearch/k-NN
     plugin_version: 1.12.0.0
