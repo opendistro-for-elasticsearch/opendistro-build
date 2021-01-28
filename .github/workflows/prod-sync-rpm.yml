@@ -21,6 +21,6 @@ jobs:
           aws-region: us-east-1
 
       - name: (New) (PROD) Sync artifacts from staging to prod repo
-        run: rpm-signing.sh passphrase prod-sync
+        run: ./elasticsearch/linux_distributions/rpm-signing.sh passphrase prod-sync
 
 
