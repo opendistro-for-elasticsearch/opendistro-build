@@ -98,7 +98,7 @@ fi
 
 if [ "$SETUP_DISTRO" = "rpm" ]
 then
-  sudo curl https://d3g5vo6xdbdb9a.cloudfront.net/yum/staging-opendistroforelasticsearch-artifacts.repo  -o /etc/yum.repos.d/staging-opendistroforelasticsearch-artifacts.repo
+  sudo curl https://d3g5vo6xdbdb9a.cloudfront.net/staging/yum/staging-opendistroforelasticsearch-artifacts.repo  -o /etc/yum.repos.d/staging-opendistroforelasticsearch-artifacts.repo
   sudo yum update -y
   sudo yum install $ES_PACKAGE_NAME -y
 fi
