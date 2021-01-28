@@ -86,6 +86,7 @@ if [[ -d "/usr/share/elasticsearch/plugins/opendistro_security" && "$DISABLE_INS
     # Install Demo certifactes for Security Plugin and update the elasticsearch.yml
     # file to use those certificates.
     /usr/share/elasticsearch/plugins/opendistro_security/tools/install_demo_configuration.sh -y -i -s
+    chmod 0600 /usr/share/elasticsearch/config/*.pem
 fi
 
 if [[ -d "/usr/share/elasticsearch/plugins/opendistro_performance_analyzer" ]]; then

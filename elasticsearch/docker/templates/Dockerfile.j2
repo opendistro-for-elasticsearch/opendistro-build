@@ -116,6 +116,7 @@ RUN security=`ls -p plugins/ | grep security` && \
     else echo "Security plugin is not yet installed"; fi
 
 COPY --chown=1000:0 elasticsearch.yml log4j2.properties config/
+RUN chmod 0600 /usr/share/elasticsearch/config/log4j2.properties
 
 USER 0
 
@@ -175,6 +176,8 @@ RUN mkdir /usr/share/elasticsearch && \
     groupadd -g 1000 elasticsearch && \
     adduser -u 1000 -g 1000 -G 0 -d /usr/share/elasticsearch elasticsearch && \
     chmod 0775 /usr/share/elasticsearch && \
+    chmod 0700 /usr/share/elasticsearch/config && \
+    chmod 0600 /usr/share/elasticsearch/config/elasticsearch.yml && \
     chgrp 0 /usr/share/elasticsearch
 
 RUN mkdir -p /usr/share/supervisor/performance_analyzer/ && \
