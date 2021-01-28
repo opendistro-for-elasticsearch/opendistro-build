@@ -106,7 +106,7 @@ jobs:
       - name: (NEW) Sign Deb Artifacts
         env:
           passphrase: ${{ secrets.PASSPHRASE }}
-        run: ./elasticsearch/linux_distributions/deb-signing.sh $passphrase
+        run: ./elasticsearch/linux_distributions/deb-signing.sh $passphrase x64
 
   Build-ES-and-Kibana-Ubuntu-Docker:
     needs: [sign-deb-artifacts]
