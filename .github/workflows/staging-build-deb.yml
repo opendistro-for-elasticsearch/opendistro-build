@@ -182,7 +182,7 @@ jobs:
       matrix:
         java: [14]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@master
 
       - name: Retrieve plugin tags 
         run:  echo "p_tag_ism=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)" >> $GITHUB_ENV
