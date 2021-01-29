@@ -200,7 +200,7 @@ jobs:
 
       - name: IT
         run: |
-          .github/scripts/setup_runners_service.sh deb --es-nosec
+          release-tools/scripts/setup_runners_service.sh deb --es-nosec
           export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../index-management; pwd
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
           
@@ -266,7 +266,7 @@ jobs:
           yarn kbn bootstrap
           
       - name: Start ES and Kibana
-        run: .github/scripts/setup_runners_service.sh deb --kibana-nosec
+        run: release-tools/scripts/setup_runners_service.sh deb --kibana-nosec
           
       - name: run IT
         uses: cypress-io/github-action@v2.5.0
