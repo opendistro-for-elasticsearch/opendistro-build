@@ -182,7 +182,9 @@ jobs:
       matrix:
         java: [14]
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v1
+      - name: Required Packages
+        run: ./release-tools/scripts/required_packages.sh
 
       - name: Retrieve plugin tags 
         run:  echo "p_tag_ism=$(.github/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)" >> $GITHUB_ENV
@@ -196,8 +198,6 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.java }}
-      - name: Required Packages
-        run: ./release-tools/scripts/required_packages.sh
 
       - name: IT
         run: |
