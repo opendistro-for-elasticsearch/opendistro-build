@@ -220,8 +220,12 @@ jobs:
         run: ./release-tools/scripts/required_packages.sh
       - name: Retrieve plugin tags 
         run: |
+          echo "####################"
+          ls -ltr 
           echo "p_tag_ad=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)" >> $GITHUB_ENV
           echo "es_version=$(release-tools/scripts/version-info.sh --es)" >> $GITHUB_ENV
+          echo $p_tag_ad
+          echo $es_version
           
       - name: Checkout Kibana
         uses: actions/checkout@v2
