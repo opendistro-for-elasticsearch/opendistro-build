@@ -85,8 +85,8 @@ fi
 
 if [ "$SETUP_DISTRO" = "deb" ]
 then
-  sudo add-apt-repository ppa:openjdk-r/ppa
-  sudo apt update
+  sudo add-apt-repository ppa:openjdk-r/ppa -y
+  sudo apt update -y
   sudo sudo apt install -y net-tools
   wget -qO - https://d3g5vo6xdbdb9a.cloudfront.net/GPG-KEY-opendistroforelasticsearch | sudo apt-key add -
   echo "deb https://d3g5vo6xdbdb9a.cloudfront.net/staging/apt stable main" | sudo tee -a /etc/apt/sources.list.d/opendistroforelasticsearch.list
