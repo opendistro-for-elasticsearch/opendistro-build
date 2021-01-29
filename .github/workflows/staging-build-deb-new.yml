@@ -62,28 +62,28 @@ jobs:
           aws s3 cp $deb_artifact $S3_RELEASE_BASEURL$OD_VERSION/odfe/
           echo "DEB creation for ES completed"
 
-  build-kibana-artifacts:
-    needs: [plugin-availability]
-    name: Build Kibana Artifacts
-    runs-on: [ubuntu-18.04]
-    container:
-      image: opendistroforelasticsearch/jsenv:v1
-    steps:
-      - uses: actions/checkout@v1
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-      - name: Required Packages
-        run: |
-          apt-get update
-          apt-get install sudo -y
-          ./release-tools/scripts/required_packages.sh
-      - name: Build Kibana deb
-        run: apt install -y jq; ./kibana/linux_distributions/opendistro-kibana-build.sh deb
-
+#  build-kibana-artifacts:
+#    needs: [plugin-availability]
+#    name: Build Kibana Artifacts
+#    runs-on: [ubuntu-18.04]
+#    container:
+#      image: opendistroforelasticsearch/jsenv:v1
+#    steps:
+#      - uses: actions/checkout@v1
+#      - name: Configure AWS Credentials
+#        uses: aws-actions/configure-aws-credentials@v1
+#        with:
+#          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
+#          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
+#          aws-region: us-east-1
+#      - name: Required Packages
+#        run: |
+#          apt-get update
+#          apt-get install sudo -y
+#          ./release-tools/scripts/required_packages.sh
+#      - name: Build Kibana deb
+#        run: apt install -y jq; ./kibana/linux_distributions/opendistro-kibana-build.sh deb
+#
 #  sign-deb-artifacts:
 #    needs: [build-es-artifacts, build-kibana-artifacts]
 #    runs-on: [ubuntu-18.04]

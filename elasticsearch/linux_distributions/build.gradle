@@ -116,7 +116,7 @@ ospackage {
       String pluginVersionNext = pver_next.trim()
       String pluginIsRC = prc_arr[i].trim()
 
-      if (!pluginName.contains("none") && pluginIsRC ) {
+      if (!pluginName.contains("none") && pluginIsRC.contains("true") ) {
         println(pluginName + ": >= " + pluginVersion + " | < " + pluginVersionNext)
         requires(pluginName, pluginVersion, GREATER | EQUAL)
         requires(pluginName, pluginVersionNext, LESS)
