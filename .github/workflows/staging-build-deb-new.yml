@@ -216,7 +216,8 @@ jobs:
         java: [14]
     steps:
       - uses: actions/checkout@v1
-
+      - name: Required Packages
+        run: ./release-tools/scripts/required_packages.sh
       - name: Retrieve plugin tags 
         run: |
           echo "p_tag_ad=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)" >> $GITHUB_ENV
@@ -235,8 +236,6 @@ jobs:
           repository: opendistro-for-elasticsearch/anomaly-detection-kibana-plugin
           ref: ${{env.p_tag_ad}}
           path: kibana/plugins/anomaly-detection-kibana-plugin
-      - name: Required Packages
-        run: ./release-tools/scripts/required_packages.sh      
       - name: Setup Java
         uses: actions/setup-java@v1
         with:
