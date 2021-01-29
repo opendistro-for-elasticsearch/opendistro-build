@@ -206,36 +206,38 @@ jobs:
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
           
 
-#  Test-ALERTING-NoSec:
-#    needs: [sign-deb-artifacts]
-#    runs-on: [ubuntu-18.04]
-#    name: Test-ALERTING-NoSec
-#    strategy:
-#      fail-fast: false
-#      matrix:
-#        java: [14]
-#    steps:
-#      - uses: actions/checkout@v1
-#
-#      - name: Retrieve plugin tags 
-#        run:  echo "p_tag_alerting=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)" >> $GITHUB_ENV
-#
-#      - uses: actions/checkout@v1
-#        with:
-#          repository: opendistro-for-elasticsearch/alerting
-#          ref: ${{env.p_tag_alerting}}
-#
-#      - name: Setup Java
-#        uses: actions/setup-java@v1
-#        with:
-#          java-version: ${{ matrix.java }}
-#
-#      - name: IT
-#        run: |
-#          release-tools/scripts/setup_runners_service.sh deb --es-nosec
-#          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../alerting/alerting; pwd
-#          ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
-#          
+  Test-ALERTING-NoSec:
+    ###needs: [sign-deb-artifacts]
+    runs-on: [ubuntu-18.04]
+    name: Test-ALERTING-NoSec
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [14]
+    steps:
+      - uses: actions/checkout@v1
+      - name: Required Packages
+        run: ./release-tools/scripts/required_packages.sh
+
+      - name: Retrieve plugin tags 
+        run:  echo "p_tag_alerting=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)" >> $GITHUB_ENV
+
+      - uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/alerting
+          ref: ${{env.p_tag_alerting}}
+
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+
+      - name: IT
+        run: |
+          release-tools/scripts/setup_runners_service.sh deb --es-nosec
+          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../alerting/alerting; pwd
+          ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
+          
 #  Test-SQL-NoSec:
 #    needs: [sign-deb-artifacts]
 #    runs-on: [ubuntu-18.04]
