@@ -5,8 +5,6 @@ on:
   #   - cron: '0 10 * * *'
   repository_dispatch:
     types: [staging-build-deb]
-  push:
-    branches: [sreekarj_deb]
 
 jobs:
   plugin-availability:
@@ -671,7 +669,7 @@ jobs:
           command: npx cypress run
 
   Test-AD-KIBANA:
-    #needs: [sign-deb-artifacts]
+    needs: [sign-deb-artifacts]
     runs-on: [ubuntu-18.04]
     name: Test-AD-KIBANA
     strategy:
