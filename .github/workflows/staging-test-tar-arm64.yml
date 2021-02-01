@@ -1,10 +1,10 @@
-name: Process TAR Artifacts
+name: Test ARM64 TAR Artifacts
 
 on:
   # schedule:
   #   - cron: '0 10 * * *'
   repository_dispatch:
-    types: [staging-build-tar]
+    types: [staging-test-arm64-tar]
 
 
 jobs:
