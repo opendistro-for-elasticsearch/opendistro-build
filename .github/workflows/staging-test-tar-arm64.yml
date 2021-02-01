@@ -4,7 +4,7 @@ on:
   # schedule:
   #   - cron: '0 10 * * *'
   repository_dispatch:
-    types: [staging-test-arm64-tar]
+    types: [staging-test-tar-arm64]
 
 
 jobs:
@@ -68,7 +68,7 @@ jobs:
         with:
           repository: opendistro-for-elasticsearch/index-management
           ref: ${{env.p_tag_ism}}
-      - name: IT
+      - name: Integration Test
         run: |
           ./release-tools/scripts/setup_runners_service.sh zip --es-nosec arm64
           export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../index-management; pwd
@@ -95,7 +95,7 @@ jobs:
         with:
           repository: opendistro-for-elasticsearch/alerting
           ref: ${{env.p_tag_alerting}}
-      - name: IT
+      - name: Integration Test
         run: |
           ./release-tools/scripts/setup_runners_service.sh zip --es-nosec arm64
           export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../alerting/alerting; pwd
@@ -122,7 +122,7 @@ jobs:
         with:
           repository: opendistro-for-elasticsearch/sql
           ref: ${{env.p_tag_sql}}
-      - name: IT
+      - name: Integration Test
         run: |
           ./release-tools/scripts/setup_runners_service.sh zip --es-nosec arm64
           export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../sql; pwd
@@ -149,7 +149,7 @@ jobs:
         with:
           repository: opendistro-for-elasticsearch/k-NN
           ref: ${{env.p_tag_knn}}
-      - name: IT
+      - name: Integration Test
         run: |
           ./release-tools/scripts/setup_runners_service.sh zip --es-nosec arm64
           export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../k-NN; pwd
@@ -176,7 +176,7 @@ jobs:
         with:
           repository: opendistro-for-elasticsearch/anomaly-detection
           ref: ${{env.p_tag_ad}}
-      - name: IT
+      - name: Integration Test
         run: |
           ./release-tools/scripts/setup_runners_service.sh zip --es-nosec arm64
           export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../anomaly-detection; pwd
@@ -203,7 +203,7 @@ jobs:
         with:
           repository: opendistro-for-elasticsearch/sql
           ref: ${{env.p_tag_sql}}
-      - name: IT
+      - name: Integration Test
         run: |
           ./release-tools/scripts/setup_runners_service.sh zip --es arm64
           export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../sql; pwd
@@ -230,7 +230,7 @@ jobs:
         with:
           repository: opendistro-for-elasticsearch/anomaly-detection
           ref: ${{env.p_tag_ad}}
-      - name: IT
+      - name: Integration Test
         run: |
           ./release-tools/scripts/setup_runners_service.sh zip --es arm64
           export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../anomaly-detection; pwd
@@ -257,7 +257,7 @@ jobs:
         with:
           repository: opendistro-for-elasticsearch/alerting
           ref: ${{env.p_tag_alerting}}
-      - name: IT
+      - name: Integration Test
         run: |
           ./release-tools/scripts/setup_runners_service.sh zip --es arm64
           export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../alerting/alerting; pwd

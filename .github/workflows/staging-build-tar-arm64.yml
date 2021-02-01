@@ -4,7 +4,7 @@ on:
   # schedule:
   #   - cron: '0 10 * * *'
   repository_dispatch:
-    types: [staging-build-tar]
+    types: [staging-build-tar-arm64]
 
 jobs:
   plugin-availability:

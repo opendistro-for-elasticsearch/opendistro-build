@@ -23,7 +23,7 @@ if [ "$#" -lt 2 ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]
 then
   echo "Please assign 2 parameters when running this script"
   echo "Example: $0 \$SETUP_DISTRO \$SETUP_ACTION"
-  echo "Example: $0 \"zip | docker | deb | rpm\" \"--es | --es-nosec | --kibana | --kibana-nosec\""
+  echo "Example: $0 \"zip | docker | deb | rpm\" \"--es | --es-nosec | --kibana | --kibana-nosec \" \"ARCHITECTURE (optional)\""
   exit 1
 fi
 
