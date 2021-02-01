@@ -49,7 +49,7 @@ jobs:
 
   Test-ISM-NoSec:
     needs: [Provision-Runners]
-    runs-on: ubuntu-18.04
+    runs-on: [self-hosted, Linux, ARM64, odfe-tar-ism-nosec-arm64]
     name: Test-ISM-NoSec
     strategy:
       fail-fast: false
@@ -84,7 +84,7 @@ jobs:
 
   Test-Alerting-NoSec:
     needs: [Provision-Runners]
-    runs-on: ubuntu-18.04
+    runs-on: [self-hosted, Linux, ARM64, odfe-tar-alerting-nosec-arm64]
     name: Test-Alerting-NoSec
     strategy:
       fail-fast: false
@@ -119,7 +119,7 @@ jobs:
 
   Test-SQL-NoSec:
     needs: [Provision-Runners]
-    runs-on: ubuntu-18.04
+    runs-on: [self-hosted, Linux, ARM64, odfe-tar-sql-nosec-arm64]
     name: Test-SQL-NoSec
     strategy:
       fail-fast: false
@@ -154,7 +154,7 @@ jobs:
           
   Test-KNN-NoSec:
     needs: [Provision-Runners]
-    runs-on: ubuntu-18.04
+    runs-on: [self-hosted, Linux, ARM64, odfe-tar-knn-nosec-arm64]
     name: Test-KNN-NoSec
     strategy:
       fail-fast: false
@@ -189,7 +189,7 @@ jobs:
           
   Test-AD-NoSec:
     needs: [Provision-Runners]
-    runs-on: ubuntu-18.04
+    runs-on: [self-hosted, Linux, ARM64, odfe-tar-ad-nosec-arm64]
     name: Test-AD-NoSec
     strategy:
       fail-fast: false
@@ -224,7 +224,7 @@ jobs:
 
   Test-SQL:
     needs: [Provision-Runners]
-    runs-on: ubuntu-18.04
+    runs-on: [self-hosted, Linux, ARM64, odfe-tar-sql-arm64]
     name: Test-SQL
     strategy:
       fail-fast: false
@@ -259,7 +259,7 @@ jobs:
   
   Test-AD:
     needs: [Provision-Runners]
-    runs-on: ubuntu-18.04
+    runs-on: [self-hosted, Linux, ARM64, odfe-tar-ad-arm64]
     name: Test-AD
     strategy:
       fail-fast: false
@@ -294,7 +294,7 @@ jobs:
   
   Test-ALERTING:
     needs: [Provision-Runners]
-    runs-on: [ubuntu-18.04]
+    runs-on: [self-hosted, Linux, ARM64, odfe-tar-alerting-arm64]
     name: Test-ALERTING
     strategy:
       fail-fast: false
