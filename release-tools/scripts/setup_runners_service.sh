@@ -7,9 +7,10 @@
 #
 # About:         Setup ES/KIBANA for integTests on *NIX based ODFE distros w/wo Security
 #
-# Usage:         ./setup_runners_service.sh $SETUP_DISTRO $SETUP_ACTION
+# Usage:         ./setup_runners_service.sh $SETUP_DISTRO $SETUP_ACTION $ARCHITECTURE
 #                $SETUP_DISTRO: zip | docker | deb | rpm (required)
 #                $SETUP_ACTION: --es | --es-nosec | --kibana | --kibana-nosec (required)
+#                $ARCHITECTURE: arm64 (optional)
 #
 # Requirements:  This script assumes java 14 is already installed on the servers
 #
@@ -18,16 +19,17 @@
 ###############################################################################################
 
 # This script allows users to manually assign parameters
-if [ "$#" -ne 2 ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]
+if [ "$#" -lt 2 ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]
 then
-  echo "Please assign 2 parameters when running this script"
-  echo "Example: $0 \$SETUP_DISTRO \$SETUP_ACTION"
-  echo "Example: $0 \"zip | docker | deb | rpm\" \"--es | --es-nosec | --kibana | --kibana-nosec\""
+  echo "Please assign atleast 2 parameters when running this script"
+  echo "Example: $0 \$SETUP_DISTRO \$SETUP_ACTION \$ARCHITECTURE (optional)"
+  echo "Example: $0 \"zip | docker | deb | rpm\" \"--es | --es-nosec | --kibana | --kibana-nosec \" \"arm64 (optional)\""
   exit 1
 fi
 
 SETUP_DISTRO=$1
 SETUP_ACTION=$2
+ARCHITECTURE="x64"; if [ ! -z "$3" ]; then ARCHITECTURE=$3; fi; echo ARCHITECTURE $ARCHITECTURE
 SETUP_PACKAGES="python3 git unzip wget jq"
 
 echo "install required packages"
@@ -72,8 +74,8 @@ sudo chmod -R 777 /dev/shm
 if [ "$SETUP_DISTRO" = "zip" ]
 then
   mkdir -p $ES_ROOT
-  aws s3 cp s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/odfe/$ES_PACKAGE_NAME.tar.gz . --quiet; echo $?
-  tar -zxf $ES_PACKAGE_NAME.tar.gz -C $ES_ROOT --strip-components 1
+  aws s3 cp s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/odfe/$ES_PACKAGE_NAME-linux-$ARCHITECTURE.tar.gz . --quiet; echo $?
+  tar -zxf $ES_PACKAGE_NAME-linux-$ARCHITECTURE.tar.gz -C $ES_ROOT --strip-components 1
 fi
 
 if [ "$SETUP_DISTRO" = "docker" ]
@@ -226,8 +228,8 @@ then
   if [ "$SETUP_DISTRO" = "zip" ]
   then
     mkdir -p $KIBANA_ROOT
-    aws s3 cp s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/odfe/$KIBANA_PACKAGE_NAME-$OD_VERSION.tar.gz . --quiet; echo $?
-    tar -zxf $KIBANA_PACKAGE_NAME-$OD_VERSION.tar.gz -C $KIBANA_ROOT --strip-components 1
+    aws s3 cp s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/odfe/$KIBANA_PACKAGE_NAME-$OD_VERSION-linux-$ARCHITECTURE.tar.gz . --quiet; echo $?
+    tar -zxf $KIBANA_PACKAGE_NAME-$OD_VERSION-linux-$ARCHITECTURE.tar.gz -C $KIBANA_ROOT --strip-components 1
   elif [ "$SETUP_DISTRO" = "docker" ]
   then
     echo "FROM opendistroforelasticsearch/opendistroforelasticsearch-kibana:$OD_VERSION" >> Dockerfile.kibana
