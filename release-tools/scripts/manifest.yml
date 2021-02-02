@@ -1,26 +1,26 @@
 ---
 versions:
   ES:
-    previous: 7.9.1
-    current: 7.10.0
-    next: 7.10.1
+    previous: 7.10.0
+    current: 7.10.2
+    next: 7.10.3
   ODFE:
-    previous: 1.11.0
-    current: 1.12.0
-    next: 1.12.1
+    previous: 1.12.0
+    current: 1.13.0
+    next: 1.13.1
 
 urls:
   ES: 
-    linux_x64: https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-7.10.0-linux-x86_64.tar.gz
-    linux_arm64: https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-7.10.0-linux-aarch64.tar.gz
-    windows_x64: https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-7.10.0-windows-x86_64.zip
+    linux_x64: https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-7.10.2-linux-x86_64.tar.gz
+    linux_arm64: https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-7.10.2-linux-aarch64.tar.gz
+    windows_x64: https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-7.10.2-windows-x86_64.zip
     windows_arm64: 
     macos_x64:
     macos_arm64:
   KIBANA:
-    linux_x64: https://artifacts.elastic.co/downloads/kibana/kibana-oss-7.10.0-linux-x86_64.tar.gz
-    linux_arm64: https://artifacts.elastic.co/downloads/kibana/kibana-oss-7.10.0-linux-aarch64.tar.gz
-    windows_x64: https://artifacts.elastic.co/downloads/kibana/kibana-oss-7.10.0-windows-x86_64.zip
+    linux_x64: https://artifacts.elastic.co/downloads/kibana/kibana-oss-7.10.2-linux-x86_64.tar.gz
+    linux_arm64: https://artifacts.elastic.co/downloads/kibana/kibana-oss-7.10.2-linux-aarch64.tar.gz
+    windows_x64: https://artifacts.elastic.co/downloads/kibana/kibana-oss-7.10.2-windows-x86_64.zip
     windows_arm64: 
     macos_x64:
     macos_arm64:
