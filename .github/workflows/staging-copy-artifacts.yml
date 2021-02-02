@@ -2,7 +2,7 @@ name: Staging Copy Artifacts
 
 on:
 #  schedule:
-#    - cron: '30 10 * * *' 
+#    - cron: '0 9 * * *' 
   repository_dispatch:
     types: [staging-copy-artifacts]
 
