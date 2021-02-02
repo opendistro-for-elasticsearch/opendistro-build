@@ -157,7 +157,7 @@ echo HOME $HOME
 ls -l ~/.aptly/public/pool/
 ls -l ~/.aptly/public/pool/*/*
 
-echo "Sync rpms back to the repo"
+echo "Sync debs back to the repo"
 #aws s3 sync $REPO_DOWNLOADSDIR/debs ${S3_PROD_BASEURL}downloads/debs  --quiet; echo $?
 aws s3 sync ~/.aptly/public/ ${S3_PROD_BASEURL}staging/apt/ --quiet; echo $?
 aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/debs/*"
