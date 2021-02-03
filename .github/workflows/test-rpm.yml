@@ -61,9 +61,8 @@ jobs:
           rpm_artifact=`ls build/distributions/*.rpm`
           ls -ltr build/distributions/*.rpm
 
-          rpm -qpR build/distributions/opendistroforelasticsearch-1.12.0-linux-x64.rpm
-          #aws s3 cp $rpm_artifact $S3_RELEASE_BASEURL$OD_VERSION/odfe/
-          #echo "RPM creation for ES completed"
+          aws s3 cp $rpm_artifact $S3_RELEASE_BASEURL$OD_VERSION/odfe/
+          echo "RPM creation for ES completed"
 
 #  build-kibana-artifacts:
 #    needs: [plugin-availability]
