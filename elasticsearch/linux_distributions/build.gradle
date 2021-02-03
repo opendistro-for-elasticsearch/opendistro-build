@@ -146,7 +146,15 @@ ospackage {
 buildRpm() {
     //arch = 'NOARCH'
     arch = 'AARCH64'
-    archiveName "${packageName}-${version}-linux-arm64.rpm"
+    //dependsOn 'assemble'
+    finalizedBy 'renameRpm'
+    task renameRpm(type: Copy) {
+        from("$buildDir/distributions")
+        into("$buildDir/distributions")
+        include archiveName
+        rename archiveName, "${packageName}-${version}-linux-arm64.rpm"
+        doLast { delete file("$buildDir/distributions/$archiveName") }
+    }
 }
 
 buildDeb() {
