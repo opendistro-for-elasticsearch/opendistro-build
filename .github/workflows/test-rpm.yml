@@ -24,43 +24,43 @@ jobs:
 #        run: ./release-tools/scripts/required_packages.sh
 #      - name: Run check_plugin scripts
 #        run: release-tools/scripts/check_plugin.sh; exit `cat /tmp/plugin_status.check`
-
-  build-es-artifacts:
-    #needs: [plugin-availability]
-    name: Build ES Artifacts
-    runs-on: ubuntu-18.04
-    container:
-      image: opendistroforelasticsearch/multijava08101112-git:v1
-
-    steps:
-      - uses: actions/checkout@v1
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-      - name: Required Packages
-        run: ./release-tools/scripts/required_packages.sh
-      - name: Build rpm
-        run: |
-          #!/bin/bash -x
-          set -e
-          set -u
-          export JAVA_HOME=/openjdk12
-          export PATH=$JAVA_HOME:$PATH
-          OD_VERSION=`./release-tools/scripts/version-info.sh --od`
-          S3_RELEASE_BASEURL=`yq eval '.urls.ODFE.releases' release-tools/scripts/manifest.yml`
-          cd elasticsearch/linux_distributions
-          #apt update -y
-          #apt install jq python -y
-          ./gradlew buildRpm --console=plain -Dbuild.snapshot=false -b ./build.gradle
-          rpm_artifact=`ls build/distributions/*.rpm`
-          ls -ltr build/distributions/*.rpm
-
-          aws s3 cp $rpm_artifact $S3_RELEASE_BASEURL$OD_VERSION/odfe/
-          echo "RPM creation for ES completed"
-
+#
+#  build-es-artifacts:
+#    #needs: [plugin-availability]
+#    name: Build ES Artifacts
+#    runs-on: ubuntu-18.04
+#    container:
+#      image: opendistroforelasticsearch/multijava08101112-git:v1
+#
+#    steps:
+#      - uses: actions/checkout@v1
+#      - name: Configure AWS Credentials
+#        uses: aws-actions/configure-aws-credentials@v1
+#        with:
+#          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
+#          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
+#          aws-region: us-east-1
+#      - name: Required Packages
+#        run: ./release-tools/scripts/required_packages.sh
+#      - name: Build rpm
+#        run: |
+#          #!/bin/bash -x
+#          set -e
+#          set -u
+#          export JAVA_HOME=/openjdk12
+#          export PATH=$JAVA_HOME:$PATH
+#          OD_VERSION=`./release-tools/scripts/version-info.sh --od`
+#          S3_RELEASE_BASEURL=`yq eval '.urls.ODFE.releases' release-tools/scripts/manifest.yml`
+#          cd elasticsearch/linux_distributions
+#          #apt update -y
+#          #apt install jq python -y
+#          ./gradlew buildRpm --console=plain -Dbuild.snapshot=false -b ./build.gradle
+#          rpm_artifact=`ls build/distributions/*.rpm`
+#          ls -ltr build/distributions/*.rpm
+#
+#          aws s3 cp $rpm_artifact $S3_RELEASE_BASEURL$OD_VERSION/odfe/
+#          echo "RPM creation for ES completed"
+#
 #  build-kibana-artifacts:
 #    needs: [plugin-availability]
 #    name: Build Kibana Artifacts
@@ -83,36 +83,33 @@ jobs:
 #      - name: Build Kibana rpm
 #        run: apt install -y jq; ./kibana/linux_distributions/opendistro-kibana-build.sh rpm
 #
-#  signing-artifacts:
-#    name: Sign Yum
-#    runs-on: [ubuntu-16.04]
-#    container:
-#      image: amazonlinux
-#    needs: [build-es-artifacts, build-kibana-artifacts]
-#    steps:
-#      - uses: actions/checkout@v1
-#
-#      - name: Configure AWS Credentials
-#        uses: aws-actions/configure-aws-credentials@v1
-#        with:
-#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#          aws-region: us-east-1
-#
-#      - name: Required Packages
-#        run: |
-#          yum repolist -y
-#          yum install -y sudo
-#          ./release-tools/scripts/required_packages.sh
-#
-#      - name: Sign And Upload Artifacts
-#        env:
-#          passphrase: ${{ secrets.RPM_SIGN_PASSPHRASE }}
-#        run: |
-#          #!/bin/bash
-#          set -e
-#          elasticsearch/linux_distributions/rpm-signing.sh $passphrase
-#
+  signing-artifacts:
+    name: Sign Yum
+    runs-on: [ubuntu-16.04]
+    container:
+      image: amazonlinux
+    #needs: [build-es-artifacts, build-kibana-artifacts]
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Required Packages
+        run: ./release-tools/scripts/required_packages.sh
+
+      - name: Sign And Upload Artifacts
+        env:
+          passphrase: ${{ secrets.RPM_SIGN_PASSPHRASE }}
+        run: |
+          #!/bin/bash
+          set -e
+          elasticsearch/linux_distributions/rpm-signing.sh $passphrase
+
 #  Build-ES-and-Kibana-Centos-Docker:
 #    needs: [signing-artifacts]
 #    runs-on: [ubuntu-18.04]
