@@ -138,13 +138,15 @@ ospackage {
 }
 
 buildRpm() {
-    arch = 'NOARCH'
-    archiveName "${packageName}-${version}.rpm"
+    //arch = 'NOARCH'
+    arch = 'x86_64'
+    archiveName "${packageName}-${version}-linux-x64.rpm"
 }
 
 buildDeb() {
-    arch = 'all'
-    archiveName "${packageName}-${version}.deb"
+    //arch = 'all'
+    arch = 'amd64'
+    archiveName "${packageName}-${version}-linux-x64.deb"
 }
 
 task buildPackages(type: GradleBuild) {
