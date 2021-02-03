@@ -138,11 +138,6 @@ ospackage {
     '''.stripIndent().replace('\n', ' ').trim()
 }
 
-//buildRpm() {
-//    //arch = 'NOARCH'
-//    arch = 'x86_64'
-//    archiveName "${packageName}-${version}-linux-x64.rpm"
-//}
 
 buildRpm() {
     //arch = 'NOARCH'
@@ -175,7 +170,15 @@ buildRpm() {
 buildDeb() {
     //arch = 'all'
     arch = 'amd64'
-    archiveName "${packageName}-${version}-linux-x64.deb"
+    //dependsOn 'assemble'
+    finalizedBy 'renameDeb'
+    task renameDeb(type: Copy) {
+        from("$buildDir/distributions")
+        into("$buildDir/distributions")
+        include archiveName
+        rename archiveName, "${packageName}-${version}-linux-x64.deb"
+        doLast { delete file("$buildDir/distributions/$archiveName") }
+    }
 }
 
 task buildPackages(type: GradleBuild) {
