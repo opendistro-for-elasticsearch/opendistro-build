@@ -55,15 +55,12 @@
         }
   
     },
-
-    "Conditions" : {
-        "Architecture" : {"Fn::Equals" : [{"Ref" : "architecture"}, "ARM64"]}
-    },
+    
     "Mappings" : {
         "DistributionMap" : {
-          "RPM" : {"Fn::If": ["Architecture", {"amiId" : "ami-05c53e3ce52089c5c"}, {"amiId" : "ami-0e999cbd62129e3b1"}]},
-          "TAR" : {"Fn::If": ["Architecture", {"amiId" : "ami-03c1b544a7566b3e5"}, {"amiId" : "ami-07dd19a7900a1f049"}]},
-          "DEB" : {"Fn::If": ["Architecture", {"amiId" : "ami-03c1b544a7566b3e5"}, {"amiId" : "ami-07dd19a7900a1f049"}]}
+          "RPM" : {"ARM64": "ami-05c53e3ce52089c5c", "X64" : "ami-0e999cbd62129e3b1"},
+          "TAR" : {"ARM64": "ami-03c1b544a7566b3e5", "X64" : "ami-07dd19a7900a1f049"},
+          "DEB" : {"ARM64": "ami-03c1b544a7566b3e5", "X64" : "ami-07dd19a7900a1f049"}
         }
       },
 
@@ -102,7 +99,7 @@
         "asgLaunchConfig":{
               "Type": "AWS::AutoScaling::LaunchConfiguration",
               "Properties": {
-                  "ImageId": { "Fn::FindInMap" : [ "DistributionMap", { "Ref" : "distribution" }, "amiId"]},
+                  "ImageId": { "Fn::FindInMap" : [ "DistributionMap", { "Ref" : "distribution" }, {"Ref" : "architecture"}]},
                   "InstanceType": "m5a.large",
                   "IamInstanceProfile": "odfe_testing_cluster_role",
                   "KeyName": {"Ref" : "keypair"},

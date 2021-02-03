@@ -34,7 +34,7 @@ jobs:
 
       - name: Install required packages
         run: ./release-tools/scripts/required_packages.sh
-        
+
       - name: Creating cluster with static domain name
         run: |
             #!/bin/bash
@@ -44,7 +44,9 @@ jobs:
             function stack_setup() {
               DISTRIBUTION_TYPE=$1
               SECURITY=$2
-              ARCHITECTURE="X64"; if [ ! -z "$3" ]; then ARCHITECTURE=$3; fi; echo ARCHITECTURE $ARCHITECTURE
+              ARCHITECTURE=$3
+              echo "ARCHITECTURE=$ARCHITECTURE"
+              echo "DISTRIBUTION_TYPE=$DISTRIBUTION_TYPE"
 
               existingStacks=`aws cloudformation list-stacks --query 'StackSummaries[*].StackName' --output text`
 
@@ -61,7 +63,7 @@ jobs:
               
               if [$ARCHITECTURE = "ARM64"];
               then
-                release-tools/scripts/userdata.sh $1 $2 ARM64
+                release-tools/scripts/userdata.sh $1 $2 arm64
                 ls-ltr
 
                 # Getting target groups for ARM64 arch for ELB mapping
