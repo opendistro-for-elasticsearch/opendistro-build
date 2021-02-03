@@ -32,6 +32,9 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_TESTING_SECRET_ACCESS_KEY }}
           aws-region: us-west-2
 
+      - name: Install required packages
+        run: ./release-tools/scripts/required_packages.sh
+        
       - name: Creating cluster with static domain name
         run: |
             #!/bin/bash
