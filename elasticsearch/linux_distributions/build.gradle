@@ -137,10 +137,16 @@ ospackage {
     '''.stripIndent().replace('\n', ' ').trim()
 }
 
+//buildRpm() {
+//    //arch = 'NOARCH'
+//    arch = 'x86_64'
+//    archiveName "${packageName}-${version}-linux-x64.rpm"
+//}
+
 buildRpm() {
     //arch = 'NOARCH'
-    arch = 'x86_64'
-    archiveName "${packageName}-${version}-linux-x64.rpm"
+    arch = 'aarch64'
+    archiveName "${packageName}-${version}-linux-arm64.rpm"
 }
 
 buildDeb() {
