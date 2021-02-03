@@ -2,6 +2,7 @@
 
 set -e
 
+OLDIFS=$IFS
 REPO_ROOT=`git rev-parse --show-toplevel`
 ROOT=`dirname $(realpath $0)`; echo $ROOT; cd $ROOT
 MANIFEST_FILE=$REPO_ROOT/release-tools/scripts/manifest.yml
@@ -94,11 +95,22 @@ for plugin_dir in `ls $REPO_DOWNLOADSDIR/debs`
 do
   echo plugin_dir $plugin_dir
   pkg=`(ls $REPO_DEBSDIR | grep -E "$plugin_dir-[.0-9]+") || echo None`
+  pkg_num=`echo $pkg | wc -w`
   if [ "$pkg" != "None" ]
   then
     echo "####################################"
-    echo move $pkg
-    mv -v $REPO_DEBSDIR/$pkg $REPO_DOWNLOADSDIR/debs/$plugin_dir/
+    if [ "$pkg_num" -gt 1 ]
+    then
+      IFS=$OLDIFS
+      for pkg_temp in `echo $pkg`
+      do
+        echo movemul $pkg_temp
+        mv -v $REPO_DEBSDIR/$pkg_temp $REPO_DOWNLOADSDIR/debs/$plugin_dir/
+      done
+    else
+      echo move $pkg
+      mv -v $REPO_DEBSDIR/$pkg $REPO_DOWNLOADSDIR/debs/$plugin_dir/
+    fi
   fi
 done
 
