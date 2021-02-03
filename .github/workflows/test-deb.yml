@@ -82,7 +82,7 @@ jobs:
 #        run: apt install -y jq; ./kibana/linux_distributions/opendistro-kibana-build.sh deb
 
   sign-deb-artifacts:
-    needs: [build-es-artifacts, build-kibana-artifacts]
+    #needs: [build-es-artifacts, build-kibana-artifacts]
     runs-on: [ubuntu-18.04]
     container:
       image: opendistroforelasticsearch/base-ubuntu
