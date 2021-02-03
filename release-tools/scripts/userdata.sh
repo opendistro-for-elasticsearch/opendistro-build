@@ -71,7 +71,8 @@ cat <<- EOF > $REPO_ROOT/userdata_$1.sh
 #installing ODFE
 sudo -i
 sudo sysctl -w vm.max_map_count=262144
-sudo apt-get install -y zip
+sudo apt-get update
+sudo apt install zip awscli -y 
 wget -qO - https://d3g5vo6xdbdb9a.cloudfront.net/GPG-KEY-opendistroforelasticsearch | sudo apt-key add -
 echo "deb https://d3g5vo6xdbdb9a.cloudfront.net/staging/apt stable main" | sudo tee -a /etc/apt/sources.list.d/opendistroforelasticsearch.list
 wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$ES_VERSION-amd64.deb
@@ -99,10 +100,11 @@ cat <<- EOF > $REPO_ROOT/userdata_$1.sh
 #!/bin/bash
 echo "*   hard  nofile  65535" | tee --append /etc/security/limits.conf
 echo "*   soft  nofile  65535" | tee --append /etc/security/limits.conf
-sudo apt-get install -y zip
+sudo apt-get update
+sudo apt install zip awscli -y 
 ulimit -n 65535
-aws s3 cp s3://$S3_RELEASE_BASEURL$OD_VERSION/odfe/opendistroforelasticsearch-$OD_VERSION-linux-$ARCHITECTURE.tar.gz .
-tar zxf opendistroforelasticsearch-linux-$OD_VERSION-$ARCHITECTURE.tar.gz
+aws s3 cp $S3_RELEASE_BASEURL$OD_VERSION/odfe/opendistroforelasticsearch-$OD_VERSION-linux-$ARCHITECTURE.tar.gz .
+tar zxf opendistroforelasticsearch-$OD_VERSION-linux-$ARCHITECTURE.tar.gz
 chown -R ubuntu:ubuntu opendistroforelasticsearch-$OD_VERSION
 cd opendistroforelasticsearch-$OD_VERSION/
 
@@ -117,7 +119,7 @@ sudo sysctl -w vm.max_map_count=262144
 
 #Installing kibana
 cd /
-aws s3 cp s3://$S3_RELEASE_BASEURL$OD_VERSION/odfe/opendistroforelasticsearch-kibana-$OD_VERSION-linux-$ARCHITECTURE.tar.gz .
+aws s3 cp $S3_RELEASE_BASEURL$OD_VERSION/odfe/opendistroforelasticsearch-kibana-$OD_VERSION-linux-$ARCHITECTURE.tar.gz .
 tar zxf opendistroforelasticsearch-kibana-$OD_VERSION-linux-$ARCHITECTURE.tar.gz
 chown -R ubuntu:ubuntu opendistroforelasticsearch-kibana
 cd opendistroforelasticsearch-kibana/

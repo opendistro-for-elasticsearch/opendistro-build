@@ -52,7 +52,7 @@ jobs:
 
               for i in $existingStacks
               do
-                  if [ $i == $stackName ]
+                  if [ $i == $stackName ];
                   then
                       echo "Stack already exists! Deleting the old stack"
                       aws cloudformation delete-stack --stack-name $stackName
@@ -64,7 +64,7 @@ jobs:
               if [ $ARCHITECTURE == "ARM64" ];
               then
                 release-tools/scripts/userdata.sh $1 $2 arm64
-                ls-ltr
+                ls -ltr
 
                 # Getting target groups for ARM64 arch for ELB mapping
                 esTargetGroup=`aws elbv2 describe-target-groups --names ES-${DISTRIBUTION_TYPE}ARM64-SECURITY-$SECURITY --query TargetGroups[*].TargetGroupArn --output text`
@@ -98,7 +98,7 @@ jobs:
               sleep 60
             }
 
-            if ${{ github.event_name == 'repository_dispatch' }}
+            if ${{ github.event_name == 'repository_dispatch' }};
             then
               DISTRIBUTION_TYPE=`echo ${{github.event.client_payload.distribution}} | tr [:lower:] [:upper:]`
               SECURITY=`echo ${{github.event.client_payload.security}} | tr [:lower:] [:upper:]`
