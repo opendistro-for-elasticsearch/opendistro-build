@@ -61,7 +61,7 @@ jobs:
                   fi
               done
               
-              if [$ARCHITECTURE == "ARM64"];
+              if [ $ARCHITECTURE == "ARM64" ];
               then
                 release-tools/scripts/userdata.sh $1 $2 arm64
                 ls-ltr

@@ -27,7 +27,7 @@ MANIFEST_FILE=$REPO_ROOT/release-tools/scripts/manifest.yml
 S3_RELEASE_BASEURL=`yq eval '.urls.ODFE.releases' $MANIFEST_FILE`
 echo $ES_VERSION $OD_VERSION
 
-if [ "$#" -ne 2 ] || [ -z "$1" ] || [ -z "$2" ]
+if [ "$#" -lt 2 ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]
 then
     echo "Please assign atleast 2 parameters when running this script"
     echo "Format for dispatch event: \"client_payload\": {
