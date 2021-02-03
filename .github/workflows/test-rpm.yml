@@ -5,8 +5,8 @@ on:
   #   - cron: '0 10 * * *'
   repository_dispatch:
     types: [staging-build-rpm]
-  #push:
-  #  branches: [deb-rpm-arm64-V313743037]
+  push:
+    branches: [deb-rpm-arm64-V313743037]
 
 jobs:
 #  plugin-availability:
