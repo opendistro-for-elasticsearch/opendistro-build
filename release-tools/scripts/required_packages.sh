@@ -2,14 +2,21 @@
 
 ARCH=`uname -p | tr '[:upper:]' '[:lower:]'`; echo $ARCH
 PLATFORM=`uname -s | tr '[:upper:]' '[:lower:]'`; echo $PLATFORM
-DEB_PKGS="sudo curl wget unzip tar jq python python3 git awscli"
-RPM_PKGS="sudo curl wget unzip tar jq python python3 git awscli"
+DEB_PKGS="curl wget unzip tar jq python python3 git awscli"
+RPM_PKGS="curl wget unzip tar jq python python3 git awscli"
+USER=`whoami`
 
 echo "This script is to installed the required packages for GitHub Runners"
 
 # Install from package managers
-sudo apt update || sudo yum repolist
-sudo apt install -y $DEB_PKGS || sudo yum install -y $RPM_PKGS
+if [ "$USER" = "root" ]
+then
+  apt update -y || yum repolist
+  apt install -y $DEB_PKGS || yum install -y $RPM_PKGS
+else
+  sudo apt update -y || sudo yum repolist
+  sudo apt install -y $DEB_PKGS || sudo yum install -y $RPM_PKGS
+fi
 
 # Install from repositories
 

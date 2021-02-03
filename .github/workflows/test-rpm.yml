@@ -41,10 +41,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
       - name: Required Packages
-        run: |
-          apt-get update
-          apt-get install sudo -y
-          ./release-tools/scripts/required_packages.sh
+        run: ./release-tools/scripts/required_packages.sh
       - name: Build rpm
         run: |
           #!/bin/bash -x
