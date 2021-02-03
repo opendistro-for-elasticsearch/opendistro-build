@@ -145,7 +145,7 @@ ospackage {
 
 buildRpm() {
     //arch = 'NOARCH'
-    arch = 'aarch64'
+    arch = 'AARCH64'
     archiveName "${packageName}-${version}-linux-arm64.rpm"
 }
 
