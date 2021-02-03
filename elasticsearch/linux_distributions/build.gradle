@@ -146,17 +146,31 @@ ospackage {
 
 buildRpm() {
     //arch = 'NOARCH'
-    arch = 'AARCH64'
+    arch = 'X86_64'
     //dependsOn 'assemble'
     finalizedBy 'renameRpm'
     task renameRpm(type: Copy) {
         from("$buildDir/distributions")
         into("$buildDir/distributions")
         include archiveName
-        rename archiveName, "${packageName}-${version}-linux-arm64.rpm"
+        rename archiveName, "${packageName}-${version}-linux-x64.rpm"
         doLast { delete file("$buildDir/distributions/$archiveName") }
     }
 }
+
+//buildRpm() {
+//    //arch = 'NOARCH'
+//    arch = 'AARCH64'
+//    //dependsOn 'assemble'
+//    finalizedBy 'renameRpm'
+//    task renameRpm(type: Copy) {
+//        from("$buildDir/distributions")
+//        into("$buildDir/distributions")
+//        include archiveName
+//        rename archiveName, "${packageName}-${version}-linux-arm64.rpm"
+//        doLast { delete file("$buildDir/distributions/$archiveName") }
+//    }
+//}
 
 buildDeb() {
     //arch = 'all'
