@@ -5,12 +5,17 @@ name: Create testing cluster with static domain
 # Example: client_payload: { "distribution": "deb", "security": "disable" }
 # For scheduled workflow run all 6 combinations of the testing domains will be created
 # NOTE: This workflow is based on the static ELBs pre-configured in the AWS account
+#       The load balancers are already mapped to the right target groups. When you run this workflow they create EC2s and map them to
+#       right target groups.
 
 on:
   # schedule:
   #   - cron: '0 11 * * *'
   repository_dispatch:
     types: [test-cluster-static-domain-set-up]
+  push:
+    branches:
+      - "arm-test"
 
 jobs:
   Create-Cluster:
@@ -34,8 +39,10 @@ jobs:
 
             #Function to create stack
             function stack_setup() {
-              distribution_type=$1
-              security=$2
+              DISTRIBUTION_TYPE=$1
+              SECURITY=$2
+              ARCHITECTURE="X64"; if [ ! -z "$3" ]; then ARCHITECTURE=$3; fi; echo ARCHITECTURE $ARCHITECTURE
+
               existingStacks=`aws cloudformation list-stacks --query 'StackSummaries[*].StackName' --output text`
 
               for i in $existingStacks
@@ -49,20 +56,32 @@ jobs:
                   fi
               done
               
-              release-tools/scripts/userdata.sh $1 $2
-              ls -ltr
+              if [$ARCHITECTURE = "ARM64"];
+              then
+                release-tools/scripts/userdata.sh $1 $2 ARM64
+                ls-ltr
 
-              # Getting target groups for ELB mapping
-              esTargetGroup=`aws elbv2 describe-target-groups --names ES-$distribution_type-SECURITY-$security --query TargetGroups[*].TargetGroupArn --output text`
-              kibanaTargetGroup=`aws elbv2 describe-target-groups --names KIBANA-$distribution_type-SECURITY-$security --query TargetGroups[*].TargetGroupArn --output text`
-              paTargetGroup=`aws elbv2 describe-target-groups --names PA-$distribution_type-SECURITY-$security --query TargetGroups[*].TargetGroupArn --output text`
-  
+                # Getting target groups for ARM64 arch for ELB mapping
+                esTargetGroup=`aws elbv2 describe-target-groups --names ES-${DISTRIBUTION_TYPE}ARM64-SECURITY-$SECURITY --query TargetGroups[*].TargetGroupArn --output text`
+                kibanaTargetGroup=`aws elbv2 describe-target-groups --names KIBANA-${DISTRIBUTION_TYPE}ARM64-SECURITY-$SECURITY --query TargetGroups[*].TargetGroupArn --output text`
+                paTargetGroup=`aws elbv2 describe-target-groups --names PA-${DISTRIBUTION_TYPE}ARM64-SECURITY-$SECURITY --query TargetGroups[*].TargetGroupArn --output text`
+              else
+                release-tools/scripts/userdata.sh $1 $2
+                ls -ltr
+
+                # Getting target groups for ELB mapping
+                esTargetGroup=`aws elbv2 describe-target-groups --names ES-$DISTRIBUTION_TYPE-SECURITY-$SECURITY --query TargetGroups[*].TargetGroupArn --output text`
+                kibanaTargetGroup=`aws elbv2 describe-target-groups --names KIBANA-$DISTRIBUTION_TYPE-SECURITY-$SECURITY --query TargetGroups[*].TargetGroupArn --output text`
+                paTargetGroup=`aws elbv2 describe-target-groups --names PA-$DISTRIBUTION_TYPE-SECURITY-$SECURITY --query TargetGroups[*].TargetGroupArn --output text`
+              fi
+              
               echo "Creating $stackName stack"
               aws cloudformation create-stack --stack-name $stackName \
               --template-body file://release-tools/templates/odfe-testing-cluster-static-domain-template.json \
-              --parameters ParameterKey=userdata,ParameterValue=$(base64 -w0 userdata_$distribution_type.sh) \
-              ParameterKey=distribution,ParameterValue=$distribution_type \
-              ParameterKey=security,ParameterValue=$security \
+              --parameters ParameterKey=userdata,ParameterValue=$(base64 -w0 userdata_$DISTRIBUTION_TYPE.sh) \
+              ParameterKey=distribution,ParameterValue=$DISTRIBUTION_TYPE \
+              ParameterKey=architecture,ParameterValue=$ARCHITECTURE \
+              ParameterKey=security,ParameterValue=$SECURITY \
               ParameterKey=ODFESecurityGroup,ParameterValue=sg-050990cf314e66320 \
               ParameterKey=keypair,ParameterValue=odfe-testing-cluster \
               ParameterKey=esTargetGroup,ParameterValue=$esTargetGroup \
@@ -76,21 +95,35 @@ jobs:
 
             if ${{ github.event_name == 'repository_dispatch' }}
             then
-              distribution_type=`echo ${{github.event.client_payload.distribution}} | tr [:lower:] [:upper:]`
-              security=`echo ${{github.event.client_payload.security}} | tr [:lower:] [:upper:]`
-              stackName=ODFE-$distribution_type-SECURITY-$security
+              DISTRIBUTION_TYPE=`echo ${{github.event.client_payload.distribution}} | tr [:lower:] [:upper:]`
+              SECURITY=`echo ${{github.event.client_payload.security}} | tr [:lower:] [:upper:]`
+              ARCHITECTURE=`echo ${{github.event.client_payload.architecture}} | tr [:lower:] [:upper:]`
+              stackName=ODFE-$DISTRIBUTION_TYPE-$ARCHITECTURE-SECURITY-$SECURITY
               echo $stackName
-              stack_setup $distribution_type $security
-            elif ${{ github.event_name == 'schedule' }}
+              stack_setup $DISTRIBUTION_TYPE $SECURITY $ARCHITECTURE
+            elif ${{ github.event_name == 'schedule' }} || ${{ github.event_name == 'push' }}
             then
-              for distribution_type in RPM DEB TAR
+              # for DISTRIBUTION_TYPE in RPM DEB TAR
+              # do
+              #   for SECURITY in ENABLE DISABLE
+              #   do
+              #     stackName=ODFE-$DISTRIBUTION_TYPE-$ARCHITECTURE-SECURITY-$SECURITY
+              #     echo $stackName
+              #     stack_setup $DISTRIBUTION_TYPE $SECURITY
+              #     rm userdata_$DISTRIBUTION_TYPE.sh
+              #   done
+              # done
+              for DISTRIBUTION_TYPE in TAR
               do
-                for security in ENABLE DISABLE
+                for SECURITY in ENABLE DISABLE
                 do
-                  stackName=ODFE-$distribution_type-SECURITY-$security
-                  echo $stackName
-                  stack_setup $distribution_type $security
-                  rm userdata_$distribution_type.sh
+                  for ARCHITECTURE in X64 ARM64
+                  do
+                    stackName=ODFE-$DISTRIBUTION_TYPE-$ARCHITECTURE-SECURITY-$SECURITY
+                    echo $stackName
+                    stack_setup $DISTRIBUTION_TYPE $SECURITY $ARCHITECTURE
+                    rm userdata_$DISTRIBUTION_TYPE.sh
+                  done
                 done
               done
             fi

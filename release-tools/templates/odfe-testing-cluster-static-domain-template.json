@@ -14,7 +14,13 @@
             "Type": "String",
             "Description": "Testing distribution name (RPM/DEB/TAR)",
             "Default" : "RPM",
-            "AllowedValues" : ["RPM", "DEB", "TAR"]
+            "AllowedValues" : ["RPM", "DEB", "TAR", "TARARM64"]
+        },
+        "architecture":{
+            "Type": "String",
+            "Description": "Architecture to be used",
+            "Default" : "X64",
+            "AllowedValues" : ["X64","ARM64"]
         },
 
         "security":{
@@ -50,11 +56,14 @@
   
     },
 
+    "Conditions" : {
+        "Architecture" : {"Fn::Equals" : [{"Ref" : "architecture"}, "ARM64"]}
+    },
     "Mappings" : {
         "DistributionMap" : {
-          "RPM" : { "amiId" : "ami-01ce4793a2f45922e" },
-          "TAR" : { "amiId" : "ami-07a29e5e945228fa1" },
-          "DEB" : { "amiId" : "ami-07a29e5e945228fa1" }
+          "RPM" : {"Fn::If": ["Architecture", {"amiId" : "ami-05c53e3ce52089c5c"}, {"amiId" : "ami-0e999cbd62129e3b1"}]},
+          "TAR" : {"Fn::If": ["Architecture", {"amiId" : "ami-03c1b544a7566b3e5"}, {"amiId" : "ami-07dd19a7900a1f049"}]},
+          "DEB" : {"Fn::If": ["Architecture", {"amiId" : "ami-03c1b544a7566b3e5"}, {"amiId" : "ami-07dd19a7900a1f049"}]}
         }
       },
 

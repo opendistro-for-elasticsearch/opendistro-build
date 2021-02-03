@@ -10,34 +10,36 @@
 #
 #                In order to set-up domains, EC2 needs to have ES and Kibana running, 
 #                hence this script will act as userdata input to install and configure 
-#                the necessary services while installing the EC2 via AutoScaling Groups
+#                the necessary services while installing the EC2 via Launch configurations
 #
-# Usage:         ./userdata.sh $distribution $security
+# Usage:         ./userdata.sh $distribution $security $architecture
 #                $distribution: TAR | DEB | RPM (required)
 #                $security: ENABLE | DISABLE (required)
+#                $architecture: arm64 (optional defaults to x64)
 #
-# Starting Date: 2020-06-24
-# Modified Date: 2020-07-30
 ###############################################################################################
 
 set -e
 REPO_ROOT=`git rev-parse --show-toplevel`
-ES_VER=`$REPO_ROOT/release-tools/scripts/version-info.sh --es`
-ODFE_VER=`$REPO_ROOT/release-tools/scripts/version-info.sh --od`
-echo $ES_VER $ODFE_VER
+ES_VERSION=`$REPO_ROOT/release-tools/scripts/version-info.sh --es`
+OD_VERSION=`$REPO_ROOT/release-tools/scripts/version-info.sh --od`
+MANIFEST_FILE=$REPO_ROOT/release-tools/scripts/manifest.yml
+S3_RELEASE_BASEURL=`yq eval '.urls.ODFE.releases' $MANIFEST_FILE`
+echo $ES_VERSION $OD_VERSION
 
 if [ "$#" -ne 2 ] || [ -z "$1" ] || [ -z "$2" ]
 then
-    echo "Please assign 2 parameters when running this script"
+    echo "Please assign atleast 2 parameters when running this script"
     echo "Format for dispatch event: \"client_payload\": {
 		\"distribution\" : \"rpm\",
 		\"security\" : \"enable\"
 	}"
     echo "Example: $0 \"RPM\" \"ENABLE\""
-    echo "Example: $0 \"DEB\" \"DISABLE\""
+    echo "Example: $0 \"DEB\" \"DISABLE\" \"ARM64\""
     exit 1
 fi
 
+ARCHITECTURE="x64"; if [ ! -z "$3" ]; then ARCHITECTURE=$3; fi; echo ARCHITECTURE $ARCHITECTURE
 ###### RPM package with Security enabled ######
 if [ "$1" = "RPM" ]
 then
@@ -45,17 +47,17 @@ cat <<- EOF > $REPO_ROOT/userdata_$1.sh
 #!/bin/bash
 sudo -i
 sudo curl https://d3g5vo6xdbdb9a.cloudfront.net/yum/staging-opendistroforelasticsearch-artifacts.repo -o /etc/yum.repos.d/staging-opendistroforelasticsearch-artifacts.repo
-sudo yum install -y opendistroforelasticsearch-$ODFE_VER
+sudo yum install -y opendistroforelasticsearch-$OD_VERSION
 sudo sysctl -w vm.max_map_count=262144
 echo "node.name: init-master" >> /etc/elasticsearch/elasticsearch.yml
-echo "cluster.name: odfe-$ODFE_VER-rpm-auth" >> /etc/elasticsearch/elasticsearch.yml
+echo "cluster.name: odfe-$OD_VERSION-rpm-auth" >> /etc/elasticsearch/elasticsearch.yml
 echo "network.host: 0.0.0.0" >> /etc/elasticsearch/elasticsearch.yml
 echo "cluster.initial_master_nodes: [\"init-master\"]" >> /etc/elasticsearch/elasticsearch.yml
 echo "webservice-bind-host = 0.0.0.0" >> /usr/share/elasticsearch/plugins/opendistro_performance_analyzer/pa_config/performance-analyzer.properties
 
 
 # Installing kibana
-sudo yum install -y opendistroforelasticsearch-kibana-$ODFE_VER
+sudo yum install -y opendistroforelasticsearch-kibana-$OD_VERSION
 echo "server.host: 0.0.0.0" >> /etc/kibana/kibana.yml
 
 EOF
@@ -72,13 +74,13 @@ sudo sysctl -w vm.max_map_count=262144
 sudo apt-get install -y zip
 wget -qO - https://d3g5vo6xdbdb9a.cloudfront.net/GPG-KEY-opendistroforelasticsearch | sudo apt-key add -
 echo "deb https://d3g5vo6xdbdb9a.cloudfront.net/staging/apt stable main" | sudo tee -a /etc/apt/sources.list.d/opendistroforelasticsearch.list
-wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$ES_VER-amd64.deb
-sudo dpkg -i elasticsearch-oss-$ES_VER-amd64.deb
+wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$ES_VERSION-amd64.deb
+sudo dpkg -i elasticsearch-oss-$ES_VERSION-amd64.deb
 sudo apt-get -y update
 sudo apt install -y opendistroforelasticsearch
 echo "node.name: init-master" >> /etc/elasticsearch/elasticsearch.yml
 echo "cluster.initial_master_nodes: [\"init-master\"]" >> /etc/elasticsearch/elasticsearch.yml
-echo "cluster.name: odfe-$ODFE_VER-deb-auth" >> /etc/elasticsearch/elasticsearch.yml
+echo "cluster.name: odfe-$OD_VERSION-deb-auth" >> /etc/elasticsearch/elasticsearch.yml
 echo "network.host: 0.0.0.0" >> /etc/elasticsearch/elasticsearch.yml
 echo "webservice-bind-host = 0.0.0.0" >> /usr/share/elasticsearch/plugins/opendistro_performance_analyzer/pa_config/performance-analyzer.properties
 
@@ -99,24 +101,24 @@ echo "*   hard  nofile  65535" | tee --append /etc/security/limits.conf
 echo "*   soft  nofile  65535" | tee --append /etc/security/limits.conf
 sudo apt-get install -y zip
 ulimit -n 65535
-wget https://d3g5vo6xdbdb9a.cloudfront.net/downloads/tarball/opendistro-elasticsearch/opendistroforelasticsearch-$ODFE_VER.tar.gz
-tar zxf opendistroforelasticsearch-$ODFE_VER.tar.gz
-chown -R ubuntu:ubuntu opendistroforelasticsearch-$ODFE_VER
-cd opendistroforelasticsearch-$ODFE_VER/
+aws s3 cp s3://$S3_RELEASE_BASEURL$OD_VERSION/odfe/opendistroforelasticsearch-$OD_VERSION-linux-$ARCHITECTURE.tar.gz .
+tar zxf opendistroforelasticsearch-linux-$OD_VERSION-$ARCHITECTURE.tar.gz
+chown -R ubuntu:ubuntu opendistroforelasticsearch-$OD_VERSION
+cd opendistroforelasticsearch-$OD_VERSION/
 
 echo "node.name: init-master" >> config/elasticsearch.yml
 echo "cluster.initial_master_nodes: [\"init-master\"]" >> config/elasticsearch.yml
-echo "cluster.name: odfe-$ODFE_VER-tarball-auth" >> config/elasticsearch.yml
+echo "cluster.name: odfe-$OD_VERSION-tarball-auth" >> config/elasticsearch.yml
 echo "network.host: 0.0.0.0" >> config/elasticsearch.yml
-echo "webservice-bind-host = 0.0.0.0" >> /opendistroforelasticsearch-$ODFE_VER/plugins/opendistro_performance_analyzer/pa_config/performance-analyzer.properties
+echo "webservice-bind-host = 0.0.0.0" >> /opendistroforelasticsearch-$OD_VERSION/plugins/opendistro_performance_analyzer/pa_config/performance-analyzer.properties
 sudo sysctl -w vm.max_map_count=262144
 
 
 
 #Installing kibana
 cd /
-wget https://d3g5vo6xdbdb9a.cloudfront.net/downloads/tarball/opendistroforelasticsearch-kibana/opendistroforelasticsearch-kibana-$ODFE_VER.tar.gz
-tar zxf opendistroforelasticsearch-kibana-$ODFE_VER.tar.gz
+aws s3 cp s3://$S3_RELEASE_BASEURL$OD_VERSION/odfe/opendistroforelasticsearch-kibana-$OD_VERSION-linux-$ARCHITECTURE.tar.gz .
+tar zxf opendistroforelasticsearch-kibana-$OD_VERSION-linux-$ARCHITECTURE.tar.gz
 chown -R ubuntu:ubuntu opendistroforelasticsearch-kibana
 cd opendistroforelasticsearch-kibana/
 echo "server.host: 0.0.0.0" >> config/kibana.yml
@@ -128,9 +130,9 @@ fi
 if [ "$1" = "TAR" ]
 then
 cat <<- EOF >> $REPO_ROOT/userdata_$1.sh
-cd /opendistroforelasticsearch-$ODFE_VER/
+cd /opendistroforelasticsearch-$OD_VERSION/
 mkdir -p snapshots
-echo "path.repo: [\"/opendistroforelasticsearch-$ODFE_VER/snapshots\"]" >> config/elasticsearch.yml
+echo "path.repo: [\"/opendistroforelasticsearch-$OD_VERSION/snapshots\"]" >> config/elasticsearch.yml
 # Increase the number of allowed script compilations. The SQL integ tests use a lot of scripts.
 echo "script.context.field.max_compilations_rate: 1000/1m" >> config/elasticsearch.yml
 EOF
@@ -151,7 +153,7 @@ if  [[ "$2" = "DISABLE" ]]
 then
 if [[ "$1" = "RPM"  ||  "$1" = "DEB" ]]
 then
-sed -i "s/^echo \"cluster.name.*/echo \"cluster.name \: odfe-$ODFE_VER-$1-noauth\" \>\> \/etc\/elasticsearch\/elasticsearch.yml/g" $REPO_ROOT/userdata_$1.sh
+sed -i "s/^echo \"cluster.name.*/echo \"cluster.name \: odfe-$OD_VERSION-$1-noauth\" \>\> \/etc\/elasticsearch\/elasticsearch.yml/g" $REPO_ROOT/userdata_$1.sh
 sed -i "/echo \"network.host/a echo \"opendistro_security.disabled: true\" \>\> \/etc\/elasticsearch\/elasticsearch.yml" $REPO_ROOT/userdata_$1.sh
 cat <<- EOF >> userdata_$1.sh
 sudo rm -rf /usr/share/kibana/plugins/opendistroSecurityKibana
@@ -159,7 +161,7 @@ sudo sed -i /^opendistro_security/d /etc/kibana/kibana.yml
 sudo sed -i 's/https/http/' /etc/kibana/kibana.yml
 EOF
 else
-sed -i "s/^echo \"cluster.name.*/echo \"cluster.name \: odfe-$ODFE_VER-$1-noauth\" \>\> config\/elasticsearch.yml/g" $REPO_ROOT/userdata_$1.sh
+sed -i "s/^echo \"cluster.name.*/echo \"cluster.name \: odfe-$OD_VERSION-$1-noauth\" \>\> config\/elasticsearch.yml/g" $REPO_ROOT/userdata_$1.sh
 cat <<- EOF >> userdata_$1.sh
 sudo rm -rf plugins/opendistro_security
 sed -i /^opendistro_security/d config/elasticsearch.yml
@@ -175,7 +177,7 @@ fi
 if [[ "$1" = "TAR" ]]
 then
 cat <<- EOF >> $REPO_ROOT/userdata_$1.sh
-cd /opendistroforelasticsearch-$ODFE_VER/
+cd /opendistroforelasticsearch-$OD_VERSION/
 sudo -u ubuntu nohup ./opendistro-tar-install.sh 2>&1 > /dev/null &
 EOF
 if [[ "$2" = "ENABLE" ]]
