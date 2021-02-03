@@ -12,11 +12,13 @@ echo "This script is to installed the required packages for GitHub Runners"
 if [ "$USER" = "root" ]
 then
   apt update -y || yum repolist
-  apt install -y $DEB_PKGS || yum install -y $RPM_PKGS
-else
-  sudo apt update -y || sudo yum repolist
-  sudo apt install -y $DEB_PKGS || sudo yum install -y $RPM_PKGS
+  apt install -y sudo || yum install -y sudo
 fi
+
+
+sudo apt update -y || sudo yum repolist
+sudo apt install -y $DEB_PKGS || sudo yum install -y $RPM_PKGS
+
 
 # Install from repositories
 
