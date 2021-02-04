@@ -58,8 +58,10 @@ jobs:
           echo build arm64
           ./gradlew buildDeb --console=plain -Dbuild.snapshot=false -b ./build-arm64.gradle
           ls -ltr build/distributions/*.deb
-          deb_artifact=`ls build/distributions/*.deb`
-          aws s3 cp $deb_artifact $S3_RELEASE_BASEURL$OD_VERSION/odfe/
+          deb_artifact_x64=`ls build/distributions/*x64.deb`
+          deb_artifact_arm64=`ls build/distributions/*arm64.deb`
+          aws s3 cp $deb_artifact_x64 $S3_RELEASE_BASEURL$OD_VERSION/odfe/
+          aws s3 cp $deb_artifact_arm64 $S3_RELEASE_BASEURL$OD_VERSION/odfe/
           echo "DEB creation for ES completed"
 
   build-kibana-artifacts:
