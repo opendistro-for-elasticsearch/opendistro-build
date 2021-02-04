@@ -107,8 +107,6 @@ jobs:
     needs: [plugin-availability, Provision-Runners]
     name: Build Kibana Artifacts ARM64
     runs-on: [self-hosted, Linux, ARM64, odfe-deb-build-kibana-arm64]
-    container:
-      image: opendistroforelasticsearch/jsenv:v1
     steps:
       - uses: actions/checkout@v1
       - name: Configure AWS Credentials
@@ -118,7 +116,11 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
       - name: Required Packages
-        run: ./release-tools/scripts/required_packages.sh
+        run: |
+          ./release-tools/scripts/required_packages.sh
+          sudo apt-get install ruby ruby-dev rubygems build-essential
+          gem install --no-document fpm
+          fpm --version
       - name: Build Kibana deb
         run: ./kibana/linux_distributions/opendistro-kibana-build.sh deb linux arm64
 
