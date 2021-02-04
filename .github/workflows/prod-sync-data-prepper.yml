@@ -21,13 +21,14 @@ jobs:
     - name: S3 sync artifacts
       run: |
         #!/bin/bash
-        S3_BUCKET_PROD="artifacts.opendistroforelasticsearch.amazon.com"
-        TARGET_DIR=`./bin/plugins-info data-prepper zip --require-install-false`
-        TAG_VERSION="v$(./bin/plugins-info data-prepper cutversion --require-install-false | tr ' ' '\n' | uniq | sort -V | head -n 1)"
+        S3_URL_DATAPREPPER="s3://artifacts.dataprepper.amazon.com/"
+        S3_URL_DATAPREPPER_STAGING=`release-tools/scripts/plugin_parser.sh opendistroforelasticsearch-data-prepper plugin_location_staging | sed 's/[][}{"]*//g' | awk -F ':' '{print $2 ":" $3}'`
+        S3_URL_DATAPREPPER_PROD=`release-tools/scripts/plugin_parser.sh opendistroforelasticsearch-data-prepper plugin_location_prod | sed 's/[][}{"]*//g' | awk -F ':' '{print $2 ":" $3}'`
+        TAG_VERSION=`release-tools/scripts/plugin_parser.sh opendistroforelasticsearch-data-prepper plugin_version`
 
         echo $TAG_VERSION
-        aws s3 sync s3://$S3_BUCKET_PROD/$TARGET_DIR/ s3://$S3_BUCKET_PROD/tarball/opendistroforelasticsearch-data-prepper/ --exclude "*" --include "data-prepper-jdk-${TAG_VERSION}*" --quiet
-        aws s3 sync s3://$S3_BUCKET_PROD/$TARGET_DIR/ s3://$S3_BUCKET_PROD/tarball/opendistroforelasticsearch-data-prepper/ --exclude "*" --include "data-prepper-${TAG_VERSION}*" --quiet
+        aws s3 sync $S3_URL_DATAPREPPER_STAGING $S3_URL_DATAPREPPER_PROD --exclude "*" --include "opendistroforelasticsearch-data-prepper-jdk-${TAG_VERSION}*" --quiet
+        aws s3 sync $S3_URL_DATAPREPPER_STAGING $S3_URL_DATAPREPPER_PROD --exclude "*" --include "opendistroforelasticsearch-data-prepper-${TAG_VERSION}*" --quiet
         aws s3 ls s3://$S3_BUCKET_PROD/tarball/opendistroforelasticsearch-data-prepper/ | grep $TAG_VERSION
         aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/tarball/opendistroforelasticsearch-data-prepper/*"
 
