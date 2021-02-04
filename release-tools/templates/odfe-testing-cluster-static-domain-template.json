@@ -63,7 +63,7 @@
           "DEB" : {"ARM64": "ami-09e38cf07be65a594", "X64" : "ami-0ac73f33a1888c64a"}
         },
         "InstanceTypeMap": {
-            "ARM" : {"Type": "m6g.xlarge"},
+            "ARM64" : {"Type": "m6g.xlarge"},
             "X64" : {"Type": "m5.xlarge"}
         }
       },
