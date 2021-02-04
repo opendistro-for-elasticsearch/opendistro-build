@@ -72,8 +72,10 @@ if [ -n $PACKAGE_TYPE ] && [ "$PACKAGE_TYPE" != "rpm" ] && [ "$PACKAGE_TYPE" != 
 fi
 
 # Prepare target directories
-mkdir $TARGET_DIR
-mkdir $PACKAGE_NAME
+rm -rf $TARGET_DIR
+rm -rf $PACKAGE_NAME
+mkdir -p $TARGET_DIR
+mkdir -p $PACKAGE_NAME
 
 # Downloading Kibana oss
 echo "Downloading kibana oss"
