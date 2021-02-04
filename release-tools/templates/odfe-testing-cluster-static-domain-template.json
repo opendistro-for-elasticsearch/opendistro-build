@@ -61,6 +61,10 @@
           "RPM" : {"ARM64": "ami-05c53e3ce52089c5c", "X64" : "ami-0e999cbd62129e3b1"},
           "TAR" : {"ARM64": "ami-09e38cf07be65a594", "X64" : "ami-0ac73f33a1888c64a"},
           "DEB" : {"ARM64": "ami-09e38cf07be65a594", "X64" : "ami-0ac73f33a1888c64a"}
+        },
+        "InstanceTypeMap": {
+            "ARM" : {"Type": "m6g.xlarge"},
+            "X64" : {"Type": "m5.xlarge"}
         }
       },
 
@@ -100,7 +104,7 @@
               "Type": "AWS::AutoScaling::LaunchConfiguration",
               "Properties": {
                   "ImageId": { "Fn::FindInMap" : [ "DistributionMap", { "Ref" : "distribution" }, {"Ref" : "architecture"}]},
-                  "InstanceType": "m5a.large",
+                  "InstanceType": { "Fn::FindInMap" : [ "InstanceTypeMap", { "Ref" : "architecture" }, "Type"]},
                   "IamInstanceProfile": "odfe_testing_cluster_role",
                   "KeyName": {"Ref" : "keypair"},
                   "AssociatePublicIpAddress": true,
