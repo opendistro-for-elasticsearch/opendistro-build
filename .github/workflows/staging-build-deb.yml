@@ -23,7 +23,8 @@ jobs:
       - name: Required Packages
         run: ./release-tools/scripts/required_packages.sh
       - name: Run check_plugin scripts
-        run: release-tools/scripts/check_plugin.sh; exit `cat /tmp/plugin_status.check`
+        run: release-tools/scripts/check_plugin.sh plugins; exit `cat /tmp/plugin_status.check`
+        #run: release-tools/scripts/check_plugin.sh; exit `cat /tmp/plugin_status.check`
 
   Provision-Runners:
     name: Provision-Runners
@@ -42,7 +43,7 @@ jobs:
           # Please add comma at the end of the RUNNERS strings
           # Don't add space after commas
           RUNNERS="odfe-deb-build-kibana-arm64"
-          release-tools/scripts/setup_runners.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }} ami-055197d43e4ec7482
+          release-tools/scripts/setup_runners.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }} ami-040568c6e3d22bbe1
 
   build-es-artifacts:
     needs: [plugin-availability]
@@ -106,6 +107,8 @@ jobs:
     needs: [plugin-availability, Provision-Runners]
     name: Build Kibana Artifacts ARM64
     runs-on: [self-hosted, Linux, ARM64, odfe-deb-build-kibana-arm64]
+    container:
+      image: opendistroforelasticsearch/jsenv:v1
     steps:
       - uses: actions/checkout@v1
       - name: Configure AWS Credentials
