@@ -162,6 +162,7 @@ then
   echo "Sleep 120 seconds"
   sleep 120
   curl -XGET https://localhost:9200 -u admin:admin --insecure
+  curl -XGET https://localhost:9200/_cat/plugins?v -u admin:admin --insecure
   curl -XGET https://localhost:9200/_cluster/health?pretty -u admin:admin --insecure
   echo "es start"
   netstat -ntlp
@@ -211,6 +212,7 @@ then
   echo "Sleep 120 seconds"
   sleep 120
   curl -XGET http://localhost:9200
+  curl -XGET http://localhost:9200/_cat/plugins?v
   curl -XGET http://localhost:9200/_cluster/health?pretty
   echo "es-nosec start"
   netstat -ntlp
@@ -265,6 +267,7 @@ then
   echo "Sleep 120 seconds"
   sleep 120
   curl -XGET https://localhost:9200 -u admin:admin --insecure
+  curl -XGET https://localhost:9200/_cat/plugins?v -u admin:admin --insecure
   curl -XGET https://localhost:9200/_cluster/health?pretty -u admin:admin --insecure
   # kibana can still use http to check status
   curl -v -XGET http://localhost:5601
@@ -312,6 +315,7 @@ then
   echo "Sleep 120 seconds"
   sleep 120
   curl -XGET http://localhost:9200
+  curl -XGET http://localhost:9200/_cat/plugins?v
   curl -XGET http://localhost:9200/_cluster/health?pretty
   curl -v -XGET http://localhost:5601
   curl -v -XGET http://localhost:5601/api/status
