@@ -122,7 +122,7 @@ jobs:
               do
                 for SECURITY in ENABLE DISABLE
                 do
-                  for ARCHITECTURE in X64 ARM64
+                  for ARCHITECTURE in ARM64
                   do
                     stackName=ODFE-$DISTRIBUTION_TYPE-$ARCHITECTURE-SECURITY-$SECURITY
                     echo $stackName
