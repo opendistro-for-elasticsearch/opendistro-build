@@ -119,7 +119,7 @@ jobs:
         run: |
           ./release-tools/scripts/required_packages.sh
           sudo apt-get install -y ruby ruby-dev rubygems build-essential
-          gem install --no-document fpm -v 1.10.2
+          sudo gem install --no-document fpm -v 1.10.2
           fpm --version
       - name: Build Kibana deb
         run: ./kibana/linux_distributions/opendistro-kibana-build.sh deb linux arm64
