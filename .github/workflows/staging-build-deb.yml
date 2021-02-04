@@ -84,7 +84,7 @@ jobs:
           echo "DEB creation for ES completed"
 
   build-kibana-artifacts-x64:
-    #needs: [plugin-availability]
+    needs: [plugin-availability]
     name: Build Kibana Artifacts X64
     runs-on: [ubuntu-18.04]
     container:
