@@ -37,8 +37,7 @@ then
   ARCHITECTURE_ALT="amd64"
 elif [ "$ARCHITECTURE" = "aarch64" ]
 then
-  # Placeholder for later
-  ARCHITECTURE_ALT="aarch64"
+  ARCHITECTURE_ALT="arm64"
 else
   echo "Your server is not supported for now"
   exit 1
@@ -104,7 +103,7 @@ then
   sudo sudo apt install -y net-tools
   wget -qO - https://d3g5vo6xdbdb9a.cloudfront.net/GPG-KEY-opendistroforelasticsearch | sudo apt-key add -
   echo "deb https://d3g5vo6xdbdb9a.cloudfront.net/staging/apt stable main" | sudo tee -a /etc/apt/sources.list.d/opendistroforelasticsearch.list
-  wget -q https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$ES_VERSION-$ARCHITECTURE_ALT.deb
+  wget -nv https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$ES_VERSION-$ARCHITECTURE_ALT.deb
   sudo dpkg -i elasticsearch-oss-$ES_VERSION-$ARCHITECTURE_ALT.deb
   sudo apt update -y
   sudo apt install -y opendistroforelasticsearch=$OD_VERSION*

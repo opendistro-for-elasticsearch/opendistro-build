@@ -5,8 +5,8 @@ on:
   #   - cron: '0 10 * * *'
   repository_dispatch:
     types: [staging-build-rpm-arm64]
-  push:
-    branches: [deb-rpm-arm64-V313743037]
+  #push:
+  #  branches: [deb-rpm-arm64-V313743037]
 
 jobs:
   Provision-Runners:
@@ -37,10 +37,6 @@ jobs:
     runs-on: [self-hosted, Linux, ARM64, odfe-rpm-ism-nosec-arm64]
     steps:
       - uses: actions/checkout@v1
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: 14
       - name: Required Packages
         run: release-tools/scripts/required_packages.sh
       - name: Retrieve plugin tags
@@ -61,10 +57,6 @@ jobs:
     runs-on: [self-hosted, Linux, ARM64, odfe-rpm-alerting-nosec-arm64]
     steps:
       - uses: actions/checkout@v1
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: 14
       - name: Required Packages
         run: release-tools/scripts/required_packages.sh
       - name: Retrieve plugin tags
@@ -85,10 +77,6 @@ jobs:
     runs-on: [self-hosted, Linux, ARM64, odfe-rpm-sql-nosec-arm64]
     steps:
       - uses: actions/checkout@v1
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: 14
       - name: Required Packages
         run: release-tools/scripts/required_packages.sh
       - name: Retrieve plugin tags
@@ -109,10 +97,6 @@ jobs:
     runs-on: [self-hosted, Linux, ARM64, odfe-rpm-knn-nosec-arm64]
     steps:
       - uses: actions/checkout@v1
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: 14
       - name: Required Packages
         run: release-tools/scripts/required_packages.sh
       - name: Retrieve plugin tags
@@ -133,10 +117,6 @@ jobs:
     runs-on: [self-hosted, Linux, ARM64, odfe-rpm-ad-nosec-arm64]
     steps:
       - uses: actions/checkout@v1
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: 14
       - name: Required Packages
         run: release-tools/scripts/required_packages.sh
       - name: Retrieve plugin tags
@@ -157,10 +137,6 @@ jobs:
     runs-on: [self-hosted, Linux, ARM64, odfe-rpm-sql-arm64]
     steps:
       - uses: actions/checkout@v1
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: 14
       - name: Required Packages
         run: release-tools/scripts/required_packages.sh
       - name: Retrieve plugin tags
@@ -181,10 +157,6 @@ jobs:
     runs-on: [self-hosted, Linux, ARM64, odfe-rpm-ad-arm64]
     steps:
       - uses: actions/checkout@v1
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: 14
       - name: Required Packages
         run: release-tools/scripts/required_packages.sh
       - name: Retrieve plugin tags
@@ -205,10 +177,6 @@ jobs:
     runs-on: [self-hosted, Linux, ARM64, odfe-rpm-alerting-arm64]
     steps:
       - uses: actions/checkout@v1
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: 14
       - name: Required Packages
         run: release-tools/scripts/required_packages.sh
       - name: Retrieve plugin tags
@@ -229,10 +197,6 @@ jobs:
     name: Test-AD-KIBANA-NoSec
     steps:
       - uses: actions/checkout@v1
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: 14
 
       - name: Required Packages
         run: release-tools/scripts/required_packages.sh
@@ -297,9 +261,6 @@ jobs:
     needs: [Provision-Runners]
     runs-on: [self-hosted, Linux, ARM64, odfe-rpm-sql-kibana-nosec-arm64]
     name: Test-SQL-KIBANA-NoSec
-    strategy:
-      matrix:
-        java: [14]
     steps:
       - uses: actions/checkout@v1
       - name: Set up AWS Cred
@@ -328,11 +289,6 @@ jobs:
           repository: opendistro-for-elasticsearch/sql
           ref: ${{env.p_tag_sql_kibana}}
           path: kibana/plugins/sql
-      
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.java }}
       
       - name: Get node and yarn versions
         id: node_yarn_versions
@@ -390,10 +346,6 @@ jobs:
     needs: [Provision-Runners]
     runs-on: [self-hosted, Linux, ARM64, odfe-rpm-kibana-nb-nosec-arm64]
     name: Test-Kibana-Notebooks-NoSec
-    strategy:
-      fail-fast: false
-      matrix:
-        java: [14]
     steps:
       - uses: actions/checkout@v1
       - name: Set up AWS Cred
@@ -424,11 +376,6 @@ jobs:
           repository: opendistro-for-elasticsearch/kibana-notebooks
           ref: ${{env.p_tag_kib_nb}}
           path: kibana/plugins/kibana-notebooks
-      
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.java }}
       
       - name: Get node and yarn versions
         id: node_yarn_versions
@@ -472,10 +419,6 @@ jobs:
     name: Test-AD-KIBANA
     steps:
       - uses: actions/checkout@v1
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: 14
 
       - name: Required Packages
         run: release-tools/scripts/required_packages.sh
@@ -540,10 +483,6 @@ jobs:
     needs: [Provision-Runners]
     runs-on: [self-hosted, Linux, ARM64, odfe-rpm-sec-kibana-arm64]
     name: Test-SEC-KIBANA
-    strategy:
-      fail-fast: false
-      matrix:
-        java: [14]
     steps:
       - uses: actions/checkout@v1
 
@@ -568,11 +507,6 @@ jobs:
           repository: opendistro-for-elasticsearch/security-kibana-plugin
           ref: ${{env.p_tag_sec_kibana}}
           path: kibana/plugins/opendistro_security
-      
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.java }}
 
       - name: Get node and yarn versions
         id: node_yarn_versions
