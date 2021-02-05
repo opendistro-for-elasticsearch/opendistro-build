@@ -71,7 +71,7 @@ mkdir -p $REPO_RPMSDIR/
 echo "Sync yum"
 aws s3 sync ${S3_PROD_BASEURL}staging/yum/ $REPO_YUMDIR/ --quiet; echo $?
 echo "Sync rpms"
-aws s3 sync ${S3_RELEASE_BASEURL}${OD_VERSION}/${S3_RELEASE_BUILD}/elasticsearch-plugins/ $REPO_RPMSDIR/ --exclude "*" --include "*.rpm" --quiet; echo $?
+aws s3 sync ${S3_RELEASE_BASEURL}${OD_VERSION}/${S3_RELEASE_BUILD}/elasticsearch-plugins/ $REPO_RPMSDIR/ --exclude "*" --include "*.rpm"  --quiet; echo $?
 aws s3 sync ${S3_RELEASE_BASEURL}${OD_VERSION}/${S3_RELEASE_BUILD}/opendistro-libs/ $REPO_RPMSDIR/ --exclude "*" --include "*.rpm"  --quiet; echo $?
 aws s3 sync ${S3_RELEASE_BASEURL}${OD_VERSION}/odfe/ $REPO_RPMSDIR/ --exclude "*" --include "*.rpm"  --quiet; echo $?
 
