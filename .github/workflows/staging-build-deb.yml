@@ -24,7 +24,6 @@ jobs:
         run: ./release-tools/scripts/required_packages.sh
       - name: Run check_plugin scripts
         run: release-tools/scripts/check_plugin.sh; exit `cat /tmp/plugin_status.check`
-        #run: release-tools/scripts/check_plugin.sh; exit `cat /tmp/plugin_status.check`
 
   Provision-Runners:
     name: Provision-Runners
