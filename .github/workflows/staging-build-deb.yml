@@ -5,8 +5,8 @@ on:
   #   - cron: '0 10 * * *'
   repository_dispatch:
     types: [staging-build-deb]
-  push:
-    branches: [deb-rpm-arm64-V313743037]
+  #push:
+  #  branches: [deb-rpm-arm64-V313743037]
 
 jobs:
   plugin-availability:
@@ -167,3 +167,4 @@ jobs:
           # Don't add space after commas
           RUNNERS="odfe-deb-build-kibana-arm64"
           release-tools/scripts/setup_runners.sh terminate $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
+
