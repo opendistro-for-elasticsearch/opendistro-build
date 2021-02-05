@@ -5,6 +5,8 @@ on:
   #   - cron: '0 10 * * *'
   repository_dispatch:
     types: [staging-build-rpm-arm64]
+  #push:
+  #  branches: [deb-rpm-arm64-V313743037]
 
 jobs:
   Provision-Runners:
@@ -27,7 +29,7 @@ jobs:
           RUNNERS+="odfe-rpm-sql-arm64,odfe-rpm-ad-arm64,odfe-rpm-alerting-arm64,"
           RUNNERS+="odfe-rpm-ad-kibana-nosec-arm64,odfe-rpm-sql-kibana-nosec-arm64,"
           RUNNERS+="odfe-rpm-ad-kibana-arm64,odfe-rpm-sec-kibana-arm64,odfe-rpm-kibana-nb-nosec-arm64"
-          release-tools/scripts/setup_runners.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }} ami-086e8a98280780e63
+          release-tools/scripts/setup_runners.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }} ami-0ed17173ab64255b1
 
   Test-ISM-NoSec:
     needs: [Provision-Runners]
