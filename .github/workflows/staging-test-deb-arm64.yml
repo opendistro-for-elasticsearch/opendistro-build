@@ -29,7 +29,7 @@ jobs:
           RUNNERS+="odfe-deb-sql-arm64,odfe-deb-ad-arm64,odfe-deb-alerting-arm64,"
           RUNNERS+="odfe-deb-ad-kibana-nosec-arm64,odfe-deb-sql-kibana-nosec-arm64,"
           RUNNERS+="odfe-deb-ad-kibana-arm64,odfe-deb-sec-kibana-arm64,odfe-deb-kibana-nb-nosec-arm64"
-          release-tools/scripts/setup_runners.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }} ami-086e8a98280780e63
+          release-tools/scripts/setup_runners.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }} ami-055197d43e4ec7482
 
   Test-ISM-NoSec:
     needs: [Provision-Runners]
