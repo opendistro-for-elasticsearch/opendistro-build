@@ -200,7 +200,7 @@ if [ $# -eq 0 ] || [ "$PACKAGE_TYPE" = "deb" ]; then
       --template-value dataDir=/var/lib/kibana \
       --exclude usr/share/kibana/config \
       --exclude usr/share/kibana/data \
-      --architecture $ARCHITECTURE_ALT_RPM \
+      --architecture $ARCHITECTURE_ALT_DEB \
       $ROOT/opendistroforelasticsearch-kibana/=/usr/share/kibana/ \
       $ROOT/opendistroforelasticsearch-kibana/config/=/etc/kibana/ \
       $ROOT/opendistroforelasticsearch-kibana/data/=/var/lib/kibana/ \
