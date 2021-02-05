@@ -2,6 +2,7 @@
 
 set -e
 
+OLDIFS=$IFS
 REPO_ROOT=`git rev-parse --show-toplevel`
 ROOT=`dirname $(realpath $0)`; echo $ROOT; cd $ROOT
 MANIFEST_FILE=$REPO_ROOT/release-tools/scripts/manifest.yml
@@ -14,21 +15,7 @@ S3_RELEASE_BUCKET=`echo $S3_RELEASE_BASEURL | awk -F '/' '{print $3}'`
 S3_RELEASE_FINAL_BUILD=`yq eval '.urls.ODFE.releases_final_build' $MANIFEST_FILE | sed 's/\///g'`
 PLUGIN_PATH=`yq eval '.urls.ODFE.releases' $MANIFEST_FILE | sed "s/^.*$S3_RELEASE_BUCKET\///g"`
 PASSPHRASE=$1; if [ -z "$PASSPHRASE" ]; then echo "Please enter passphrase as a parameter"; exit 1; fi
-ARCHITECTURE="x64"; if [ ! -z "$2" ]; then ARCHITECTURE=$2; fi; echo $ARCHITECTURE
-ACTION=$3; if [ ! -z "$ACTION" ]; then echo "About to sync staging to prod repo! Wait for 30 seconds"; sleep 30; fi
-
-# Temp hardcoding to avoid other architecture mix
-if [ "$ARCHITECTURE" = "x64" ]
-then
-  ARCHITECTURE_NO="arm64"
-elif [ "$ARCHITECTURE" = "arm64" ]
-then
-  ARCHITECTURE_NO="x64"
-else
-  echo "Please enter either x64 or arm64 for \$ARCHITECTURE"
-  exit 1
-fi
-
+ACTION=$2; if [ ! -z "$ACTION" ]; then echo "About to sync staging to prod repo! Wait for 30 seconds"; sleep 30; fi
 
 REPO_DOWNLOADSDIR="$ROOT/downloads"
 REPO_DEBSDIR="$ROOT/debs"
@@ -93,15 +80,9 @@ aws s3 sync ${S3_RELEASE_BASEURL}${OD_VERSION}/${S3_RELEASE_BUILD}/opendistro-li
 aws s3 sync ${S3_RELEASE_BASEURL}${OD_VERSION}/odfe/ $REPO_DEBSDIR/ --exclude "*" --include "*.deb"  --quiet; echo $?
 
 # Rename debs to remove build numbers
-# Remove debs that not match \$ARCHITECTURE (aka match $ARCHITECTURE_NO)
 for pkg in `ls $REPO_DEBSDIR | grep -i build`
 do
-  if echo $pkg | grep -i "$ARCHITECTURE_NO"
-  then
-    rm -v $REPO_DEBSDIR/$pkg
-  else
-    mv -v $REPO_DEBSDIR/$pkg $REPO_DEBSDIR/`echo $pkg | sed 's/-build-[0-9]*//g'`
-  fi
+  mv -v $REPO_DEBSDIR/$pkg $REPO_DEBSDIR/`echo $pkg | sed 's/-build-[0-9]*//g'`
 done
 
 # List artifacts
@@ -114,11 +95,22 @@ for plugin_dir in `ls $REPO_DOWNLOADSDIR/debs`
 do
   echo plugin_dir $plugin_dir
   pkg=`(ls $REPO_DEBSDIR | grep -E "$plugin_dir-[.0-9]+") || echo None`
+  pkg_num=`echo $pkg | wc -w`
   if [ "$pkg" != "None" ]
   then
     echo "####################################"
-    echo move $pkg
-    mv -v $REPO_DEBSDIR/$pkg $REPO_DOWNLOADSDIR/debs/$plugin_dir/
+    if [ "$pkg_num" -gt 1 ]
+    then
+      IFS=$OLDIFS
+      for pkg_temp in `echo $pkg`
+      do
+        echo movemul $pkg_temp
+        mv -v $REPO_DEBSDIR/$pkg_temp $REPO_DOWNLOADSDIR/debs/$plugin_dir/
+      done
+    else
+      echo move $pkg
+      mv -v $REPO_DEBSDIR/$pkg $REPO_DOWNLOADSDIR/debs/$plugin_dir/
+    fi
   fi
 done
 

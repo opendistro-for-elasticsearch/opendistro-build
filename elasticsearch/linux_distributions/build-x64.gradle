@@ -22,7 +22,7 @@ buildscript {
 
 plugins {
     id "base"
-     id "nebula.ospackage" version "5.3.0"
+     id "nebula.ospackage" version "8.3.0"
 }
 
 ext {
@@ -137,14 +137,31 @@ ospackage {
     '''.stripIndent().replace('\n', ' ').trim()
 }
 
+
 buildRpm() {
-    arch = 'NOARCH'
-    archiveName "${packageName}-${version}.rpm"
+    arch = 'X86_64'
+    //dependsOn 'assemble'
+    finalizedBy 'renameRpm'
+    task renameRpm(type: Copy) {
+        from("$buildDir/distributions")
+        into("$buildDir/distributions")
+        include archiveName
+        rename archiveName, "${packageName}-${version}-linux-x64.rpm"
+        doLast { delete file("$buildDir/distributions/$archiveName") }
+    }
 }
 
 buildDeb() {
-    arch = 'all'
-    archiveName "${packageName}-${version}.deb"
+    arch = 'amd64'
+    //dependsOn 'assemble'
+    finalizedBy 'renameDeb'
+    task renameDeb(type: Copy) {
+        from("$buildDir/distributions")
+        into("$buildDir/distributions")
+        include archiveName
+        rename archiveName, "${packageName}-${version}-linux-x64.deb"
+        doLast { delete file("$buildDir/distributions/$archiveName") }
+    }
 }
 
 task buildPackages(type: GradleBuild) {

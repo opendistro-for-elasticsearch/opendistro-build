@@ -31,6 +31,17 @@ SETUP_DISTRO=$1
 SETUP_ACTION=$2
 ARCHITECTURE="x64"; if [ ! -z "$3" ]; then ARCHITECTURE=$3; fi; echo ARCHITECTURE $ARCHITECTURE
 SETUP_PACKAGES="python3 git unzip wget jq"
+ARCHITECTURE=`uname -p`
+if [ "$ARCHITECTURE" = "x86_64" ]
+then
+  ARCHITECTURE_ALT="amd64"
+elif [ "$ARCHITECTURE" = "aarch64" ]
+then
+  ARCHITECTURE_ALT="arm64"
+else
+  echo "Your server is not supported for now"
+  exit 1
+fi
 
 echo "install required packages"
 sudo apt install $SETUP_PACKAGES -y || sudo yum install $SETUP_PACKAGES -y
@@ -92,8 +103,8 @@ then
   sudo sudo apt install -y net-tools
   wget -qO - https://d3g5vo6xdbdb9a.cloudfront.net/GPG-KEY-opendistroforelasticsearch | sudo apt-key add -
   echo "deb https://d3g5vo6xdbdb9a.cloudfront.net/staging/apt stable main" | sudo tee -a /etc/apt/sources.list.d/opendistroforelasticsearch.list
-  wget -q https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$ES_VERSION-amd64.deb
-  sudo dpkg -i elasticsearch-oss-$ES_VERSION-amd64.deb
+  wget -nv https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$ES_VERSION-$ARCHITECTURE_ALT.deb
+  sudo dpkg -i elasticsearch-oss-$ES_VERSION-$ARCHITECTURE_ALT.deb
   sudo apt update -y
   sudo apt install -y opendistroforelasticsearch=$OD_VERSION*
 fi
@@ -162,6 +173,7 @@ then
   echo "Sleep 120 seconds"
   sleep 120
   curl -XGET https://localhost:9200 -u admin:admin --insecure
+  curl -XGET https://localhost:9200/_cat/plugins?v -u admin:admin --insecure
   curl -XGET https://localhost:9200/_cluster/health?pretty -u admin:admin --insecure
   echo "es start"
   netstat -ntlp
@@ -211,6 +223,7 @@ then
   echo "Sleep 120 seconds"
   sleep 120
   curl -XGET http://localhost:9200
+  curl -XGET http://localhost:9200/_cat/plugins?v
   curl -XGET http://localhost:9200/_cluster/health?pretty
   echo "es-nosec start"
   netstat -ntlp
@@ -265,6 +278,7 @@ then
   echo "Sleep 120 seconds"
   sleep 120
   curl -XGET https://localhost:9200 -u admin:admin --insecure
+  curl -XGET https://localhost:9200/_cat/plugins?v -u admin:admin --insecure
   curl -XGET https://localhost:9200/_cluster/health?pretty -u admin:admin --insecure
   # kibana can still use http to check status
   curl -v -XGET http://localhost:5601
@@ -312,6 +326,7 @@ then
   echo "Sleep 120 seconds"
   sleep 120
   curl -XGET http://localhost:9200
+  curl -XGET http://localhost:9200/_cat/plugins?v
   curl -XGET http://localhost:9200/_cluster/health?pretty
   curl -v -XGET http://localhost:5601
   curl -v -XGET http://localhost:5601/api/status

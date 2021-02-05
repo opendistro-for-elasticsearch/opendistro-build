@@ -124,11 +124,13 @@ SETUP_RUNNER=`echo $2 | sed 's/,/ /g'`
 SETUP_GIT_TOKEN=$3
 
 # AMI on us-west-2
-# Distro      Arch  Username AMI-ID                Java  Comments
-# RPM-al2     x64   ec2-user ami-086e8a98280780e63 none  need to install jdk by workflow
-# RPM-centos8 x64   centos   ami-011f59f50bac33376 jdk15 preinstall
-# RPM-centos8 arm64 centos   ami-0ed17173ab64255b1 jdk15 preinstall
-# DEB-ubu1804 arm64 ubuntu   ami-055197d43e4ec7482 jdk14 preinstall disable daily updates
+# Distro      Arch  Recommand Username AMI-ID                Java  Comments
+# RPM-al2     x64   YES       ec2-user ami-086e8a98280780e63 none  need to install jdk by workflow
+# RPM-al2     arm64 YES       ec2-user on hold               jdk14 preinstall
+# RPM-centos8 x64   NO        centos   ami-011f59f50bac33376 jdk15 preinstall
+# RPM-centos8 arm64 NO        centos   ami-0ed17173ab64255b1 jdk15 preinstall
+# DEB-ubu1804 arm64 YES       ubuntu   ami-055197d43e4ec7482 jdk14 preinstall disable daily updates
+# DEB-ubu1804 arm64 NO        ubuntu   ami-040568c6e3d22bbe1 jdk14 preinstall + docker + docker compose
 EC2_AMI_ID=$4
 
 if [ "$SETUP_ACTION" = "run" ]

@@ -1,0 +1,169 @@
+// Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// 
+// Licensed under the Apache License, Version 2.0 (the "License").
+// You may not use this file except in compliance with the License.
+// A copy of the License is located at
+// 
+//     http://www.apache.org/licenses/LICENSE-2.0
+// 
+// or in the "license" file accompanying this file. This file is distributed
+// on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+// express or implied. See the License for the specific language governing
+// permissions and limitations under the License.
+//
+// Description:
+// Build file for linux distribution (rpm and deb)
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+
+plugins {
+    id "base"
+     id "nebula.ospackage" version "8.3.0"
+}
+
+ext {
+    println("get dependencies names and corresponding versions")
+
+    new ByteArrayOutputStream().withStream { os1 ->
+      def result1 = exec {
+        executable = '../../release-tools/scripts/version-info.sh'
+        args = ['--es']
+        standardOutput = os1
+      }
+      ext.es_version = os1.toString().trim()
+    }
+    elasticsearchVersion = System.getProperty("es.version", ext.es_version)
+    println("es_version: " + elasticsearchVersion)
+
+    new ByteArrayOutputStream().withStream { os2 ->
+      def result2 = exec {
+        executable = '../../release-tools/scripts/version-info.sh'
+        args = ['--od']
+        standardOutput = os2
+      }
+      ext.od_version = os2.toString().trim()
+    }
+    opendistroVersion = ext.od_version
+    println("od_version: " + opendistroVersion)
+
+    isSnapshot = "true" == System.getProperty("build.snapshot", "true")
+
+    ///////////////////////////////////////////////////////////////////
+
+    new ByteArrayOutputStream().withStream { os3 ->
+      def result3 = exec {
+        executable = '../../release-tools/scripts/plugins-info.sh'
+        args = ['elasticsearch-plugins', 'plugin_basename']
+        standardOutput = os3
+      }
+      ext.plugin_names = os3.toString()
+    }
+
+    new ByteArrayOutputStream().withStream { os4 ->
+      def result4 = exec {
+        executable = '../../release-tools/scripts/plugins-info.sh'
+        args = ['elasticsearch-plugins', 'plugin_version']
+        standardOutput = os4
+      }
+      ext.plugin_versions = os4.toString()
+    }
+
+    new ByteArrayOutputStream().withStream { os5 ->
+      def result5 = exec {
+        executable = '../../release-tools/scripts/version-info.sh'
+        args = ['--od-next']
+        standardOutput = os5
+      }
+      ext.plugin_versions_next = os5.toString().trim() + ".0"
+    }
+    
+    new ByteArrayOutputStream().withStream { os6 ->
+      def result6 = exec {
+        executable = '../../release-tools/scripts/plugins-info.sh'
+        args = ['elasticsearch-plugins', 'release_candidate']
+        standardOutput = os6
+      }
+      ext.plugin_rc = os6.toString()
+    }
+
+    pname_arr = ext.plugin_names.split("\n").toList()
+    pver_arr = ext.plugin_versions.split("\n").toList()
+    prc_arr = ext.plugin_rc.split("\n").toList()
+    pver_next = ext.plugin_versions_next
+
+}
+group 'com.amazon.opendistroforelasticsearch'
+version = opendistroVersion + (isSnapshot ? "-SNAPSHOT" : "")
+
+ospackage {
+    packageName = "opendistroforelasticsearch"
+    release = isSnapshot ? "0.1" : '1'
+    version = "${project.version}" - "-SNAPSHOT"
+    
+    println("setup these dependencies: \n##################")
+    println("elasticsearch-oss" + ": = " + elasticsearchVersion)
+
+    // setup package requirements
+    requires('elasticsearch-oss', elasticsearchVersion, EQUAL)
+
+    for (int i = 0; i < pname_arr.size; i++) {
+      String pluginName = pname_arr[i].substring(pname_arr[i].lastIndexOf("/") + 1).trim()
+      String pluginVersion = pver_arr[i].trim()
+      String pluginVersionNext = pver_next.trim()
+      String pluginIsRC = prc_arr[i].trim()
+
+      if (!pluginName.contains("null") && pluginIsRC.contains("true") ) {
+        println(pluginName + ": >= " + pluginVersion + " | < " + pluginVersionNext)
+        requires(pluginName, pluginVersion, GREATER | EQUAL)
+        requires(pluginName, pluginVersionNext, LESS)
+      }
+    } 
+
+    packager = 'Amazon'
+    vendor = 'Amazon'
+    os = 'LINUX'
+    prefix '/usr'
+
+    license 'ASL-2.0'
+    maintainer 'OpenDistro for Elasticsearch Team <opendistro@amazon.com>'
+    url 'https://opendistro.github.io/for-elasticsearch/downloads.html'
+    summary '''
+         OpenDistro for Elasticsearch. 
+         Reference documentation can be found at https://opendistro.github.io/for-elasticsearch-docs/.
+    '''.stripIndent().replace('\n', ' ').trim()
+}
+
+
+buildRpm() {
+    arch = 'AARCH64'
+    //dependsOn 'assemble'
+    finalizedBy 'renameRpm'
+    task renameRpm(type: Copy) {
+        from("$buildDir/distributions")
+        into("$buildDir/distributions")
+        include archiveName
+        rename archiveName, "${packageName}-${version}-linux-arm64.rpm"
+        doLast { delete file("$buildDir/distributions/$archiveName") }
+    }
+}
+
+buildDeb() {
+    arch = 'arm64'
+    //dependsOn 'assemble'
+    finalizedBy 'renameDeb'
+    task renameDeb(type: Copy) {
+        from("$buildDir/distributions")
+        into("$buildDir/distributions")
+        include archiveName
+        rename archiveName, "${packageName}-${version}-linux-arm64.deb"
+        doLast { delete file("$buildDir/distributions/$archiveName") }
+    }
+}
+
+task buildPackages(type: GradleBuild) {
+    tasks = ['buildRpm', 'buildDeb']
+}
