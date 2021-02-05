@@ -326,4 +326,3 @@ plugins:
     release_candidate: false
     plugin_location_staging: [default: "s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/elasticsearch-clients/data-prepper/"]
     plugin_location_prod: [default: "s3://artifacts.opendistroforelasticsearch.amazon.com/tarball/opendistroforelasticsearch-data-prepper/"]
-
