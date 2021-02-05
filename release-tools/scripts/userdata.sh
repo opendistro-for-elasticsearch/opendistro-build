@@ -46,7 +46,7 @@ then
 cat <<- EOF > $REPO_ROOT/userdata_$1.sh
 #!/bin/bash
 sudo -i
-sudo curl https://d3g5vo6xdbdb9a.cloudfront.net/yum/staging-opendistroforelasticsearch-artifacts.repo -o /etc/yum.repos.d/staging-opendistroforelasticsearch-artifacts.repo
+sudo curl https://d3g5vo6xdbdb9a.cloudfront.net/staging/yum/staging-opendistroforelasticsearch-artifacts.repo -o /etc/yum.repos.d/staging-opendistroforelasticsearch-artifacts.repo
 sudo yum install -y opendistroforelasticsearch-$OD_VERSION
 sudo sysctl -w vm.max_map_count=262144
 echo "node.name: init-master" >> /etc/elasticsearch/elasticsearch.yml

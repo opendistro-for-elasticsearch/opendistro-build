@@ -83,19 +83,12 @@
                     "Key" : "Name", 
                     "Value" : {
                         "Fn::Join": [
-                          "", [
-                            "ODFE-",
-                            {
-                              "Ref": "distribution"
-                            },
+                          "", ["ODFE-",
+                            {"Ref": "distribution"},
                             "-SECURITY-",
-                            {
-                                "Ref": "security"
-                            },
-                            "-Testing-Cluster"
-                          ]
-                        ]
-                      }, 
+                            {"Ref": "security"},
+                            "-Testing-Cluster"]
+                        ]}, 
                     "PropagateAtLaunch" : "true"}]
                 }
             },

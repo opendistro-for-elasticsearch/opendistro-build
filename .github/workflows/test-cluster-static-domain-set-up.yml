@@ -1,9 +1,9 @@
 name: Create testing cluster with static domain
 
-# Make sure to pass the distribution type (RPM/DEB/TAR) and security feature (enable, disable) as client_payload in the dispatch event
-# Example: client_payload: { "distribution": "rpm", "security": "enable" }
-# Example: client_payload: { "distribution": "deb", "security": "disable" }
-# For scheduled workflow run all 6 combinations of the testing domains will be created
+# Make sure to pass the distribution type (RPM/DEB/TAR), architecture (X64, ARM64) security feature (enable, disable) as client_payload in the dispatch event
+# Example: client_payload: { "distribution": "rpm", "security": "enable", architecture: "X64" }
+# Example: client_payload: { "distribution": "deb", "security": "disable", architecture: "ARM64"}
+# For scheduled workflow run all combinations of the testing domains will be created
 # NOTE: This workflow is based on the static ELBs pre-configured in the AWS account
 #       The load balancers are already mapped to the right target groups. When you run this workflow they create EC2s and map them to
 #       right target groups.
@@ -103,11 +103,28 @@ jobs:
               DISTRIBUTION_TYPE=`echo ${{github.event.client_payload.distribution}} | tr [:lower:] [:upper:]`
               SECURITY=`echo ${{github.event.client_payload.security}} | tr [:lower:] [:upper:]`
               ARCHITECTURE=`echo ${{github.event.client_payload.architecture}} | tr [:lower:] [:upper:]`
+
               stackName=ODFE-$DISTRIBUTION_TYPE-$ARCHITECTURE-SECURITY-$SECURITY
               echo $stackName
               stack_setup $DISTRIBUTION_TYPE $SECURITY $ARCHITECTURE
             elif ${{ github.event_name == 'schedule' }} || ${{ github.event_name == 'push' }}
             then
+              # Add the ditributions and architectures in the below array. All CAPS
+              DISTRIBUTION_TYPE=(TAR RPM DEB)
+              ARCHITECTURE=(X64)
+
+              for dis in ${DISTRIBUTION_TYPE[@]}; do
+                for security in ENABLE DISABLE; do
+                  for arch in ${ARCHITECTURE[@]}; do
+                    stackName=ODFE-$dis-$arch-SECURITY-$security
+                    echo $stackName
+                    stack_setup $dis $security $arch
+                    rm userdata_$dis.sh
+                  done
+                done
+              done
+            fi
+
               # for DISTRIBUTION_TYPE in RPM DEB TAR
               # do
               #   for SECURITY in ENABLE DISABLE
@@ -118,17 +135,3 @@ jobs:
               #     rm userdata_$DISTRIBUTION_TYPE.sh
               #   done
               # done
-              for DISTRIBUTION_TYPE in TAR
-              do
-                for SECURITY in ENABLE DISABLE
-                do
-                  for ARCHITECTURE in X64 ARM64
-                  do
-                    stackName=ODFE-$DISTRIBUTION_TYPE-$ARCHITECTURE-SECURITY-$SECURITY
-                    echo $stackName
-                    stack_setup $DISTRIBUTION_TYPE $SECURITY $ARCHITECTURE
-                    rm userdata_$DISTRIBUTION_TYPE.sh
-                  done
-                done
-              done
-            fi
