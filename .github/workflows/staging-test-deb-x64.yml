@@ -5,6 +5,8 @@ on:
   #   - cron: '0 10 * * *'
   repository_dispatch:
     types: [staging-test-deb-x64]
+  push:
+    branches: [deb-rpm-arm64-V313743037]
 
 jobs:
   Test-ISM-NoSec:
