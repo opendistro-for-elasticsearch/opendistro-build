@@ -52,7 +52,7 @@ jobs:
 
               for i in $existingStacks
               do
-                  if [ $i == $stackName ];
+                  if [ $i = $stackName ];
                   then
                       echo "Stack already exists! Deleting the old stack"
                       aws cloudformation delete-stack --stack-name $stackName
@@ -61,7 +61,7 @@ jobs:
                   fi
               done
               
-              if [ $ARCHITECTURE == "ARM64" ];
+              if [ $ARCHITECTURE = "ARM64" ];
               then
                 release-tools/scripts/userdata.sh $1 $2 arm64
                 ls -ltr
