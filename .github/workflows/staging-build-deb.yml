@@ -5,8 +5,8 @@ on:
   #   - cron: '0 10 * * *'
   repository_dispatch:
     types: [staging-build-deb]
-  push:
-    branches: [deb-rpm-arm64-V313743037]
+  #push:
+  #  branches: [deb-rpm-arm64-V313743037]
 
 jobs:
   plugin-availability:
@@ -23,7 +23,7 @@ jobs:
       - name: Required Packages
         run: ./release-tools/scripts/required_packages.sh
       - name: Run check_plugin scripts
-        run: release-tools/scripts/check_plugin.sh plugins; exit `cat /tmp/plugin_status.check`
+        run: release-tools/scripts/check_plugin.sh; exit `cat /tmp/plugin_status.check`
         #run: release-tools/scripts/check_plugin.sh; exit `cat /tmp/plugin_status.check`
 
   Provision-Runners:
