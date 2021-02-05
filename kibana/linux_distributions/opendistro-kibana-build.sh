@@ -41,6 +41,20 @@ PLATFORM="linux"; if [ ! -z "$2" ]; then PLATFORM=$2; fi; echo PLATFORM $PLATFOR
 ARCHITECTURE="x64"; if [ ! -z "$3" ]; then ARCHITECTURE=$3; fi; echo ARCHITECTURE $ARCHITECTURE
 KIBANA_URL=`yq eval '.urls.KIBANA.'$PLATFORM'_'$ARCHITECTURE'' $MANIFEST_FILE`
 
+if [ "$ARCHITECTURE" = "x64" ]
+then
+  ARCHITECTURE_ALT_RPM="x86_64"
+  ARCHITECTURE_ALT_DEB="amd64"
+elif [ "$ARCHITECTURE" = "arm64" ]
+then
+  ARCHITECTURE_ALT_RPM="aarch64"
+  ARCHITECTURE_ALT_DEB="arm64"
+else
+  echo "User enter wrong architecture, choose among x64/arm64"
+  exit 1
+fi
+
+
 # Please DO NOT change the orders, they have dependencies
 PLUGINS=`$REPO_ROOT/release-tools/scripts/plugins-info.sh kibana-plugins plugin_basename`
 PLUGINS_ARRAY=($PLUGINS )
@@ -143,7 +157,7 @@ if [ $# -eq 0 ] || [ "$PACKAGE_TYPE" = "rpm" ]; then
       --template-value dataDir=/var/lib/kibana \
       --exclude usr/share/kibana/config \
       --exclude usr/share/kibana/data \
-      --architecture x86_64 \
+      --architecture $ARCHITECTURE_ALT_RPM \
       --rpm-os linux \
       $ROOT/opendistroforelasticsearch-kibana/=/usr/share/kibana/ \
       $ROOT/opendistroforelasticsearch-kibana/config/=/etc/kibana/ \
@@ -186,7 +200,7 @@ if [ $# -eq 0 ] || [ "$PACKAGE_TYPE" = "deb" ]; then
       --template-value dataDir=/var/lib/kibana \
       --exclude usr/share/kibana/config \
       --exclude usr/share/kibana/data \
-      --architecture amd64 \
+      --architecture $ARCHITECTURE_ALT_RPM \
       $ROOT/opendistroforelasticsearch-kibana/=/usr/share/kibana/ \
       $ROOT/opendistroforelasticsearch-kibana/config/=/etc/kibana/ \
       $ROOT/opendistroforelasticsearch-kibana/data/=/var/lib/kibana/ \

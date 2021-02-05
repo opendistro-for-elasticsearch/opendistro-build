@@ -1,10 +1,10 @@
-name: Process RPM Artifacts X64
+name: Process RPM Artifacts ARM64
 
 on:
   # schedule:
   #   - cron: '0 10 * * *'
   repository_dispatch:
-    types: [staging-build-rpm-x64]
+    types: [staging-build-rpm-arm64]
 
 jobs:
   Provision-Runners:
@@ -23,16 +23,16 @@ jobs:
           #!/bin/bash
           # Please add comma at the end of the RUNNERS strings
           # Don't add space after commas
-          RUNNERS="odfe-rpm-ism-nosec-x64,odfe-rpm-alerting-nosec-x64,odfe-rpm-sql-nosec-x64,odfe-rpm-knn-nosec-x64,odfe-rpm-ad-nosec-x64,"
-          RUNNERS+="odfe-rpm-sql-x64,odfe-rpm-ad-x64,odfe-rpm-alerting-x64,"
-          RUNNERS+="odfe-rpm-ad-kibana-nosec-x64,odfe-rpm-sql-kibana-nosec-x64,"
-          RUNNERS+="odfe-rpm-ad-kibana-x64,odfe-rpm-sec-kibana-x64,odfe-rpm-kibana-nb-nosec-x64"
+          RUNNERS="odfe-rpm-ism-nosec-arm64,odfe-rpm-alerting-nosec-arm64,odfe-rpm-sql-nosec-arm64,odfe-rpm-knn-nosec-arm64,odfe-rpm-ad-nosec-arm64,"
+          RUNNERS+="odfe-rpm-sql-arm64,odfe-rpm-ad-arm64,odfe-rpm-alerting-arm64,"
+          RUNNERS+="odfe-rpm-ad-kibana-nosec-arm64,odfe-rpm-sql-kibana-nosec-arm64,"
+          RUNNERS+="odfe-rpm-ad-kibana-arm64,odfe-rpm-sec-kibana-arm64,odfe-rpm-kibana-nb-nosec-arm64"
           release-tools/scripts/setup_runners.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }} ami-086e8a98280780e63
 
   Test-ISM-NoSec:
     needs: [Provision-Runners]
     name: Test-ISM-NoSec
-    runs-on: [self-hosted, Linux, X64, odfe-rpm-ism-nosec-x64]
+    runs-on: [self-hosted, Linux, ARM64, odfe-rpm-ism-nosec-arm64]
     steps:
       - uses: actions/checkout@v1
       - name: Setup Java
@@ -56,7 +56,7 @@ jobs:
   Test-ALERTING-NoSec:
     needs: [Provision-Runners]
     name: Test-ALERTING-NoSec
-    runs-on: [self-hosted, Linux, X64, odfe-rpm-alerting-nosec-x64]
+    runs-on: [self-hosted, Linux, ARM64, odfe-rpm-alerting-nosec-arm64]
     steps:
       - uses: actions/checkout@v1
       - name: Setup Java
@@ -80,7 +80,7 @@ jobs:
   Test-SQL-NoSec:
     needs: [Provision-Runners]
     name: Test-SQL-NoSec
-    runs-on: [self-hosted, Linux, X64, odfe-rpm-sql-nosec-x64]
+    runs-on: [self-hosted, Linux, ARM64, odfe-rpm-sql-nosec-arm64]
     steps:
       - uses: actions/checkout@v1
       - name: Setup Java
@@ -104,7 +104,7 @@ jobs:
   Test-KNN-NoSec:
     needs: [Provision-Runners]
     name: Test-KNN-NoSec
-    runs-on: [self-hosted, Linux, X64, odfe-rpm-knn-nosec-x64]
+    runs-on: [self-hosted, Linux, ARM64, odfe-rpm-knn-nosec-arm64]
     steps:
       - uses: actions/checkout@v1
       - name: Setup Java
@@ -128,7 +128,7 @@ jobs:
   Test-AD-NoSec:
     needs: [Provision-Runners]
     name: Test-AD-NoSec
-    runs-on: [self-hosted, Linux, X64, odfe-rpm-ad-nosec-x64]
+    runs-on: [self-hosted, Linux, ARM64, odfe-rpm-ad-nosec-arm64]
     steps:
       - uses: actions/checkout@v1
       - name: Setup Java
@@ -152,7 +152,7 @@ jobs:
   Test-SQL:
     needs: [Provision-Runners]
     name: Test-SQL
-    runs-on: [self-hosted, Linux, X64, odfe-rpm-sql-x64]
+    runs-on: [self-hosted, Linux, ARM64, odfe-rpm-sql-arm64]
     steps:
       - uses: actions/checkout@v1
       - name: Setup Java
@@ -176,7 +176,7 @@ jobs:
   Test-AD:
     needs: [Provision-Runners]
     name: Test-AD
-    runs-on: [self-hosted, Linux, X64, odfe-rpm-ad-x64]
+    runs-on: [self-hosted, Linux, ARM64, odfe-rpm-ad-arm64]
     steps:
       - uses: actions/checkout@v1
       - name: Setup Java
@@ -200,7 +200,7 @@ jobs:
   Test-ALERTING:
     needs: [Provision-Runners]
     name: Test-ALERTING
-    runs-on: [self-hosted, Linux, X64, odfe-rpm-alerting-x64]
+    runs-on: [self-hosted, Linux, ARM64, odfe-rpm-alerting-arm64]
     steps:
       - uses: actions/checkout@v1
       - name: Setup Java
@@ -223,7 +223,7 @@ jobs:
         
   Test-AD-KIBANA-NoSec:
     needs: [Provision-Runners]
-    runs-on: [self-hosted, Linux, X64, odfe-rpm-ad-kibana-nosec-x64]
+    runs-on: [self-hosted, Linux, ARM64, odfe-rpm-ad-kibana-nosec-arm64]
     name: Test-AD-KIBANA-NoSec
     steps:
       - uses: actions/checkout@v1
@@ -293,7 +293,7 @@ jobs:
 
   Test-SQL-KIBANA-NoSec:
     needs: [Provision-Runners]
-    runs-on: [self-hosted, Linux, X64, odfe-rpm-sql-kibana-nosec-x64]
+    runs-on: [self-hosted, Linux, ARM64, odfe-rpm-sql-kibana-nosec-arm64]
     name: Test-SQL-KIBANA-NoSec
     strategy:
       matrix:
@@ -386,7 +386,7 @@ jobs:
 
   Test-Kibana-Notebooks-NoSec:
     needs: [Provision-Runners]
-    runs-on: [self-hosted, Linux, X64, odfe-rpm-kibana-nb-nosec-x64]
+    runs-on: [self-hosted, Linux, ARM64, odfe-rpm-kibana-nb-nosec-arm64]
     name: Test-Kibana-Notebooks-NoSec
     strategy:
       fail-fast: false
@@ -466,7 +466,7 @@ jobs:
 
   Test-AD-KIBANA:
     needs: [Provision-Runners]
-    runs-on: [self-hosted, Linux, X64, odfe-rpm-ad-kibana-x64]
+    runs-on: [self-hosted, Linux, ARM64, odfe-rpm-ad-kibana-arm64]
     name: Test-AD-KIBANA
     steps:
       - uses: actions/checkout@v1
@@ -536,7 +536,7 @@ jobs:
           
   Test-SEC-KIBANA:
     needs: [Provision-Runners]
-    runs-on: [self-hosted, Linux, X64, odfe-rpm-sec-kibana-x64]
+    runs-on: [self-hosted, Linux, ARM64, odfe-rpm-sec-kibana-arm64]
     name: Test-SEC-KIBANA
     strategy:
       fail-fast: false
@@ -625,9 +625,9 @@ jobs:
           #!/bin/bash
           # Please add comma at the end of the RUNNERS strings
           # Don't add space after commas
-          RUNNERS="odfe-rpm-ism-nosec-x64,odfe-rpm-alerting-nosec-x64,odfe-rpm-sql-nosec-x64,odfe-rpm-knn-nosec-x64,odfe-rpm-ad-nosec-x64,"
-          RUNNERS+="odfe-rpm-sql-x64,odfe-rpm-ad-x64,odfe-rpm-alerting-x64,"
-          RUNNERS+="odfe-rpm-ad-kibana-nosec-x64,odfe-rpm-sql-kibana-nosec-x64,"
-          RUNNERS+="odfe-rpm-ad-kibana-x64,odfe-rpm-sec-kibana-x64,odfe-rpm-kibana-nb-nosec-x64"
+          RUNNERS="odfe-rpm-ism-nosec-arm64,odfe-rpm-alerting-nosec-arm64,odfe-rpm-sql-nosec-arm64,odfe-rpm-knn-nosec-arm64,odfe-rpm-ad-nosec-arm64,"
+          RUNNERS+="odfe-rpm-sql-arm64,odfe-rpm-ad-arm64,odfe-rpm-alerting-arm64,"
+          RUNNERS+="odfe-rpm-ad-kibana-nosec-arm64,odfe-rpm-sql-kibana-nosec-arm64,"
+          RUNNERS+="odfe-rpm-ad-kibana-arm64,odfe-rpm-sec-kibana-arm64,odfe-rpm-kibana-nb-nosec-arm64"
           release-tools/scripts/setup_runners.sh terminate $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
 
