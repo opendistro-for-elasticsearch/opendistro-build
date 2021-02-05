@@ -128,7 +128,7 @@ jobs:
       - name: Build Kibana rpm
         run: ./kibana/linux_distributions/opendistro-kibana-build.sh rpm linux arm64
 
-  signing-artifacts:
+  sign-rpm-artifacts:
     name: Sign Yum
     runs-on: [ubuntu-16.04]
     container:
@@ -156,7 +156,7 @@ jobs:
           elasticsearch/linux_distributions/rpm-signing.sh $passphrase
 
   CleanUp-Runners:
-    needs: [sign-deb-artifacts]
+    needs: [sign-rpm-artifacts]
     if: always()
     name: CleanUp-Runners
     runs-on: ubuntu-18.04
