@@ -111,7 +111,7 @@ jobs:
             then
               # Add the ditributions and architectures in the below array. All CAPS
               DISTRIBUTION_TYPE=(TAR RPM DEB)
-              ARCHITECTURE=(X64)
+              ARCHITECTURE=(X64 ARM64)
 
               for dis in ${DISTRIBUTION_TYPE[@]}; do
                 for security in ENABLE DISABLE; do

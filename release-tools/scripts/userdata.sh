@@ -40,6 +40,13 @@ then
 fi
 
 ARCHITECTURE="x64"; if [ ! -z "$3" ]; then ARCHITECTURE=$3; fi; echo ARCHITECTURE $ARCHITECTURE
+if [ "$ARCHITECTURE" = "arm64" ];
+then
+ESARCH="arm64"
+else
+ESARCH="amd64"
+fi
+
 ###### RPM package with Security enabled ######
 if [ "$1" = "RPM" ]
 then
@@ -64,8 +71,8 @@ EOF
 fi
 
 ###### DEB package with Security enabled ######
-if [ "$1" = "DEB" ]
-then 
+if [ "$1" = "DEB" ];
+then
 cat <<- EOF > $REPO_ROOT/userdata_$1.sh
 #!/bin/bash
 #installing ODFE
@@ -75,8 +82,8 @@ sudo apt-get update
 sudo apt install zip awscli -y 
 wget -qO - https://d3g5vo6xdbdb9a.cloudfront.net/GPG-KEY-opendistroforelasticsearch | sudo apt-key add -
 echo "deb https://d3g5vo6xdbdb9a.cloudfront.net/staging/apt stable main" | sudo tee -a /etc/apt/sources.list.d/opendistroforelasticsearch.list
-wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$ES_VERSION-amd64.deb
-sudo dpkg -i elasticsearch-oss-$ES_VERSION-amd64.deb
+wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$ES_VERSION-$ESARCH.deb
+sudo dpkg -i elasticsearch-oss-$ES_VERSION-$ESARCH.deb
 sudo apt-get -y update
 sudo apt install -y opendistroforelasticsearch
 echo "node.name: init-master" >> /etc/elasticsearch/elasticsearch.yml
