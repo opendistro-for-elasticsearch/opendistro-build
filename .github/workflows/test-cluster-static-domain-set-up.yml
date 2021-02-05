@@ -113,13 +113,15 @@ jobs:
               DISTRIBUTION_TYPE=(TAR RPM DEB)
               ARCHITECTURE=(X64 ARM64)
 
-              for dis in ${DISTRIBUTION_TYPE[@]}; do
-                for security in ENABLE DISABLE; do
-                  for arch in ${ARCHITECTURE[@]}; do
-                    stackName=ODFE-$dis-$arch-SECURITY-$security
-                    echo $stackName
-                    stack_setup $dis $security $arch
-                    rm userdata_$dis.sh
+              # for dis in ${DISTRIBUTION_TYPE[@]}; do
+                for dis in TAR RPM DEB; do
+                  for security in ENABLE DISABLE; do
+                    for arch in X64 ARM64; do
+                  # for arch in ${ARCHITECTURE[@]}; do
+                      stackName=ODFE-$dis-$arch-SECURITY-$security
+                      echo $stackName
+                      stack_setup $dis $security $arch
+                      rm userdata_$dis.sh
                   done
                 done
               done
