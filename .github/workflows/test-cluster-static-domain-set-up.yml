@@ -111,19 +111,16 @@ jobs:
             elif ${{ github.event_name == 'schedule' }} || ${{ github.event_name == 'push' }}
             then
               # Add the ditributions and architectures in the below array. All CAPS
-              DISTRIBUTION_TYPE=(TAR RPM DEB)
               ARCHITECTURE=(X64 ARM64)
-              SECURITY=(ENABLE DISABLE)
-
-              for dis in ${DISTRIBUTION_TYPE[@]}; do
-                for security in ${SECURITY[@]}; do
-                  for arch in ${ARCHITECTURE[@]}; do
-                    stackName=ODFE-$dis-$arch-SECURITY-$security
-                    echo "$stackName in process"
-                    stack_setup $dis $security $arch
-                    rm userdata_$dis.sh
+              for arch in ${ARCHITECTURE[@]}; do
+                  SECURITY=(ENABLE DISABLE)
+                  for sec in ${SECURITY[@]}; do
+                      DISTRIBUTION_TYPE=(TAR RPM DEB)
+                      for dis in ${DISTRIBUTION_TYPE[@]}; do    
+                          stackName=ODFE-$dis-$arch-SECURITY-$sec
+                          echo $stackName
+                      done
                   done
-                done
               done
             fi
 
