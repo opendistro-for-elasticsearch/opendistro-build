@@ -49,7 +49,7 @@ jobs:
               echo "DISTRIBUTION_TYPE=$DISTRIBUTION_TYPE"
 
               existingStacks=`aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE --query 'StackSummaries[*].StackName' --output text`
-              echo $existingStacks
+              echo "Existing stacks are: $existingStacks"
 
               for i in $existingStacks
               do
@@ -113,9 +113,10 @@ jobs:
               # Add the ditributions and architectures in the below array. All CAPS
               DISTRIBUTION_TYPE=(TAR RPM DEB)
               ARCHITECTURE=(X64 ARM64)
+              SECURITY=(ENABLE DISABLE)
 
               for dis in ${DISTRIBUTION_TYPE[@]}; do
-                for security in ENABLE DISABLE; do
+                for security in ${SECURITY[@]}; do
                   for arch in ${ARCHITECTURE[@]}; do
                     stackName=ODFE-$dis-$arch-SECURITY-$security
                     echo $stackName
