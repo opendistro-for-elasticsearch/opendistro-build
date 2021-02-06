@@ -119,7 +119,7 @@ jobs:
                       for dis in ${DISTRIBUTION_TYPE[@]}; do    
                         stackName=ODFE-$dis-$arch-SECURITY-$sec
                         echo "$stackName in process"
-                        stack_setup $dis $security $arch
+                        stack_setup $dis $sec $arch
                       done
                   done
               done
