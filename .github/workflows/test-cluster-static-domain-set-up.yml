@@ -117,8 +117,9 @@ jobs:
                   for sec in ${SECURITY[@]}; do
                       DISTRIBUTION_TYPE=(TAR RPM DEB)
                       for dis in ${DISTRIBUTION_TYPE[@]}; do    
-                          stackName=ODFE-$dis-$arch-SECURITY-$sec
-                          echo $stackName
+                        stackName=ODFE-$dis-$arch-SECURITY-$sec
+                        echo "$stackName in process"
+                        stack_setup $dis $security $arch
                       done
                   done
               done
