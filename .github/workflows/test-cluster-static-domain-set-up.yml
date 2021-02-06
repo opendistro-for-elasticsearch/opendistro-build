@@ -49,6 +49,7 @@ jobs:
               echo "DISTRIBUTION_TYPE=$DISTRIBUTION_TYPE"
 
               existingStacks=`aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE --query 'StackSummaries[*].StackName' --output text`
+              echo $existingStacks
 
               for i in $existingStacks
               do
