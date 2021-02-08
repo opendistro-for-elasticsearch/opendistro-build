@@ -24,6 +24,7 @@ jobs:
         run: release-tools/scripts/check_plugin.sh; exit `cat /tmp/plugin_status.check`
 
   Provision-Runners:
+    needs: [plugin-availability]
     name: Provision-Runners
     runs-on: ubuntu-18.04
     steps:

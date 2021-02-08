@@ -23,35 +23,30 @@ jobs:
       - name: Run check_plugin scripts
         run: ./release-tools/scripts/check_plugin.sh; exit `cat /tmp/plugin_status.check`
 
-  build-es-artifacts:
+  Provision-Runners:
     needs: [plugin-availability]
-    name: Build ES Artifacts
+    name: Provision-Runners
     runs-on: ubuntu-18.04
-    container:
-      image: opendistroforelasticsearch/multijava08101112-git:v1
     steps:
-    - uses: actions/checkout@v1
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
-    - name: Required Packages
-      run: |
-        apt-get update
-        apt-get install sudo -y
-        ./release-tools/scripts/required_packages.sh
-    - name: Build tar
-      run: set -u; export JAVA_HOME=/openjdk12; export PATH=$JAVA_HOME:$PATH; ./elasticsearch/linux_distributions/opendistro-tar-build.sh
+      - uses: actions/checkout@v1
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_EC2_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_EC2_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
+      - name: AWS Cli Processing
+        run: |
+          #!/bin/bash
+          # Please add comma at the end of the RUNNERS strings
+          # Don't add space after commas
+          RUNNERS="odfe-tar-build-es-arm64,odfe-tar-build-kibana-arm64"
+          release-tools/scripts/setup_runners.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }} ami-055197d43e4ec7482
 
-
-  build-kibana-artifacts:
+  build-es-artifacts-x64:
     needs: [plugin-availability]
-    name: Build Kibana Artifacts
+    name: Build ES Artifacts X64
     runs-on: [ubuntu-18.04]
-    container:
-        image: opendistroforelasticsearch/jsenv:v1
     steps:
       - uses: actions/checkout@v1
       - name: Configure AWS Credentials
@@ -61,717 +56,78 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
       - name: Required Packages
-        run: |
-          apt-get update
-          apt-get install sudo -y
-          ./release-tools/scripts/required_packages.sh
+        run: ./release-tools/scripts/required_packages.sh
+      - name: Build tar
+        run: set -u; ./elasticsearch/linux_distributions/opendistro-tar-build.sh linux x64
+
+  build-es-artifacts-arm64:
+    needs: [plugin-availability, Provision-Runners]
+    name: Build ES Artifacts ARM64
+    runs-on: [self-hosted, Linux, ARM64, odfe-tar-build-es-arm64]
+    steps:
+      - uses: actions/checkout@v1
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Required Packages
+        run: ./release-tools/scripts/required_packages.sh
+      - name: Build tar
+        run: set -u; ./elasticsearch/linux_distributions/opendistro-tar-build.sh linux arm64
+
+  build-kibana-artifacts-x64:
+    needs: [plugin-availability]
+    name: Build KIBANA Artifacts X64
+    runs-on: [ubuntu-18.04]
+    steps:
+      - uses: actions/checkout@v1
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Required Packages
+        run: ./release-tools/scripts/required_packages.sh
       - name: Build Kibana
-        run: ./kibana/linux_distributions/opendistro-kibana-build.sh tar
+        run: ./kibana/linux_distributions/opendistro-kibana-build.sh tar linux x64
 
-  Test-IM-NoSec:
-    needs: [build-es-artifacts]
+  build-kibana-artifacts-arm64:
+    needs: [plugin-availability, Provision-Runners]
+    name: Build KIBANA Artifacts ARM64
+    runs-on: [self-hosted, Linux, ARM64, odfe-tar-build-kibana-arm64]
+    steps:
+      - uses: actions/checkout@v1
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Required Packages
+        run: ./release-tools/scripts/required_packages.sh
+      - name: Build Kibana
+        run: ./kibana/linux_distributions/opendistro-kibana-build.sh tar linux arm64
+
+  CleanUp-Runners:
+    needs: [build-es-artifacts-arm64, build-kibana-artifacts-arm64]
+    if: always()
+    name: CleanUp-Runners
     runs-on: ubuntu-18.04
-    name: Test-IM-NoSec
-    strategy:
-      fail-fast: false
-      matrix:
-        java: [14]
-    steps:
-      - name: Set up AWS Cred
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.java }}
-      - uses: actions/checkout@v1
-      - name: Required Packages
-        run: ./release-tools/scripts/required_packages.sh
-      - name: Retrieve plugin tags
-        run:  echo "p_tag_im=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)" >> $GITHUB_ENV
-      - name: Checkout IM
-        uses: actions/checkout@v1
-        with:
-          repository: opendistro-for-elasticsearch/index-management
-          ref: ${{env.p_tag_im}}
-      - name: IT
-        run: |
-          ./release-tools/scripts/setup_runners_service.sh zip --es-nosec
-          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../index-management; pwd
-          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
-
-  Test-Alerting-NoSec:
-    needs: [build-es-artifacts]
-    runs-on: ubuntu-18.04
-    name: Test-Alerting-NoSec
-    strategy:
-      fail-fast: false
-      matrix:
-        java: [14]
-    steps:
-      - name: Set up AWS Cred
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.java }}
-      - uses: actions/checkout@v1
-      - name: Required Packages
-        run: ./release-tools/scripts/required_packages.sh
-      - name: Retrieve plugin tags
-        run:  echo "p_tag_alerting=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)" >> $GITHUB_ENV
-      - name: Checkout Alerting
-        uses: actions/checkout@v1
-        with:
-          repository: opendistro-for-elasticsearch/alerting
-          ref: ${{env.p_tag_alerting}}
-      - name: IT
-        run: |
-          ./release-tools/scripts/setup_runners_service.sh zip --es-nosec
-          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../alerting/alerting; pwd
-          ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
-
-  Test-SQL-NoSec:
-    needs: [build-es-artifacts]
-    runs-on: ubuntu-18.04
-    name: Test-SQL-NoSec
-    strategy:
-      fail-fast: false
-      matrix:
-        java: [14]
-    steps:
-      - name: Set up AWS Cred
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.java }}
-      - uses: actions/checkout@v1
-      - name: Required Packages
-        run: ./release-tools/scripts/required_packages.sh
-      - name: Retrieve plugin tags
-        run:  echo "p_tag_sql=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)" >> $GITHUB_ENV
-      - name: Checkout SQL
-        uses: actions/checkout@v1
-        with:
-          repository: opendistro-for-elasticsearch/sql
-          ref: ${{env.p_tag_sql}}
-      - name: IT
-        run: |
-          ./release-tools/scripts/setup_runners_service.sh zip --es-nosec
-          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../sql; pwd
-          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
-          
-  Test-KNN-NoSec:
-    needs: [build-es-artifacts]
-    runs-on: ubuntu-18.04
-    name: Test-KNN-NoSec
-    strategy:
-      fail-fast: false
-      matrix:
-        java: [14]
-    steps:
-      - name: Set up AWS Cred
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.java }}
-      - uses: actions/checkout@v1
-      - name: Required Packages
-        run: ./release-tools/scripts/required_packages.sh
-      - name: Retrieve plugin tags
-        run:  echo "p_tag_knn=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/k-NN)" >> $GITHUB_ENV
-      - name: Checkout k-NN
-        uses: actions/checkout@v1
-        with:
-          repository: opendistro-for-elasticsearch/k-NN
-          ref: ${{env.p_tag_knn}}
-      - name: IT
-        run: |
-          ./release-tools/scripts/setup_runners_service.sh zip --es-nosec
-          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../k-NN; pwd
-          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
-          
-  Test-AD-NoSec:
-    needs: [build-es-artifacts]
-    runs-on: ubuntu-18.04
-    name: Test-AD-NoSec
-    strategy:
-      fail-fast: false
-      matrix:
-        java: [14]
-    steps:
-      - name: Set up AWS Cred
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.java }}
-      - uses: actions/checkout@v1
-      - name: Required Packages
-        run: ./release-tools/scripts/required_packages.sh
-      - name: Retrieve plugin tags
-        run:  echo "p_tag_ad=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)" >> $GITHUB_ENV
-      - name: Checkout anomaly-detection
-        uses: actions/checkout@v1
-        with:
-          repository: opendistro-for-elasticsearch/anomaly-detection
-          ref: ${{env.p_tag_ad}}
-      - name: IT
-        run: |
-          ./release-tools/scripts/setup_runners_service.sh zip --es-nosec
-          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../anomaly-detection; pwd
-          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest"
-
-  Test-SQL:
-    needs: [build-es-artifacts]
-    runs-on: ubuntu-18.04
-    name: Test-SQL
-    strategy:
-      fail-fast: false
-      matrix:
-        java: [14]
-    steps:
-      - name: Set up AWS Cred
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.java }}
-      - uses: actions/checkout@v1
-      - name: Required Packages
-        run: ./release-tools/scripts/required_packages.sh
-      - name: Retrieve plugin tags
-        run:  echo "p_tag_sql=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)" >> $GITHUB_ENV
-      - name: Checkout SQL
-        uses: actions/checkout@v1
-        with:
-          repository: opendistro-for-elasticsearch/sql
-          ref: ${{env.p_tag_sql}}
-      - name: IT
-        run: |
-          ./release-tools/scripts/setup_runners_service.sh zip --es
-          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../sql; pwd
-          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin
-  
-  Test-AD:
-    needs: [build-es-artifacts]
-    runs-on: ubuntu-18.04
-    name: Test-AD
-    strategy:
-      fail-fast: false
-      matrix:
-        java: [14]
-    steps:
-      - name: Set up AWS Cred
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.java }}
-      - uses: actions/checkout@v1
-      - name: Required Packages
-        run: ./release-tools/scripts/required_packages.sh
-      - name: Retrieve plugin tags
-        run:  echo "p_tag_ad=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)" >> $GITHUB_ENV
-      - name: Checkout anomaly-detection
-        uses: actions/checkout@v1
-        with:
-          repository: opendistro-for-elasticsearch/anomaly-detection
-          ref: ${{env.p_tag_ad}}
-      - name: IT
-        run: |
-          ./release-tools/scripts/setup_runners_service.sh zip --es
-          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../anomaly-detection; pwd
-          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest" -Dhttps=true -Duser=admin -Dpassword=admin
-
-  Test-IM:
-    needs: [build-es-artifacts]
-    runs-on: [ubuntu-18.04]
-    name: Test-IM
-    strategy:
-      fail-fast: false
-      matrix:
-        java: [14]
     steps:
       - uses: actions/checkout@v1
-      - name: Set up AWS Cred
+      - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-      - name: Required Packages
-        run: ./release-tools/scripts/required_packages.sh
-      - name: Retrieve plugin tags
-        run:  echo "p_tag_im=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)" >> $GITHUB_ENV
-
-      - uses: actions/checkout@v1
-        with:
-          repository: opendistro-for-elasticsearch/index-management
-          ref: ${{env.p_tag_im}}
-
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.java }}
-
-      - name: IT
+          aws-access-key-id: ${{ secrets.AWS_EC2_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_EC2_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
+      - name: AWS Cli Processing
         run: |
-          ./release-tools/scripts/setup_runners_service.sh zip --es
-          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../index-management; pwd
-          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin
-
-  Test-ALERTING:
-    needs: [build-es-artifacts]
-    runs-on: [ubuntu-18.04]
-    name: Test-ALERTING
-    strategy:
-      fail-fast: false
-      matrix:
-        java: [14]
-    steps:
-      - uses: actions/checkout@v1
-      - name: Set up AWS Cred
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-      - name: Required Packages
-        run: ./release-tools/scripts/required_packages.sh
-      - name: Retrieve plugin tags 
-        run:  echo "p_tag_alerting=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)" >> $GITHUB_ENV
-
-      - uses: actions/checkout@v1
-        with:
-          repository: opendistro-for-elasticsearch/alerting
-          ref: ${{env.p_tag_alerting}}
-
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.java }}
-
-      - name: IT
-        run: |
-          ./release-tools/scripts/setup_runners_service.sh zip --es
-          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../alerting/alerting; pwd
-          ls -ltr
-          ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin -Dsecurity=true
-               
-  Test-AD-KIBANA-NoSec:
-    needs: [build-es-artifacts, build-kibana-artifacts]
-    runs-on: [ubuntu-16.04]
-    name: Test-AD-KIBANA-NoSec
-    strategy:
-      fail-fast: false
-      matrix:
-        java: [14]
-    steps:
-      - uses: actions/checkout@v1
-      - name: Set up AWS Cred
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-      - name: Required Packages
-        run: ./release-tools/scripts/required_packages.sh
-      - name: Retrieve plugin tags 
-        run: |
-          echo "p_tag_ad=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)" >> $GITHUB_ENV
-          echo "es_version=$(release-tools/scripts/version-info.sh --es)" >> $GITHUB_ENV
-          
-      - name: Checkout Kibana
-        uses: actions/checkout@v2
-        with:
-          repository: opendistro-for-elasticsearch/kibana-oss
-          ref: ${{env.es_version}}
-          token: ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
-          path: kibana
-           
-      - uses: actions/checkout@v2
-        with:
-          repository: opendistro-for-elasticsearch/anomaly-detection-kibana-plugin
-          ref: ${{env.p_tag_ad}}
-          path: kibana/plugins/anomaly-detection-kibana-plugin
-      
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.java }}
-      
-      - name: Get node and yarn versions
-        id: node_yarn_versions
-        run: |
-          echo "kibana_node_version=$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV
-          echo "kibana_yarn_version=$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV   
-      
-      - name: Setup node
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{env.kibana_node_version}}
-          registry-url: 'https://registry.npmjs.org'
-      
-      - name: Install correct yarn version for Kibana
-        run: |
-          npm uninstall -g yarn
-          echo "Installing yarn ${{ env.kibana_yarn_version }}"
-          npm i -g yarn@${{ env.kibana_yarn_version }}
-      
-      - name: Bootstrap the plugin
-        run: |
-          cd ./kibana/plugins/anomaly-detection-kibana-plugin
-          yarn kbn bootstrap
-          
-      - name: Start ES and Kibana
-        run: ./release-tools/scripts/setup_runners_service.sh zip --kibana-nosec
- 
-      - name: run IT
-        uses: cypress-io/github-action@v2.5.0
-        with:
-          working-directory: kibana/plugins/anomaly-detection-kibana-plugin
-          command: yarn cy:run --config baseurl=http://localhost:5601
-    
-  Test-SQL-KIBANA-NoSec:
-    needs: [build-es-artifacts, build-kibana-artifacts]
-    runs-on: [ubuntu-16.04]
-    name: Test-SQL-KIBANA-NoSec
-    strategy:
-      fail-fast: false
-      matrix:
-        java: [14]
-    steps:
-      - uses: actions/checkout@v1
-      - name: Set up AWS Cred
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-      - name: Required Packages
-        run: ./release-tools/scripts/required_packages.sh
-      - name: Retrieve plugin tags 
-        run: |
-          echo "p_tag_sql_kibana=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)" >> $GITHUB_ENV
-          echo "es_version=$(release-tools/scripts/version-info.sh --es)" >> $GITHUB_ENV
-          
-      - name: Checkout Kibana
-        uses: actions/checkout@v2
-        with:
-          repository: opendistro-for-elasticsearch/kibana-oss
-          ref: ${{env.es_version}}
-          token: ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
-          path: kibana
-           
-      - uses: actions/checkout@v2
-        with:
-          repository: opendistro-for-elasticsearch/sql
-          ref: ${{env.p_tag_sql_kibana}}
-          path: kibana/plugins/sql
-      
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.java }}
-      
-      - name: Get node and yarn versions
-        id: node_yarn_versions
-        run: |
-          echo "kibana_node_version=$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV
-          echo "kibana_yarn_version=$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV   
-      
-      - name: Setup node
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{env.kibana_node_version}}
-          registry-url: 'https://registry.npmjs.org'
-      
-      - name: Install correct yarn version for Kibana
-        run: |
-          npm uninstall -g yarn
-          echo "Installing yarn ${{ env.kibana_yarn_version }}"
-          npm i -g yarn@${{ env.kibana_yarn_version }}
-      
-      - name: Bootstrap the plugin
-        run: |
-          cd ./kibana/plugins
-          cp -rp sql/workbench .
-          rm -rf sql/
-          cd workbench
-
-      - name: Retry the bootstraps
-        # sql repo has a bug that you have to bootstrap at least twice to success
-        # this is a temp solution and they will try to fix it later
-        uses: nick-invision/retry@v1
-        with:
-          # 60 min timeouts as certain runners like windows may take 30+ min just to complete one bootstrap
-          timeout_minutes: 60
-          max_attempts: 3
-          command: cd ./kibana/plugins/workbench; pwd; yarn kbn bootstrap
-
-      - name: Start ES and Kibana
-        run: |
-          ./release-tools/scripts/setup_runners_service.sh zip --kibana-nosec
-          echo "load the indices"
-          curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/sql/master/integ-test/src/test/resources/accounts.json | curl -s -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/accounts/_bulk?pretty' --data-binary @- > /dev/null 2>&1
-          curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/sql/master/integ-test/src/test/resources/employee_nested.json | curl -s -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/employee_nested/_bulk?pretty' --data-binary @- > /dev/null 2>&1
- 
-      - name: run IT
-        uses: cypress-io/github-action@v2.5.0
-        with:
-          working-directory: kibana/plugins/workbench
-          command: npx cypress run
-
-  Test-Kibana-Notebooks-NoSec:
-    needs: [build-es-artifacts, build-kibana-artifacts]
-    runs-on: [ubuntu-18.04]
-    name: Test-Kibana-Notebooks-NoSec
-    strategy:
-      fail-fast: false
-      matrix:
-        java: [14]
-    steps:
-      - uses: actions/checkout@v1
-      - name: Set up AWS Cred
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-
-      - name: Install required packages
-        run: release-tools/scripts/required_packages.sh
-
-      - name: Retrieve plugin tags 
-        run: |
-          echo "p_tag_kib_nb=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/kibana-notebooks)" >> $GITHUB_ENV
-          echo "es_version=$(release-tools/scripts/version-info.sh --es)" >> $GITHUB_ENV
-          
-      - name: Checkout Kibana
-        uses: actions/checkout@v2
-        with:
-          repository: opendistro-for-elasticsearch/kibana-oss
-          ref: ${{env.es_version}}
-          token: ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
-          path: kibana
-           
-      - uses: actions/checkout@v2
-        with:
-          repository: opendistro-for-elasticsearch/kibana-notebooks
-          ref: ${{env.p_tag_kib_nb}}
-          path: kibana/plugins/kibana-notebooks
-      
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.java }}
-      
-      - name: Get node and yarn versions
-        id: node_yarn_versions
-        run: |
-          echo "kibana_node_version=$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV
-          echo "kibana_yarn_version=$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV   
-      
-      - name: Setup node
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{env.kibana_node_version}}
-          registry-url: 'https://registry.npmjs.org'
-      
-      - name: Install correct yarn version for Kibana
-        run: |
-          npm uninstall -g yarn
-          echo "Installing yarn ${{ env.kibana_yarn_version }}"
-          npm i -g yarn@${{ env.kibana_yarn_version }}
-      
-      - name: Bootstrap the plugin
-        run: |
-          cd ./kibana/plugins/kibana-notebooks
-          yarn kbn bootstrap
-
-      - name: Start ES and Kibana
-        run: |
-          release-tools/scripts/setup_runners_service.sh zip --kibana-nosec 
-
-      - name: Run IT
-        uses: cypress-io/github-action@v2.5.0
-        with:
-          working-directory: kibana/plugins/kibana-notebooks
-          command: npx cypress run
-
-  Test-AD-KIBANA:
-    needs: [build-es-artifacts, build-kibana-artifacts]
-    runs-on: [ubuntu-16.04]
-    name: Test-AD-KIBANA
-    strategy:
-      fail-fast: false
-      matrix:
-        java: [14]
-    steps:
-      - uses: actions/checkout@v1
-      - name: Set up AWS Cred
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-      - name: Required Packages
-        run: ./release-tools/scripts/required_packages.sh
-      - name: Retrieve plugin tags 
-        run: |
-          echo "p_tag_ad=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)" >> $GITHUB_ENV
-          echo "es_version=$(release-tools/scripts/version-info.sh --es)" >> $GITHUB_ENV
-          
-      - name: Checkout Kibana
-        uses: actions/checkout@v2
-        with:
-          repository: opendistro-for-elasticsearch/kibana-oss
-          ref: ${{env.es_version}}
-          token: ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
-          path: kibana
-           
-      - uses: actions/checkout@v2
-        with:
-          repository: opendistro-for-elasticsearch/anomaly-detection-kibana-plugin
-          ref: ${{env.p_tag_ad}}
-          path: kibana/plugins/anomaly-detection-kibana-plugin
-      
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.java }}
-      
-      - name: Get node and yarn versions
-        id: node_yarn_versions
-        run: |
-          echo "kibana_node_version=$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV
-          echo "kibana_yarn_version=$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV   
-      
-      - name: Setup node
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{env.kibana_node_version}}
-          registry-url: 'https://registry.npmjs.org'
-      
-      - name: Install correct yarn version for Kibana
-        run: |
-          npm uninstall -g yarn
-          echo "Installing yarn ${{ env.kibana_yarn_version }}"
-          npm i -g yarn@${{ env.kibana_yarn_version }}
-      
-      - name: Bootstrap the plugin
-        run: |
-          cd ./kibana/plugins/anomaly-detection-kibana-plugin
-          yarn kbn bootstrap
-          
-      - name: Start ES and Kibana
-        run: ./release-tools/scripts/setup_runners_service.sh zip --kibana
- 
-      - name: run IT
-        uses: cypress-io/github-action@v2.5.0
-        with:
-          working-directory: kibana/plugins/anomaly-detection-kibana-plugin
-          command: yarn cy:run-with-security --config baseurl=http://localhost:5601
-
-  Test-SEC-KIBANA:
-    needs: [build-es-artifacts, build-kibana-artifacts]
-    runs-on: [ubuntu-18.04]
-    name: Test-SEC-KIBANA
-    strategy:
-      fail-fast: false
-      matrix:
-        java: [14]
-    steps:
-      - uses: actions/checkout@v1
-      - name: Set up AWS Cred
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-      - name: Required Packages
-        run: ./release-tools/scripts/required_packages.sh
-      - name: Retrieve plugin tags 
-        run: |
-          echo "p_tag_sec_kibana=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/security-kibana-plugin)" >> $GITHUB_ENV
-          echo "es_version=$(release-tools/scripts/version-info.sh --es)" >> $GITHUB_ENV
-
-      - name: Checkout Kibana
-        uses: actions/checkout@v2
-        with:
-          repository: opendistro-for-elasticsearch/kibana-oss
-          ref: ${{env.es_version}}
-          token: ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
-          path: kibana  
-
-      - uses: actions/checkout@v2
-        with:
-          repository: opendistro-for-elasticsearch/security-kibana-plugin
-          ref: ${{env.p_tag_sec_kibana}}
-          path: kibana/plugins/opendistro_security
-      
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.java }}
-      
-      - name: Get node and yarn versions
-        id: node_yarn_versions
-        run: |
-          echo "kibana_node_version=$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV
-          echo "kibana_yarn_version=$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV   
-      
-      - name: Setup node
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{env.kibana_node_version}}
-          registry-url: 'https://registry.npmjs.org'
-      
-      - name: Install correct yarn version for Kibana
-        run: |
-          npm uninstall -g yarn
-          echo "Installing yarn ${{ env.kibana_yarn_version }}"
-          npm i -g yarn@${{ env.kibana_yarn_version }}
-      
-      - name: Bootstrap the plugin
-        run: |
-          cd ./kibana/plugins/opendistro_security
-          yarn kbn bootstrap --oss
-          
-      - name: Start ES and Kibana
-        run: release-tools/scripts/setup_runners_service.sh zip --kibana
- 
-      - name: Run IT
-        run: |
-          cd ./kibana/plugins/opendistro_security
-          yarn test:jest_server
+          #!/bin/bash
+          # Please add comma at the end of the RUNNERS strings
+          # Don't add space after commas
+          RUNNERS="odfe-tar-build-es-arm64,odfe-tar-build-kibana-arm64"
+          release-tools/scripts/setup_runners.sh terminate $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
