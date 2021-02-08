@@ -16,6 +16,12 @@
             "Default" : "RPM",
             "AllowedValues" : ["RPM", "DEB", "TAR"]
         },
+        "architecture":{
+            "Type": "String",
+            "Description": "Architecture to be used",
+            "Default" : "X64",
+            "AllowedValues" : ["X64","ARM64"]
+        },
 
         "security":{
             "Type": "String",
@@ -49,12 +55,16 @@
         }
   
     },
-
+    
     "Mappings" : {
         "DistributionMap" : {
-          "RPM" : { "amiId" : "ami-01ce4793a2f45922e" },
-          "TAR" : { "amiId" : "ami-07a29e5e945228fa1" },
-          "DEB" : { "amiId" : "ami-07a29e5e945228fa1" }
+          "RPM" : {"ARM64": "ami-05c53e3ce52089c5c", "X64" : "ami-0e999cbd62129e3b1"},
+          "TAR" : {"ARM64": "ami-09e38cf07be65a594", "X64" : "ami-0ac73f33a1888c64a"},
+          "DEB" : {"ARM64": "ami-09e38cf07be65a594", "X64" : "ami-0ac73f33a1888c64a"}
+        },
+        "InstanceTypeMap": {
+            "ARM64" : {"Type": "m6g.xlarge"},
+            "X64" : {"Type": "m5.xlarge"}
         }
       },
 
@@ -73,19 +83,12 @@
                     "Key" : "Name", 
                     "Value" : {
                         "Fn::Join": [
-                          "", [
-                            "ODFE-",
-                            {
-                              "Ref": "distribution"
-                            },
+                          "", ["ODFE-",
+                            {"Ref": "distribution"},
                             "-SECURITY-",
-                            {
-                                "Ref": "security"
-                            },
-                            "-Testing-Cluster"
-                          ]
-                        ]
-                      }, 
+                            {"Ref": "security"},
+                            "-Testing-Cluster"]
+                        ]}, 
                     "PropagateAtLaunch" : "true"}]
                 }
             },
@@ -93,8 +96,8 @@
         "asgLaunchConfig":{
               "Type": "AWS::AutoScaling::LaunchConfiguration",
               "Properties": {
-                  "ImageId": { "Fn::FindInMap" : [ "DistributionMap", { "Ref" : "distribution" }, "amiId"]},
-                  "InstanceType": "m5a.large",
+                  "ImageId": { "Fn::FindInMap" : [ "DistributionMap", { "Ref" : "distribution" }, {"Ref" : "architecture"}]},
+                  "InstanceType": { "Fn::FindInMap" : [ "InstanceTypeMap", { "Ref" : "architecture" }, "Type"]},
                   "IamInstanceProfile": "odfe_testing_cluster_role",
                   "KeyName": {"Ref" : "keypair"},
                   "AssociatePublicIpAddress": true,

@@ -1,10 +1,12 @@
 name: Create testing cluster with static domain
 
-# Make sure to pass the distribution type (RPM/DEB/TAR) and security feature (enable, disable) as client_payload in the dispatch event
-# Example: client_payload: { "distribution": "rpm", "security": "enable" }
-# Example: client_payload: { "distribution": "deb", "security": "disable" }
-# For scheduled workflow run all 6 combinations of the testing domains will be created
+# Make sure to pass the distribution type (RPM/DEB/TAR), architecture (X64, ARM64) security feature (enable, disable) as client_payload in the dispatch event
+# Example: client_payload: { "distribution": "rpm", "security": "enable", architecture: "X64" }
+# Example: client_payload: { "distribution": "deb", "security": "disable", architecture: "ARM64"}
+# For scheduled workflow run all combinations of the testing domains will be created
 # NOTE: This workflow is based on the static ELBs pre-configured in the AWS account
+#       The load balancers are already mapped to the right target groups. When you run this workflow they create EC2s and map them to
+#       right target groups.
 
 on:
   # schedule:
@@ -27,6 +29,9 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_TESTING_SECRET_ACCESS_KEY }}
           aws-region: us-west-2
 
+      - name: Install required packages
+        run: ./release-tools/scripts/required_packages.sh
+
       - name: Creating cluster with static domain name
         run: |
             #!/bin/bash
@@ -34,35 +39,52 @@ jobs:
 
             #Function to create stack
             function stack_setup() {
-              distribution_type=$1
-              security=$2
-              existingStacks=`aws cloudformation list-stacks --query 'StackSummaries[*].StackName' --output text`
+              DISTRIBUTION_TYPE=$1
+              SECURITY=$2
+              ARCHITECTURE=$3
+              echo "ARCHITECTURE=$ARCHITECTURE"
+              echo "DISTRIBUTION_TYPE=$DISTRIBUTION_TYPE"
+
+              existingStacks=`aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE --query 'StackSummaries[*].StackName' --output text`
+              echo "Existing stacks are: $existingStacks"
 
               for i in $existingStacks
               do
-                  if [[ $i = $stackName ]]
-                  then
-                      echo "Stack already exists! Deleting the old stack"
-                      aws cloudformation delete-stack --stack-name $stackName
-                      aws cloudformation wait stack-delete-complete --stack-name $stackName
-                      echo "$stackName deleted successfully!!"
-                  fi
+                if [ $i = $stackName ];
+                then
+                  echo "Stack already exists! Deleting the old stack"
+                  aws cloudformation delete-stack --stack-name $stackName
+                  aws cloudformation wait stack-delete-complete --stack-name $stackName
+                  echo "$stackName deleted successfully!!"
+                fi
               done
               
-              release-tools/scripts/userdata.sh $1 $2
-              ls -ltr
+              if [ $ARCHITECTURE = "ARM64" ];
+              then
+                release-tools/scripts/userdata.sh $1 $2 arm64
+                ls -ltr
 
-              # Getting target groups for ELB mapping
-              esTargetGroup=`aws elbv2 describe-target-groups --names ES-$distribution_type-SECURITY-$security --query TargetGroups[*].TargetGroupArn --output text`
-              kibanaTargetGroup=`aws elbv2 describe-target-groups --names KIBANA-$distribution_type-SECURITY-$security --query TargetGroups[*].TargetGroupArn --output text`
-              paTargetGroup=`aws elbv2 describe-target-groups --names PA-$distribution_type-SECURITY-$security --query TargetGroups[*].TargetGroupArn --output text`
-  
+                # Getting target groups for ARM64 arch for ELB mapping
+                esTargetGroup=`aws elbv2 describe-target-groups --names ES-${DISTRIBUTION_TYPE}ARM64-SECURITY-$SECURITY --query TargetGroups[*].TargetGroupArn --output text`
+                kibanaTargetGroup=`aws elbv2 describe-target-groups --names KIBANA-${DISTRIBUTION_TYPE}ARM64-SECURITY-$SECURITY --query TargetGroups[*].TargetGroupArn --output text`
+                paTargetGroup=`aws elbv2 describe-target-groups --names PA-${DISTRIBUTION_TYPE}ARM64-SECURITY-$SECURITY --query TargetGroups[*].TargetGroupArn --output text`
+              else
+                release-tools/scripts/userdata.sh $1 $2
+                ls -ltr
+
+                # Getting target groups for ELB mapping
+                esTargetGroup=`aws elbv2 describe-target-groups --names ES-$DISTRIBUTION_TYPE-SECURITY-$SECURITY --query TargetGroups[*].TargetGroupArn --output text`
+                kibanaTargetGroup=`aws elbv2 describe-target-groups --names KIBANA-$DISTRIBUTION_TYPE-SECURITY-$SECURITY --query TargetGroups[*].TargetGroupArn --output text`
+                paTargetGroup=`aws elbv2 describe-target-groups --names PA-$DISTRIBUTION_TYPE-SECURITY-$SECURITY --query TargetGroups[*].TargetGroupArn --output text`
+              fi
+              
               echo "Creating $stackName stack"
               aws cloudformation create-stack --stack-name $stackName \
               --template-body file://release-tools/templates/odfe-testing-cluster-static-domain-template.json \
-              --parameters ParameterKey=userdata,ParameterValue=$(base64 -w0 userdata_$distribution_type.sh) \
-              ParameterKey=distribution,ParameterValue=$distribution_type \
-              ParameterKey=security,ParameterValue=$security \
+              --parameters ParameterKey=userdata,ParameterValue=$(base64 -w0 userdata_$DISTRIBUTION_TYPE.sh) \
+              ParameterKey=distribution,ParameterValue=$DISTRIBUTION_TYPE \
+              ParameterKey=architecture,ParameterValue=$ARCHITECTURE \
+              ParameterKey=security,ParameterValue=$SECURITY \
               ParameterKey=ODFESecurityGroup,ParameterValue=sg-050990cf314e66320 \
               ParameterKey=keypair,ParameterValue=odfe-testing-cluster \
               ParameterKey=esTargetGroup,ParameterValue=$esTargetGroup \
@@ -74,23 +96,30 @@ jobs:
               sleep 60
             }
 
-            if ${{ github.event_name == 'repository_dispatch' }}
+            if ${{ github.event_name == 'repository_dispatch' }};
             then
-              distribution_type=`echo ${{github.event.client_payload.distribution}} | tr [:lower:] [:upper:]`
-              security=`echo ${{github.event.client_payload.security}} | tr [:lower:] [:upper:]`
-              stackName=ODFE-$distribution_type-SECURITY-$security
+              DISTRIBUTION_TYPE=`echo ${{github.event.client_payload.distribution}} | tr [:lower:] [:upper:]`
+              SECURITY=`echo ${{github.event.client_payload.security}} | tr [:lower:] [:upper:]`
+              ARCHITECTURE=`echo ${{github.event.client_payload.architecture}} | tr [:lower:] [:upper:]`
+
+              stackName=ODFE-$DISTRIBUTION_TYPE-$ARCHITECTURE-SECURITY-$SECURITY
               echo $stackName
-              stack_setup $distribution_type $security
+              stack_setup $DISTRIBUTION_TYPE $SECURITY $ARCHITECTURE
             elif ${{ github.event_name == 'schedule' }}
             then
-              for distribution_type in RPM DEB TAR
-              do
-                for security in ENABLE DISABLE
-                do
-                  stackName=ODFE-$distribution_type-SECURITY-$security
-                  echo $stackName
-                  stack_setup $distribution_type $security
-                  rm userdata_$distribution_type.sh
-                done
+              # Add the ditributions and architectures in the below array. All CAPS
+              ARCHITECTURE=(X64 ARM64)
+              for arch in ${ARCHITECTURE[@]}; do
+                  SECURITY=(ENABLE DISABLE)
+                  for sec in ${SECURITY[@]}; do
+                      DISTRIBUTION_TYPE=(TAR RPM DEB)
+                      for dis in ${DISTRIBUTION_TYPE[@]}; do    
+                        stackName=ODFE-$dis-$arch-SECURITY-$sec
+                        echo "$stackName in process"
+                        stack_setup $dis $sec $arch
+                        rm userdata_$dis.sh
+                      done
+                  done
               done
             fi
+            
