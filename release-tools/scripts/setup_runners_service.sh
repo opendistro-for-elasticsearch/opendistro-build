@@ -31,11 +31,10 @@ SETUP_DISTRO=$1
 SETUP_ACTION=$2
 ARCHITECTURE="x64"; if [ ! -z "$3" ]; then ARCHITECTURE=$3; fi; echo ARCHITECTURE $ARCHITECTURE
 SETUP_PACKAGES="python3 git unzip wget jq"
-ARCH=`uname -p`
-if [ "$ARCH" = "x86_64" ]
+if [ "$ARCHITECTURE" = "x86_64" ]
 then
   ARCHITECTURE_ALT="amd64"
-elif [ "$ARCH" = "aarch64" ]
+elif [ "$ARCHITECTURE" = "aarch64" ]
 then
   ARCHITECTURE_ALT="arm64"
 else
