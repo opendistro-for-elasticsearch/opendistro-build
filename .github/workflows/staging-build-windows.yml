@@ -7,8 +7,8 @@ on:
     types: [staging-build-windows]
 
 jobs:
-  build-es-artifacts:
-    name: Build Windows ES Artifacts
+  build-es-artifacts-x64:
+    name: Build Windows ES Artifacts X64
     runs-on: ubuntu-18.04
     steps:
     - uses: actions/checkout@v1
@@ -31,10 +31,10 @@ jobs:
     - name: Build Windows
       env:
         install4j_license: ${{ secrets.INSTALL4J_LICENSE }}
-      run: ./elasticsearch/windows/opendistro-windows-build.sh
+      run: ./elasticsearch/windows/opendistro-windows-build.sh windows x64
         
-  build-kibana-artifacts:
-    name: Build Kibana Artifacts
+  build-kibana-artifacts-x64:
+    name: Build Kibana Artifacts X64
     runs-on: [ubuntu-18.04]
     steps:
     - uses: actions/checkout@v1
@@ -56,7 +56,7 @@ jobs:
     - name: Build Kibana
       env:
         install4j_license: ${{ secrets.INSTALL4J_LICENSE }}
-      run: ./kibana/windows/opendistro-windows-kibana-build.sh
+      run: ./kibana/windows/opendistro-windows-kibana-build.sh windows x64
 
   Get-versions:
     name: Get-versions

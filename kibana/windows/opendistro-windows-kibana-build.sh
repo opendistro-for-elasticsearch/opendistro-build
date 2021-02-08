@@ -35,7 +35,8 @@ mkdir -p $TARGET_DIR
 mkdir -p $PLUGIN_DIR
 
 # Downloading tar from s3
-aws s3 cp "${S3_RELEASE_BASEURL}${OD_VERSION}/odfe/${PACKAGE_NAME}-${OD_VERSION}.tar.gz" . --quiet ; echo $0
+# Kibana windows is based on linux tarball
+aws s3 cp "${S3_RELEASE_BASEURL}${OD_VERSION}/odfe/${PACKAGE_NAME}-${OD_VERSION}-linux-${ARCHITECTURE}.tar.gz" . --quiet ; echo $0
 
 # Untar the tar artifact
 tar -xzf $PACKAGE_NAME-$OD_VERSION.tar.gz
