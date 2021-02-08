@@ -58,9 +58,9 @@
     
     "Mappings" : {
         "DistributionMap" : {
-          "RPM" : {"ARM64": "ami-05c53e3ce52089c5c", "X64" : "ami-0e999cbd62129e3b1"},
-          "TAR" : {"ARM64": "ami-09e38cf07be65a594", "X64" : "ami-0ac73f33a1888c64a"},
-          "DEB" : {"ARM64": "ami-09e38cf07be65a594", "X64" : "ami-0ac73f33a1888c64a"}
+          "TAR" : {"ARM64": "ami-09e38cf07be65a594", "X64" : "ami-0ac73f33a1888c64a", "zone": "us-west-2a"},
+          "DEB" : {"ARM64": "ami-09e38cf07be65a594", "X64" : "ami-0ac73f33a1888c64a", "zone": "us-west-2b"},
+          "RPM" : {"ARM64": "ami-05c53e3ce52089c5c", "X64" : "ami-0e999cbd62129e3b1", "zone": "us-west-2c"}
         },
         "InstanceTypeMap": {
             "ARM64" : {"Type": "m6g.xlarge"},
@@ -73,7 +73,7 @@
         "ODFEASG" : {
             "Type" : "AWS::AutoScaling::AutoScalingGroup",
             "Properties" : {
-                "AvailabilityZones" : [ "us-west-2a","us-west-2b","us-west-2c","us-west-2d"  ],
+                "AvailabilityZones" : [ { "Fn::FindInMap" : [ "DistributionMap", { "Ref" : "distribution" }, "zone"]} ],
                 "LaunchConfigurationName" : { "Ref" : "asgLaunchConfig" },
                 "MinSize" : "1",
                 "MaxSize" : "1",
@@ -85,6 +85,7 @@
                         "Fn::Join": [
                           "", ["ODFE-",
                             {"Ref": "distribution"},
+                            {"Ref": "architecture"},
                             "-SECURITY-",
                             {"Ref": "security"},
                             "-Testing-Cluster"]
