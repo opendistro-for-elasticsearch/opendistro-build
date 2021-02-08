@@ -14,7 +14,7 @@
             "Type": "String",
             "Description": "Testing distribution name (RPM/DEB/TAR)",
             "Default" : "RPM",
-            "AllowedValues" : ["RPM", "DEB", "TAR", "TARARM64"]
+            "AllowedValues" : ["RPM", "DEB", "TAR"]
         },
         "architecture":{
             "Type": "String",
