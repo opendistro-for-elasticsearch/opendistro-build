@@ -120,6 +120,7 @@ jobs:
                         stackName=ODFE-$dis-$arch-SECURITY-$sec
                         echo "$stackName in process"
                         stack_setup $dis $sec $arch
+                        rm userdata_$dis.sh
                       done
                   done
               done
