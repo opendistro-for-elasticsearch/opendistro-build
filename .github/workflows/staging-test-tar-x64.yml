@@ -1,4 +1,4 @@
-name: Process TAR Artifacts X64
+name: Test TAR Artifacts X64
 
 on:
   # schedule:
