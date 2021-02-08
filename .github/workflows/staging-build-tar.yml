@@ -40,7 +40,7 @@ jobs:
           #!/bin/bash
           # Please add comma at the end of the RUNNERS strings
           # Don't add space after commas
-          RUNNERS="odfe-tar-build-es-arm64,odfe-tar-build-kibana-arm64,"
+          RUNNERS="odfe-tar-build-es-arm64,odfe-tar-build-kibana-arm64"
           release-tools/scripts/setup_runners.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }} ami-055197d43e4ec7482
 
   build-es-artifacts-x64:
@@ -129,5 +129,5 @@ jobs:
           #!/bin/bash
           # Please add comma at the end of the RUNNERS strings
           # Don't add space after commas
-          RUNNERS="odfe-tar-build-es-arm64,odfe-tar-build-kibana-arm64,"
+          RUNNERS="odfe-tar-build-es-arm64,odfe-tar-build-kibana-arm64"
           release-tools/scripts/setup_runners.sh terminate $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
