@@ -39,8 +39,8 @@ mkdir -p $PLUGIN_DIR
 aws s3 cp "${S3_RELEASE_BASEURL}${OD_VERSION}/odfe/${PACKAGE_NAME}-${OD_VERSION}-linux-${ARCHITECTURE}.tar.gz" . --quiet ; echo $0
 
 # Untar the tar artifact
-tar -xzf $PACKAGE_NAME-$OD_VERSION.tar.gz
-rm -rf $PACKAGE_NAME-$OD_VERSION.tar.gz
+tar -xzf ${PACKAGE_NAME}-${OD_VERSION}-linux-${ARCHITECTURE}.tar.gz
+rm -rf ${PACKAGE_NAME}-${OD_VERSION}-linux-${ARCHITECTURE}.tar.gz
 ls -l
 
 # Please DO NOT change the orders, they have dependencies
