@@ -13,6 +13,9 @@ on:
   #   - cron: '0 11 * * *'
   repository_dispatch:
     types: [test-cluster-static-domain-set-up]
+  push:
+    branches:
+      - "az"
 
 jobs:
   Create-Cluster:
