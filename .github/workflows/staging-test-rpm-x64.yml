@@ -23,16 +23,16 @@ jobs:
           #!/bin/bash
           # Please add comma at the end of the RUNNERS strings
           # Don't add space after commas
-          RUNNERS="odfe-rpm-ism-nosec-x64,odfe-rpm-alerting-nosec-x64,odfe-rpm-sql-nosec-x64,odfe-rpm-knn-nosec-x64,odfe-rpm-ad-nosec-x64,"
-          RUNNERS+="odfe-rpm-sql-x64,odfe-rpm-ad-x64,odfe-rpm-alerting-x64,"
+          RUNNERS="odfe-rpm-im-nosec-x64,odfe-rpm-alerting-nosec-x64,odfe-rpm-sql-nosec-x64,odfe-rpm-knn-nosec-x64,odfe-rpm-ad-nosec-x64,"
+          RUNNERS+="odfe-rpm-sql-x64,odfe-rpm-ad-x64,odfe-rpm-im-x64,odfe-rpm-alerting-x64,"
           RUNNERS+="odfe-rpm-ad-kibana-nosec-x64,odfe-rpm-sql-kibana-nosec-x64,"
           RUNNERS+="odfe-rpm-ad-kibana-x64,odfe-rpm-sec-kibana-x64,odfe-rpm-kibana-nb-nosec-x64"
           release-tools/scripts/setup_runners.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }} ami-086e8a98280780e63
 
-  Test-ISM-NoSec:
+  Test-IM-NoSec:
     needs: [Provision-Runners]
-    name: Test-ISM-NoSec
-    runs-on: [self-hosted, Linux, X64, odfe-rpm-ism-nosec-x64]
+    name: Test-IM-NoSec
+    runs-on: [self-hosted, Linux, X64, odfe-rpm-im-nosec-x64]
     steps:
       - uses: actions/checkout@v1
       - name: Setup Java
@@ -42,12 +42,12 @@ jobs:
       - name: Required Packages
         run: release-tools/scripts/required_packages.sh
       - name: Retrieve plugin tags
-        run: echo "p_tag_ism=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)" >> $GITHUB_ENV
+        run: echo "p_tag_im=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)" >> $GITHUB_ENV
       - uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/index-management
-          ref: ${{env.p_tag_ism}}
-      - name: IT for ISM NoSec
+          ref: ${{env.p_tag_im}}
+      - name: IT for IM NoSec
         run: |
           release-tools/scripts/setup_runners_service.sh rpm --es-nosec
           export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../index-management; pwd
@@ -196,7 +196,31 @@ jobs:
           release-tools/scripts/setup_runners_service.sh rpm --es
           export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../anomaly-detection; pwd
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest" -Dhttps=true -Duser=admin -Dpassword=admin
-  
+
+  Test-IM:
+    needs: [Provision-Runners]
+    name: Test-IM
+    runs-on: [self-hosted, Linux, X64, odfe-rpm-im-x64]
+    steps:
+      - uses: actions/checkout@v1
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 14
+      - name: Required Packages
+        run: release-tools/scripts/required_packages.sh
+      - name: Retrieve plugin tags
+        run: echo "p_tag_im=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)" >> $GITHUB_ENV
+      - uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/index-management
+          ref: ${{env.p_tag_im}}
+      - name: IT for Index Management
+        run: |
+          release-tools/scripts/setup_runners_service.sh rpm --es
+          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../index-management; pwd
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin
+
   Test-ALERTING:
     needs: [Provision-Runners]
     name: Test-ALERTING
@@ -608,7 +632,7 @@ jobs:
           yarn test:jest_server
 
   CleanUp-Runners:
-    needs: [Test-ISM-NoSec, Test-ALERTING-NoSec, Test-SQL-NoSec, Test-KNN-NoSec, Test-AD-NoSec, Test-SQL, Test-AD, Test-ALERTING, Test-AD-KIBANA-NoSec, Test-SQL-KIBANA-NoSec, Test-AD-KIBANA, Test-SEC-KIBANA, Test-Kibana-Notebooks-NoSec]
+    needs: [Test-IM-NoSec, Test-ALERTING-NoSec, Test-SQL-NoSec, Test-KNN-NoSec, Test-AD-NoSec, Test-SQL, Test-AD, Test-IM, Test-ALERTING, Test-AD-KIBANA-NoSec, Test-SQL-KIBANA-NoSec, Test-AD-KIBANA, Test-SEC-KIBANA, Test-Kibana-Notebooks-NoSec]
     if: always()
     name: CleanUp-Runners
     runs-on: ubuntu-18.04
@@ -625,8 +649,8 @@ jobs:
           #!/bin/bash
           # Please add comma at the end of the RUNNERS strings
           # Don't add space after commas
-          RUNNERS="odfe-rpm-ism-nosec-x64,odfe-rpm-alerting-nosec-x64,odfe-rpm-sql-nosec-x64,odfe-rpm-knn-nosec-x64,odfe-rpm-ad-nosec-x64,"
-          RUNNERS+="odfe-rpm-sql-x64,odfe-rpm-ad-x64,odfe-rpm-alerting-x64,"
+          RUNNERS="odfe-rpm-im-nosec-x64,odfe-rpm-alerting-nosec-x64,odfe-rpm-sql-nosec-x64,odfe-rpm-knn-nosec-x64,odfe-rpm-ad-nosec-x64,"
+          RUNNERS+="odfe-rpm-sql-x64,odfe-rpm-ad-x64,odfe-rpm-im-x64,odfe-rpm-alerting-x64,"
           RUNNERS+="odfe-rpm-ad-kibana-nosec-x64,odfe-rpm-sql-kibana-nosec-x64,"
           RUNNERS+="odfe-rpm-ad-kibana-x64,odfe-rpm-sec-kibana-x64,odfe-rpm-kibana-nb-nosec-x64"
           release-tools/scripts/setup_runners.sh terminate $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}

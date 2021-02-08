@@ -40,8 +40,8 @@ jobs:
           # Please add comma at the end of the RUNNERS strings
           # Don't add space after commas
           RUNNERS="odfe-tar-build-es-arm64,odfe-tar-build-kibana-arm64,"
-          #RUNNERS+="odfe-tar-ism-nosec-arm64,odfe-tar-alerting-nosec-arm64,odfe-tar-sql-nosec-arm64,odfe-tar-knn-nosec-arm64,odfe-tar-ad-nosec-arm64,"
-          #RUNNERS+="odfe-tar-sql-arm64,odfe-tar-ad-arm64,odfe-tar-alerting-arm64,"
+          #RUNNERS+="odfe-tar-im-nosec-arm64,odfe-tar-alerting-nosec-arm64,odfe-tar-sql-nosec-arm64,odfe-tar-knn-nosec-arm64,odfe-tar-ad-nosec-arm64,"
+          #RUNNERS+="odfe-tar-sql-arm64,odfe-tar-ad-arm64,odfe-tar-im-arm64,odfe-tar-alerting-arm64,"
           #RUNNERS+="odfe-tar-ad-kibana-nosec-arm64,odfe-tar-sql-kibana-nosec-arm64,"
           #RUNNERS+="odfe-tar-ad-kibana-arm64,odfe-tar-sec-kibana-arm64,odfe-tar-kibana-nb-nosec-arm64"
           release-tools/scripts/setup_runners.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }} ami-055197d43e4ec7482
@@ -81,7 +81,7 @@ jobs:
         run: ./kibana/linux_distributions/opendistro-kibana-build.sh tar linux arm64
 
   CleanUp-Runners:
-    #needs: [Test-ISM-NoSec, Test-ALERTING-NoSec, Test-SQL-NoSec, Test-KNN-NoSec, Test-AD-NoSec, Test-SQL, Test-AD, Test-ALERTING, Test-AD-KIBANA-NoSec, Test-SQL-KIBANA-NoSec, Test-AD-KIBANA, Test-SEC-KIBANA, Test-Kibana-Notebooks-NoSec]
+    #needs: [Test-IM-NoSec, Test-ALERTING-NoSec, Test-SQL-NoSec, Test-KNN-NoSec, Test-AD-NoSec, Test-SQL, Test-AD, Test-IM, Test-ALERTING, Test-AD-KIBANA-NoSec, Test-SQL-KIBANA-NoSec, Test-AD-KIBANA, Test-SEC-KIBANA, Test-Kibana-Notebooks-NoSec]
     needs: [build-es-artifacts-arm64, build-kibana-artifacts-arm64]
     if: always()
     name: CleanUp-Runners
@@ -100,8 +100,8 @@ jobs:
           # Please add comma at the end of the RUNNERS strings
           # Don't add space after commas
           RUNNERS="odfe-tar-build-es-arm64,odfe-tar-build-kibana-arm64,"
-          #RUNNERS+="odfe-tar-ism-nosec-arm64,odfe-tar-alerting-nosec-arm64,odfe-tar-sql-nosec-arm64,odfe-tar-knn-nosec-arm64,odfe-tar-ad-nosec-arm64,"
-          #RUNNERS+="odfe-tar-sql-arm64,odfe-tar-ad-arm64,odfe-tar-alerting-arm64,"
+          #RUNNERS+="odfe-tar-im-nosec-arm64,odfe-tar-alerting-nosec-arm64,odfe-tar-sql-nosec-arm64,odfe-tar-knn-nosec-arm64,odfe-tar-ad-nosec-arm64,"
+          #RUNNERS+="odfe-tar-sql-arm64,odfe-tar-ad-arm64,odfe-tar-im-arm64,odfe-tar-alerting-arm64,"
           #RUNNERS+="odfe-tar-ad-kibana-nosec-arm64,odfe-tar-sql-kibana-nosec-arm64,"
           #RUNNERS+="odfe-tar-ad-kibana-arm64,odfe-tar-sec-kibana-arm64,odfe-tar-kibana-nb-nosec-arm64"
           release-tools/scripts/setup_runners.sh terminate $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}

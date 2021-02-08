@@ -64,7 +64,7 @@ jobs:
     outputs:
       es_version: ${{ env.es_version }}
       od_version: ${{ env.od_version }}
-      p_tag_ism: ${{env.p_tag_ism}}
+      p_tag_im: ${{env.p_tag_im}}
       p_tag_alerting: ${{env.p_tag_alerting}}
       p_tag_sql: ${{env.p_tag_sql}}
       p_tag_ad: ${{env.p_tag_ad}}
@@ -78,7 +78,7 @@ jobs:
           release-tools/scripts/required_packages.sh
           echo "es_version=$(release-tools/scripts/version-info.sh --es)" >> $GITHUB_ENV
           echo "od_version=$(release-tools/scripts/version-info.sh --od)" >> $GITHUB_ENV
-          echo "p_tag_ism=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)" >> $GITHUB_ENV
+          echo "p_tag_im=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)" >> $GITHUB_ENV
           echo "p_tag_alerting=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)" >> $GITHUB_ENV
           echo "p_tag_sql=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)" >> $GITHUB_ENV
           echo "p_tag_ad=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)" >> $GITHUB_ENV
@@ -86,10 +86,10 @@ jobs:
           echo "p_tag_kib_nb=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/kibana-notebooks)" >> $GITHUB_ENV
           echo "p_tag_sec_kibana=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/security-kibana-plugin)" >> $GITHUB_ENV
 
-  Test-ISM-NoSec:
+  Test-IM-NoSec:
     needs: [build-es-artifacts, build-kibana-artifacts, Get-versions]
     runs-on: windows-2019
-    name: Test-ISM-NoSec
+    name: Test-IM-NoSec
     strategy:
       fail-fast: false
       matrix:
@@ -99,7 +99,7 @@ jobs:
       - uses: actions/checkout@v1
         with:
            repository: opendistro-for-elasticsearch/index-management
-           ref: ${{needs.Get-versions.outputs.p_tag_ism}}
+           ref: ${{needs.Get-versions.outputs.p_tag_im}}
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -112,7 +112,7 @@ jobs:
         with:
           java-version: ${{ matrix.java }}
        
-      - name: RUN ES and ISM IntegTest
+      - name: RUN ES and IM IntegTest
         run: |
           release-tools\scripts\setup_runners_service_windows.ps1 --es-nosec ${{needs.Get-versions.outputs.od_version}}
           $ErrorActionPreference = 'SilentlyContinue'
@@ -289,6 +289,43 @@ jobs:
           cd ..\anomaly-detection
           dir
           .\gradlew.bat integTest -D tests.rest.cluster=localhost:9200 -D tests.cluster=localhost:9200 -D tests.clustername="es-integrationtest" -D https=true -D user=admin -D password=admin
+
+  Test-IM:
+    needs: [build-es-artifacts, build-kibana-artifacts, Get-versions]
+    runs-on: windows-2019
+    name: Test-IM
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [14]
+    steps:
+      - uses: actions/checkout@v1
+
+      - uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/index-management
+          ref: ${{needs.Get-versions.outputs.p_tag_im}}
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Set Up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+
+      - name: Run IM IT
+        run: |
+          release-tools\scripts\setup_runners_service_windows.ps1 --es ${{needs.Get-versions.outputs.od_version}}
+          $ErrorActionPreference = 'SilentlyContinue'
+          echo "running tests"
+          cd ..\index-management
+          dir
+          .\gradlew.bat integTest -D tests.rest.cluster=localhost:9200 -D tests.cluster=localhost:9200 -D tests.clustername=es-integrationtest -D https=true -D user=admin -D password=admin
 
   Test-ALERTING:
     needs: [build-es-artifacts, build-kibana-artifacts, Get-versions]

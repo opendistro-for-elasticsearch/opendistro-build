@@ -41,16 +41,16 @@ jobs:
           #!/bin/bash
           # Please add comma at the end of the RUNNERS strings
           # Don't add space after commas
-          RUNNERS+="odfe-tar-ism-nosec-arm64,odfe-tar-alerting-nosec-arm64,odfe-tar-sql-nosec-arm64,odfe-tar-knn-nosec-arm64,odfe-tar-ad-nosec-arm64,"
-          RUNNERS+="odfe-tar-sql-arm64,odfe-tar-ad-arm64,odfe-tar-alerting-arm64"
+          RUNNERS+="odfe-tar-im-nosec-arm64,odfe-tar-alerting-nosec-arm64,odfe-tar-sql-nosec-arm64,odfe-tar-knn-nosec-arm64,odfe-tar-ad-nosec-arm64,"
+          RUNNERS+="odfe-tar-sql-arm64,odfe-tar-ad-arm64,odfe-tar-im-arm64,odfe-tar-alerting-arm64"
           release-tools/scripts/setup_runners.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }} ami-055197d43e4ec7482
 
 
 
-  Test-ISM-NoSec:
+  Test-IM-NoSec:
     needs: [Provision-Runners]
-    runs-on: [self-hosted, Linux, ARM64, odfe-tar-ism-nosec-arm64]
-    name: Test-ISM-NoSec
+    runs-on: [self-hosted, Linux, ARM64, odfe-tar-im-nosec-arm64]
+    name: Test-IM-NoSec
     steps:
       - name: Set up AWS Cred
         uses: aws-actions/configure-aws-credentials@v1
@@ -62,12 +62,12 @@ jobs:
       - name: Required Packages
         run: ./release-tools/scripts/required_packages.sh
       - name: Retrieve plugin tags
-        run:  echo "p_tag_ism=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)" >> $GITHUB_ENV
-      - name: Checkout ISM
+        run:  echo "p_tag_im=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)" >> $GITHUB_ENV
+      - name: Checkout IM
         uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/index-management
-          ref: ${{env.p_tag_ism}}
+          ref: ${{env.p_tag_im}}
       - name: Integration Test
         run: |
           ./release-tools/scripts/setup_runners_service.sh zip --es-nosec arm64
@@ -235,7 +235,34 @@ jobs:
           ./release-tools/scripts/setup_runners_service.sh zip --es arm64
           export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../anomaly-detection; pwd
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest" -Dhttps=true -Duser=admin -Dpassword=admin
-  
+
+  Test-IM:
+    needs: [Provision-Runners]
+    runs-on: [self-hosted, Linux, ARM64, odfe-tar-im-arm64]
+    name: Test-IM
+    steps:
+      - uses: actions/checkout@v1
+      - name: Set up AWS Cred
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Required Packages
+        run: ./release-tools/scripts/required_packages.sh
+      - name: Retrieve plugin tags
+        run:  echo "p_tag_im=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)" >> $GITHUB_ENV
+
+      - uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/index-management
+          ref: ${{env.p_tag_im}}
+      - name: Integration Test
+        run: |
+          ./release-tools/scripts/setup_runners_service.sh zip --es arm64
+          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../index-management; pwd
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin
+
   Test-ALERTING:
     needs: [Provision-Runners]
     runs-on: [self-hosted, Linux, ARM64, odfe-tar-alerting-arm64]
@@ -265,7 +292,7 @@ jobs:
           ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin -Dsecurity=true
 
   CleanUp-Runners:
-    needs: [Test-ISM-NoSec, Test-ALERTING-NoSec, Test-SQL-NoSec, Test-KNN-NoSec, Test-AD-NoSec, Test-SQL, Test-AD, Test-ALERTING]
+    needs: [Test-IM-NoSec, Test-ALERTING-NoSec, Test-SQL-NoSec, Test-KNN-NoSec, Test-AD-NoSec, Test-SQL, Test-AD, Test-IM, Test-ALERTING]
     if: always()
     name: CleanUp-Runners
     runs-on: ubuntu-18.04
@@ -282,6 +309,6 @@ jobs:
           #!/bin/bash
           # Please add comma at the end of the RUNNERS strings
           # Don't add space after commas
-          RUNNERS+="odfe-tar-ism-nosec-arm64,odfe-tar-alerting-nosec-arm64,odfe-tar-sql-nosec-arm64,odfe-tar-knn-nosec-arm64,odfe-tar-ad-nosec-arm64,"
-          RUNNERS+="odfe-tar-sql-arm64,odfe-tar-ad-arm64,odfe-tar-alerting-arm64"
+          RUNNERS+="odfe-tar-im-nosec-arm64,odfe-tar-alerting-nosec-arm64,odfe-tar-sql-nosec-arm64,odfe-tar-knn-nosec-arm64,odfe-tar-ad-nosec-arm64,"
+          RUNNERS+="odfe-tar-sql-arm64,odfe-tar-ad-arm64,odfe-tar-im-arm64,odfe-tar-alerting-arm64"
           release-tools/scripts/setup_runners.sh terminate $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}  
