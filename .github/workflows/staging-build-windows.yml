@@ -3,8 +3,11 @@ name: Build Windows Exe using tar artifacts
 on:
   # schedule:
   #   - cron: '30 10 * * *'
-  repository_dispatch:
-    types: [staging-build-windows]
+#  repository_dispatch:
+#    types: [staging-build-windows]
+  push:
+    branches: [sreekarj_windows]
+
 
 jobs:
   build-es-artifacts-x64:
@@ -87,7 +90,7 @@ jobs:
           echo "p_tag_sec_kibana=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/security-kibana-plugin)" >> $GITHUB_ENV
 
   Test-IM-NoSec:
-    needs: [build-es-artifacts, build-kibana-artifacts, Get-versions]
+    needs: [build-es-artifacts-x64, build-kibana-artifacts-x64, Get-versions]
     runs-on: windows-2019
     name: Test-IM-NoSec
     strategy:
@@ -122,7 +125,7 @@ jobs:
           ./gradlew.bat integTest -D tests.rest.cluster=localhost:9200 -D tests.cluster=localhost:9200 -D tests.clustername=es-integrationtest --stacktrace          
 
   Test-ALERTING-NoSec:
-    needs: [build-es-artifacts, build-kibana-artifacts, Get-versions]
+    needs: [build-es-artifacts-x64, build-kibana-artifacts-x64, Get-versions]
     runs-on: windows-2019
     name: Test-ALERTING-NoSec
     strategy:
@@ -156,7 +159,7 @@ jobs:
           ..\gradlew.bat integTest -D tests.rest.cluster=localhost:9200 -D tests.cluster=localhost:9200 -D tests.clustername=es-integrationtest --stacktrace
 
   Test-SQL-NoSec:
-    needs: [build-es-artifacts, build-kibana-artifacts, Get-versions]
+    needs: [build-es-artifacts-x64, build-kibana-artifacts-x64, Get-versions]
     runs-on: windows-2019
     name: Test-SQL-NoSec
     strategy:
@@ -190,7 +193,7 @@ jobs:
           .\gradlew.bat integTest -D tests.rest.cluster=localhost:9200 -D tests.cluster=localhost:9200 -D tests.clustername=es-integrationtest --stacktrace
         
   Test-AD-NoSec:
-    needs: [build-es-artifacts, build-kibana-artifacts, Get-versions]
+    needs: [build-es-artifacts-x64, build-kibana-artifacts-x64, Get-versions]
     runs-on: windows-2019
     name: Test-AD-NoSec
     strategy:
@@ -224,7 +227,7 @@ jobs:
           .\gradlew.bat integTest -D tests.rest.cluster=localhost:9200 -D tests.cluster=localhost:9200 -D tests.clustername="es-integrationtest"
 
   Test-SQL:
-    needs: [build-es-artifacts, build-kibana-artifacts, Get-versions]
+    needs: [build-es-artifacts-x64, build-kibana-artifacts-x64, Get-versions]
     runs-on: windows-2019
     name: Test-SQL
     strategy:
@@ -258,7 +261,7 @@ jobs:
           .\gradlew.bat integTest -D tests.rest.cluster=localhost:9200 -D tests.cluster=localhost:9200 -D tests.clustername=es-integrationtest -D https=true -D user=admin -D password=admin --stacktrace
 
   Test-AD:
-    needs: [build-es-artifacts, build-kibana-artifacts, Get-versions]
+    needs: [build-es-artifacts-x64, build-kibana-artifacts-x64, Get-versions]
     runs-on: windows-2019
     name: Test-AD
     strategy:
@@ -291,7 +294,7 @@ jobs:
           .\gradlew.bat integTest -D tests.rest.cluster=localhost:9200 -D tests.cluster=localhost:9200 -D tests.clustername="es-integrationtest" -D https=true -D user=admin -D password=admin
 
   Test-IM:
-    needs: [build-es-artifacts, build-kibana-artifacts, Get-versions]
+    needs: [build-es-artifacts-x64, build-kibana-artifacts-x64, Get-versions]
     runs-on: windows-2019
     name: Test-IM
     strategy:
@@ -328,7 +331,7 @@ jobs:
           .\gradlew.bat integTest -D tests.rest.cluster=localhost:9200 -D tests.cluster=localhost:9200 -D tests.clustername=es-integrationtest -D https=true -D user=admin -D password=admin
 
   Test-ALERTING:
-    needs: [build-es-artifacts, build-kibana-artifacts, Get-versions]
+    needs: [build-es-artifacts-x64, build-kibana-artifacts-x64, Get-versions]
     runs-on: windows-2019
     name: Test-ALERTING
     strategy:
@@ -366,7 +369,7 @@ jobs:
         
 
   Test-AD-KIBANA-NoSec:
-    needs: [build-es-artifacts, build-kibana-artifacts, Get-versions]
+    needs: [build-es-artifacts-x64, build-kibana-artifacts-x64, Get-versions]
     runs-on: windows-2019
     name: Test-AD-KIBANA-NoSec
     strategy:
@@ -435,7 +438,7 @@ jobs:
           yarn cy:run-with-security --config baseurl=http://localhost:5601
 
   Test-SQL-KIBANA-NoSec:
-    needs: [build-es-artifacts, build-kibana-artifacts, Get-versions]
+    needs: [build-es-artifacts-x64, build-kibana-artifacts-x64, Get-versions]
     runs-on: windows-2019
     name: Test-SQL-KIBANA-NoSec
     strategy:
@@ -520,7 +523,7 @@ jobs:
           npx cypress run
 
   Test-Kibana-Notebooks-NoSec:
-    needs: [build-es-artifacts, build-kibana-artifacts, Get-versions]
+    needs: [build-es-artifacts-x64, build-kibana-artifacts-x64, Get-versions]
     runs-on: windows-2019
     name: Test-Kibana-Notebooks-NoSec
     strategy:
@@ -587,7 +590,7 @@ jobs:
           npx cypress run
 
   Test-AD-KIBANA:
-    needs: [build-es-artifacts, build-kibana-artifacts, Get-versions]
+    needs: [build-es-artifacts-x64, build-kibana-artifacts-x64, Get-versions]
     runs-on: windows-2019
     name: Test-AD-KIBANA
     strategy:
@@ -656,7 +659,7 @@ jobs:
           yarn cy:run-with-security --config baseurl=http://localhost:5601
 
   Test-SEC-KIBANA:
-    needs: [build-es-artifacts, build-kibana-artifacts, Get-versions]
+    needs: [build-es-artifacts-x64, build-kibana-artifacts-x64, Get-versions]
     runs-on: windows-2019
     name: Test-SEC-KIBANA
     strategy:
