@@ -45,8 +45,6 @@ jobs:
           RUNNERS+="odfe-tar-sql-arm64,odfe-tar-ad-arm64,odfe-tar-im-arm64,odfe-tar-alerting-arm64"
           release-tools/scripts/setup_runners.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }} ami-055197d43e4ec7482
 
-
-
   Test-IM-NoSec:
     needs: [Provision-Runners]
     runs-on: [self-hosted, Linux, ARM64, odfe-tar-im-nosec-arm64]
