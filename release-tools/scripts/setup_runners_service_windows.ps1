@@ -146,6 +146,7 @@ if ($SETUP_ACTION -eq "--kibana-nosec"){
   cd ..\..
 
   echo "running es"
+  dir .\$PACKAGE-$OD_VERSION\plugins
   nohup .\$PACKAGE-$OD_VERSION\bin\elasticsearch.bat &
 
   echo "running kibana"
