@@ -13,6 +13,9 @@ on:
   #   - cron: '0 11 * * *'
   repository_dispatch:
     types: [test-cluster-static-domain-set-up]
+  push:
+    branches:
+      - "pa"
 
 jobs:
   Create-Cluster:
@@ -105,7 +108,7 @@ jobs:
               stackName=ODFE-$DISTRIBUTION_TYPE-$ARCHITECTURE-SECURITY-$SECURITY
               echo $stackName
               stack_setup $DISTRIBUTION_TYPE $SECURITY $ARCHITECTURE
-            elif ${{ github.event_name == 'schedule' }}
+            elif ${{ github.event_name == 'schedule' }} || ${{ github.event_name == 'push' }}
             then
               # Add the ditributions and architectures in the below array. All CAPS
               ARCHITECTURE=(X64 ARM64)

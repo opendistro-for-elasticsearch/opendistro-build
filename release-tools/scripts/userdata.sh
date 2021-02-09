@@ -60,7 +60,7 @@ echo "node.name: init-master" >> /etc/elasticsearch/elasticsearch.yml
 echo "cluster.name: odfe-$OD_VERSION-rpm-auth" >> /etc/elasticsearch/elasticsearch.yml
 echo "network.host: 0.0.0.0" >> /etc/elasticsearch/elasticsearch.yml
 echo "cluster.initial_master_nodes: [\"init-master\"]" >> /etc/elasticsearch/elasticsearch.yml
-echo "webservice-bind-host = 0.0.0.0" >> /usr/share/elasticsearch/plugins/opendistro_performance_analyzer/pa_config/performance-analyzer.properties
+echo "webservice-bind-host = 0.0.0.0" >> /usr/share/elasticsearch/plugins/opendistro-performance-analyzer/pa_config/performance-analyzer.properties
 
 
 # Installing kibana
@@ -90,7 +90,7 @@ echo "node.name: init-master" >> /etc/elasticsearch/elasticsearch.yml
 echo "cluster.initial_master_nodes: [\"init-master\"]" >> /etc/elasticsearch/elasticsearch.yml
 echo "cluster.name: odfe-$OD_VERSION-deb-auth" >> /etc/elasticsearch/elasticsearch.yml
 echo "network.host: 0.0.0.0" >> /etc/elasticsearch/elasticsearch.yml
-echo "webservice-bind-host = 0.0.0.0" >> /usr/share/elasticsearch/plugins/opendistro_performance_analyzer/pa_config/performance-analyzer.properties
+echo "webservice-bind-host = 0.0.0.0" >> /usr/share/elasticsearch/plugins/opendistro-performance-analyzer/pa_config/performance-analyzer.properties
 
 # Installing kibana
 sudo apt install opendistroforelasticsearch-kibana
@@ -119,7 +119,7 @@ echo "node.name: init-master" >> config/elasticsearch.yml
 echo "cluster.initial_master_nodes: [\"init-master\"]" >> config/elasticsearch.yml
 echo "cluster.name: odfe-$OD_VERSION-tarball-auth" >> config/elasticsearch.yml
 echo "network.host: 0.0.0.0" >> config/elasticsearch.yml
-echo "webservice-bind-host = 0.0.0.0" >> /opendistroforelasticsearch-$OD_VERSION/plugins/opendistro_performance_analyzer/pa_config/performance-analyzer.properties
+echo "webservice-bind-host = 0.0.0.0" >> /opendistroforelasticsearch-$OD_VERSION/plugins/opendistro-performance-analyzer/pa_config/performance-analyzer.properties
 sudo sysctl -w vm.max_map_count=262144
 
 
