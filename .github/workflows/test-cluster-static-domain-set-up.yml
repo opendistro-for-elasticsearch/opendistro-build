@@ -112,7 +112,7 @@ jobs:
               for arch in ${ARCHITECTURE[@]}; do
                   SECURITY=(ENABLE DISABLE)
                   for sec in ${SECURITY[@]}; do
-                      DISTRIBUTION_TYPE=(TAR RPM DEB)
+                      DISTRIBUTION_TYPE=(TAR DEB RPM)
                       for dis in ${DISTRIBUTION_TYPE[@]}; do    
                         stackName=ODFE-$dis-$arch-SECURITY-$sec
                         echo "$stackName in process"
