@@ -267,7 +267,7 @@ jobs:
           ref: ${{env.p_tag_im}}
       - name: Integration Test
         run: |
-          ./release-tools/scripts/setup_runners_service.sh zip --es arm64
+          ./release-tools/scripts/setup_runners_service.sh zip --es
           export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../index-management; pwd
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin
   
