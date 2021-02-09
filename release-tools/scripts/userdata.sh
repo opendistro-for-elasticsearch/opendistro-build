@@ -162,7 +162,7 @@ if  [[ "$2" = "DISABLE" ]]
 then
 if [[ "$1" = "RPM"  ||  "$1" = "DEB" ]]
 then
-sed -i "s/^echo \"cluster.name.*/echo \"cluster.name \: odfe-$OD_VERSION-$1-noauth\" \>\> \/etc\/elasticsearch\/elasticsearch.yml/g" $REPO_ROOT/userdata_$1.sh
+sed -i "s/^echo \"cluster.name.*/echo \"cluster.name \: odfe-$OD_VERSION-$1-$ARCHITECTURE-noauth\" \>\> \/etc\/elasticsearch\/elasticsearch.yml/g" $REPO_ROOT/userdata_$1.sh
 sed -i "/echo \"network.host/a echo \"opendistro_security.disabled: true\" \>\> \/etc\/elasticsearch\/elasticsearch.yml" $REPO_ROOT/userdata_$1.sh
 cat <<- EOF >> userdata_$1.sh
 sudo rm -rf /usr/share/kibana/plugins/opendistroSecurityKibana
@@ -170,9 +170,9 @@ sudo sed -i /^opendistro_security/d /etc/kibana/kibana.yml
 sudo sed -i 's/https/http/' /etc/kibana/kibana.yml
 EOF
 else
-sed -i "s/^echo \"cluster.name.*/echo \"cluster.name \: odfe-$OD_VERSION-$1-noauth\" \>\> config\/elasticsearch.yml/g" $REPO_ROOT/userdata_$1.sh
+sed -i "s/^echo \"cluster.name.*/echo \"cluster.name \: odfe-$OD_VERSION-$1-$ARCHITECTURE-noauth\" \>\> config\/elasticsearch.yml/g" $REPO_ROOT/userdata_$1.sh
 cat <<- EOF >> userdata_$1.sh
-sudo rm -rf plugins/opendistro_security
+sudo rm -rf plugins/opendistro-security
 sed -i /^opendistro_security/d config/elasticsearch.yml
 cd /opendistroforelasticsearch-kibana/
 sudo rm -rf plugins/opendistroSecurityKibana
