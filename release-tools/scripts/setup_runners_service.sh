@@ -281,7 +281,7 @@ then
   curl -XGET https://localhost:9200/_cluster/health?pretty -u admin:admin --insecure
   # kibana can still use http to check status
   curl -v -XGET http://localhost:5601
-  curl http://localhost:5601/_cat/plugins?v
+  #curl http://localhost:5601/_cat/plugins?v
   curl -v -XGET http://localhost:5601/api/status
   echo "es & kibana start"
   netstat -ntlp
