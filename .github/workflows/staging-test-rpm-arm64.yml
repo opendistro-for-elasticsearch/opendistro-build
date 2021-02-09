@@ -1,10 +1,10 @@
-name: Process RPM Artifacts ARM64
+name: Test RPM Artifacts ARM64
 
 on:
   # schedule:
   #   - cron: '0 10 * * *'
   repository_dispatch:
-    types: [staging-build-rpm-arm64]
+    types: [staging-test-rpm-arm64]
 
 jobs:
   Provision-Runners:
