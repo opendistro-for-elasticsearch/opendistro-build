@@ -34,7 +34,7 @@ jobs:
           cd release-tools/scripts
           ARTIFACT_URL=`yq eval '.urls.ODFE.prod' manifest.yml | awk -F/ '{print $3}'`
           echo "$ARTIFACT_URL"
-          action=${{github.event.client_payload.branch}}
+          action=${{github.event.client_payload.action}}
           if [ "$action" == "prod-sync-all" ]
           then
             ./prod-sync-artifacts.py $action |tee sync_info_$(date +%F-%H:%M).txt
