@@ -7,7 +7,7 @@ umask 0002
 run_as_other_user_if_needed() {
     if [[ "$(id -u)" == "0" ]]; then
         # If running as root, drop to specified UID and run command
-        exec chroot --userspec=1000 / "${@}"
+        exec chroot --userspec=${PUID:-${DEFAULT_UID}} / "${@}"
     else
         # Either we are running in Openshift with random uid and are a member of the root group
         # or with a custom --user
@@ -30,8 +30,8 @@ if [[ "$1" != "eswrapper" ]]; then
         # Without this, user could specify `elasticsearch -E x.y=z` but
         # `bin/elasticsearch -E x.y=z` would not work.
         set -- "elasticsearch" "${@:2}"
-        # Use chroot to switch to UID 1000
-        exec chroot --userspec=1000 / "$@"
+        # Use chroot to switch to non-root UID
+        exec chroot --userspec=${PUID:-${DEFAULT_UID}} / "$@"
     else
         # User probably wants to run something else, like /bin/bash, with another uid forced (Openshift?)
         exec "$@"
@@ -78,7 +78,7 @@ export ES_JAVA_OPTS="-Des.cgroups.hierarchy.override=/ $ES_JAVA_OPTS"
 if [[ "$(id -u)" == "0" ]]; then
     # If requested and running as root, mutate the ownership of bind-mounts
     if [[ -n "$TAKE_FILE_OWNERSHIP" ]]; then
-        chown -R 1000:0 /usr/share/elasticsearch/{data,logs}
+        chown -R ${PUID:-${DEFAULT_UID}}:0 /usr/share/elasticsearch/{data,logs}
     fi
 fi
 
@@ -92,9 +92,11 @@ if [[ -d "/usr/share/elasticsearch/plugins/opendistro_performance_analyzer" ]]; 
     CLK_TCK=`/usr/bin/getconf CLK_TCK`
     ES_JAVA_OPTS="-Dclk.tck=$CLK_TCK -Djdk.attach.allowAttachSelf=true $ES_JAVA_OPTS"
     if [[ -d "/usr/share/elasticsearch/performance-analyzer-rca" ]]; then
+        sed -i "s/^user=.*/user=${PUID:-${DEFAULT_UID}}/" /usr/share/elasticsearch/performance-analyzer-rca/pa_config/supervisord.conf
         ES_JAVA_OPTS="-Djava.security.policy=file:///usr/share/elasticsearch/performance-analyzer-rca/pa_config/es_security.policy $ES_JAVA_OPTS"
         /usr/bin/supervisord -c /usr/share/elasticsearch/performance-analyzer-rca/pa_config/supervisord.conf
     else
+        sed -i "s/^user=.*/user=${PUID:-${DEFAULT_UID}}/" /usr/share/elasticsearch/plugins/opendistro_performance_analyzer/pa_config/supervisord.conf
         ES_JAVA_OPTS="-Djava.security.policy=file:///usr/share/elasticsearch/plugins/opendistro_performance_analyzer/pa_config/es_security.policy $ES_JAVA_OPTS"
         /usr/bin/supervisord -c /usr/share/elasticsearch/plugins/opendistro_performance_analyzer/pa_config/supervisord.conf
     fi
