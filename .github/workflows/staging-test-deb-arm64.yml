@@ -24,7 +24,7 @@ jobs:
           # Please add comma at the end of the RUNNERS strings
           # Don't add space after commas
           RUNNERS="odfe-deb-im-nosec-arm64,odfe-deb-alerting-nosec-arm64,odfe-deb-sql-nosec-arm64,odfe-deb-knn-nosec-arm64,odfe-deb-ad-nosec-arm64,"
-          RUNNERS+="odfe-deb-sql-arm64,odfe-deb-ad-arm64,odfe-deb-im-arm64,odfe-deb-alerting-arm64,"
+          RUNNERS+="odfe-deb-sql-arm64,odfe-deb-ad-arm64,odfe-deb-alerting-arm64,"
           RUNNERS+="odfe-deb-ad-kibana-nosec-arm64,odfe-deb-sql-kibana-nosec-arm64,"
           RUNNERS+="odfe-deb-ad-kibana-arm64,odfe-deb-sec-kibana-arm64,odfe-deb-kibana-nb-nosec-arm64"
           release-tools/scripts/setup_runners.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }} ami-055197d43e4ec7482
@@ -168,26 +168,6 @@ jobs:
           release-tools/scripts/setup_runners_service.sh deb --es arm64
           export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../anomaly-detection; pwd
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest" -Dhttps=true -Duser=admin -Dpassword=admin
-
-  Test-IM:
-    needs: [Provision-Runners]
-    name: Test-IM
-    runs-on: [self-hosted, Linux, ARM64, odfe-deb-im-arm64]
-    steps:
-      - uses: actions/checkout@v1
-      - name: Required Packages
-        run: release-tools/scripts/required_packages.sh
-      - name: Retrieve plugin tags
-        run: echo "p_tag_im=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)" >> $GITHUB_ENV
-      - uses: actions/checkout@v1
-        with:
-          repository: opendistro-for-elasticsearch/index-management
-          ref: ${{env.p_tag_im}}
-      - name: IT for Index Management
-        run: |
-          release-tools/scripts/setup_runners_service.sh deb --es arm64
-          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../index-management; pwd
-          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin
 
   Test-ALERTING:
     needs: [Provision-Runners]
@@ -580,7 +560,7 @@ jobs:
           # Please add comma at the end of the RUNNERS strings
           # Don't add space after commas
           RUNNERS="odfe-deb-im-nosec-arm64,odfe-deb-alerting-nosec-arm64,odfe-deb-sql-nosec-arm64,odfe-deb-knn-nosec-arm64,odfe-deb-ad-nosec-arm64,"
-          RUNNERS+="odfe-deb-sql-arm64,odfe-deb-ad-arm64,odfe-deb-im-arm64,odfe-deb-alerting-arm64,"
+          RUNNERS+="odfe-deb-sql-arm64,odfe-deb-ad-arm64,odfe-deb-alerting-arm64,"
           RUNNERS+="odfe-deb-ad-kibana-nosec-arm64,odfe-deb-sql-kibana-nosec-arm64,"
           RUNNERS+="odfe-deb-ad-kibana-arm64,odfe-deb-sec-kibana-arm64,odfe-deb-kibana-nb-nosec-arm64"
           release-tools/scripts/setup_runners.sh terminate $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
