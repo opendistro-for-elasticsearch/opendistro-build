@@ -172,7 +172,7 @@ EOF
 else
 sed -i "s/^echo \"cluster.name.*/echo \"cluster.name \: odfe-$OD_VERSION-$1-$ARCHITECTURE-noauth\" \>\> config\/elasticsearch.yml/g" $REPO_ROOT/userdata_$1.sh
 cat <<- EOF >> userdata_$1.sh
-sudo rm -rf plugins/opendistro-security
+sudo rm -rf plugins/opendistro_security
 ls -l plugins/
 sed -i /^opendistro_security/d config/elasticsearch.yml
 cd /opendistroforelasticsearch-kibana/
