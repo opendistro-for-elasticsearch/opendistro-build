@@ -252,7 +252,7 @@ you can define secrets that map to each config given that each secret contains t
 ```
 securityConfig:
   enabled: true
-  path: "/usr/share/elasticsearch/plugins/opendistro_security/securityconfig"
+  path: "/usr/share/elasticsearch/plugins/opendistro-security/securityconfig"
   actionGroupsSecret:
   configSecret:
   internalUsersSecret:
@@ -284,7 +284,7 @@ or You can specify  all the security configurations in the values.yaml file  as
 ```
 securityConfig:
   enabled: true
-  path: "/usr/share/elasticsearch/plugins/opendistro_security/securityconfig"
+  path: "/usr/share/elasticsearch/plugins/opendistro-security/securityconfig"
   securityConfigSecret:
   data: {}
     # config.yml: |-
@@ -347,7 +347,7 @@ elasticsearch:
 
   securityConfig:
     enabled: true
-    path: "/usr/share/elasticsearch/plugins/opendistro_security/securityconfig"
+    path: "/usr/share/elasticsearch/plugins/opendistro-security/securityconfig"
     configSecret: "security-config"
     rolesSecret: "roles-config"
     rolesMappingSecret: "roles-mapping-config"
@@ -514,7 +514,7 @@ The following table lists the configurable parameters of the opendistro elastics
 | `kibana.startupProbe`                                    | Configuration for the [startupProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/)                     | `[]`                                                                    |
 | `elasticsearch.discoveryOverride`                         | For hot/warm architectures. Allows second aliased deployment to find cluster.                                                                            | `""`                                                                    |
 | `elasticsearch.securityConfig.enabled`                    | Use custom [security configs](https://github.com/opendistro-for-elasticsearch/security/tree/master/securityconfig)                                       | `"true"`                                                                |
-| `elasticsearch.securityConfig.path`                       | Path to security config files                                                                                                                            | `"/usr/share/elasticsearch/plugins/opendistro_security/securityconfig"` |
+| `elasticsearch.securityConfig.path`                       | Path to security config files                                                                                                                            | `"/usr/share/elasticsearch/plugins/opendistro-security/securityconfig"` |
 | `elasticsearch.securityConfig.actionGroupsSecret`         | Name of secret with [action_groups.yml](https://github.com/opendistro-for-elasticsearch/security/blob/master/securityconfig/action_groups.yml) defined   | `""`                                                                    |
 | `elasticsearch.securityConfig.configSecret`               | Name of secret with [config.yml](https://github.com/opendistro-for-elasticsearch/security/blob/master/securityconfig/config.yml) defined                 | `""`                                                                    |
 | `elasticsearch.securityConfig.internalUsersSecret`        | Name of secret with [internal_users.yml](https://github.com/opendistro-for-elasticsearch/security/blob/master/securityconfig/internal_users.yml) defined | `""`                                                                    |

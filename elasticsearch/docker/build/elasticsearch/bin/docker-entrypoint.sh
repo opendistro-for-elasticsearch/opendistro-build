@@ -82,10 +82,13 @@ if [[ "$(id -u)" == "0" ]]; then
     fi
 fi
 
-if [[ -d "/usr/share/elasticsearch/plugins/opendistro_security" && "$DISABLE_INSTALL_DEMO_CONFIG" != "true" ]]; then
+SECURITY_PLUGIN=`ls -p /usr/share/elasticsearch/plugins/ | grep security`
+echo "SECURITY_PLUGIN $SECURITY_PLUGIN"
+
+if [[ -d "/usr/share/elasticsearch/plugins/$SECURITY_PLUGIN" && "$DISABLE_INSTALL_DEMO_CONFIG" != "true" ]]; then
     # Install Demo certifactes for Security Plugin and update the elasticsearch.yml
     # file to use those certificates.
-    /usr/share/elasticsearch/plugins/opendistro_security/tools/install_demo_configuration.sh -y -i -s
+    /usr/share/elasticsearch/plugins/$SECURITY_PLUGIN/tools/install_demo_configuration.sh -y -i -s
 fi
 
 if [[ -d "/usr/share/elasticsearch/plugins/opendistro_performance_analyzer" ]]; then

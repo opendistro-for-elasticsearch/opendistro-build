@@ -89,7 +89,10 @@ done
 echo "List available plugins"
 ls -l $WORK_DIR/plugins
 
-bash $WORK_DIR/plugins/opendistro_security/tools/install_demo_configuration.sh -y -i -s
+# Security Plugin
+SECURITY_PLUGIN=`ls -p $WORK_DIR/plugins/ | grep security`
+echo "SECURITY_PLUGIN $SECURITY_PLUGIN"
+bash $WORK_DIR/plugins/$SECURITY_PLUGIN/tools/install_demo_configuration.sh -y -i -s
 
 # Making zip
 echo "Generating zip"

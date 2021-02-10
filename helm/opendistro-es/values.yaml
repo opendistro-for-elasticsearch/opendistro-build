@@ -162,7 +162,7 @@ elasticsearch:
   discoveryOverride: ""
   securityConfig:
     enabled: true
-    path: "/usr/share/elasticsearch/plugins/opendistro_security/securityconfig"
+    path: "/usr/share/elasticsearch/plugins/opendistro-security/securityconfig"
     actionGroupsSecret:
     configSecret:
     internalUsersSecret:
