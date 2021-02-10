@@ -81,7 +81,7 @@ if ($SETUP_ACTION -eq "--es"){
 if ($SETUP_ACTION -eq "--es-nosec" -Or $SETUP_ACTION -eq "--kibana-nosec"){
   echo "removing es security"
   cd $PACKAGE-$OD_VERSION\bin
-  .\elasticsearch-plugin.bat remove opendistro-security
+  .\elasticsearch-plugin.bat remove opendistro_security
   cd ..\..
 
   echo "Overriding with elasticsearch.yml having no certificates"
