@@ -190,7 +190,7 @@ def main():
                             else:
                                 print("Build number is missing for plugin : " + plugin_name)
                                 raise
-                            artifact_status.append([final_name,plugin_name,plugin_state])
+                            artifact_status.append([final_name,plugin_name,plugin_build,plugin_state])
                 except Exception as ex:
                     print(ex)
             print("\n\n\n\n")
@@ -223,12 +223,12 @@ def main():
                         print("ODFE artifact : " + odfe_es)
                         if odfe_es:
                             artifact_status.append(["opendistroforelasticsearch" + "-" + key,
-                                                   odfe_es,"Found"])
+                                                   odfe_es,"NA","Found"])
                             print("Artifact : " + odfe_es + "\t Status : Found")
                             if action == "prod-sync-all":
                                 upload_artifact(rc_bucket,es,prod_bucket,value)
                 else:
-                    artifact_status.append(["opendistroforelasticsearch",key,"Not Found"])
+                    artifact_status.append(["opendistroforelasticsearch",key,"NA","Not Found"])
                     print("Artifact : " + odfe_es + "\t Status : Not Found")
             for key,value in odfe_kb:
                 dest_state = check_prod_location(prod_bucket,value)
@@ -242,18 +242,18 @@ def main():
                         print("ODFE artifact : " + odfe_kb)
                         if odfe_kb:
                             artifact_status.append(["opendistroforelasticsearch-kibana" + "-" + key,
-                                                   odfe_kb,"Found"])
+                                                   odfe_kb,"NA","Found"])
                             print("Artifact : " + odfe_kb + "\t Status : Found")
                             if action == "prod-sync-all":
                                 upload_artifact(rc_bucket,kb,prod_bucket,value)
                 else:
-                    artifact_status.append(["opendistroforelasticsearch-kibana",key,"Not Found"])
+                    artifact_status.append(["opendistroforelasticsearch-kibana",key,"NA","Not Found"])
                     print("Artifact : " + odfe_es + "\t Status : Not Found")
                 print("Prod Folder path : " + value + "\t Status : " + dest_state)
             print("\n\n\n\n")
             print(tabulate(folder_status,headers = ["Folder path","State"], tablefmt="github"))
             print("\n\n\n\n")
-            print(tabulate(artifact_status,headers = ["Plugin Name","Full Name","State"], tablefmt="github"))
+            print(tabulate(artifact_status,headers = ["Plugin Name","Full Name","Build No.","State"], tablefmt="github"))
             if action == "prod-sync":
                 print("\n\n\n\n")
                 print(tabulate(upload_list,headers = ["Artifact name","State"], tablefmt="github"))
