@@ -190,18 +190,15 @@ then
   if [ "$SETUP_DISTRO" = "zip" ]
   then
     sed -i /install_demo_configuration/d $ES_ROOT/opendistro-tar-install.sh
-    $ES_ROOT/bin/elasticsearch-plugin remove opendistro-security
-    ls -l $ES_ROOT/plugins
+    $ES_ROOT/bin/elasticsearch-plugin remove opendistro_security
     sed -i '/http\.port/s/^# *//' $ES_ROOT/config/elasticsearch.yml
   elif [ "$SETUP_DISTRO" = "docker" ]
   then
-    echo "RUN /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro-security" >> Dockerfile
-    echo "RUN ls -l /usr/share/elasticsearch/plugins"
+    echo "RUN /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro_security" >> Dockerfile
     docker build -t odfe-http:no-security -f Dockerfile .
     sleep 5
   else
-    sudo /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro-security
-    ls -l /usr/share/elasticsearch/plugins
+    sudo /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro_security
     sudo sed -i '/http\.port/s/^# *//' /etc/elasticsearch/elasticsearch.yml
     sudo sed -i /^opendistro_security/d /etc/elasticsearch/elasticsearch.yml
     sudo sed -i /CN=kirk/d /etc/elasticsearch/elasticsearch.yml
