@@ -1,0 +1,47 @@
+name: Sync ODFE artifacts to Prod
+
+# For validation the client_payload can be empty
+# Make sure to pass the action as client_payload in the dispatch event for Prod Sync
+# Example: client_payload: { "action": "prod-sync-all"}
+
+on: 
+  repository_dispatch:
+    types: [prod-sync-artifacts]
+
+jobs:
+  Sync-Prod:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Required Packages
+        run: ./release-tools/scripts/required_packages.sh
+      - name: Install python packages
+        run: |
+          sudo pip install boto3
+          sudo pip install pyyaml
+          sudo pip install requests
+          sudo pip install tabulate
+      - name: Moving artifacts from staging to prod
+        run: |
+          #!/bin/bash
+          cd release-tools/scripts
+          ARTIFACT_URL=`yq eval '.urls.ODFE.prod' manifest.yml | awk -F/ '{print $3}'`
+          echo "$ARTIFACT_URL"
+          action=${{github.event.client_payload.action}}
+          if [ "$action" == "prod-sync-all" ]
+          then
+            ./prod-sync-artifacts.py $action |tee sync_info_$(date +%F-%H:%M).txt
+            aws s3 cp sync_info* s3://$ARTIFACT_URL/prod-sync-tracker/
+            aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/tarball/*"
+            aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/downloads/*"
+          else
+            ./prod-sync-artifacts.py
+          fi
+
