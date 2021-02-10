@@ -73,19 +73,19 @@ def check_odfe(rc_bucket,odfe_path,artifact_type,odfe_name):
 def check_plugin(rc_bucket,plugin_fullpath,plugin_name,plugin_ver,plugin_build,key_word):
     try:
         bld_num = "-build-" + str(plugin_build)
-        pltfrm = str(key_word).split('_')[0]
+        platform = str(key_word).split('_')[0]
         arch = str(key_word).split('_')[1]
         plugin_type = str(key_word).split('_')[2]
         response = s3.list_objects_v2(Bucket=rc_bucket, Prefix=plugin_fullpath)
         plugin = ""
         for artifact in sorted(response['Contents'], key=lambda x: x['LastModified'], reverse=True):
             key = artifact['Key']
-            if pltfrm == "noplatform":
-                pltfrm = ""
+            if platform == "noplatform":
+                platform = ""
             if arch == "noarch":
                 arch = ""
             if (plugin_name in key and plugin_ver in key and 
-                    bld_num in key and pltfrm in key and 
+                    bld_num in key and platform in key and 
                     arch in key):
                 if key.endswith(plugin_type):
                     plugin = key
@@ -101,8 +101,8 @@ def check_prod_location(bucket_name,folder_path):
         prefix = folder_path.replace(plugin_folder+"/",'')
         response = s3.list_objects_v2(Bucket=bucket_name, Delimiter='/', Prefix=prefix)
         if response.get('CommonPrefixes'):
-            for plg_path in response.get('CommonPrefixes'):
-                if folder_path == plg_path.get('Prefix'):
+            for plugin_path in response.get('CommonPrefixes'):
+                if folder_path == plugin_path.get('Prefix'):
                     return "Found"
         return "Not Found"
     except:
@@ -139,8 +139,8 @@ def main():
                 try:
                     if plugin.get('release_candidate'):
                         print("\n")
-                        plugin_name = plugin.get('plugin_basename')
-                        print("Plugin name : " + plugin_name)
+                        plugin_basename = plugin.get('plugin_basename')
+                        print("Plugin name : " + plugin_basename)
                         plugin_version = plugin.get('plugin_version')
                         print("Plugin version : " + plugin_version)
                         plugin_category = plugin.get('plugin_category')
@@ -149,48 +149,48 @@ def main():
                         for spec in plugin.get('plugin_spec'):
                             print(spec)
                             match_found = False
-                            for plugin_loc in plugin.get('plugin_location_prod'):
-                                for key,value in plugin_loc.items():
+                            for plugin_loc_list in plugin.get('plugin_location_prod'):
+                                for key,value in plugin_loc_list.items():
                                    if key == spec:
-                                        plg_loc = plugin_loc[key]
-                                        print(plg_loc)
+                                        plugin_loc = plugin_loc_list[key]
+                                        print(plugin_loc)
                                         match_found = True
                                         break
                             if not match_found:
-                                for key,value in plugin_loc.items():
+                                for key,value in plugin_loc_list.items():
                                     if key == "default":
                                         print("The default location will be used for Prod")
-                                        plg_loc = plugin_loc["default"]
-                                        print(plg_loc)
-                            plg_prd_loc = str(plg_loc)[5:]
-                            print("Plugin Prod location : " + plg_prd_loc )
-                            plg_prd_bucket = plg_prd_loc.split('/')[0]
-                            print("Prod Bucket name : " + plg_prd_bucket )
-                            plg_prd_path = plg_prd_loc.replace(plg_prd_bucket,'')[1:]
-                            dest_state = check_prod_location(plg_prd_bucket,plg_prd_path)
-                            print("Prod Folder path : " + plg_prd_path + "\t Status : " + dest_state)
-                            folder_status.append([plg_prd_path,dest_state])
+                                        plugin_loc = plugin_loc_list["default"]
+                                        print(plugin_loc)
+                            plugin_prd_loc = str(plugin_loc)[5:]
+                            print("Plugin Prod location : " + plugin_prd_loc )
+                            plugin_prd_bucket = plugin_prd_loc.split('/')[0]
+                            print("Prod Bucket name : " + plugin_prd_bucket )
+                            plugin_prd_path = plugin_prd_loc.replace(plugin_prd_bucket,'')[1:]
+                            dest_state = check_prod_location(plugin_prd_bucket,plugin_prd_path)
+                            print("Prod Folder path : " + plugin_prd_path + "\t Status : " + dest_state)
+                            folder_status.append([plugin_prd_path,dest_state])
                             plugin_fullpath = rc_plugin_path + plugin_category + "/"
                             if plugin_build is not None:
                                 plugin_val = check_plugin(rc_bucket,plugin_fullpath,
-                                    plugin_name,plugin_version,plugin_build,spec)
+                                    plugin_basename,plugin_version,plugin_build,spec)
                                 if plugin_val:
                                     print("Plugin : " + plugin_val.split('/')[-1] + "\t Status : Found")
-                                    plg_state = "Found"
-                                    plg_name = plugin_val.split('/')[-1]
-                                    final_name = re.sub('-build-[0-9]*','',plg_name)
+                                    plugin_state = "Found"
+                                    plugin_name = plugin_val.split('/')[-1]
+                                    final_name = re.sub('-build-[0-9]*','',plugin_name)
                                     print("Plugin final name :  " + final_name)
-                                    if action == "prod-sync":
-                                        upload_artifact(rc_bucket,plugin_val,plg_prd_bucket,plg_prd_path)
+                                    if action == "prod-sync-all":
+                                        upload_artifact(rc_bucket,plugin_val,plugin_prd_bucket,plugin_prd_path)
                                 else:
-                                    plg_name = "NA"
-                                    final_name = plugin_name
-                                    plg_state = "Not Found"
-                                    print("Plugin : " + plugin_name + "-" + plugin_version + "\t Status : Not Found")
+                                    plugin_name = "NA"
+                                    final_name = plugin_basename
+                                    plugin_state = "Not Found"
+                                    print("Plugin : " + plugin_basename + "-" + plugin_version + "\t Status : Not Found")
                             else:
                                 print("Build number is missing for plugin : " + plugin_name)
                                 raise
-                            artifact_status.append([final_name,plg_name,plg_state])
+                            artifact_status.append([final_name,plugin_name,plugin_state])
                 except Exception as ex:
                     print(ex)
             print("\n\n\n\n")
@@ -208,14 +208,14 @@ def main():
                        ["zip","downloads/odfe-windows/ode-windows-zip/"],
                        ["x64.rpm","downloads/rpms/opendistroforelasticsearch-kibana/"],
                        ["arm64.rpm","downloads/rpms/opendistroforelasticsearch-kibana/"],
-                       ["x64.deb","downloads/rpms/opendistroforelasticsearch-kibana/"],
-                       ["arm64.deb","downloads/rpms/opendistroforelasticsearch-kibana/"]]
+                       ["x64.deb","downloads/debs/opendistroforelasticsearch-kibana/"],
+                       ["arm64.deb","downloads/debs/opendistroforelasticsearch-kibana/"]]
             for key,value in odfe_es:
                 dest_state = check_prod_location(prod_bucket,value)
                 folder_status.append([value,dest_state])
                 odfe_es_val = check_odfe(rc_bucket,
-                        rc_path + odfe_version + "/" + "odfe/",
-                        key,"opendistroforelasticsearch-"+odfe_version)
+                                         rc_path + odfe_version + "/" + "odfe/",
+                                         key,"opendistroforelasticsearch-"+odfe_version)
                 print("Prod Folder path : " + value + "\t Status : " + dest_state)
                 if odfe_es_val:
                     for es in odfe_es_val:
@@ -225,7 +225,7 @@ def main():
                             artifact_status.append(["opendistroforelasticsearch" + "-" + key,
                                                    odfe_es,"Found"])
                             print("Artifact : " + odfe_es + "\t Status : Found")
-                            if action == "prod-sync":
+                            if action == "prod-sync-all":
                                 upload_artifact(rc_bucket,es,prod_bucket,value)
                 else:
                     artifact_status.append(["opendistroforelasticsearch",key,"Not Found"])
@@ -244,7 +244,7 @@ def main():
                             artifact_status.append(["opendistroforelasticsearch-kibana" + "-" + key,
                                                    odfe_kb,"Found"])
                             print("Artifact : " + odfe_kb + "\t Status : Found")
-                            if action == "prod-sync":
+                            if action == "prod-sync-all":
                                 upload_artifact(rc_bucket,kb,prod_bucket,value)
                 else:
                     artifact_status.append(["opendistroforelasticsearch-kibana",key,"Not Found"])
