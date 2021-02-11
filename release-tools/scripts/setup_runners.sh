@@ -125,12 +125,11 @@ SETUP_GIT_TOKEN=$3
 
 # AMI on us-west-2
 # Distro      Arch  Recommand Username AMI-ID                Java  Comments
-# RPM-al2     x64   YES       ec2-user ami-086e8a98280780e63 none  need to install jdk by workflow
-# RPM-al2     arm64 YES       ec2-user ami-0824bd49967ce7fe4 jdk14 preinstall with tar.gz
+# RPM-al2     x64   YES       ec2-user ami-0bd968fea932935f4 none  no jdk + reports kibana dependencies
+# RPM-al2     arm64 YES       ec2-user ami-0ef0c96643bbd01f2 jdk14 preinstall with tar.gz + reports kibana dependencies
+# DEB-ubu1804 arm64 YES       ubuntu   ami-03f8a33a16290a84c  jdk14 preinstall + docker + docker compose + reports kibana dependencies
 # RPM-centos8 x64   NO        centos   ami-011f59f50bac33376 jdk15 preinstall
 # RPM-centos8 arm64 NO        centos   ami-0ed17173ab64255b1 jdk15 preinstall
-# DEB-ubu1804 arm64 YES       ubuntu   ami-055197d43e4ec7482 jdk14 preinstall disable daily updates
-# DEB-ubu1804 arm64 NO        ubuntu   ami-040568c6e3d22bbe1 jdk14 preinstall + docker + docker compose
 EC2_AMI_ID=$4
 
 if [ "$SETUP_ACTION" = "run" ]
