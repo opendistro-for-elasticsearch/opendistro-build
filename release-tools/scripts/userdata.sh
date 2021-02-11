@@ -54,6 +54,7 @@ cat <<- EOF > $REPO_ROOT/userdata_$1.sh
 #!/bin/bash
 sudo -i
 sudo curl https://d3g5vo6xdbdb9a.cloudfront.net/staging/yum/staging-opendistroforelasticsearch-artifacts.repo -o /etc/yum.repos.d/staging-opendistroforelasticsearch-artifacts.repo
+sudo yum install -y libnss3.so xorg-x11-fonts-100dpi xorg-x11-fonts-75dpi xorg-x11-utils xorg-x11-fonts-cyrillic xorg-x11-fonts-Type1 xorg-x11-fonts-misc fontconfig freetype
 sudo yum install -y opendistroforelasticsearch-$OD_VERSION
 sudo sysctl -w vm.max_map_count=262144
 echo "node.name: init-master" >> /etc/elasticsearch/elasticsearch.yml
@@ -79,7 +80,7 @@ cat <<- EOF > $REPO_ROOT/userdata_$1.sh
 sudo -i
 sudo sysctl -w vm.max_map_count=262144
 sudo apt-get update
-sudo apt install zip awscli -y 
+sudo apt install zip awscli libnss3-dev fonts-liberation libfontconfig1 -y 
 wget -qO - https://d3g5vo6xdbdb9a.cloudfront.net/GPG-KEY-opendistroforelasticsearch | sudo apt-key add -
 echo "deb https://d3g5vo6xdbdb9a.cloudfront.net/staging/apt stable main" | sudo tee -a /etc/apt/sources.list.d/opendistroforelasticsearch.list
 wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-$ES_VERSION-$ESARCH.deb
@@ -108,7 +109,7 @@ cat <<- EOF > $REPO_ROOT/userdata_$1.sh
 echo "*   hard  nofile  65535" | tee --append /etc/security/limits.conf
 echo "*   soft  nofile  65535" | tee --append /etc/security/limits.conf
 sudo apt-get update
-sudo apt install zip awscli -y 
+sudo apt install zip awscli libnss3-dev fonts-liberation libfontconfig1 -y 
 ulimit -n 65535
 aws s3 cp $S3_RELEASE_BASEURL$OD_VERSION/odfe/opendistroforelasticsearch-$OD_VERSION-linux-$ARCHITECTURE.tar.gz .
 tar zxf opendistroforelasticsearch-$OD_VERSION-linux-$ARCHITECTURE.tar.gz
