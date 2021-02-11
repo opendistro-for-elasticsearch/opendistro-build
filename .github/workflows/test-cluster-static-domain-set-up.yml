@@ -9,8 +9,8 @@ name: Create testing cluster with static domain
 #       right target groups.
 
 on:
-  # schedule:
-  #   - cron: '0 11 * * *'
+  schedule:
+    - cron: '0 13 * * *'
   repository_dispatch:
     types: [test-cluster-static-domain-set-up]
 
