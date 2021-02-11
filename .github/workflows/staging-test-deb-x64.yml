@@ -1,8 +1,8 @@
 name: Test Debian Artifacts X64
 
 on:
-  # schedule:
-  #   - cron: '0 10 * * *'
+  schedule:
+    - cron: '15 12 * * *'
   repository_dispatch:
     types: [staging-test-deb-x64]
 
