@@ -41,7 +41,7 @@ jobs:
           # Please add comma at the end of the RUNNERS strings
           # Don't add space after commas
           RUNNERS="odfe-deb-build-kibana-arm64"
-          release-tools/scripts/setup_runners.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }} ami-055197d43e4ec7482
+          release-tools/scripts/setup_runners.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }} ami-03f8a33a16290a84c
 
   build-es-artifacts:
     needs: [plugin-availability]
