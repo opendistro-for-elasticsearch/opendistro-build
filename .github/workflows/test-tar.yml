@@ -74,7 +74,11 @@ jobs:
 #          yarn kbn bootstrap --oss
           
       - name: Start ES and Kibana
-        run: ./release-tools/scripts/setup_runners_service.sh zip --kibana
+        run: |
+        echo $SHELL SHELL
+        ps -ef | grep init
+        ./release-tools/scripts/setup_runners_service.sh zip --kibana
+        shell: bash
  
       - name: Run IT
         run: |
