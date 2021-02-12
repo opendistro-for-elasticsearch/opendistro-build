@@ -75,9 +75,9 @@ jobs:
           
       - name: Start ES and Kibana
         run: |
-        echo $SHELL SHELL
-        ps -ef | grep init
-        ./release-tools/scripts/setup_runners_service.sh zip --kibana
+          echo $SHELL SHELL
+          ps -ef | grep init
+          ./release-tools/scripts/setup_runners_service.sh zip --kibana
         shell: bash
  
       - name: Run IT
