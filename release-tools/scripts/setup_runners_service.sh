@@ -260,8 +260,10 @@ then
   if [ "$SETUP_DISTRO" = "zip" ]
   then
     cd $ES_ROOT
-    nohup ./opendistro-tar-install.sh > /dev/null 2>&1 &
+    #nohup ./opendistro-tar-install.sh > /dev/null 2>&1 &
+    nohup ./opendistro-tar-install.sh > nohup.txt 2>&1 &
     sleep 30
+    cat nohup.txt
     kill -9 `ps -ef | grep [e]lasticsearch | awk '{print $2}'`
     sed -i /^node.max_local_storage_nodes/d ./config/elasticsearch.yml
     echo "opendistro_security.unsupported.restapi.allow_securityconfig_modification: true" >> ./config/elasticsearch.yml
