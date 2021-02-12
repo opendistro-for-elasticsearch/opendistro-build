@@ -262,7 +262,7 @@ then
     cd $ES_ROOT
     #nohup ./opendistro-tar-install.sh > /dev/null 2>&1 &
     nohup ./opendistro-tar-install.sh > nohup.txt 2>&1 &
-    sleep 30
+    sleep 60
     cat nohup.txt
     kill -9 `ps -ef | grep [e]lasticsearch | awk '{print $2}'`
     sed -i /^node.max_local_storage_nodes/d ./config/elasticsearch.yml

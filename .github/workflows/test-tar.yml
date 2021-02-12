@@ -45,11 +45,11 @@ jobs:
 #          ref: ${{env.p_tag_sec_kibana}}
 #          path: kibana/plugins/opendistro_security
 #      
-#      - name: Setup Java
-#        uses: actions/setup-java@v1
-#        with:
-#          java-version: ${{ matrix.java }}
-#      
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+      
 #      - name: Get node and yarn versions
 #        id: node_yarn_versions
 #        run: |
