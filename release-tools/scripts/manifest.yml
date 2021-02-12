@@ -211,7 +211,7 @@ plugins:
   - 
     plugin_basename: opendistroIndexManagementKibana
     plugin_git: opendistro-for-elasticsearch/index-management-kibana-plugin
-    plugin_version: 1.13.0.0
+    plugin_version: 1.13.0.1
     plugin_build: 
     plugin_spec: [noplatform_noarch_zip]
     plugin_category: kibana-plugins
