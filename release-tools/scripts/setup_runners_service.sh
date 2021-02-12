@@ -136,7 +136,7 @@ then
   docker build -t odfe-http:security -f Dockerfile .
   sleep 5
   docker run -d -p 9200:9200 -d -p 9600:9600 -e "discovery.type=single-node" --name $DOCKER_NAME odfe-http:security
-  sleep 30
+  sleep 40
   echo "Temp Solution to remove the wrong configuration. need be fixed in building stage"
   docker exec -t $DOCKER_NAME /bin/bash -c "sed -i /^node.max_local_storage_nodes/d /usr/share/elasticsearch/config/elasticsearch.yml"
   docker exec -t $DOCKER_NAME /bin/bash -c "echo \"opendistro_security.unsupported.restapi.allow_securityconfig_modification: true\" >> /usr/share/elasticsearch/config/elasticsearch.yml"
@@ -158,7 +158,7 @@ then
   then
     cd $ES_ROOT
     nohup ./opendistro-tar-install.sh > /dev/null 2>&1 &
-    sleep 30
+    sleep 40
     kill -9 `ps -ef | grep [e]lasticsearch | awk '{print $2}'`
     sed -i /^node.max_local_storage_nodes/d ./config/elasticsearch.yml
     nohup ./opendistro-tar-install.sh > /dev/null 2>&1 &
@@ -260,10 +260,8 @@ then
   if [ "$SETUP_DISTRO" = "zip" ]
   then
     cd $ES_ROOT
-    #nohup ./opendistro-tar-install.sh > /dev/null 2>&1 &
-    nohup ./opendistro-tar-install.sh > nohup.txt 2>&1 &
-    sleep 60
-    cat nohup.txt
+    nohup ./opendistro-tar-install.sh > /dev/null 2>&1 &
+    sleep 40
     kill -9 `ps -ef | grep [e]lasticsearch | awk '{print $2}'`
     sed -i /^node.max_local_storage_nodes/d ./config/elasticsearch.yml
     echo "opendistro_security.unsupported.restapi.allow_securityconfig_modification: true" >> ./config/elasticsearch.yml
@@ -341,4 +339,5 @@ then
   cd $REPO_ROOT
   exit 0
 fi
+
 
