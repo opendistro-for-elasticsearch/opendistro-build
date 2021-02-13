@@ -1,8 +1,8 @@
 name: Test DEB Artifacts ARM64
 
 on:
-  schedule:
-    - cron: '15 12 * * *'
+#  schedule:
+#    - cron: '15 12 * * *'
   repository_dispatch:
     types: [staging-test-deb-arm64]
 

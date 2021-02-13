@@ -1,8 +1,8 @@
 name: Build ES Docker
 
 on:
-  schedule:
-    - cron: '0 12 * * *'
+#  schedule:
+#    - cron: '0 12 * * *'
   repository_dispatch:
     types: [staging-build-docker]
 
