@@ -5,6 +5,9 @@ on:
 #    - cron: '0 9 * * *' 
   repository_dispatch:
     types: [staging-copy-artifacts]
+  push:
+    branches: [sreekarj_staging]
+
 
 jobs:
   Staging-Copy-Artifacts:
