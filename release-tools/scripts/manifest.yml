@@ -40,7 +40,7 @@ plugins:
     plugin_basename: opendistro-sql
     plugin_git: opendistro-for-elasticsearch/sql
     plugin_version: 1.13.0.0
-    plugin_build: 
+    plugin_build: 37
     plugin_spec: [noplatform_noarch_zip,noplatform_noarch_deb,noplatform_noarch_rpm]
     plugin_category: elasticsearch-plugins
     release_candidate: true
@@ -52,7 +52,7 @@ plugins:
     plugin_basename: opendistro-alerting
     plugin_git: opendistro-for-elasticsearch/alerting
     plugin_version: 1.13.0.0
-    plugin_build: 
+    plugin_build: 21
     plugin_spec: [noplatform_noarch_zip,noplatform_noarch_deb,noplatform_noarch_rpm]
     plugin_category: elasticsearch-plugins
     release_candidate: true
@@ -64,7 +64,7 @@ plugins:
     plugin_basename: opendistro-job-scheduler
     plugin_git: opendistro-for-elasticsearch/job-scheduler
     plugin_version: 1.13.0.0
-    plugin_build: 
+    plugin_build: 16
     plugin_spec: [noplatform_noarch_zip,noplatform_noarch_deb,noplatform_noarch_rpm]
     plugin_category: elasticsearch-plugins
     release_candidate: true
@@ -76,7 +76,7 @@ plugins:
     plugin_basename: opendistro-security
     plugin_git: opendistro-for-elasticsearch/security
     plugin_version: 1.13.0.0
-    plugin_build: 
+    plugin_build: 48
     plugin_spec: [noplatform_noarch_zip,noplatform_noarch_deb,noplatform_noarch_rpm]
     plugin_category: elasticsearch-plugins
     release_candidate: true
@@ -88,7 +88,7 @@ plugins:
     plugin_basename: opendistro-performance-analyzer
     plugin_git: opendistro-for-elasticsearch/performance-analyzer
     plugin_version: 1.13.0.0
-    plugin_build: 
+    plugin_build: 37
     plugin_spec: [noplatform_noarch_zip,noplatform_noarch_deb,noplatform_noarch_rpm]
     plugin_category: elasticsearch-plugins
     release_candidate: true
@@ -100,7 +100,7 @@ plugins:
     plugin_basename: opendistro-index-management
     plugin_git: opendistro-for-elasticsearch/index-management
     plugin_version: 1.13.0.0
-    plugin_build: 
+    plugin_build: 14
     plugin_spec: [noplatform_noarch_zip,noplatform_noarch_deb,noplatform_noarch_rpm]
     plugin_category: elasticsearch-plugins
     release_candidate: true
@@ -112,7 +112,7 @@ plugins:
     plugin_basename: opendistro-knn
     plugin_git: opendistro-for-elasticsearch/k-NN
     plugin_version: 1.13.0.0
-    plugin_build: 
+    plugin_build: 51
     plugin_spec: [noplatform_noarch_zip,noplatform_noarch_deb,noplatform_noarch_rpm]
     plugin_category: elasticsearch-plugins
     release_candidate: true
@@ -124,7 +124,7 @@ plugins:
     plugin_basename: opendistro-anomaly-detection
     plugin_git: opendistro-for-elasticsearch/anomaly-detection
     plugin_version: 1.13.0.0
-    plugin_build: 
+    plugin_build: 20
     plugin_spec: [noplatform_noarch_zip,noplatform_noarch_deb,noplatform_noarch_rpm]
     plugin_category: elasticsearch-plugins
     release_candidate: true
@@ -136,7 +136,7 @@ plugins:
     plugin_basename: opendistro-reports-scheduler
     plugin_git: opendistro-for-elasticsearch/kibana-reports
     plugin_version: 1.13.0.0
-    plugin_build: 
+    plugin_build: 16
     plugin_spec: [noplatform_noarch_zip,noplatform_noarch_deb,noplatform_noarch_rpm]
     plugin_category: elasticsearch-plugins
     release_candidate: true
@@ -147,8 +147,8 @@ plugins:
   - 
     plugin_basename: opendistro-asynchronous-search
     plugin_git: opendistro-for-elasticsearch/asynchronous-search
-    plugin_version: 1.13.0.0
-    plugin_build: 
+    plugin_version: 1.13.0.1
+    plugin_build: 21
     plugin_spec: [noplatform_noarch_zip,noplatform_noarch_deb,noplatform_noarch_rpm]
     plugin_category: elasticsearch-plugins
     release_candidate: true
@@ -160,7 +160,7 @@ plugins:
     plugin_basename: opendistro-knnlib
     plugin_git: opendistro-for-elasticsearch/k-NN
     plugin_version: 1.13.0.0
-    plugin_build: 
+    plugin_build: 51
     plugin_spec: [linux_x64_zip,linux_x64_deb,linux_x64_rpm,linux_arm64_zip,linux_arm64_deb,linux_arm64_rpm]
     plugin_category: opendistro-libs
     release_candidate: true
@@ -172,7 +172,7 @@ plugins:
     plugin_basename: opendistroQueryWorkbenchKibana
     plugin_git: opendistro-for-elasticsearch/sql
     plugin_version: 1.13.0.0
-    plugin_build: 
+    plugin_build: 31
     plugin_spec: [noplatform_noarch_zip]
     plugin_category: kibana-plugins
     release_candidate: true
@@ -182,7 +182,7 @@ plugins:
     plugin_basename: opendistroAnomalyDetectionKibana
     plugin_git: opendistro-for-elasticsearch/anomaly-detection-kibana-plugin
     plugin_version: 1.13.0.0
-    plugin_build: 
+    plugin_build: 36
     plugin_spec: [noplatform_noarch_zip]
     plugin_category: kibana-plugins
     release_candidate: true
@@ -192,7 +192,7 @@ plugins:
     plugin_basename: opendistroSecurityKibana
     plugin_git: opendistro-for-elasticsearch/security-kibana-plugin
     plugin_version: 1.13.0.1
-    plugin_build: 
+    plugin_build: 47
     plugin_spec: [noplatform_noarch_zip]
     plugin_category: kibana-plugins
     release_candidate: true
@@ -202,7 +202,7 @@ plugins:
     plugin_basename: opendistroAlertingKibana
     plugin_git: opendistro-for-elasticsearch/alerting-kibana-plugin
     plugin_version: 1.13.0.0
-    plugin_build: 
+    plugin_build: 14
     plugin_spec: [noplatform_noarch_zip]
     plugin_category: kibana-plugins
     release_candidate: true
@@ -212,7 +212,7 @@ plugins:
     plugin_basename: opendistroIndexManagementKibana
     plugin_git: opendistro-for-elasticsearch/index-management-kibana-plugin
     plugin_version: 1.13.0.1
-    plugin_build: 
+    plugin_build: 12
     plugin_spec: [noplatform_noarch_zip]
     plugin_category: kibana-plugins
     release_candidate: true
@@ -222,7 +222,7 @@ plugins:
     plugin_basename: opendistroNotebooksKibana
     plugin_git: opendistro-for-elasticsearch/kibana-notebooks
     plugin_version: 1.13.0.0
-    plugin_build: 
+    plugin_build: 11
     plugin_spec: [noplatform_noarch_zip]
     plugin_category: kibana-plugins
     release_candidate: true
@@ -232,7 +232,7 @@ plugins:
     plugin_basename: opendistroGanttChartKibana
     plugin_git: opendistro-for-elasticsearch/kibana-visualizations
     plugin_version: 1.13.0.0
-    plugin_build: 
+    plugin_build: 4
     plugin_spec: [noplatform_noarch_zip]
     plugin_category: kibana-plugins
     release_candidate: true
@@ -242,7 +242,7 @@ plugins:
     plugin_basename: opendistroReportsKibana
     plugin_git: opendistro-for-elasticsearch/kibana-reports
     plugin_version: 1.13.0.0
-    plugin_build: 
+    plugin_build: 17
     plugin_spec: [linux_x64_zip,linux_arm64_zip,windows_x64_zip]
     plugin_category: kibana-plugins
     release_candidate: true
@@ -264,7 +264,7 @@ plugins:
     plugin_basename: odfe-sql-cli
     plugin_git: opendistro-for-elasticsearch/sql
     plugin_version: 1.13.0.0
-    plugin_build: 
+    plugin_build: 31
     plugin_spec: [noplatform_noarch_tar.gz,noplatform_noarch_whl]
     plugin_category: elasticsearch-clients
     release_candidate: true
@@ -274,7 +274,7 @@ plugins:
     plugin_basename: opendistro-sql-jdbc
     plugin_git: opendistro-for-elasticsearch/sql
     plugin_version: 1.13.0.0
-    plugin_build: 
+    plugin_build: 31
     plugin_spec: [noplatform_noarch_jar]
     plugin_category: elasticsearch-clients
     release_candidate: true
@@ -284,7 +284,7 @@ plugins:
     plugin_basename: opendistro-sql-odbc
     plugin_git: opendistro-for-elasticsearch/sql
     plugin_version: 1.13.0.0
-    plugin_build: 
+    plugin_build: 31
     plugin_spec: [macos_x64_pkg,windows_x86_msi,windows_x64_msi]
     plugin_category: elasticsearch-clients
     release_candidate: true
@@ -310,7 +310,7 @@ plugins:
     plugin_basename: opendistro-perf-top
     plugin_git: opendistro-for-elasticsearch/perftop
     plugin_version: 1.13.0.0
-    plugin_build: 
+    plugin_build: 19
     plugin_spec: [linux_x64_zip,macos_x64_zip]
     plugin_category: elasticsearch-clients
     release_candidate: true
