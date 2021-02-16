@@ -42,12 +42,12 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 
 
 ### SQL
-* Added keywords option as alias identifier in SQL parser ([#866](https://github.com/opendistro-for-elasticsearch/sql/pull/866))
+* Add keywords option as alias identifier in SQL parser ([#866](https://github.com/opendistro-for-elasticsearch/sql/pull/866))
 * Support show and describe statement ([#907](https://github.com/opendistro-for-elasticsearch/sql/pull/907))
 * Support cast function in SQL ([#926](https://github.com/opendistro-for-elasticsearch/sql/pull/926))
 * Support NULLS FIRST/LAST ordering for window functions ([#929](https://github.com/opendistro-for-elasticsearch/sql/pull/929))
 * Project operator pushdown ([#933](https://github.com/opendistro-for-elasticsearch/sql/pull/933))
-* add string function RIGHT ([#938](https://github.com/opendistro-for-elasticsearch/sql/pull/938))
+* Add string function RIGHT ([#938](https://github.com/opendistro-for-elasticsearch/sql/pull/938))
 * Add Flow control function IF(expr1, expr2, expr3) ([#990](https://github.com/opendistro-for-elasticsearch/sql/pull/990))
 * Support Struct Data Query in SQL/PPL ([#1018](https://github.com/opendistro-for-elasticsearch/sql/pull/1018))
 
@@ -111,7 +111,7 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 * Updating Autheticators to throw RuntimeException on errors ([#505](https://github.com/opendistro-for-elasticsearch/security/pull/505))
 * Add security configuration for Kibana Notebooks ([#903](https://github.com/opendistro-for-elasticsearch/security/pull/903))
 * Short circuit privilege evaluation for bulk requests without index resolution ([#926](https://github.com/opendistro-for-elasticsearch/security/pull/926))
-* Added async search response index to system index list ([#859](https://github.com/opendistro-for-elasticsearch/security/pull/859))
+* Add async search response index to system index list ([#859](https://github.com/opendistro-for-elasticsearch/security/pull/859))
 
 
 ### SQL
@@ -138,13 +138,13 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 
 
 ### Anomaly Detection
-* Adding unit tests for Transport Actions ([#327](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/327))
-* Adding role based filtering for rest of APIs ([#325](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/325))
+* Add unit tests for Transport Actions ([#327](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/327))
+* Add role based filtering for rest of APIs ([#325](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/325))
 * Add ad task stats ([#332](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/332))
-* Adding support for Security Test Framework ([#331](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/331))
+* Add support for Security Test Framework ([#331](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/331))
 * Filter out exceptions which should not be counted in failure stats ([#341](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/341))
-* Moving Preview Anomaly Detectors to Transport layer ([#321](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/321))
-* Adding role based filtering for Preview API ([#356](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/356))
+* Move Preview Anomaly Detectors to Transport layer ([#321](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/321))
+* Add role based filtering for Preview API ([#356](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/356))
 * Change the backend role filtering to keep consistent with alerting plugin ([#383](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/383))
 
 
@@ -197,8 +197,8 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 * Fix UUID Generation ([#263](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/263))
 * Configure Max Size for Dashboards API \& Minor UI Changes ([#266](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/266))
 * Support csv report for saved search with multiple indices ([#267](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/267))
-* Added error case handling for on-demand report generation ([#271](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/271))
-* Fixed Edit Report Definition Trigger Type Pre-fill ([#280](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/280))
+* Add error case handling for on-demand report generation ([#271](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/271))
+* Fix Edit Report Definition Trigger Type Pre-fill ([#280](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/280))
 * Fix the selected fields issue in csv report ([#293](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/293))
 * Fix reporting download button visibility issue for dashboard and visualization ([#294](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/294))
 * Context menu popout \& Report definitions toast fixes ([#295](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/295))
@@ -274,7 +274,7 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 * Fix release workflow artifact paths and s3 url ([#231](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/231))
 * Update path and artifact names in release workflow ([#233](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/233))
 * Add Download Cypress Tests ([#253](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/253))
-* Added integration test for the sample on-demand report generation use-case ([#270](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/270))
+* Add integration test for the sample on-demand report generation use-case ([#270](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/270))
 * Add integration test cases for report definition rest APIs ([#272](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/272))
 * Report Instance Integration Tests ([#274](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/274))
 * List Multiple Report Definitions IT ([#276](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/276))
@@ -455,7 +455,7 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 * Remove veracode profile and associated config ([#992](https://github.com/opendistro-for-elasticsearch/security/pull/992))
 * Try using another port 8088 for running the webhook test ([#999](https://github.com/opendistro-for-elasticsearch/security/pull/999))
 * Cleanup single shard request index check ([#993](https://github.com/opendistro-for-elasticsearch/security/pull/993))
-* add AD search task permission to ad read access ([#997](https://github.com/opendistro-for-elasticsearch/security/pull/997))
+* Add AD search task permission to ad read access ([#997](https://github.com/opendistro-for-elasticsearch/security/pull/997))
 * Change CD workflow to use new staging bucket for artifacts ([#954](https://github.com/opendistro-for-elasticsearch/security/pull/954))
 * Refactor Resolved ([#929](https://github.com/opendistro-for-elasticsearch/security/pull/929))
 * Combine log messages of no cluster-level permission ([#1002](https://github.com/opendistro-for-elasticsearch/security/pull/1002))
