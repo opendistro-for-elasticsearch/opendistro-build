@@ -41,9 +41,6 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 * Add support for L1 distance in AKNN, custom scoring and painless scripting ([#310](https://github.com/opendistro-for-elasticsearch/k-NN/pull/310))
 
 
-### Opendistro For Elasticsearch
-
-
 ### SQL
 * Added keywords option as alias identifier in SQL parser ([#866](https://github.com/opendistro-for-elasticsearch/sql/pull/866))
 * Support show and describe statement ([#907](https://github.com/opendistro-for-elasticsearch/sql/pull/907))
@@ -213,9 +210,6 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 * Add builder constructor that takes algo params ([#289](https://github.com/opendistro-for-elasticsearch/k-NN/pull/289))
 
 
-### Opendistro For Elasticsearch
-
-
 ### Security
 * Replace InjectedUser with User during serialization ([#891](https://github.com/opendistro-for-elasticsearch/security/pull/891))
 * ConfigUpdateRequest should include only updated CType ([#953](https://github.com/opendistro-for-elasticsearch/security/pull/953))
@@ -376,9 +370,6 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 * Add copyright header ([#307](https://github.com/opendistro-for-elasticsearch/k-NN/pull/307))
 
 
-### Opendistro For Elasticsearch
-
-
 ### SQL
 * Keep development doc sync with latest code ([#961](https://github.com/opendistro-for-elasticsearch/sql/pull/961))
 * Update ODBC documentation ([#1012](https://github.com/opendistro-for-elasticsearch/sql/pull/1012))
@@ -448,8 +439,8 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 * Upgrade odfe version to 1.13.0 ([#312](https://github.com/opendistro-for-elasticsearch/k-NN/pull/312))
 
 
-### Opendistro For Elasticsearch
-* Update the Perftop Package with new naming Convention for ODFE ([68](https://github.com/opendistro-for-elasticsearch/perftop/pull/68))
+### PerfTop
+* Update the Perftop Package with new naming Convention for ODFE ([#68](https://github.com/opendistro-for-elasticsearch/perftop/pull/68))
 
 
 ### Security
