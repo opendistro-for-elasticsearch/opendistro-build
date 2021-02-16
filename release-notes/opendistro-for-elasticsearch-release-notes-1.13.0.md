@@ -4,7 +4,7 @@
 
 ## Release Details
 
-You can also track upcoming features in Open Distro for Elasticsearch by watching the code repositories or checking the project website (https://opendistro.github.io/for-elasticsearch/features/comingsoon.html).
+You can also track upcoming features in Open Distro for Elasticsearch by watching the code repositories or checking the [project website](https://opendistro.github.io/for-elasticsearch/features/comingsoon.html).
 
 ## BREAKING CHANGES
 
