@@ -401,8 +401,7 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 
 
 ### Asynchronous Search
-* Renamed settings for consistency with other ODFE plugins ([#35](https://github.com/opendistro-for-elasticsearch/asynchronous-search
-/pull/35))
+* Renamed settings for consistency with other ODFE plugins ([#35](https://github.com/opendistro-for-elasticsearch/asynchronous-search/pull/35))
 
 
 ### Index Management
