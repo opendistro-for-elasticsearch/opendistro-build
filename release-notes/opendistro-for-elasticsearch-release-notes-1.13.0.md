@@ -89,7 +89,7 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 * Using common-utils for Security plugin transient thread context key ([#234](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/234))
 * Using Kotlin standard coding standard ([#235](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/235))
 * Using chromium path relative to constant file ([#236](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/236))
-* add double dots to relative url in fetch() ([#242](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/242))
+* Add double dots to relative url in fetch() ([#242](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/242))
 * Optimize selectors for DOM operation to reduce possible version compatibility issue ([#244](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/244))
 * Add flag to chromium to use single process ([#268](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/268))
 * Add semaphore to block on puppeteer chromium execution ([#284](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/284))
@@ -140,12 +140,12 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 ### Anomaly Detection
 * Adding unit tests for Transport Actions ([#327](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/327))
 * Adding role based filtering for rest of APIs ([#325](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/325))
-* add ad task stats ([#332](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/332))
+* Add ad task stats ([#332](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/332))
 * Adding support for Security Test Framework ([#331](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/331))
-* filter out exceptions which should not be counted in failure stats ([#341](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/341))
+* Filter out exceptions which should not be counted in failure stats ([#341](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/341))
 * Moving Preview Anomaly Detectors to Transport layer ([#321](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/321))
 * Adding role based filtering for Preview API ([#356](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/356))
-* change the backend role filtering to keep consistent with alerting plugin ([#383](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/383))
+* Change the backend role filtering to keep consistent with alerting plugin ([#383](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/383))
 
 
 ## BUG FIXES
@@ -229,7 +229,7 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 * Fix the profile API returns prematurely. ([#340](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/340))
 * Fix another case of the profile API returns prematurely ([#353](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/353))
 * Fix log messages and init progress for the profile API ([#374](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/374))
-* validate detector only when start detector; fix flaky test case ([#377](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/377))
+* Validate detector only when start detector; fix flaky test case ([#377](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/377))
 
 
 ## INFRASTRUCTURE
@@ -345,7 +345,7 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 
 
 ### Anomaly Detection Kibana Plugin
-* add tiny icon fix to release note ([#346](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/346))
+* Add tiny icon fix to release note ([#346](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/346))
 * Update draft release notes config to use URL ([#358](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/358))
 * Remove copyright year for newly added files ([#367](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/367))
 * Add release notes for version 1.13.0.0 ([#375](https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/pull/375))
@@ -377,7 +377,7 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 
 ### Anomaly Detection
 * Updating Readme to include Secure tests ([#334](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/334))
-* remove spotless header file; remove copyright year in new files for h… ([#372](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/372))
+* Remove spotless header file; remove copyright year in new files for h… ([#372](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/372))
 * Add release notes for version 1.13.0.0 ([#382](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/382))
 
 
