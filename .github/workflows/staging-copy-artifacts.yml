@@ -1,10 +1,11 @@
 name: Staging Copy Artifacts
 
 on:
-  schedule:
-    - cron: '0 9 * * *' 
+#  schedule:
+#    - cron: '0 9 * * *' 
   repository_dispatch:
     types: [staging-copy-artifacts]
+
 
 jobs:
   Staging-Copy-Artifacts:

@@ -113,7 +113,6 @@ def get_latest_plugin(plugin_name,plugin_version,plugin_build,bucket_name,folder
                 build_number = "-build-"
             else:
                 build_number = "-build-"+str(plugin_build)
-                print("Build number " + plugin_build)
             if platform == "noplatform":
                 platform = ""
             if arch == "noarch":
@@ -161,7 +160,7 @@ def main():
                         print("Plugin version : " + plugin_version)
                         plugin_build = plugin.get('plugin_build')
                         if plugin_build is not None:
-                            print("Plugin Build number : " + plugin_build) 
+                            print("Plugin Build number : " + str(plugin_build)) 
                         plugin_category = plugin.get('plugin_category')
                         print("Plugin category " + plugin_category )
                         plg_loc = ""
