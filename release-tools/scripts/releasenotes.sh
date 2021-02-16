@@ -46,7 +46,7 @@ echo "## Release Highlights" >> $RELEASENOTES_DISTROS
 echo "" >> $RELEASENOTES_DISTROS
 echo "## Release Details" >> $RELEASENOTES_DISTROS
 echo "" >> $RELEASENOTES_DISTROS
-echo "You can also track upcoming features in Open Distro for Elasticsearch by watching the code repositories or checking the project website (https://opendistro.github.io/for-elasticsearch/features/comingsoon.html)." >> $RELEASENOTES_DISTROS
+echo "You can also track upcoming features in Open Distro for Elasticsearch by watching the code repositories or checking the [project website](https://opendistro.github.io/for-elasticsearch/features/comingsoon.html)." >> $RELEASENOTES_DISTROS
 echo "" >> $RELEASENOTES_DISTROS
 
 for category in $RELEASENOTES_CATEGORIES
