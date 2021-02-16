@@ -40,7 +40,7 @@ Open Distro for Elasticsearch 1.13.0 includes the following breaking changes, fe
 * Support customized server config ([#313](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/313))
 
 
-### K-NN
+### k-NN
 * Support k-NN similarity functions in painless scripting ([#281](https://github.com/opendistro-for-elasticsearch/k-NN/pull/281))
 * Add support for L1 distance in AKNN, custom scoring and painless scripting ([#310](https://github.com/opendistro-for-elasticsearch/k-NN/pull/310))
 
@@ -104,7 +104,7 @@ Open Distro for Elasticsearch 1.13.0 includes the following breaking changes, fe
 * Use plotly-dist instead of ploty ([#5](https://github.com/opendistro-for-elasticsearch/kibana-visualizations/pull/5))
 
 
-### K-NN
+### k-NN
 * Upgrade nmslib to 2.0.11 ([#302](https://github.com/opendistro-for-elasticsearch/k-NN/pull/302))
 * Upgrade commons-beanutils ([#297](https://github.com/opendistro-for-elasticsearch/k-NN/pull/297))
 
@@ -209,7 +209,7 @@ Open Distro for Elasticsearch 1.13.0 includes the following breaking changes, fe
 * Keep Reporting menu in Nav Menu when switching Index Patterns ([#299](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/299))
 
 
-### K-NN
+### k-NN
 * Fix find_path bug in CMakeLists ([#280](https://github.com/opendistro-for-elasticsearch/k-NN/pull/280))
 * Add builder constructor that takes algo params ([#289](https://github.com/opendistro-for-elasticsearch/k-NN/pull/289))
 
@@ -302,7 +302,7 @@ Open Distro for Elasticsearch 1.13.0 includes the following breaking changes, fe
 * Fix cypress tests ([#12](https://github.com/opendistro-for-elasticsearch/kibana-visualizations/pull/12))
 
 
-### K-NN
+### k-NN
 * Add arm64 support and correct the naming convention to the new standards ([#299](https://github.com/opendistro-for-elasticsearch/k-NN/pull/299))
 * Run KNN integ tests with security plugin enabled ([#304](https://github.com/opendistro-for-elasticsearch/k-NN/pull/304))
 * Update artifact naming ([#309](https://github.com/opendistro-for-elasticsearch/k-NN/pull/309))
@@ -370,7 +370,7 @@ Open Distro for Elasticsearch 1.13.0 includes the following breaking changes, fe
 * Fix README badge ([#257](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/257))
 
 
-### K-NN
+### k-NN
 * Add copyright header ([#307](https://github.com/opendistro-for-elasticsearch/k-NN/pull/307))
 
 
@@ -438,7 +438,7 @@ Open Distro for Elasticsearch 1.13.0 includes the following breaking changes, fe
 * Bump ini from 1.3.5 to 1.3.8 in /gantt-chart ([#6](https://github.com/opendistro-for-elasticsearch/kibana-visualizations/pull/6))
 
 
-### K-NN
+### k-NN
 * Upgrade odfe version to 1.13.0 ([#312](https://github.com/opendistro-for-elasticsearch/k-NN/pull/312))
 
 
