@@ -108,9 +108,6 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 * Upgrade commons-beanutils ([#297](https://github.com/opendistro-for-elasticsearch/k-NN/pull/297))
 
 
-### Performance Analyzer
-
-
 ### Security
 * Using SAML subject_key and roles_key in the HTTPSamlAuthenticator ([#892](https://github.com/opendistro-for-elasticsearch/security/pull/892))
 * Support for ES system index ([#946](https://github.com/opendistro-for-elasticsearch/security/pull/946))
