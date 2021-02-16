@@ -65,6 +65,12 @@ Open Distro for Elasticsearch 1.13.0 includes the following breaking changes, fe
 * Add user in AD task ([#370](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/370))
 
 
+
+### Release Engineering
+* Add ARM64 TAR building process for both ES and KIBANA ([#559](https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/559), [#565](https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/565), [#581](https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/581), [#590](https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/590))
+* Add ARM64 support for deb/rpm (apt/yum) for ES and Kibana ([#562](https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/562), [#575](https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/575), [#584](https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/584), [#596](https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/596))
+
+
 ## ENHANCEMENTS
 
 ### Alerting Kibana Plugin
@@ -235,6 +241,9 @@ Open Distro for Elasticsearch 1.13.0 includes the following breaking changes, fe
 * Fix log messages and init progress for the profile API ([#374](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/374))
 * Validate detector only when start detector; fix flaky test case ([#377](https://github.com/opendistro-for-elasticsearch/anomaly-detection/pull/377))
 
+
+### Release Engineering
+* [Helm] Include Ingress annotations for HTTPS backend, thanks @Purneau ([#570](https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/570))
 
 ## INFRASTRUCTURE
 
