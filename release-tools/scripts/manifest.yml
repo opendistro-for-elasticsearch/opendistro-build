@@ -242,7 +242,7 @@ plugins:
     plugin_basename: opendistroReportsKibana
     plugin_git: opendistro-for-elasticsearch/kibana-reports
     plugin_version: 1.13.0.0
-    plugin_build: 17
+    plugin_build: 18
     plugin_spec: [linux_x64_zip,linux_arm64_zip,windows_x64_zip]
     plugin_category: kibana-plugins
     release_candidate: true
