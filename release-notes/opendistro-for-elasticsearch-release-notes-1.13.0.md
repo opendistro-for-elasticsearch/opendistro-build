@@ -4,7 +4,7 @@
 
 ## Release Details
 
-You can also track upcoming features in Open Distro for Elasticsearch by watching the code repositories or checking the [project website](https://opendistro.github.io/for-elasticsearch/features/comingsoon.html).
+Open Distro for Elasticsearch 1.13.0 includes the following breaking changes, features, enhancements, bug fixes, infrastructure, documentation, maintenance, and refactoring updates.
 
 ## BREAKING CHANGES
 
