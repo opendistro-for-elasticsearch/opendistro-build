@@ -3,8 +3,6 @@ name: Prod Sync DATAPREPPER Artifacts
 on:
   repository_dispatch:
     types: [prod-sync-data-prepper]
-  push:
-    branches: [data-prepper-fix-V311401608]
 
 jobs:
   sync-dataprepper-artifacts-prod:
