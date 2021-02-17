@@ -6,8 +6,6 @@ The release consists of Apache 2 licensed Elasticsearch version 7.10.2 and Kiban
 
 ## Release Highlights
 
-Open Distro for Elasticsearch 1.13.0 includes version 7.10.2 of open source Elasticsearch and Kibana, plus Apache 2.0-licensed plugins that provide alerting, anomaly detection, index management, performance analysis, security, SQL, k-NN, and more. Other components, including ODBC and JDBC drivers, a command line SQL client, and a command line performance visualization tool (“PerfTop”) are also available to download.
-
 Asynchronous search lets you run queries across large data sets, or data sets that span multiple clusters, and allows Elasticsearch clients to receive results as they become available. 
 
 Historical data analysis is now available in Anomaly Detection (https://opendistro.github.io/for-elasticsearch-docs/docs/ad/). With this feature, you can analyze and apply machine learning models over long historical data windows to identify anomaly patterns, seasonality, and trends.
