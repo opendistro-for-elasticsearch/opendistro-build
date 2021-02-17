@@ -6,13 +6,13 @@ The release consists of Apache 2 licensed Elasticsearch version 7.10.2 and Kiban
 
 ## Release Highlights
 
-Asynchronous search lets you run queries across large data sets, or data sets that span multiple clusters, and allows Elasticsearch clients to receive results as they become available. 
+* Asynchronous search lets you run queries across large data sets, or data sets that span multiple clusters, and allows Elasticsearch clients to receive results as they become available. 
 
-Historical data analysis is now available in Anomaly Detection (https://opendistro.github.io/for-elasticsearch-docs/docs/ad/). With this feature, you can analyze and apply machine learning models over long historical data windows to identify anomaly patterns, seasonality, and trends.
+* Historical data analysis is now available in [Anomaly Detection](https://opendistro.github.io/for-elasticsearch-docs/docs/ad/). With this feature, you can analyze and apply machine learning models over long historical data windows to identify anomaly patterns, seasonality, and trends.
 
-You can now run Open Distro for Elasticsearch on *64-bit* *ARM processors*. ARM support has been one of the most requested features for Open Distro, and is another step toward making it easy to deploy and run on premises or in the cloud on the architecture of your choice.
+* You can now run Open Distro for Elasticsearch on *64-bit* *ARM processors*. ARM support has been one of the most requested features for Open Distro, and is another step toward making it easy to deploy and run on premises or in the cloud on the architecture of your choice.
 
-The SQL engine now supports complex nested expressions , and lets you perform queries that contain the HAVING clause without GROUP BY and subqueries in FROM clauses. With the FILTER clause, you can set specific conditions for your aggregation bucket. You can use the ORDER BY clause to specify the order of documents with missing fields either before or after the documents containing no missing fields.  You can also use ORDER BY clause on aggregate functions, and perform aggregations on expressions. Finally, with enhanced PartiQL (JSON) support, you can query object fields at deeper levels.
+* The SQL engine now supports complex nested expressions , and lets you perform queries that contain the HAVING clause without GROUP BY and subqueries in FROM clauses. With the FILTER clause, you can set specific conditions for your aggregation bucket. You can use the ORDER BY clause to specify the order of documents with missing fields either before or after the documents containing no missing fields.  You can also use ORDER BY clause on aggregate functions, and perform aggregations on expressions. Finally, with enhanced PartiQL (JSON) support, you can query object fields at deeper levels.
 
 ## Release Details
 
