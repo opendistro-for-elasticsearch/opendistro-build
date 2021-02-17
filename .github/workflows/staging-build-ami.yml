@@ -26,8 +26,8 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.ODFE_AMI_AWS_SECRET_ACCESS_KEY }}
       run: |
         #!/bin/bash
-        export APT_OSS_version=`./release-tools/scripts/version-info --es`
-        OD_version=`./release-tools/scripts/version-info --od`
+        export APT_OSS_version=`./release-tools/scripts/version-info.sh --es`
+        OD_version=`./release-tools/scripts/version-info.sh --od`
         export region_name="us-east-1"
         export os="amazonLinux"
         export security_group_id="sg-038f838bd82ee0ea2"
