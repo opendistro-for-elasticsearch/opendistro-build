@@ -26,5 +26,5 @@ jobs:
           ./release-tools/scripts/required_packages.sh
 
       - name: (NEW) (PROD) Sync Deb Artifacts
-        run: ./elasticsearch/linux_distributions/deb-signing.sh passphrase x64 prod-sync
+        run: ./elasticsearch/linux_distributions/deb-signing.sh passphrase prod-sync
 
