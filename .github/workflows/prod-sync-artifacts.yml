@@ -5,11 +5,8 @@ name: Sync ODFE artifacts to Prod
 # Example: client_payload: { "action": "prod-sync-all"}
 
 on: 
-#  repository_dispatch:
-#    types: [prod-sync-artifacts]
-
-  push:
-    branches: [sreekarj_sync]
+  repository_dispatch:
+    types: [prod-sync-artifacts]
 
 jobs:
   Sync-Prod:

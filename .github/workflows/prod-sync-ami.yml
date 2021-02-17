@@ -14,7 +14,8 @@ jobs:
         run: |
           OD_VERSION=`./bin/version-info --od`
           echo "od_version=$OD_VERSION" >> $GITHUB_ENV
-    
+      - name: Required Packages
+        run: ./release-tools/scripts/required_packages.sh    
       - name: Set AMI from private to public in all regions
         run: |
           #!/bin/bash
