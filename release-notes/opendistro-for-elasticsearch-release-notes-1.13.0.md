@@ -213,6 +213,7 @@ Open Distro for Elasticsearch 1.13.0 includes the following breaking changes, fe
 * Fix reporting download button visibility issue for dashboard and visualization ([#294](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/294))
 * Context menu popout \& Report definitions toast fixes ([#295](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/295))
 * Keep Reporting menu in Nav Menu when switching Index Patterns ([#299](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/299))
+* Add global tenant for report definition urls ([#325](https://github.com/opendistro-for-elasticsearch/kibana-reports/pull/325))
 
 
 ### k-NN
