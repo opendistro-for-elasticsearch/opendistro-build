@@ -142,6 +142,7 @@ class Instance:
             self.APT_OSS_version,
         )
         installer.install()
+        print('install odfe')
 
     def create_AMI(self):
         """
@@ -165,6 +166,7 @@ class Instance:
             + " and AMI id: "
             + self.snapshot.image_id
         )
+        print('create ami')
         return self.snapshot.image_id
 
     def cleanup_instance(self):

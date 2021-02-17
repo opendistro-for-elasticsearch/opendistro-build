@@ -110,7 +110,9 @@ def AMI_builder(
     else:
         try:
             instance.install_ODFE()
+            print('install complete')
             AMI_id = instance.create_AMI()
+            print('ami complete')
         except Exception as err:
             installation_failed = True
             logging.error(
