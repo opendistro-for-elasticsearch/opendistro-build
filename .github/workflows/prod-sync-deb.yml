@@ -11,6 +11,7 @@ jobs:
       image: opendistroforelasticsearch/base-ubuntu
     name: Sync Deb Artifacts to Prod
     steps:
+      - uses: actions/checkout@v1
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
