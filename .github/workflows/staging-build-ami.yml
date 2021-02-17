@@ -28,6 +28,7 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.ODFE_AMI_AWS_SECRET_ACCESS_KEY }}
       run: |
         #!/bin/bash
+        python3 --version
         export APT_OSS_version=`./release-tools/scripts/version-info.sh --es`
         OD_version=`./release-tools/scripts/version-info.sh --od`
         export region_name="us-east-1"
