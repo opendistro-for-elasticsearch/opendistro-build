@@ -11,6 +11,7 @@ The release consists of Apache 2 licensed Elasticsearch version 7.10.2 and Kiban
 Open Distro for Elasticsearch 1.13.0 includes the following breaking changes, features, enhancements, bug fixes, infrastructure, documentation, maintenance, and refactoring updates.
 
 ## BREAKING CHANGES
+* We have renamed all the Open Distro For Elasticsearch Plugins, Clients and Drivers with kebab-case naming convention. You can find the full list of names [here](https://opendistro.github.io/for-elasticsearch-docs/docs/install/plugins/#plugin-compatibility).
 
 ### Index Management
 * Removes support of "index.opendistro.index_state_management.policy_id" setting ([#357](https://github.com/opendistro-for-elasticsearch/index-management/pull/357))
