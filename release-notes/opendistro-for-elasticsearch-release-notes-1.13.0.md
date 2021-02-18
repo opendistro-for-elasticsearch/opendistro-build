@@ -20,58 +20,58 @@ The release consists of Apache 2 licensed Elasticsearch version 7.10.2 and Kiban
 Open Distro for Elasticsearch 1.13.0 includes the following breaking changes, features, enhancements, bug fixes, infrastructure, documentation, maintenance, and refactoring updates.
 
 ## BREAKING CHANGES
-* We have renamed Open Distro For Elasticsearch Plugins, Clients and Drivers with kebab-case naming convention. You can find the full list of opendistroforelasticsearch plugins' names [here](https://opendistro.github.io/for-elasticsearch-docs/docs/install/plugins/#plugin-compatibility).
+* We have renamed Open Distro For Elasticsearch Plugins, Clients and Drivers with kebab-case naming convention. You can find the details below:
 
 |Old Artifact Name   |New Artifact Name |
 | ----------- | ----------- |
-|opendistro_sql-1.12.0.0.zip    |opendistro-sql-1.12.0.0.zip    |
-|opendistro-sql_1.12.0.0-1_amd64.deb    |opendistro-sql-1.12.0.0.deb    |
-|opendistro-sql-1.12.0.0-1.noarch.rpm   |opendistro-sql-1.12.0.0.rpm    |
-|opendistro_alerting-1.12.0.2.zip   |opendistro-alerting-1.12.0.2.zip   |
-|opendistro-alerting_1.12.0.2-1_amd64.deb   |opendistro-alerting-1.12.0.2.deb   |
-|opendistro-alerting-1.12.0.2-1.noarch.rpm  |opendistro-alerting-1.12.0.2.rpm   |
+|opendistro_sql-1.12.0.0.zip    |opendistro-sql-1.13.0.0.zip    |
+|opendistro-sql_1.12.0.0-1_amd64.deb    |opendistro-sql-1.13.0.0.deb    |
+|opendistro-sql-1.12.0.0-1.noarch.rpm   |opendistro-sql-1.13.0.0.rpm    |
+|opendistro_alerting-1.12.0.2.zip   |opendistro-alerting-1.13.0.0.zip   |
+|opendistro-alerting_1.12.0.2-1_amd64.deb   |opendistro-alerting-1.13.0.0.deb   |
+|opendistro-alerting-1.12.0.2-1.noarch.rpm  |opendistro-alerting-1.13.0.0.rpm   |
 |opendistro-job-scheduler-1.12.0.0.zip  |No change  |
-|opendistro-job-scheduler_1.12.0.0-1_amd64.deb  |opendistro-job-scheduler-1.12.0.0.deb  |
-|opendistro-job-scheduler-1.12.0.0-1.noarch.rpm |opendistro-job-scheduler-1.12.0.0.rpm  |
-|opendistro_security-1.12.0.0.zip   |opendistro-security-1.12.0.0.zip   |
+|opendistro-job-scheduler_1.12.0.0-1_amd64.deb  |opendistro-job-scheduler-1.13.0.0.deb  |
+|opendistro-job-scheduler-1.12.0.0-1.noarch.rpm |opendistro-job-scheduler-1.13.0.0.rpm  |
+|opendistro_security-1.12.0.0.zip   |opendistro-security-1.13.0.0.zip   |
 |opendistro-security-1.12.0.0.deb   |No change  |
 |opendistro-security-1.12.0.0.rpm   |No change  |
-|opendistro_performance_analyzer-1.12.0.0.zip   |opendistro-performance-analyzer-1.12.0.0.zip   |
-|opendistro-performance-analyzer_1.12.0.0-1_amd64.deb   |opendistro-performance-analyzer-1.12.0.0.deb   |
-|opendistro-performance-analyzer-1.12.0.0-1.noarch.rpm  |opendistro-performance-analyzer-1.12.0.0.rpm   |
-|opendistro_index_management-1.12.0.1.zip   |opendistro-index-management-1.12.0.1.zip   |
-|opendistro-index-management_1.12.0.1-1_amd64.deb   |opendistro-index-management-1.12.0.1.deb   |
-|opendistro-index-management-1.12.0.1-1.noarch.rpm  |opendistro-index-management-1.12.0.1.rpm   |
+|opendistro_performance_analyzer-1.12.0.0.zip   |opendistro-performance-analyzer-1.13.0.0.zip   |
+|opendistro-performance-analyzer_1.12.0.0-1_amd64.deb   |opendistro-performance-analyzer-1.13.0.0.deb   |
+|opendistro-performance-analyzer-1.12.0.0-1.noarch.rpm  |opendistro-performance-analyzer-1.13.0.0.rpm   |
+|opendistro_index_management-1.12.0.1.zip   |opendistro-index-management-1.13.0.0.zip   |
+|opendistro-index-management_1.12.0.1-1_amd64.deb   |opendistro-index-management-1.13.0.0.deb   |
+|opendistro-index-management-1.12.0.1-1.noarch.rpm  |opendistro-index-management-1.13.0.0.rpm   |
 |opendistro-knn-1.12.0.0.zip    |No change  |
-|opendistro-knn_1.12.0.0-1_amd64.deb    |opendistro-knn-1.12.0.0.deb    |
-|opendistro-knn-1.12.0.0-1.noarch.rpm   |opendistro-knn-1.12.0.0.rpm    |
+|opendistro-knn_1.12.0.0-1_amd64.deb    |opendistro-knn-1.13.0.0.deb    |
+|opendistro-knn-1.12.0.0-1.noarch.rpm   |opendistro-knn-1.13.0.0.rpm    |
 |opendistro-anomaly-detection-1.12.0.0.zip  |No change  |
-|opendistro-anomaly-detection_1.12.0.0-1_amd64.deb  |opendistro-anomaly-detection-1.12.0.0.deb  |
-|opendistro-anomaly-detection-1.12.0.0-1.noarch.rpm |opendistro-anomaly-detection-1.12.0.0.rpm  |
+|opendistro-anomaly-detection_1.12.0.0-1_amd64.deb  |opendistro-anomaly-detection-1.13.0.0.deb  |
+|opendistro-anomaly-detection-1.12.0.0-1.noarch.rpm |opendistro-anomaly-detection-1.13.0.0.rpm  |
 |opendistro-reports-scheduler-1.12.0.0.zip  |No change  |
-|opendistro-reports-scheduler_1.12.0.0-1_amd64.deb  |opendistro-reports-scheduler-1.12.0.0.deb  |
-|opendistro-reports-scheduler-1.12.0.0-1.noarch.rpm |opendistro-reports-scheduler-1.12.0.0.rpm  |
+|opendistro-reports-scheduler_1.12.0.0-1_amd64.deb  |opendistro-reports-scheduler-1.13.0.0.deb  |
+|opendistro-reports-scheduler-1.12.0.0-1.noarch.rpm |opendistro-reports-scheduler-1.13.0.0.rpm  |
 |opendistroQueryWorkbenchKibana-1.12.0.0.zip    |No change  |
 |opendistroAnomalyDetectionKibana-1.12.0.0.zip  |No change  |
 |opendistroSecurityKibana-1.12.0.0.zip  |No change  |
 |opendistroAlertingKibana-1.12.0.2.zip  |No change  |
 |opendistroIndexManagementKibana-1.12.0.0.zip   |No change  |
-|opendistroReportsKibana-1.12.0.0.zip   |opendistroReportsKibana-1.12.0.0-linux-x64.zip / opendistroReportsKibana-1.12.0.0-linux-arm64.zip / opendistroReportsKibana-1.12.0.0-windows-x64.zip|
+|opendistroReportsKibana-1.12.0.0.zip   |opendistroReportsKibana-1.13.0.0-linux-x64.zip / opendistroReportsKibana-1.13.0.0-linux-arm64.zip / opendistroReportsKibana-1.13.0.0-windows-x64.zip|
 |opendistroGanttChartKibana-1.12.0.0.zip    |No change  |
 |opendistroNotebooksKibana-1.12.0.0.zip |No change  |
-|opendistro-knnlib-1.12.0.0-1_linux.x86_64.zip  |opendistro-knnlib-1.12.0.0-linux-x64.zip   |
-|opendistro-knnlib-1.12.0.0-linux-aarch64.deb   |opendistro-knnlib-1.12.0.0-linux-arm64.deb |
-|opendistro-knnlib-1.12.0.0-linux-x86_64.rpm    |opendistro-knnlib-1.12.0.0-linux-x64.rpm   |
+|opendistro-knnlib-1.12.0.0-1_linux.x86_64.zip  |opendistro-knnlib-1.13.0.0-linux-x64.zip   |
+|opendistro-knnlib-1.12.0.0-linux-aarch64.deb   |opendistro-knnlib-1.13.0.0-linux-arm64.deb |
+|opendistro-knnlib-1.12.0.0-linux-x86_64.rpm    |opendistro-knnlib-1.13.0.0-linux-x64.rpm   |
 |opendistro-sql-jdbc-1.12.0.0.jar   |No change |
-|Open Distro for Elasticsearch SQL ODBC Driver 64-bit-1.12.0.0-Darwin.pkg   |opendistro-sql-odbc-1.12.0.x-macos-x64.pkg |
-|Open Distro for Elasticsearch SQL ODBC Driver 64-bit-1.12.0.0-Windows.msi  |opendistro-sql-odbc-1.12.0.x-windows-x64.msi   |
-|Open Distro for Elasticsearch SQL ODBC Driver 32-bit-1.12.0.0-Windows.msi  |opendistro-sql-odbc-1.12.0.x-windows-x86.msi   |
+|Open Distro for Elasticsearch SQL ODBC Driver 64-bit-1.12.0.0-Darwin.pkg   |opendistro-sql-odbc-1.13.0.x-macos-x64.pkg |
+|Open Distro for Elasticsearch SQL ODBC Driver 64-bit-1.12.0.0-Windows.msi  |opendistro-sql-odbc-1.13.0.x-windows-x64.msi   |
+|Open Distro for Elasticsearch SQL ODBC Driver 32-bit-1.12.0.0-Windows.msi  |opendistro-sql-odbc-1.13.0.x-windows-x86.msi   |
 |odfe-cli-1.0.0-linux-arm64.zip |opendistro-odfe-cli-1.0.0-linux-arm64.zip  |
 |odfe-cli-1.0.0-linux-x64.zip   |opendistro-odfe-cli-1.0.0-linux-x64.zip    |
 |odfe-cli-1.0.0-macos-x64.zip   |opendistro-odfe-cli-1.0.0-macos-x64.zip    |
 |odfe-cli-1.0.0-windows-x64.zip |opendistro-odfe-cli-1.0.0-windows-x64.zip  |
-|perf-top-1.12.0.0-LINUX.zip    |opendistro-perf-top-1.12.0.x-linux-x64.zip |
-|perf-top-1.12.0.0-MACOS.zip    |opendistro-perf-top-1.12.0.x-macos-x64.zip |
+|perf-top-1.12.0.0-LINUX.zip    |opendistro-perf-top-1.13.0.x-linux-x64.zip |
+|perf-top-1.12.0.0-MACOS.zip    |opendistro-perf-top-1.13.0.x-macos-x64.zip |
 
 
 
