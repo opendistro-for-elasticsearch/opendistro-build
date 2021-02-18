@@ -28,7 +28,7 @@ jobs:
 
   Test-Alerting-Kibana-NoSec:
     needs: [Provision-Runners]
-    runs-on: [self-hosted, Linux, ARM64, odfe-rpm-alerting-kibana]
+    runs-on: [self-hosted, Linux, X64, odfe-rpm-alerting-kibana]
     strategy:
       fail-fast: false
       matrix:
@@ -99,7 +99,7 @@ jobs:
 
   Test-Alerting-Kibana:
     needs: [Provision-Runners]
-    runs-on: [self-hosted, Linux, ARM64, odfe-rpm-alerting-kibana-nosec]
+    runs-on: [self-hosted, Linux, X64, odfe-rpm-alerting-kibana-nosec]
     name: Test-Alerting-Kibana
     strategy:
       fail-fast: false
