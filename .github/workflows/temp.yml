@@ -6,6 +6,7 @@ on:
       - "alerting-kib"
 
 jobs:
+
   Provision-Runners:
     name: Provision-Runners
     runs-on: ubuntu-18.04
@@ -22,12 +23,12 @@ jobs:
           #!/bin/bash
           # Please add comma at the end of the RUNNERS strings
           # Don't add space after commas
-          RUNNERS+="odfe-deb-alerting-kibana-arm64,odfe-deb-alerting-kibana-nosec-arm64"
+          RUNNERS="odfe-rpm-alerting-kibana,odfe-rpm-alerting-kibana-nosec"
           release-tools/scripts/setup_runners.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }} ami-03f8a33a16290a84c
 
   Test-Alerting-Kibana-NoSec:
     needs: [Provision-Runners]
-    runs-on: [self-hosted, Linux, ARM64, odfe-deb-alerting-kibana-arm64]
+    runs-on: [self-hosted, Linux, ARM64, odfe-rpm-alerting-kibana]
     strategy:
       fail-fast: false
       matrix:
@@ -88,7 +89,7 @@ jobs:
           yarn kbn bootstrap
           
       - name: Start ES and Kibana
-        run: release-tools/scripts/setup_runners_service.sh deb --kibana-nosec arm64
+        run: release-tools/scripts/setup_runners_service.sh rpm --kibana-nosec
 
       - name: Run Cypress tests
         uses: cypress-io/github-action@v2
@@ -98,7 +99,7 @@ jobs:
 
   Test-Alerting-Kibana:
     needs: [Provision-Runners]
-    runs-on: [self-hosted, Linux, ARM64, odfe-deb-alerting-kibana-nosec-arm64]
+    runs-on: [self-hosted, Linux, ARM64, odfe-rpm-alerting-kibana-nosec]
     name: Test-Alerting-Kibana
     strategy:
       fail-fast: false
@@ -160,7 +161,7 @@ jobs:
           yarn kbn bootstrap
           
       - name: Start ES and Kibana
-        run: release-tools/scripts/setup_runners_service.sh deb --kibana arm64
+        run: release-tools/scripts/setup_runners_service.sh rpm --kibana
  
       - name: Run Cypress tests
         uses: cypress-io/github-action@v2
@@ -187,5 +188,5 @@ jobs:
           #!/bin/bash
           # Please add comma at the end of the RUNNERS strings
           # Don't add space after commas
-          RUNNERS="odfe-deb-alerting-kibana-arm64,odfe-deb-alerting-kibana-nosec-arm64"
+          RUNNERS="odfe-rpm-alerting-kibana,odfe-rpm-alerting-kibana-nosec"
           release-tools/scripts/setup_runners.sh terminate $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
