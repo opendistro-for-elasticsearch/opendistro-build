@@ -66,10 +66,6 @@ Open Distro for Elasticsearch 1.13.0 includes the following breaking changes, fe
 |Open Distro for Elasticsearch SQL ODBC Driver 64-bit-1.12.0.0-Darwin.pkg   |opendistro-sql-odbc-1.13.0.x-macos-x64.pkg |
 |Open Distro for Elasticsearch SQL ODBC Driver 64-bit-1.12.0.0-Windows.msi  |opendistro-sql-odbc-1.13.0.x-windows-x64.msi   |
 |Open Distro for Elasticsearch SQL ODBC Driver 32-bit-1.12.0.0-Windows.msi  |opendistro-sql-odbc-1.13.0.x-windows-x86.msi   |
-|odfe-cli-1.0.0-linux-arm64.zip |opendistro-odfe-cli-1.0.0-linux-arm64.zip  |
-|odfe-cli-1.0.0-linux-x64.zip   |opendistro-odfe-cli-1.0.0-linux-x64.zip    |
-|odfe-cli-1.0.0-macos-x64.zip   |opendistro-odfe-cli-1.0.0-macos-x64.zip    |
-|odfe-cli-1.0.0-windows-x64.zip |opendistro-odfe-cli-1.0.0-windows-x64.zip  |
 |perf-top-1.12.0.0-LINUX.zip    |opendistro-perf-top-1.13.0.x-linux-x64.zip |
 |perf-top-1.12.0.0-MACOS.zip    |opendistro-perf-top-1.13.0.x-macos-x64.zip |
 
