@@ -6,10 +6,11 @@ on:
       - "alerting-kib"
 
 jobs:
- Test-Alerting-Kibana-NoSec:
+
+ Test-Alerting-Kibana-Sec:
     # needs: [sign-deb-artifacts]
     runs-on: [ubuntu-18.04]
-    name: Test-Alerting-Kibana-NoSec
+    name: Test-Alerting-Kibana-Sec
     strategy:
       fail-fast: false
       matrix:
@@ -67,10 +68,10 @@ jobs:
           yarn kbn bootstrap
           
       - name: Start ES and Kibana
-        run: release-tools/scripts/setup_runners_service.sh deb --kibana-nosec
+        run: release-tools/scripts/setup_runners_service.sh deb --kibana
  
       - name: Run Cypress tests
         uses: cypress-io/github-action@v2
         with:
           working-directory: kibana/plugins/alerting-kibana-plugin
-          command: yarn run cypress run
+          command: yarn run cypress run --env security_enabled=true
