@@ -63,11 +63,11 @@ Open Distro for Elasticsearch 1.13.0 includes the following breaking changes, fe
 |opendistro-knnlib-1.12.0.0-linux-aarch64.deb   |opendistro-knnlib-1.13.0.0-linux-arm64.deb |
 |opendistro-knnlib-1.12.0.0-linux-x86_64.rpm    |opendistro-knnlib-1.13.0.0-linux-x64.rpm   |
 |opendistro-sql-jdbc-1.12.0.0.jar   |No change |
-|Open Distro for Elasticsearch SQL ODBC Driver 64-bit-1.12.0.0-Darwin.pkg   |opendistro-sql-odbc-1.13.0.x-macos-x64.pkg |
-|Open Distro for Elasticsearch SQL ODBC Driver 64-bit-1.12.0.0-Windows.msi  |opendistro-sql-odbc-1.13.0.x-windows-x64.msi   |
-|Open Distro for Elasticsearch SQL ODBC Driver 32-bit-1.12.0.0-Windows.msi  |opendistro-sql-odbc-1.13.0.x-windows-x86.msi   |
-|perf-top-1.12.0.0-LINUX.zip    |opendistro-perf-top-1.13.0.x-linux-x64.zip |
-|perf-top-1.12.0.0-MACOS.zip    |opendistro-perf-top-1.13.0.x-macos-x64.zip |
+|Open Distro for Elasticsearch SQL ODBC Driver 64-bit-1.12.0.0-Darwin.pkg   |opendistro-sql-odbc-1.13.0.0-macos-x64.pkg |
+|Open Distro for Elasticsearch SQL ODBC Driver 64-bit-1.12.0.0-Windows.msi  |opendistro-sql-odbc-1.13.0.0-windows-x64.msi   |
+|Open Distro for Elasticsearch SQL ODBC Driver 32-bit-1.12.0.0-Windows.msi  |opendistro-sql-odbc-1.13.0.0-windows-x86.msi   |
+|perf-top-1.12.0.0-LINUX.zip    |opendistro-perf-top-1.13.0.0-linux-x64.zip |
+|perf-top-1.12.0.0-MACOS.zip    |opendistro-perf-top-1.13.0.0-macos-x64.zip |
 
 
 
