@@ -18,6 +18,8 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.java }}
+      - name: Required Packages
+        run: ./release-tools/scripts/required_packages.sh
       - name: Set up AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
