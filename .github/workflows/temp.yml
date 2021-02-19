@@ -58,6 +58,10 @@ jobs:
       - name: Update SHA
         working-directory: ./tmp/pa
         run: ./gradlew updateShas
+      - name: Checkout opendistro-build
+        uses: actions/checkout@v1
+      - name: Required Packages
+        run: ./release-tools/scripts/required_packages.sh
       - name: Run integration tests
         run: |
           release-tools/scripts/setup_runners_service.sh zip --es-nosec
