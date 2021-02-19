@@ -26,8 +26,6 @@ jobs:
           aws-region: us-east-1
       - name: Checkout opendistro-build
         uses: actions/checkout@v1
-        with:
-          path: opendistro-build
       - name: Required Packages
         run: ./release-tools/scripts/required_packages.sh
       - name: Find PA and RCA tags
@@ -39,37 +37,26 @@ jobs:
         with:
           repository: opendistro-for-elasticsearch/performance-analyzer-rca
           ref: ${{env.rca_tag}}
-          path: ./tmp/rca
       - name: Checkout Performance Analyzer package
         uses: actions/checkout@v2
         with:
           repository: opendistro-for-elasticsearch/performance-analyzer
           ref: ${{env.pa_tag}}
-          path: ./tmp/pa
       - name: Build RCA with Gradle
-        working-directory:  ./tmp/rca
-        run: ./gradlew build -x test
+        run: cd ${GITHUB_WORKSPACE}/performance-analyzer-rca; ./gradlew build -x test
       - name: Publish RCA jar to maven local
-        working-directory: ./tmp/rca
-        run: ./gradlew publishToMavenLocal
+        run: cd ${GITHUB_WORKSPACE}/performance-analyzer-rca; ./gradlew publishToMavenLocal
       - name: Build PA gradle using the new RCA jar
-        working-directory: ./tmp/pa
         run: |
+          cd ${GITHUB_WORKSPACE}/performance-analyzer
           ls -l
           rm licenses/performanceanalyzer-rca-1.13.jar.sha1
-      - name: Update SHA
-        working-directory: ./tmp/pa
-        run: ./gradlew updateShas
+          ./gradlew updateShas
 
-      - name: Start ES
-        working-directory: opendistro-build
+      - name: Run IT
         run: |
           release-tools/scripts/setup_runners_service.sh zip --es-nosec
-          export PATH=$JAVA_HOME:$PATH     
-      - name: Run PA IT
-        working-directory: ./tmp/pa
-        run: |
-          pwd
+          export PATH=$JAVA_HOME:$PATH; cd ${GITHUB_WORKSPACE}/performance-analyzer
           echo "Checking PA"
           curl -XPOST localhost:9200/_opendistro/_performanceanalyzer/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
           echo "Checking RCA"
