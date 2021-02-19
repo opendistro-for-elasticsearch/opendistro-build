@@ -37,6 +37,7 @@ jobs:
         with:
           repository: opendistro-for-elasticsearch/performance-analyzer-rca
           ref: ${{env.rca_tag}}
+      - run: ls -l; pwd
       - name: Checkout Performance Analyzer package
         uses: actions/checkout@v2
         with:
