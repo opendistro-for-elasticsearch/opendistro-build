@@ -43,12 +43,12 @@ jobs:
           repository: opendistro-for-elasticsearch/performance-analyzer
           ref: ${{env.pa_tag}}
       - name: Build RCA with Gradle
-        run: cd ${GITHUB_WORKSPACE}/performance-analyzer-rca; ./gradlew build -x test
+        run: cd ${GITHUB_WORKSPACE}/../performance-analyzer-rca; ./gradlew build -x test
       - name: Publish RCA jar to maven local
-        run: cd ${GITHUB_WORKSPACE}/performance-analyzer-rca; ./gradlew publishToMavenLocal
+        run: cd ${GITHUB_WORKSPACE}/../performance-analyzer-rca; ./gradlew publishToMavenLocal
       - name: Build PA gradle using the new RCA jar
         run: |
-          cd ${GITHUB_WORKSPACE}/performance-analyzer
+          cd ${GITHUB_WORKSPACE}/../performance-analyzer
           ls -l
           rm licenses/performanceanalyzer-rca-1.13.jar.sha1
           ./gradlew updateShas
@@ -56,7 +56,7 @@ jobs:
       - name: Run IT
         run: |
           release-tools/scripts/setup_runners_service.sh zip --es-nosec
-          export PATH=$JAVA_HOME:$PATH; cd ${GITHUB_WORKSPACE}/performance-analyzer
+          export PATH=$JAVA_HOME:$PATH; cd ${GITHUB_WORKSPACE}/../performance-analyzer
           echo "Checking PA"
           curl -XPOST localhost:9200/_opendistro/_performanceanalyzer/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
           echo "Checking RCA"
