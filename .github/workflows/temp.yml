@@ -45,16 +45,19 @@ jobs:
           ref: ${{env.pa_tag}}
           path: ./tmp/pa
       - name: Build RCA with Gradle
-        working-directory: ./tmp/rca
+        working-directory:  ./tmp/rca
         run: ./gradlew build -x test
-      - name: Publish RCA into MavenLocal
+      - name: Publish RCA jar to maven local
         working-directory: ./tmp/rca
         run: ./gradlew publishToMavenLocal
-      - name: Update SHA
+      - name: Build PA gradle using the new RCA jar
         working-directory: ./tmp/pa
         run: |
-          rm licenses/performanceanalyzer-rca-*.jar.sha1
-          ./gradlew updateShas
+          ls -l
+          rm licenses/performanceanalyzer-rca-1.13.jar.sha1
+      - name: Update SHA
+        working-directory: ./tmp/pa
+        run: ./gradlew updateShas
       - name: Run integration tests
         run: |
           release-tools/scripts/setup_runners_service.sh zip --es-nosec
