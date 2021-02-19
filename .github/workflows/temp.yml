@@ -62,11 +62,13 @@ jobs:
         uses: actions/checkout@v1
       - name: Required Packages
         run: ./release-tools/scripts/required_packages.sh
-      - name: Run integration tests
+      - name: Start ES
         run: |
           release-tools/scripts/setup_runners_service.sh zip --es-nosec
-          pwd;ls -l
-          export PATH=$JAVA_HOME:$PATH; cd ${GITHUB_WORKSPACE}/./tmp/pa
+          export PATH=$JAVA_HOME:$PATH     
+      - name: Run PA IT
+        working-directory: ./tmp/pa
+        run: |
           echo "Checking PA"
           curl -XPOST localhost:9200/_opendistro/_performanceanalyzer/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
           echo "Checking RCA"
