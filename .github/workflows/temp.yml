@@ -18,8 +18,6 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.java }}
-      - name: Required Packages
-        run: ./release-tools/scripts/required_packages.sh
       - name: Set up AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -28,6 +26,8 @@ jobs:
           aws-region: us-east-1
       - name: Checkout opendistro-build
         uses: actions/checkout@v1
+      - name: Required Packages
+        run: ./release-tools/scripts/required_packages.sh
       - name: Find PA and RCA tags
         run: |
           echo "pa_tag=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/performance-analyzer)" >> $GITHUB_ENV
