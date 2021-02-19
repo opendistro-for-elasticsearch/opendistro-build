@@ -6,187 +6,70 @@ on:
       - "alerting-kib"
 
 jobs:
-
-  Provision-Runners:
-    name: Provision-Runners
-    runs-on: ubuntu-18.04
-    steps:
-      - uses: actions/checkout@v1
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_EC2_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_EC2_SECRET_ACCESS_KEY }}
-          aws-region: us-west-2
-      - name: AWS Cli Processing
-        run: |
-          #!/bin/bash
-          # Please add comma at the end of the RUNNERS strings
-          # Don't add space after commas
-          RUNNERS="odfe-rpm-alerting-kibana,odfe-rpm-alerting-kibana-nosec"
-          release-tools/scripts/setup_runners.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }} ami-0bd968fea932935f4
-
   Test-Alerting-Kibana-NoSec:
-    needs: [Provision-Runners]
-    runs-on: [self-hosted, Linux, X64, odfe-rpm-alerting-kibana]
-    strategy:
-      fail-fast: false
-      matrix:
-        java: [14]
-    steps:
-      - uses: actions/checkout@v1
+      runs-on: ubuntu-18.04
+      name: Test-Alerting-Kibana-NoSec
+      strategy:
+        fail-fast: false
+        matrix:
+          java: [14]
+      steps:
+        - uses: actions/checkout@v1
 
-      - name: Required Packages
-        run: release-tools/scripts/required_packages.sh
+        - name: Required Packages
+          run: release-tools/scripts/required_packages.sh
 
-      - name: Retrieve plugin tags 
-        run: |
-          echo "p_tag_alerting_kibana=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting-kibana-plugin)" >> $GITHUB_ENV
-          echo "es_version=$(release-tools/scripts/version-info.sh --es)" >> $GITHUB_ENV
-      - name: Checkout Kibana
-        uses: actions/checkout@v2
-        with:
-          repository: opendistro-for-elasticsearch/kibana-oss
-          ref: ${{env.es_version}}
-          token: ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
-          path: kibana  
+        - name: Retrieve plugin tags 
+          run: |
+            echo "p_tag_alerting_kibana=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting-kibana-plugin)" >> $GITHUB_ENV
+            echo "es_version=$(release-tools/scripts/version-info.sh --es)" >> $GITHUB_ENV
+        - name: Checkout Kibana
+          uses: actions/checkout@v2
+          with:
+            repository: opendistro-for-elasticsearch/kibana-oss
+            ref: ${{env.es_version}}
+            token: ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
+            path: kibana  
 
-      - uses: actions/checkout@v2
-        with:
-          repository: opendistro-for-elasticsearch/alerting-kibana-plugin
-          ref: ${{env.p_tag_alerting_kibana}}
-          path: kibana/plugins/alerting-kibana-plugin
-      
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.java }}
-      
-      - name: Get node and yarn versions
-        id: node_yarn_versions
-        run: |
-          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
-          . ~/.nvm/nvm.sh
-          nvm install node 
-          echo "kibana_node_version=$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV
-          echo "kibana_yarn_version=$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV   
-      
-      - name: Setup node
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{env.kibana_node_version}}
-          registry-url: 'https://registry.npmjs.org'
-      
-      - name: Install correct yarn version for Kibana
-        run: |
-          npm uninstall -g yarn
-          echo "Installing yarn ${{ env.kibana_yarn_version }}"
-          npm i -g yarn@${{ env.kibana_yarn_version }}
-      
-      - name: Bootstrap the plugin
-        run: |
-          cd ./kibana/plugins/alerting-kibana-plugin
-          yarn kbn bootstrap
-          
-      - name: Start ES and Kibana
-        run: release-tools/scripts/setup_runners_service.sh rpm --kibana-nosec
-
-      - name: Run Cypress tests
-        uses: cypress-io/github-action@v2
-        with:
-          working-directory: kibana/plugins/alerting-kibana-plugin
-          command: yarn run cypress run
-
-  Test-Alerting-Kibana:
-    needs: [Provision-Runners]
-    runs-on: [self-hosted, Linux, X64, odfe-rpm-alerting-kibana-nosec]
-    name: Test-Alerting-Kibana
-    strategy:
-      fail-fast: false
-      matrix:
-        java: [14]
-    steps:
-      - uses: actions/checkout@v1
-
-      - name: Required Packages
-        run: release-tools/scripts/required_packages.sh
-
-      - name: Retrieve plugin tags 
-        run: |
-          echo "p_tag_alerting_kibana=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting-kibana-plugin)" >> $GITHUB_ENV
-          echo "es_version=$(release-tools/scripts/version-info.sh --es)" >> $GITHUB_ENV
-      - name: Checkout Kibana
-        uses: actions/checkout@v2
-        with:
-          repository: opendistro-for-elasticsearch/kibana-oss
-          ref: ${{env.es_version}}
-          token: ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
-          path: kibana  
-
-      - uses: actions/checkout@v2
-        with:
-          repository: opendistro-for-elasticsearch/alerting-kibana-plugin
-          ref: ${{env.p_tag_alerting_kibana}}
-          path: kibana/plugins/alerting-kibana-plugin
-      
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.java }}
-      
-      - name: Get node and yarn versions
-        id: node_yarn_versions
-        run: |
-          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
-          . ~/.nvm/nvm.sh
-          nvm install node 
-          echo "kibana_node_version=$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV
-          echo "kibana_yarn_version=$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV   
-      
-      - name: Setup node
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{env.kibana_node_version}}
-          registry-url: 'https://registry.npmjs.org'
-      
-      - name: Install correct yarn version for Kibana
-        run: |
-          npm uninstall -g yarn
-          echo "Installing yarn ${{ env.kibana_yarn_version }}"
-          npm i -g yarn@${{ env.kibana_yarn_version }}
-      
-      - name: Bootstrap the plugin
-        run: |
-          cd ./kibana/plugins/alerting-kibana-plugin
-          yarn kbn bootstrap
-          
-      - name: Start ES and Kibana
-        run: release-tools/scripts/setup_runners_service.sh rpm --kibana
- 
-      - name: Run Cypress tests
-        uses: cypress-io/github-action@v2
-        with:
-          working-directory: kibana/plugins/alerting-kibana-plugin
-          command: yarn run cypress run --env security_enabled=true
-
-  CleanUp-Runners:
-    # needs: [Test-IM-NoSec, Test-ALERTING-NoSec, Test-SQL-NoSec, Test-KNN-NoSec, Test-AD-NoSec, Test-SQL, Test-AD, Test-ALERTING, Test-AD-KIBANA-NoSec, Test-SQL-KIBANA-NoSec, Test-AD-KIBANA, Test-SEC-KIBANA, Test-Kibana-Notebooks-NoSec]
-    needs: [Test-Alerting-Kibana-NoSec, Test-Alerting-Kibana]
-    if: always()
-    name: CleanUp-Runners
-    runs-on: ubuntu-18.04
-    steps:
-      - uses: actions/checkout@v1
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_EC2_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_EC2_SECRET_ACCESS_KEY }}
-          aws-region: us-west-2
-      - name: AWS Cli Processing
-        run: |
-          #!/bin/bash
-          # Please add comma at the end of the RUNNERS strings
-          # Don't add space after commas
-          RUNNERS="odfe-rpm-alerting-kibana,odfe-rpm-alerting-kibana-nosec"
-          release-tools/scripts/setup_runners.sh terminate $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
+        - uses: actions/checkout@v2
+          with:
+            repository: opendistro-for-elasticsearch/alerting-kibana-plugin
+            ref: ${{env.p_tag_alerting_kibana}}
+            path: kibana/plugins/alerting-kibana-plugin
+        
+        - name: Setup Java
+          uses: actions/setup-java@v1
+          with:
+            java-version: ${{ matrix.java }}
+        
+        - name: Get node and yarn versions
+          id: node_yarn_versions
+          run: |
+            echo "kibana_node_version=$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV
+            echo "kibana_yarn_version=$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV   
+        
+        - name: Setup node
+          uses: actions/setup-node@v1
+          with:
+            node-version: ${{env.kibana_node_version}}
+            registry-url: 'https://registry.npmjs.org'
+        
+        - name: Install correct yarn version for Kibana
+          run: |
+            npm uninstall -g yarn
+            echo "Installing yarn ${{ env.kibana_yarn_version }}"
+            npm i -g yarn@${{ env.kibana_yarn_version }}
+        
+        - name: Bootstrap the plugin
+          run: |
+            cd ./kibana/plugins/alerting-kibana-plugin
+            yarn kbn bootstrap
+            
+        - name: Start ES and Kibana
+          run: release-tools/scripts/setup_runners_service.sh zip --kibana-nosec
+  
+        - name: Run Cypress tests
+          uses: cypress-io/github-action@v2
+          with:
+            working-directory: kibana/plugins/alerting-kibana-plugin
+            command: yarn run cypress run
