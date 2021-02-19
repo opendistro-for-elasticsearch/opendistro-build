@@ -54,7 +54,8 @@ jobs:
         run: |
           cd ${GITHUB_WORKSPACE}/../performance-analyzer
           ls -l
-          rm licenses/performanceanalyzer-rca-*.jar.sha1
+          rm licenses/performanceanalyzer-rca-1.13.jar.sha1
+          ls -l licenses/
           ./gradlew updateShas
       - name: Run integration tests
         run: |
