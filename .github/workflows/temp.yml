@@ -43,7 +43,10 @@ jobs:
           repository: opendistro-for-elasticsearch/performance-analyzer
           ref: ${{env.pa_tag}}
       - name: Build RCA with Gradle
-        run: cd ${GITHUB_WORKSPACE}/../performance-analyzer-rca; ./gradlew build -x test
+        run: |
+          ls -l
+          pwd
+          cd ${GITHUB_WORKSPACE}/../performance-analyzer-rca; ./gradlew build -x test
       - name: Publish RCA jar to maven local
         run: cd ${GITHUB_WORKSPACE}/../performance-analyzer-rca; ./gradlew publishToMavenLocal
       - name: Build PA gradle using the new RCA jar
