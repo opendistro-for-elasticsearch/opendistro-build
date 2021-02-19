@@ -24,25 +24,27 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
-      # - name: Checkout opendistro-build
-      #   uses: actions/checkout@v1
-      # - name: Required Packages
-      #   run: ./release-tools/scripts/required_packages.sh
-      # - name: Find PA and RCA tags
-      #   run: |
-      #     echo "pa_tag=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/performance-analyzer)" >> $GITHUB_ENV
-      #     echo "rca_tag=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/performance-analyzer-rca)" >> $GITHUB_ENV
+      - name: Checkout opendistro-build
+        uses: actions/checkout@v1
+        with:
+          path: opendistro-build
+      - name: Required Packages
+        run: ./release-tools/scripts/required_packages.sh
+      - name: Find PA and RCA tags
+        run: |
+          echo "pa_tag=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/performance-analyzer)" >> $GITHUB_ENV
+          echo "rca_tag=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/performance-analyzer-rca)" >> $GITHUB_ENV
       - name: Checkout RCA package
         uses: actions/checkout@v2
         with:
           repository: opendistro-for-elasticsearch/performance-analyzer-rca
-          # ref: ${{env.rca_tag}}
+          ref: ${{env.rca_tag}}
           path: ./tmp/rca
       - name: Checkout Performance Analyzer package
         uses: actions/checkout@v2
         with:
           repository: opendistro-for-elasticsearch/performance-analyzer
-          # ref: ${{env.pa_tag}}
+          ref: ${{env.pa_tag}}
           path: ./tmp/pa
       - name: Build RCA with Gradle
         working-directory:  ./tmp/rca
@@ -58,17 +60,16 @@ jobs:
       - name: Update SHA
         working-directory: ./tmp/pa
         run: ./gradlew updateShas
-      - name: Checkout opendistro-build
-        uses: actions/checkout@v1
-      - name: Required Packages
-        run: ./release-tools/scripts/required_packages.sh
+
       - name: Start ES
+        working-directory: opendistro-build
         run: |
           release-tools/scripts/setup_runners_service.sh zip --es-nosec
           export PATH=$JAVA_HOME:$PATH     
       - name: Run PA IT
         working-directory: ./tmp/pa
         run: |
+          pwd
           echo "Checking PA"
           curl -XPOST localhost:9200/_opendistro/_performanceanalyzer/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
           echo "Checking RCA"
