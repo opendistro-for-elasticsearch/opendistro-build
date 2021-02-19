@@ -1,0 +1,66 @@
+name: Test PA
+
+on:
+  push:
+    branches:
+      - pa-test
+
+jobs:
+  Test-PA-NoSec:
+    runs-on: [ubuntu-18.04]
+    name: Test-PA-NoSec
+    strategy:
+      matrix:
+        # perf-analyzer uses gradle 6.0.1 which does not work with java 14, hence we run this job with java 12.
+        java: [12]
+    steps:
+      - name: Set up Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+      - name: Set up AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Checkout opendistro-build
+        uses: actions/checkout@v1
+      - name: Find PA and RCA tags
+        run: |
+          echo "pa_tag=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/performance-analyzer)" >> $GITHUB_ENV
+          echo "rca_tag=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/performance-analyzer-rca)" >> $GITHUB_ENV
+      - name: Checkout perf analyzer RCA package
+        uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/performance-analyzer-rca
+          ref: ${{env.rca_tag}}
+      - name: Checkout perf analyzer package
+        uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/performance-analyzer
+          ref: ${{env.pa_tag}}
+      - name: Build RCA with Gradle
+        run: |
+          cd ${GITHUB_WORKSPACE}/../performance-analyzer-rca
+          ./gradlew build -x test
+      - name: Publish RCA into MavenLocal
+        run: |
+          cd ${GITHUB_WORKSPACE}/../performance-analyzer-rca
+          ./gradlew publishToMavenLocal
+      - name: Update SHA
+        run: |
+          cd ${GITHUB_WORKSPACE}/../performance-analyzer
+          ls -l
+          rm licenses/performanceanalyzer-rca-*.jar.sha1
+          ./gradlew updateShas
+      - name: Run integration tests
+        run: |
+          release-tools/scripts/setup_runners_service.sh zip --es-nosec
+          export PATH=$JAVA_HOME:$PATH; cd ${GITHUB_WORKSPACE}/../performance-analyzer
+          echo "Checking PA"
+          curl -XPOST localhost:9200/_opendistro/_performanceanalyzer/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
+          echo "Checking RCA"
+          curl -XPOST localhost:9200/_opendistro/_performanceanalyzer/rca/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
+          echo "Starting tests"
+          ./gradlew integTest -Dtests.enableIT=true -Dtests.useDockerCluster=false -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9300
