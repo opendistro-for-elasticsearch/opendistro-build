@@ -58,7 +58,7 @@ jobs:
         run: ./gradlew updateShas
       - name: Run IT
         run: |
-          release-tools/scripts/setup_runners_service.sh zip --es-nosec
+          release-tools/scripts/setup_runners_service.sh deb --es-nosec
           export PATH=$JAVA_HOME:$PATH; cd ${GITHUB_WORKSPACE}/tmp/pa
           ls -l
           echo "Checking PA"
