@@ -9,24 +9,24 @@ on:
     branches: [1.13.1-test]
 
 jobs:
-  plugin-availability:
-    name: Check Plugin Availability
-    runs-on: ubuntu-18.04
-    steps:
-      - uses: actions/checkout@v1
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-      - name: Required Packages
-        run: ./release-tools/scripts/required_packages.sh
-      - name: Run check_plugin scripts
-        run: release-tools/scripts/check_plugin.sh; exit `cat /tmp/plugin_status.check`
+#  plugin-availability:
+#    name: Check Plugin Availability
+#    runs-on: ubuntu-18.04
+#    steps:
+#      - uses: actions/checkout@v1
+#      - name: Configure AWS Credentials
+#        uses: aws-actions/configure-aws-credentials@v1
+#        with:
+#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#          aws-region: us-east-1
+#      - name: Required Packages
+#        run: ./release-tools/scripts/required_packages.sh
+#      - name: Run check_plugin scripts
+#        run: release-tools/scripts/check_plugin.sh; exit `cat /tmp/plugin_status.check`
 
   Provision-Runners:
-    needs: [plugin-availability]
+#    needs: [plugin-availability]
     name: Provision-Runners
     runs-on: ubuntu-18.04
     steps:
@@ -46,7 +46,7 @@ jobs:
           release-tools/scripts/setup_runners.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }} ami-03f8a33a16290a84c
           
   build-es-artifacts:
-    needs: [plugin-availability]
+#    needs: [plugin-availability]
     name: Build ES Artifacts
     runs-on: ubuntu-18.04
     container:
@@ -90,7 +90,7 @@ jobs:
           echo "RPM creation for ES completed"
 
   build-kibana-artifacts-x64:
-    needs: [plugin-availability]
+#    needs: [plugin-availability]
     name: Build Kibana Artifacts X64
     runs-on: [ubuntu-18.04]
     container:
@@ -109,7 +109,8 @@ jobs:
         run: ./kibana/linux_distributions/opendistro-kibana-build.sh rpm linux x64
 
   build-kibana-artifacts-arm64:
-    needs: [plugin-availability, Provision-Runners]
+    #needs: [plugin-availability, Provision-Runners]
+    needs: [Provision-Runners]
     name: Build Kibana Artifacts ARM64
     runs-on: [self-hosted, Linux, ARM64, odfe-rpm-build-kibana-arm64]
     steps:
