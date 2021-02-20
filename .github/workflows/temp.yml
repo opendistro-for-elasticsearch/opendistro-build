@@ -32,8 +32,6 @@ jobs:
         run: |
           echo "pa_tag=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/performance-analyzer)" >> $GITHUB_ENV
           echo "rca_tag=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/performance-analyzer-rca)" >> $GITHUB_ENV
-          ls -l $GITHUB_WORKSPACE/
-          ls -l $GITHUB_WORKSPACE/../..
       - name: Checkout RCA package
         uses: actions/checkout@v2
         with:
@@ -66,7 +64,7 @@ jobs:
       - name: Run IT
         run: |
           release-tools/scripts/setup_runners_service.sh zip --es-nosec
-          export PATH=$JAVA_HOME:$PATH; cd ${GITHUB_WORKSPACE}/../performance-analyzer
+          export PATH=$JAVA_HOME:$PATH; cd ${GITHUB_WORKSPACE}/../../performance-analyzer
           echo "Checking PA"
           curl -XPOST localhost:9200/_opendistro/_performanceanalyzer/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
           echo "Checking RCA"
