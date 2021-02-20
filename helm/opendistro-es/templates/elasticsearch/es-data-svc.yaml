@@ -38,3 +38,7 @@ spec:
   {{- else }}
     role: master
   {{- end }}
+  {{- with (.Values.elasticsearch.data.service.topologyKeys | default .Values.global.services.topologyKeys)  }}
+  topologyKeys:
+    {{- . | toYaml | nindent 4 }}
+  {{- end }}

@@ -40,3 +40,7 @@ spec:
     role: master
   {{- end }}
   type: {{ .Values.elasticsearch.client.service.type }}
+  {{- with (.Values.elasticsearch.client.service.topologyKeys | default .Values.global.services.topologyKeys) }}
+  topologyKeys:
+    {{- . | toYaml | nindent 4 }}
+  {{- end }}
