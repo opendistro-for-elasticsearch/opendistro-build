@@ -155,6 +155,13 @@ global:
   # imagePullSecrets:
   #   - myRegistryKeySecretName
 
+  services:
+    # default topology key for services, if not specified individually
+    topologyKeys: []
+    # - kubernetes.io/hostname
+    # - topology.kubernetes.io/zone
+    # - topology.kubernetes.io/region
+    # - '*'
 
 elasticsearch:
   ## Used when deploying hot/warm architecture. Allows second aliased deployment to find cluster.
@@ -259,6 +266,13 @@ elasticsearch:
       size: 8Gi
       annotations: {}
 
+    service:
+      topologyKeys: []
+      # - kubernetes.io/hostname
+      # - topology.kubernetes.io/zone
+      # - topology.kubernetes.io/region
+      # - '*'
+
     resources: {}
     #  limits:
     #    cpu: 1
@@ -336,6 +350,13 @@ elasticsearch:
       size: 8Gi
       annotations: {}
 
+    service:
+      topologyKeys: []
+      # - kubernetes.io/hostname
+      # - topology.kubernetes.io/zone
+      # - topology.kubernetes.io/region
+      # - '*'
+
     resources: {}
     #  limits:
     #    cpu: 1
@@ -375,6 +396,11 @@ elasticsearch:
       enabled: true
     service:
       type: ClusterIP
+      topologyKeys: []
+      # - kubernetes.io/hostname
+      # - topology.kubernetes.io/zone
+      # - topology.kubernetes.io/region
+      # - '*'
       annotations: {}
         # # Defined ELB backend protocol as HTTPS to allow connection to Elasticsearch API
         # service.beta.kubernetes.io/aws-load-balancer-backend-protocol: https

@@ -29,4 +29,8 @@ spec:
   clusterIP: None
   selector:
     role: master
+  {{- with (.Values.elasticsearch.master.service.topologyKeys | default .Values.global.services.topologyKeys) }}
+  topologyKeys:
+    {{- . | toYaml | nindent 4 }}
+  {{- end }}
 {{- end }}
