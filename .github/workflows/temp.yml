@@ -43,7 +43,7 @@ jobs:
         with:
           repository: opendistro-for-elasticsearch/performance-analyzer
           ref: ${{env.pa_tag}}
-      - run: cd ..; ls -l; pwd
+      - run: /home/runner/work/opendistro-build; ls -l; pwd
       - name: Build RCA with Gradle
         run: |
           cd $GITHUB_WORKSPACE/performance-analyzer-rca
