@@ -42,35 +42,28 @@ jobs:
         with:
           repository: opendistro-for-elasticsearch/performance-analyzer
           path: ./tmp/pa
-      # - name: Set up JDK 1.12
-      #   uses: actions/setup-java@v1
-      #   with:
-      #     java-version: 1.12
-      # - name: Build RCA with Gradle
-      #   working-directory:  ./tmp/rca
-      #   run: ./gradlew build -x test
-      # - name: Publish RCA jar to maven local
-      #   working-directory: ./tmp/rca
-      #   run: ./gradlew publishToMavenLocal
-      # - name: Build PA gradle using the new RCA jar
-      #   working-directory: ./tmp/pa
-      #   run: |
-      #     ls -l
-      #     rm licenses/performanceanalyzer-rca-1.13.jar.sha1
-      # - name: Update SHA
-      #   working-directory: ./tmp/pa
-      #   run: ./gradlew updateShas
-      - run: |
-          cd ${GITHUB_WORKSPACE}/tmp
+      - name: Build RCA with Gradle
+        working-directory:  ./tmp/rca
+        run: ./gradlew build -x test
+      - name: Publish RCA jar to maven local
+        working-directory: ./tmp/rca
+        run: ./gradlew publishToMavenLocal
+      - name: Build PA gradle using the new RCA jar
+        working-directory: ./tmp/pa
+        run: |
           ls -l
-      # - name: Run IT
-      #   run: |
-      #     release-tools/scripts/setup_runners_service.sh zip --es-nosec
-      #     export PATH=$JAVA_HOME:$PATH; cd ${GITHUB_WORKSPACE}/.././tmp/pa
-      #     ls -l
-      #     echo "Checking PA"
-      #     curl -XPOST localhost:9200/_opendistro/_performanceanalyzer/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
-      #     echo "Checking RCA"
-      #     curl -XPOST localhost:9200/_opendistro/_performanceanalyzer/rca/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
-      #     echo "Starting tests"
-      #     ./gradlew integTest -Dtests.enableIT=true -Dtests.useDockerCluster=false -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9300
+          rm licenses/performanceanalyzer-rca-1.13.jar.sha1
+      - name: Update SHA
+        working-directory: ./tmp/pa
+        run: ./gradlew updateShas
+      - name: Run IT
+        run: |
+          release-tools/scripts/setup_runners_service.sh zip --es-nosec
+          export PATH=$JAVA_HOME:$PATH; cd ${GITHUB_WORKSPACE}/tmp/pa
+          ls -l
+          echo "Checking PA"
+          curl -XPOST localhost:9200/_opendistro/_performanceanalyzer/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
+          echo "Checking RCA"
+          curl -XPOST localhost:9200/_opendistro/_performanceanalyzer/rca/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
+          echo "Starting tests"
+          ./gradlew integTest -Dtests.enableIT=true -Dtests.useDockerCluster=false -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9300
