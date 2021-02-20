@@ -3,8 +3,11 @@ name: Build ES Docker
 on:
 #  schedule:
 #    - cron: '0 12 * * *'
-  repository_dispatch:
-    types: [staging-build-docker]
+#  repository_dispatch:
+#    types: [staging-build-docker]
+
+  push:
+    branches: [sreekarj_patch]
 
 jobs:
   build-es-docker:
