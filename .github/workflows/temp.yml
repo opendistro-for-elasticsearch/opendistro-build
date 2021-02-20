@@ -33,7 +33,7 @@ jobs:
           echo "pa_tag=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/performance-analyzer)" >> $GITHUB_ENV
           echo "rca_tag=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/performance-analyzer-rca)" >> $GITHUB_ENV
           ls -l $GITHUB_WORKSPACE/
-          ls -l $GITHUB_WORKSPACE/..
+          ls -l $GITHUB_WORKSPACE/../..
       - name: Checkout RCA package
         uses: actions/checkout@v2
         with:
