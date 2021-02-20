@@ -32,29 +32,36 @@ jobs:
         run: |
           echo "pa_tag=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/performance-analyzer)" >> $GITHUB_ENV
           echo "rca_tag=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/performance-analyzer-rca)" >> $GITHUB_ENV
-      - name: Checkout perf analyzer RCA package
-        uses: actions/checkout@v1
+          ls -l $GITHUB_WORKSPACE/
+          ls -l $GITHUB_WORKSPACE/..
+      - name: Checkout RCA package
+        uses: actions/checkout@v2
         with:
           repository: opendistro-for-elasticsearch/performance-analyzer-rca
-          ref: ${{env.rca_tag}}
-      - name: Checkout perf analyzer package
-        uses: actions/checkout@v1
+          path: ./tmp/rca
+      - name: Checkout Performance Analyzer package
+        uses: actions/checkout@v2
         with:
           repository: opendistro-for-elasticsearch/performance-analyzer
-          ref: ${{env.pa_tag}}
+          path: ./tmp/pa
+      - name: Set up JDK 1.12
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.12
       - name: Build RCA with Gradle
+        working-directory:  ./tmp/rca
+        run: ./gradlew build -x test
+      - name: Publish RCA jar to maven local
+        working-directory: ./tmp/rca
+        run: ./gradlew publishToMavenLocal
+      - name: Build PA gradle using the new RCA jar
+        working-directory: ./tmp/pa
         run: |
-          cd ${GITHUB_WORKSPACE}/../performance-analyzer-rca
-          ./gradlew build -x test
-      - name: Publish RCA into MavenLocal
-        run: |
-          cd ${GITHUB_WORKSPACE}/../performance-analyzer-rca
-          ./gradlew publishToMavenLocal
+          ls -l
+          rm licenses/performanceanalyzer-rca-1.13.jar.sha1
       - name: Update SHA
-        run: |
-          cd ${GITHUB_WORKSPACE}/../performance-analyzer
-          rm licenses/performanceanalyzer-rca-*.jar.sha1
-          ./gradlew updateShas
+        working-directory: ./tmp/pa
+        run: ./gradlew updateShas
 
       - name: Run IT
         run: |
