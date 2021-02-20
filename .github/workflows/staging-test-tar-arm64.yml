@@ -3,10 +3,8 @@ name: Test ARM64 TAR Artifacts
 on:
 #  schedule:
 #    - cron: '0 11 * * *'
-#  repository_dispatch:
-#    types: [staging-test-tar-arm64]
-  push:
-    branches: [sreekarj_patch]
+  repository_dispatch:
+    types: [staging-test-tar-arm64]
 
 jobs:
   plugin-availability:

@@ -3,11 +3,8 @@ name: Test TAR Artifacts X64
 on:
 #  schedule:
 #    - cron: '0 11 * * *'
-#  repository_dispatch:
-#    types: [staging-test-tar-x64]
-  push:
-    branches: [sreekarj_patch]
-
+  repository_dispatch:
+    types: [staging-test-tar-x64]
 
 jobs:
   Test-IM-NoSec:
