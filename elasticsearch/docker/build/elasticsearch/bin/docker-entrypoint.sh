@@ -88,15 +88,15 @@ if [[ -d "/usr/share/elasticsearch/plugins/opendistro_security" && "$DISABLE_INS
     /usr/share/elasticsearch/plugins/opendistro_security/tools/install_demo_configuration.sh -y -i -s
 fi
 
-if [[ -d "/usr/share/elasticsearch/plugins/opendistro_performance_analyzer" ]]; then
+if [[ -d "/usr/share/elasticsearch/plugins/opendistro-performance-analyzer" ]]; then
     CLK_TCK=`/usr/bin/getconf CLK_TCK`
     ES_JAVA_OPTS="-Dclk.tck=$CLK_TCK -Djdk.attach.allowAttachSelf=true $ES_JAVA_OPTS"
     if [[ -d "/usr/share/elasticsearch/performance-analyzer-rca" ]]; then
         ES_JAVA_OPTS="-Djava.security.policy=file:///usr/share/elasticsearch/performance-analyzer-rca/pa_config/es_security.policy $ES_JAVA_OPTS"
         /usr/bin/supervisord -c /usr/share/elasticsearch/performance-analyzer-rca/pa_config/supervisord.conf
     else
-        ES_JAVA_OPTS="-Djava.security.policy=file:///usr/share/elasticsearch/plugins/opendistro_performance_analyzer/pa_config/es_security.policy $ES_JAVA_OPTS"
-        /usr/bin/supervisord -c /usr/share/elasticsearch/plugins/opendistro_performance_analyzer/pa_config/supervisord.conf
+        ES_JAVA_OPTS="-Djava.security.policy=file:///usr/share/elasticsearch/plugins/opendistro-performance-analyzer/pa_config/es_security.policy $ES_JAVA_OPTS"
+        /usr/bin/supervisord -c /usr/share/elasticsearch/plugins/opendistro-performance-analyzer/pa_config/supervisord.conf
     fi
 fi
 

@@ -157,11 +157,14 @@ then
   if [ "$SETUP_DISTRO" = "zip" ]
   then
     cd $ES_ROOT
-    nohup ./opendistro-tar-install.sh > /dev/null 2>&1 &
+    nohup ./opendistro-tar-install.sh > install.log 2>&1 &
     sleep 60
+    cat install.log
     kill -9 `ps -ef | grep [e]lasticsearch | awk '{print $2}'`
     sed -i /^node.max_local_storage_nodes/d ./config/elasticsearch.yml
-    nohup ./opendistro-tar-install.sh > /dev/null 2>&1 &
+    nohup ./opendistro-tar-install.sh > install.log 2>&1 &
+    sleep 60
+    cat install.log
   elif [ "$SETUP_DISTRO" = "docker" ]
   then
     docker restart $DOCKER_NAME
@@ -214,7 +217,9 @@ then
   if [ "$SETUP_DISTRO" = "zip" ]
   then
     cd $ES_ROOT
-    nohup ./opendistro-tar-install.sh > /dev/null 2>&1 &
+    nohup ./opendistro-tar-install.sh > install.log 2>&1 &
+    sleep 60
+    cat install.log
   elif [ "$SETUP_DISTRO" = "docker" ]
   then
     docker run -d -p 9200:9200 -d -p 9600:9600 -e "discovery.type=single-node" --name $DOCKER_NAME_NoSec odfe-http:no-security
@@ -260,14 +265,19 @@ then
   if [ "$SETUP_DISTRO" = "zip" ]
   then
     cd $ES_ROOT
-    nohup ./opendistro-tar-install.sh > /dev/null 2>&1 &
+    nohup ./opendistro-tar-install.sh > install.log 2>&1 &
     sleep 60
+    cat install.log
     kill -9 `ps -ef | grep [e]lasticsearch | awk '{print $2}'`
     sed -i /^node.max_local_storage_nodes/d ./config/elasticsearch.yml
     echo "opendistro_security.unsupported.restapi.allow_securityconfig_modification: true" >> ./config/elasticsearch.yml
-    nohup ./opendistro-tar-install.sh > /dev/null 2>&1 &
+    nohup ./opendistro-tar-install.sh > install.log 2>&1 &
+    sleep 60
+    cat install.log
     cd $KIBANA_ROOT
-    nohup ./bin/kibana > /dev/null 2>&1 &
+    nohup ./bin/kibana > kibana_install.log 2>&1 &
+    sleep 60
+    cat kibana_install.log
   elif [ "$SETUP_DISTRO" = "docker" ]
   then
     docker restart $DOCKER_NAME
@@ -306,9 +316,13 @@ then
     sed -i 's/https/http/' $KIBANA_ROOT/config/kibana.yml
 
     cd $ES_ROOT
-    nohup ./opendistro-tar-install.sh > /dev/null 2>&1 &
+    nohup ./opendistro-tar-install.sh > install.log 2>&1 &
+    sleep 60
+    cat install.log
     cd $KIBANA_ROOT
-    nohup ./bin/kibana > /dev/null 2>&1 &
+    nohup ./bin/kibana > kibana_install.log 2>&1 &
+    sleep 60
+    cat kibana_install.log
   elif [ "$SETUP_DISTRO" = "docker" ]
   then
     echo "RUN /usr/share/kibana/bin/kibana-plugin remove opendistroSecurityKibana" >> Dockerfile.kibana
