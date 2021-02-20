@@ -32,12 +32,12 @@ jobs:
         run: |
           echo "pa_tag=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/performance-analyzer)" >> $GITHUB_ENV
           echo "rca_tag=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/performance-analyzer-rca)" >> $GITHUB_ENV
-      - name: Checkout RCA package
+      - name: Checkout perf analyzer RCA package
         uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/performance-analyzer-rca
           ref: ${{env.rca_tag}}
-      - name: Checkout Performance Analyzer package
+      - name: Checkout perf analyzer package
         uses: actions/checkout@v1
         with:
           repository: opendistro-for-elasticsearch/performance-analyzer
@@ -45,16 +45,15 @@ jobs:
       - name: Build RCA with Gradle
         run: |
           cd ${GITHUB_WORKSPACE}/../performance-analyzer-rca
-          ls -l
-          pwd
           ./gradlew build -x test
-      - name: Publish RCA jar to maven local
-        run: cd ${GITHUB_WORKSPACE}/../performance-analyzer-rca; ./gradlew publishToMavenLocal
-      - name: Build PA gradle using the new RCA jar
+      - name: Publish RCA into MavenLocal
+        run: |
+          cd ${GITHUB_WORKSPACE}/../performance-analyzer-rca
+          ./gradlew publishToMavenLocal
+      - name: Update SHA
         run: |
           cd ${GITHUB_WORKSPACE}/../performance-analyzer
-          ls -l
-          rm licenses/performanceanalyzer-rca-1.13.jar.sha1
+          rm licenses/performanceanalyzer-rca-*.jar.sha1
           ./gradlew updateShas
 
       - name: Run IT
