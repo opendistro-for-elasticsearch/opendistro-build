@@ -5,9 +5,9 @@ versions:
     current: 7.10.2
     next: 7.10.3
   ODFE:
-    previous: 1.12.0
-    current: 1.13.0
-    next: 1.13.1
+    previous: 1.13.0
+    current: 1.13.1
+    next: 1.13.2
 
 urls:
   ES: 
@@ -28,7 +28,7 @@ urls:
     prod: s3://artifacts.opendistroforelasticsearch.amazon.com/
     #snapshots: s3://staging.artifacts.opendistroforelasticsearch.amazon.com/snapshots/
     releases: s3://staging.artifacts.opendistroforelasticsearch.amazon.com/releases/
-    releases_final_build: 573103324
+    releases_final_build: rc-build-573103324
 
 # Warning:
 # Please do not change the plugin orders as they have dependencies

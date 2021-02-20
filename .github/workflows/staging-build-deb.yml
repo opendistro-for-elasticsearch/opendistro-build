@@ -5,6 +5,8 @@ on:
 #    - cron: '0 11 * * *'
   repository_dispatch:
     types: [staging-build-deb]
+  push:
+    branches: [1.13.1-test]
 
 jobs:
   plugin-availability:
