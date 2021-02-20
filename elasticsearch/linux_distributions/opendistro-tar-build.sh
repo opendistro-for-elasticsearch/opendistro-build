@@ -70,7 +70,6 @@ cp -v opendistro-tar-install.sh $WORK_DIR
 # Install Plugin
 rm -rf /tmp/plugins
 mkdir -p /tmp/plugins
-echo $PLUGINS_ARRAY
 
 for index in ${!PLUGINS_ARRAY[@]}
 do
