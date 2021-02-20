@@ -60,7 +60,15 @@ jobs:
       - name: Update SHA
         working-directory: ./tmp/pa
         run: ./gradlew updateShas
-      - run: cd ${GITHUB_WORKSPACE}/../../tmp/pa; ls -l
+      - run: |
+          cd ${GITHUB_WORKSPACE}
+          ls -l
+          cd ${GITHUB_WORKSPACE}/..
+          ls -l
+          cd ${GITHUB_WORKSPACE}/../..
+          ls -l
+          cd ${GITHUB_WORKSPACE}/../../..
+          ls -l
       # - name: Run IT
       #   run: |
       #     release-tools/scripts/setup_runners_service.sh zip --es-nosec
