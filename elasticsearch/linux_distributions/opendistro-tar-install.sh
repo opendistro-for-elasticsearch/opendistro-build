@@ -19,16 +19,16 @@ ES_KNN_LIB_DIR=$ES_HOME/plugins/opendistro-knn/knn-lib
 bash $ES_HOME/plugins/opendistro_security/tools/install_demo_configuration.sh -y -i -s
 
 ##Perf Plugin
-chmod 755 $ES_HOME/plugins/opendistro_performance_analyzer/pa_bin/performance-analyzer-agent
+chmod 755 $ES_HOME/plugins/opendistro-performance-analyzer/pa_bin/performance-analyzer-agent
 chmod -R 755 /dev/shm
 chmod 755 $ES_HOME/bin/performance-analyzer-agent-cli
 echo "done security"
-PA_AGENT_JAVA_OPTS="-Dlog4j.configurationFile=$ES_HOME/plugins/opendistro_performance_analyzer/pa_config/log4j2.xml \
+PA_AGENT_JAVA_OPTS="-Dlog4j.configurationFile=$ES_HOME/plugins/opendistro-performance-analyzer/pa_config/log4j2.xml \
               -Xms64M -Xmx64M -XX:+UseSerialGC -XX:CICompilerCount=1 -XX:-TieredCompilation -XX:InitialCodeCacheSize=4096 \
               -XX:InitialBootClassLoaderMetaspaceSize=30720 -XX:MaxRAM=400m"
 
 ES_MAIN_CLASS="com.amazon.opendistro.elasticsearch.performanceanalyzer.PerformanceAnalyzerApp" \
-ES_ADDITIONAL_CLASSPATH_DIRECTORIES=plugins/opendistro_performance_analyzer \
+ES_ADDITIONAL_CLASSPATH_DIRECTORIES=plugins/opendistro-performance-analyzer \
 ES_JAVA_OPTS=$PA_AGENT_JAVA_OPTS
 
 if ! grep -q '## OpenDistro Performance Analyzer' $ES_HOME/config/jvm.options; then
@@ -37,7 +37,7 @@ if ! grep -q '## OpenDistro Performance Analyzer' $ES_HOME/config/jvm.options; t
    echo '## OpenDistro Performance Analyzer' >> $ES_HOME/config/jvm.options
    echo "-Dclk.tck=$CLK_TCK" >> $ES_HOME/config/jvm.options
    echo "-Djdk.attach.allowAttachSelf=true" >> $ES_HOME/config/jvm.options
-   echo "-Djava.security.policy=$ES_HOME/plugins/opendistro_performance_analyzer/pa_config/es_security.policy" >> $ES_HOME/config/jvm.options
+   echo "-Djava.security.policy=$ES_HOME/plugins/opendistro-performance-analyzer/pa_config/es_security.policy" >> $ES_HOME/config/jvm.options
 fi
 echo "done plugins"
 

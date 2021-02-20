@@ -107,7 +107,7 @@ chmod -R 755 $WORK_DIR/$rca_dir
 # Move agent script directly into ES_HOME/bin
 perf_analyzer=`ls -p $WORK_DIR/bin/ | grep performance`
 mv $WORK_DIR/bin/$perf_analyzer/performance-analyzer-agent-cli $WORK_DIR/bin
-rm -rf $WORK_DIR/bin/opendistro_performance_analyzer
+rm -rf $WORK_DIR/bin/opendistro-performance-analyzer
 
 # Make sure the data folder exists and is writable
 mkdir -p $WORK_DIR/data
