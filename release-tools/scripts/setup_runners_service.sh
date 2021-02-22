@@ -163,8 +163,6 @@ then
     kill -9 `ps -ef | grep [e]lasticsearch | awk '{print $2}'`
     sed -i /^node.max_local_storage_nodes/d ./config/elasticsearch.yml
     nohup ./opendistro-tar-install.sh > install.log 2>&1 &
-    sudo chmod +x ./bin/performance-analyzer-agent-cli
-    nohup ./bin/performance-analyzer-agent-cli 2>&1 &
     sleep 60
     cat install.log
   elif [ "$SETUP_DISTRO" = "docker" ]
@@ -221,6 +219,8 @@ then
     cd $ES_ROOT
     nohup ./opendistro-tar-install.sh > install.log 2>&1 &
     sleep 60
+    sudo chmod +x ./bin/performance-analyzer-agent-cli
+    nohup ./bin/performance-analyzer-agent-cli 2>&1 &
     cat install.log
   elif [ "$SETUP_DISTRO" = "docker" ]
   then
