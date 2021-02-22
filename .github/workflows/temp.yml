@@ -11,7 +11,6 @@ jobs:
     name: Test-PA-NoSec
     strategy:
       matrix:
-        # perf-analyzer uses gradle 6.0.1 which does not work with java 14, hence we run this job with java 12.
         java: [14]
     steps:
       - name: Set up Java
