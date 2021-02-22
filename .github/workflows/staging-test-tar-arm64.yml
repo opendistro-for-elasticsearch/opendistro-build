@@ -6,7 +6,6 @@ on:
   repository_dispatch:
     types: [staging-test-tar-arm64]
 
-
 jobs:
   plugin-availability:
     name: Check Plugin Availability
