@@ -60,10 +60,10 @@ jobs:
         run: |
           release-tools/scripts/setup_runners_service.sh deb --es-nosec
           export PATH=$JAVA_HOME:$PATH; cd ${GITHUB_WORKSPACE}/tmp/pa
-          ls -l
-          echo "Checking PA"
-          curl -XPOST localhost:9200/_opendistro/_performanceanalyzer/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
-          echo "Checking RCA"
-          curl -XPOST localhost:9200/_opendistro/_performanceanalyzer/rca/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
+          # ls -l
+          # echo "Checking PA"
+          # curl -XPOST localhost:9200/_opendistro/_performanceanalyzer/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
+          # echo "Checking RCA"
+          # curl -XPOST localhost:9200/_opendistro/_performanceanalyzer/rca/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
           echo "Starting tests"
           ./gradlew integTest -Dtests.enableIT=true -Dtests.useDockerCluster=false -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9300
