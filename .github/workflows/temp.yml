@@ -57,12 +57,12 @@ jobs:
         run: ./gradlew updateShas
       - name: Run IT
         run: |
-          release-tools/scripts/setup_runners_service.sh deb --es-nosec
+          release-tools/scripts/setup_runners_service.sh zip --es-nosec
           export PATH=$JAVA_HOME:$PATH; cd ${GITHUB_WORKSPACE}/tmp/pa
           # ls -l
-          # echo "Checking PA"
-          # curl -XPOST localhost:9200/_opendistro/_performanceanalyzer/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
-          # echo "Checking RCA"
-          # curl -XPOST localhost:9200/_opendistro/_performanceanalyzer/rca/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
+          echo "Enable PA"
+          curl -XPOST localhost:9200/_opendistro/_performanceanalyzer/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
+          echo "Enable RCA"
+          curl -XPOST localhost:9200/_opendistro/_performanceanalyzer/rca/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
           echo "Starting tests"
           ./gradlew integTest -Dtests.enableIT=true -Dtests.useDockerCluster=false -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9300
