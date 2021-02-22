@@ -103,6 +103,7 @@ do
     plugin_type_array=( `echo ${PLUGINS_SPEC_ARRAY[$pindex]} | tr ',' '\n' | awk -F '_' '{print $3}'` )
     plugin_total=$((plugin_total+${#plugin_type_array[@]}))
     plugin_git=${PLUGINS_GIT_ARRAY[$pindex]}
+    plugin_version=`./plugin_parser.sh $plugin_basename plugin_version`
 
     IFS=`echo -ne "\n\b"`
 
@@ -142,7 +143,7 @@ do
       plugin_arch=${plugin_arch_array[$lindex]}; if [ "$plugin_arch" = "noarch" ]; then plugin_arch="";  fi
       plugin_type=${plugin_type_array[$lindex]}
       plugin_latest=`aws s3api list-objects --bucket $plugin_bucket --prefix $plugin_path --query 'Contents[].[Key]' --output text \
-                     | grep "${plugin_basename}" | grep "${plugin_platform}" | grep "${plugin_arch}" | grep "${plugin_build}" | grep "${plugin_type}" \
+                     | grep "${plugin_basename}" | grep "${plugin_platform}" |grep "${plugin_version}" | grep "${plugin_arch}" | grep "${plugin_build}" | grep "${plugin_type}" \
                      | sort | tail -n 1 | awk -F '/' '{print $NF}'`
 
       if [ -z "$plugin_latest" ]

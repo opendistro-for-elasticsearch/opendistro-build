@@ -6,6 +6,9 @@ on:
   repository_dispatch:
     types: [staging-build-tar]
 
+  push:
+    branches: [sreekarj_patch1]
+
 jobs:
   plugin-availability:
     name: Check Plugin Availability
