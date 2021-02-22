@@ -59,7 +59,7 @@ jobs:
         run: |
           release-tools/scripts/setup_runners_service.sh zip --es-nosec
           export PATH=$JAVA_HOME:$PATH; cd ${GITHUB_WORKSPACE}/tmp/pa
-          # ls -l
+          netstat -ntlp
           echo "Enable PA"
           curl -XPOST localhost:9200/_opendistro/_performanceanalyzer/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
           echo "Enable RCA"
