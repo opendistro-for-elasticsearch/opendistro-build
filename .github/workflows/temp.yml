@@ -122,7 +122,7 @@ jobs:
           release-tools/scripts/setup_runners_service.sh docker --es-nosec
           docker images
           echo "Docker id is:" 
-          docker images | grep odfe-http:no-security | awk '{print $3}'
+          docker images | grep no-security | awk '{print $3}'
           docker_id=`docker images | grep odfe-http:no-security | awk '{print $3}'`
           echo "Activating PA"
           docker exec -it $docker_id /bin/bash
