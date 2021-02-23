@@ -8,9 +8,6 @@ on:
   repository_dispatch:
     types: [prod-sync-artifacts]
 
-  push:
-    branches: [sreekarj_prdsync]
-
 jobs:
   Sync-Prod:
     runs-on: ubuntu-18.04
