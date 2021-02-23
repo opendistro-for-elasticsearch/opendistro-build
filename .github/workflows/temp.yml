@@ -120,10 +120,10 @@ jobs:
       - name: Set up PA
         run: |
           release-tools/scripts/setup_runners_service.sh docker --es-nosec
-          docker_id=`docker ps | grep no-security | awk '{print $1}'`
-          echo $docker_id
-          echo "Activating PA"
-          docker exec -it $docker_id /bin/bash
+          # docker_id=`docker ps | grep no-security | awk '{print $1}'`
+          # echo $docker_id
+          # echo "Activating PA"
+          # docker exec -it $docker_id /bin/bash
           echo "Enable PA"
           curl -XPOST localhost:9200/_opendistro/_performanceanalyzer/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
           echo "Enable RCA"
