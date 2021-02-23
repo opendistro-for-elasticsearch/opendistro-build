@@ -220,7 +220,7 @@ then
     nohup ./opendistro-tar-install.sh > install.log 2>&1 &
     sleep 60
     sudo chmod +x ./bin/performance-analyzer-agent-cli
-    nohup ./bin/performance-analyzer-agent-cli 2>&1 &
+    ES_HOME="$PWD" nohup ./bin/performance-analyzer-agent-cli 2>&1 &
     cat install.log
   elif [ "$SETUP_DISTRO" = "docker" ]
   then
