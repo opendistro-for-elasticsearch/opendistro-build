@@ -14,7 +14,7 @@
 kibana:
   enabled: true
   image: amazon/opendistro-for-elasticsearch-kibana
-  imageTag: 1.13.0
+  imageTag: 1.13.1
   ## Specifies the image pull policy. Can be "Always" or "IfNotPresent" or "Never".
   ## Default to "Always".
   imagePullPolicy: ""
@@ -521,7 +521,7 @@ elasticsearch:
   maxMapCount: 262144
 
   image: amazon/opendistro-for-elasticsearch
-  imageTag: 1.13.0
+  imageTag: 1.13.1
   ## Specifies the image pull policy. Can be "Always" or "IfNotPresent" or "Never".
   ## Default to "Always".
   imagePullPolicy: ""
