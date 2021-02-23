@@ -199,6 +199,7 @@ then
   elif [ "$SETUP_DISTRO" = "docker" ]
   then
     echo "RUN /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro_security" >> Dockerfile
+    echo "RUN echo \"webservice-bind-host = 0.0.0.0\"  >> /usr/share/elasticsearch/plugins/opendistro-performance-analyzer/pa_config/performance-analyzer.properties" >> Dockerfile
     echo "RUN ls -l /usr/share/elasticsearch/plugins"
     docker build -t odfe-http:no-security -f Dockerfile .
     sleep 5
@@ -234,7 +235,7 @@ then
   curl -XGET http://localhost:9200
   curl -XGET http://localhost:9200/_cat/plugins?v
   curl -XGET http://localhost:9200/_cluster/health?pretty
-  echo "es-nosec start"
+  echo "es-nosec started"
   netstat -ntlp
   cd $REPO_ROOT
   exit 0
@@ -298,7 +299,7 @@ then
   curl -v -XGET http://localhost:5601
   #curl http://localhost:5601/_cat/plugins?v
   curl -v -XGET http://localhost:5601/api/status
-  echo "es & kibana start"
+  echo "es & kibana started"
   netstat -ntlp
   cd $REPO_ROOT
   exit 0
@@ -350,7 +351,7 @@ then
   curl -v -XGET http://localhost:5601
   curl http://localhost:5601/_cat/plugins?v
   curl -v -XGET http://localhost:5601/api/status
-  echo "es & kibana-nosec start"
+  echo "es & kibana-nosec started"
   netstat -ntlp
   cd $REPO_ROOT
   exit 0
