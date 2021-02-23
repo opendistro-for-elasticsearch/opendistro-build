@@ -119,7 +119,7 @@ jobs:
         run: ./gradlew updateShas
       - name: Run IT
         run: |
-          release-tools/scripts/setup_runners_service.sh deb --es-nosec
+          release-tools/scripts/setup_runners_service.sh docker --es-nosec
           export PATH=$JAVA_HOME:$PATH; cd ${GITHUB_WORKSPACE}/tmp/pa
           echo "Starting tests"
           ./gradlew integTest -Dtests.enableIT=true -Dtests.useDockerCluster=false -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9300
