@@ -124,6 +124,7 @@ jobs:
           # echo $docker_id
           # echo "Activating PA"
           # docker exec -it $docker_id /bin/bash
+          curl -sS  "localhost:9200/_cat/nodes?h=heap*&v"
           echo "Enable PA"
           curl -XPOST localhost:9200/_opendistro/_performanceanalyzer/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
           echo "Enable RCA"
