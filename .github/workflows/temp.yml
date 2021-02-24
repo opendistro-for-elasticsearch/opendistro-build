@@ -64,6 +64,7 @@ jobs:
           echo "Enable RCA"
           curl -XPOST localhost:9200/_opendistro/_performanceanalyzer/rca/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
           sleep 60
+          curl -XGET http://localhost:9600/_opendistro/_performanceanalyzer/rca
           echo "Check ports again"
           netstat -ntlp
           echo "Starting tests"
