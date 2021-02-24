@@ -130,7 +130,7 @@ jobs:
           echo "Enable RCA"
           curl -XPOST localhost:9200/_opendistro/_performanceanalyzer/rca/cluster/config -H 'Content-Type: application/json' -d '{"enabled": true}'
           sleep 120
-          netstat
+          netstat -nltp
 
       - name: Run IT
         run: |
