@@ -5,6 +5,9 @@ on:
 #    - cron: '15 12 * * *'
   repository_dispatch:
     types: [staging-test-docker-x64]
+  push:
+    branches:
+      - windows-docker-test
 
 jobs: 
   Test-IM-NoSec:
