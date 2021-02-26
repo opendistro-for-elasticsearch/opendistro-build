@@ -115,19 +115,19 @@ chmod 755 $WORK_DIR/data/
 
 # Download Knn lib
 # Get knnlib artifact information from Manifest
-knnlib_is_rc=`$REPO_ROOT/release-tools/scripts/plugin_parser.sh opendistro-knnlib release_candidate`; echo knnlib_is_rc $knnlib_is_rc
-knnlib_basename=`$REPO_ROOT/release-tools/scripts/plugin_parser.sh opendistro-knnlib plugin_basename`; echo knnlib_basename $knnlib_basename
-if $knnlib_is_rc
-then
-  echo ""
-  knnlib_latest=`aws s3api list-objects --bucket $S3_RELEASE_BUCKET --prefix "${PLUGIN_PATH}${OD_VERSION}/$S3_RELEASE_BUILD/opendistro-libs/" --query 'Contents[].[Key]' --output text \
-                 | grep -v sha512 | grep "$knnlib_basename" | grep zip | grep "$PLATFORM" | grep "$ARCHITECTURE"`
-  echo "downloading $knnlib_latest"
-  aws s3 cp "s3://${S3_RELEASE_BUCKET}/$knnlib_latest" ./
-  unzip ${knnlib_basename}*.zip
-  mkdir -p $WORK_DIR/plugins/opendistro-knn/knn-lib/
-  mv -v opendistro-knnlib*/libKNNIndex*.so $WORK_DIR/plugins/opendistro-knn/knn-lib/
-fi
+#knnlib_is_rc=`$REPO_ROOT/release-tools/scripts/plugin_parser.sh opendistro-knnlib release_candidate`; echo knnlib_is_rc $knnlib_is_rc
+#knnlib_basename=`$REPO_ROOT/release-tools/scripts/plugin_parser.sh opendistro-knnlib plugin_basename`; echo knnlib_basename $knnlib_basename
+#if $knnlib_is_rc
+#then
+#  echo "aws s3api list-objects --bucket $S3_RELEASE_BUCKET --prefix ${PLUGIN_PATH}${OD_VERSION}/$S3_RELEASE_BUILD/opendistro-libs/"
+#  knnlib_latest=`aws s3api list-objects --bucket $S3_RELEASE_BUCKET --prefix "${PLUGIN_PATH}${OD_VERSION}/$S3_RELEASE_BUILD/opendistro-libs/" --query 'Contents[].[Key]' --output text \
+#                 | grep -v sha512 | grep "$knnlib_basename" | grep zip | grep "$PLATFORM" | grep "$ARCHITECTURE"`
+#  echo "downloading $knnlib_latest"
+#  aws s3 cp "s3://${S3_RELEASE_BUCKET}/$knnlib_latest" ./
+#  unzip ${knnlib_basename}*.zip
+#  mkdir -p $WORK_DIR/plugins/opendistro-knn/knn-lib/
+#  mv -v opendistro-knnlib*/libKNNIndex*.so $WORK_DIR/plugins/opendistro-knn/knn-lib/
+#fi
 
 # Tar generation
 echo "generating tar"

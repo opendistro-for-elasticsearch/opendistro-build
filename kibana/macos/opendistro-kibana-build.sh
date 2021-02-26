@@ -32,7 +32,7 @@ MANIFEST_FILE=$REPO_ROOT/release-tools/scripts/manifest.yml
 ES_VERSION=`$REPO_ROOT/release-tools/scripts/version-info.sh --es`; echo ES_VERSION: $ES_VERSION
 OD_VERSION=`$REPO_ROOT/release-tools/scripts/version-info.sh --od`; echo OD_VERSION: $OD_VERSION
 S3_RELEASE_BASEURL=`yq eval '.urls.ODFE.releases' $MANIFEST_FILE`
-S3_RELEASE_FINAL_BUILD=`yq eval '.urls.ODFE.releases_final_build' $MANIFEST_FILE | sed 's/\///g'`
+S3_RELEASE_FINAL_BUILD=`yq eval '.urls.ODFE.releases_final_build' $MANIFEST_FILE | gsed 's/\///g'`
 S3_RELEASE_BUCKET=`echo $S3_RELEASE_BASEURL | awk -F '/' '{print $3}'`
 PACKAGE_TYPE=$1
 PACKAGE_NAME="opendistroforelasticsearch-kibana"
@@ -40,6 +40,8 @@ TARGET_DIR="$ROOT/target"
 PLATFORM="linux"; if [ ! -z "$2" ]; then PLATFORM=$2; fi; echo PLATFORM $PLATFORM
 ARCHITECTURE="x64"; if [ ! -z "$3" ]; then ARCHITECTURE=$3; fi; echo ARCHITECTURE $ARCHITECTURE
 KIBANA_URL=`yq eval '.urls.KIBANA.'$PLATFORM'_'$ARCHITECTURE'' $MANIFEST_FILE`
+
+#alias sed=gsed
 
 if [ "$ARCHITECTURE" = "x64" ]
 then
@@ -58,7 +60,7 @@ fi
 # Please DO NOT change the orders, they have dependencies
 PLUGINS=`$REPO_ROOT/release-tools/scripts/plugins-info.sh kibana-plugins plugin_basename`
 PLUGINS_ARRAY=($PLUGINS )
-PLUGIN_PATH=`yq eval '.urls.ODFE.releases' $MANIFEST_FILE | sed "s/^.*$S3_RELEASE_BUCKET\///g"`
+PLUGIN_PATH=`yq eval '.urls.ODFE.releases' $MANIFEST_FILE | gsed "s/^.*$S3_RELEASE_BUCKET\///g"`
 
 basedir="${ROOT}/${PACKAGE_NAME}/plugins"
 
@@ -103,12 +105,12 @@ mkdir -p /tmp/plugins
 for index in ${!PLUGINS_ARRAY[@]}
 do
   plugin_latest=`(aws s3api list-objects --bucket $S3_RELEASE_BUCKET --prefix "${PLUGIN_PATH}${OD_VERSION}/$S3_RELEASE_BUILD/kibana-plugins" --query 'Contents[].[Key]' --output text | grep -v sha512 |grep ${PLUGINS_ARRAY[$index]} |grep zip) || (echo None)`
-  plugin_counts=`echo $plugin_latest | sed 's/.zip[ ]*/.zip\n/g' | sed '/^$/d' | wc -l`
+  plugin_counts=`echo $plugin_latest | gsed 's/.zip[ ]*/.zip\n/g' | gsed '/^$/d' | wc -l`
+  echo "plugin count: $plugin_counts"
   if [ "$plugin_counts" -gt 1 ]
   then
-    plugin_latest=`echo $plugin_latest | sed 's/.zip[ ]*/.zip\n/g' | sed '/^$/d' | grep "$PLATFORM" | grep "$ARCHITECTURE"`
+    plugin_latest=`(echo $plugin_latest | gsed 's/.zip[ ]*/.zip\n/g' | gsed '/^$/d' | grep "$PLATFORM" | grep "$ARCHITECTURE") || (echo None)`
   fi
-
   if [ "$plugin_latest" != "None" ]
   then
     echo "downloading $plugin_latest"
@@ -233,7 +235,7 @@ if [ $# -eq 0 ] || [ "$PACKAGE_TYPE" = "tar" ]; then
   tar_artifact=`ls $TARGET_DIR/*.tar.gz`
   tar_checksum_artifact=`ls $TARGET_DIR/*.tar.gz.sha512`
   echo "Staging destination : s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/odfe/"
-#  aws s3 cp $tar_artifact s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/odfe/
-#  aws s3 cp $tar_checksum_artifact s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/odfe/
+  aws s3 cp $tar_artifact s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/odfe/
+  aws s3 cp $tar_checksum_artifact s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/odfe/
 
 fi
