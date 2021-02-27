@@ -325,6 +325,10 @@ spec:
   volumeClaimTemplates:
   - metadata:
       name: data
+      labels:
+      {{- range $key, $value := .Values.elasticsearch.master.persistence.labels }}
+        {{ $key }}: {{ $value }}
+      {{- end }}
       annotations:
       {{- range $key, $value := .Values.elasticsearch.master.persistence.annotations }}
         {{ $key }}: {{ $value }}

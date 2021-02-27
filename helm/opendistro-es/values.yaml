@@ -258,6 +258,7 @@ elasticsearch:
         - ReadWriteOnce
       size: 8Gi
       annotations: {}
+      labels: {}
 
     resources: {}
     #  limits:
@@ -335,6 +336,7 @@ elasticsearch:
         - ReadWriteOnce
       size: 8Gi
       annotations: {}
+      labels: {}
 
     resources: {}
     #  limits:

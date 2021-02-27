@@ -229,6 +229,10 @@ spec:
       {{- range $key, $value := .Values.elasticsearch.data.persistence.annotations }}
         {{ $key }}: {{ $value }}
       {{- end }}
+      labels:
+      {{- range $key, $value := .Values.elasticsearch.data.persistence.labels }}
+        {{ $key }}: {{ $value }}
+      {{- end }}
     spec:
       accessModes:
       {{- range .Values.elasticsearch.data.persistence.accessModes }}
