@@ -96,7 +96,7 @@ if [[ -d "/usr/share/elasticsearch/plugins/opendistro-performance-analyzer" ]]; 
         ES_JAVA_OPTS="-Djava.security.policy=file:///usr/share/elasticsearch/performance-analyzer-rca/pa_config/es_security.policy $ES_JAVA_OPTS"
         /usr/bin/supervisord -c /usr/share/elasticsearch/performance-analyzer-rca/pa_config/supervisord.conf
     else
-        sed -i "s/^user=.*/user=${PUID:-${DEFAULT_UID}}/" /usr/share/elasticsearch/plugins/opendistro_performance_analyzer/pa_config/supervisord.conf
+        sed -i "s/^user=.*/user=${PUID:-${DEFAULT_UID}}/" /usr/share/elasticsearch/plugins/opendistro-performance-analyzer/pa_config/supervisord.conf
         ES_JAVA_OPTS="-Djava.security.policy=file:///usr/share/elasticsearch/plugins/opendistro-performance-analyzer/pa_config/es_security.policy $ES_JAVA_OPTS"
         /usr/bin/supervisord -c /usr/share/elasticsearch/plugins/opendistro-performance-analyzer/pa_config/supervisord.conf
     fi
