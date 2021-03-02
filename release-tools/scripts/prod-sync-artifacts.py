@@ -129,7 +129,7 @@ def main():
             print("Release bucket name : " + rc_bucket)
             rc_path = rc_location.replace(rc_bucket,'')[1:]
             print("Release folder path : " + rc_path)
-            rc_plugin_path = rc_path + odfe_version + "/" + "rc-build-" + str(run_number) + "/"
+            rc_plugin_path = rc_path + odfe_version + "/" + str(run_number) + "/"
             print("Release candiate path : " + rc_plugin_path)
             prod_location = source.get('urls').get('ODFE').get('prod')[5:]
             prod_bucket = prod_location.split('/')[0]
@@ -254,7 +254,7 @@ def main():
             print(tabulate(folder_status,headers = ["Folder path","State"], tablefmt="github"))
             print("\n\n\n\n")
             print(tabulate(artifact_status,headers = ["Plugin Name","Full Name","Build No.","State"], tablefmt="github"))
-            if action == "prod-sync":
+            if action == "prod-sync-all":
                 print("\n\n\n\n")
                 print(tabulate(upload_list,headers = ["Artifact name","State"], tablefmt="github"))
     except Exception as ex:
