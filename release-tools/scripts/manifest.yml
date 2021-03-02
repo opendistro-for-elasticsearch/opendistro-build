@@ -51,8 +51,8 @@ plugins:
   - 
     plugin_basename: opendistro-alerting
     plugin_git: opendistro-for-elasticsearch/alerting
-    plugin_version: 1.13.0.0
-    plugin_build: 21
+    plugin_version: 1.13.1.0
+    plugin_build: 22
     plugin_spec: [noplatform_noarch_zip,noplatform_noarch_deb,noplatform_noarch_rpm]
     plugin_category: elasticsearch-plugins
     release_candidate: true
@@ -75,8 +75,8 @@ plugins:
   - 
     plugin_basename: opendistro-security
     plugin_git: opendistro-for-elasticsearch/security
-    plugin_version: 1.13.0.0
-    plugin_build: 48
+    plugin_version: 1.13.1.0
+    plugin_build: 51
     plugin_spec: [noplatform_noarch_zip,noplatform_noarch_deb,noplatform_noarch_rpm]
     plugin_category: elasticsearch-plugins
     release_candidate: true
@@ -99,8 +99,8 @@ plugins:
   - 
     plugin_basename: opendistro-index-management
     plugin_git: opendistro-for-elasticsearch/index-management
-    plugin_version: 1.13.0.0
-    plugin_build: 14
+    plugin_version: 1.13.1.0
+    plugin_build: 15
     plugin_spec: [noplatform_noarch_zip,noplatform_noarch_deb,noplatform_noarch_rpm]
     plugin_category: elasticsearch-plugins
     release_candidate: true
