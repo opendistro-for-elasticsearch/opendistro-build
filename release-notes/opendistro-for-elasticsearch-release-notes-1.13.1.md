@@ -1,16 +1,10 @@
 # Open Distro for Elasticsearch 1.13.1 Release Notes
 
 ## Release Highlights
+ODFE 1.13.1 based on ES 7.10.2
 
 ## Release Details
-
-You can also track upcoming features in Open Distro for Elasticsearch by watching the code repositories or checking the [project website](https://opendistro.github.io/for-elasticsearch/features/comingsoon.html).
-
-## BREAKING CHANGES
-
-## FEATURES
-
-## ENHANCEMENTS
+Open Distro for Elasticsearch 1.13.0 includes the following bug fixes and maintenance updates.
 
 ## BUG FIXES
 
@@ -18,10 +12,9 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 * Fix for "java.lang.IllegalArgumentException: The array of keys must not be null" for "_cat/health" requests ([#1048](https://github.com/opendistro-for-elasticsearch/security/pull/1048))
 * Revert "Fix AuthCredentials equality (#876)" to improve performance ([#1061](https://github.com/opendistro-for-elasticsearch/security/pull/1061))
 
+### Release Engineering
+* Bug fix for Performance Analyzer plugin in TAR and Docker ([#649](https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/649))
 
-## INFRASTRUCTURE
-
-## DOCUMENTATION
 
 ## MAINTENANCE
 
@@ -29,6 +22,4 @@ You can also track upcoming features in Open Distro for Elasticsearch by watchin
 * Bump version to 1.13.1.0 ([#1054](https://github.com/opendistro-for-elasticsearch/security/pull/1054))
 * Update release notes 1.13.1 ([#1063](https://github.com/opendistro-for-elasticsearch/security/pull/1063))
 
-
-## REFACTORING
 
