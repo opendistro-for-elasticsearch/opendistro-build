@@ -22,4 +22,10 @@ Open Distro for Elasticsearch 1.13.0 includes the following bug fixes and mainte
 * Bump version to 1.13.1.0 ([#1054](https://github.com/opendistro-for-elasticsearch/security/pull/1054))
 * Update release notes 1.13.1 ([#1063](https://github.com/opendistro-for-elasticsearch/security/pull/1063))
 
+### Alerting
+* Bump version to 1.13.1.0 ([#358](https://github.com/opendistro-for-elasticsearch/alerting/pull/358))
+
+### Index Management
+* Bump version to 1.13.1.0 ([#411](https://github.com/opendistro-for-elasticsearch/index-management/pull/411))
+
 
