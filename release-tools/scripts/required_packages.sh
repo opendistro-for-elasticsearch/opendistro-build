@@ -10,34 +10,38 @@ USER=`whoami`
 echo "This script is to installed the required packages for GitHub Runners"
 
 # Install from package managers
-if [ "$USER" = "root" ]
+if [ "$USER" = "root" ] && [ "$PLATFORM" = "linux" ]
 then
   apt update -y || (yum repolist && yum check-update)
   apt install -y sudo || yum install -y sudo
 fi
 
-
-sudo apt update -y || (sudo yum repolist && yum check-update)
-sudo apt install -y $DEB_PKGS || sudo yum install -y $RPM_PKGS
-
+if [ "$PLATFORM" = "linux" ]
+then
+  sudo apt update -y || (sudo yum repolist && yum check-update)
+  sudo apt install -y $DEB_PKGS || sudo yum install -y $RPM_PKGS
+fi
 
 # Install from repositories
 
 # yq 4.0.0+ version, different usages compares to yq 3.x.x or previous versions
 YQ_VERSION=4.4.1
 
-if [ "$ARCH" = "x86_64" ] || [ "$ARCH" = "amd64" ]
+if [ "$PLATFORM" = "linux" ] && [ "$ARCH" = "x86_64" ] || [ "$ARCH" = "amd64" ]
 then
   sudo wget -nv https://github.com/mikefarah/yq/releases/download/v${YQ_VERSION}/yq_${PLATFORM}_amd64 -O /usr/bin/yq && sudo chmod +x /usr/bin/yq
-elif [ "$ARCH" = "x86" ] || [ "$ARCH" = "i386" ]
+elif [ "$PLATFORM" = "linux" ] && [ "$ARCH" = "x86" ] || [ "$ARCH" = "i386" ]
 then
   sudo wget -nv https://github.com/mikefarah/yq/releases/download/v${YQ_VERSION}/yq_${PLATFORM}_386 -O /usr/bin/yq && sudo chmod +x /usr/bin/yq
-elif [ "$ARCH" = "aarch64" ] || [ "$ARCH" = "arm64" ]
+elif [ "$PLATFORM" = "linux" ] && [ "$ARCH" = "aarch64" ] || [ "$ARCH" = "arm64" ]
 then
   sudo wget -nv https://github.com/mikefarah/yq/releases/download/v${YQ_VERSION}/yq_${PLATFORM}_arm64 -O /usr/bin/yq && sudo chmod +x /usr/bin/yq
-elif [ "$ARCH" = "aarch" ] || [ "$ARCH" = "arm" ]
+elif [ "$PLATFORM" = "linux" ] && [ "$ARCH" = "aarch" ] || [ "$ARCH" = "arm" ]
 then
   sudo wget -nv https://github.com/mikefarah/yq/releases/download/v${YQ_VERSION}/yq_${PLATFORM}_arm -O /usr/bin/yq && sudo chmod +x /usr/bin/yq
+elif [ "$PLATFORM" = "darwin" ]
+then
+  brew install yq coreutils gnu-sed
 else
   sudo wget -nv https://github.com/mikefarah/yq/releases/download/v${YQ_VERSION}/yq_${PLATFORM}_${ARCH} -O /usr/bin/yq && sudo chmod +x /usr/bin/yq
 fi
