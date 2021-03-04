@@ -18,10 +18,6 @@
 
 # Node-JS binaries under kibana/node which is being used while installing / removing plugin
 
-# if [[ "$OSTYPE" == "darwin"* ]]; then
-#   echo "Run this script in Linux machine as node binary shipped in Kibana is for Linux platform"
-#   exit 1
-# fi
 
 set -e
 
@@ -40,21 +36,6 @@ TARGET_DIR="$ROOT/target"
 PLATFORM="linux"; if [ ! -z "$2" ]; then PLATFORM=$2; fi; echo PLATFORM $PLATFORM
 ARCHITECTURE="x64"; if [ ! -z "$3" ]; then ARCHITECTURE=$3; fi; echo ARCHITECTURE $ARCHITECTURE
 KIBANA_URL=`yq eval '.urls.KIBANA.'$PLATFORM'_'$ARCHITECTURE'' $MANIFEST_FILE`
-
-#alias sed=gsed
-
-if [ "$ARCHITECTURE" = "x64" ]
-then
-  ARCHITECTURE_ALT_RPM="x86_64"
-  ARCHITECTURE_ALT_DEB="amd64"
-elif [ "$ARCHITECTURE" = "arm64" ]
-then
-  ARCHITECTURE_ALT_RPM="aarch64"
-  ARCHITECTURE_ALT_DEB="arm64"
-else
-  echo "User enter wrong architecture, choose among x64/arm64"
-  exit 1
-fi
 
 
 # Please DO NOT change the orders, they have dependencies
@@ -77,13 +58,6 @@ fi
 
 if [ -z "$PLUGINS" ]; then
   echo "Provide plugin list to install (separated by space)"
-  exit 1
-fi
-
-
-# If the input is set, but it's set to neither rpm nor deb, then exit.
-if [ -n $PACKAGE_TYPE ] && [ "$PACKAGE_TYPE" != "rpm" ] && [ "$PACKAGE_TYPE" != "deb" ] && [ "$PACKAGE_TYPE" != "tar" ]; then
-  printf "You entered %s. Please enter 'rpm' to build rpm or 'deb' or 'tar' to build deb or nothing to build both.\n" "$PACKAGE_TYPE"
   exit 1
 fi
 
@@ -132,110 +106,21 @@ cp config/kibana.yml $PACKAGE_NAME/config
 
 echo "building artifact: ${PACKAGE_TYPE}"
 
-if [ $# -eq 0 ] || [ "$PACKAGE_TYPE" = "rpm" ]; then
-  echo "generating rpm"
-  fpm --force \
-      -t rpm \
-      --package $TARGET_DIR/NAME-$OD_VERSION.TYPE \
-      -s dir \
-      --name $PACKAGE_NAME \
-      --description "Explore and visualize your Elasticsearch data" \
-      --version $OD_VERSION \
-      --url https://aws.amazon.com/ \
-      --vendor "Amazon Web Services, Inc." \
-      --maintainer "Opendistro Team <opendistroforelasticsearch@amazon.com>" \
-      --license "ASL 2.0" \
-      --conflicts kibana \
-      --after-install $ROOT/scripts/post_install.sh \
-      --before-install $ROOT/scripts/pre_install.sh \
-      --before-remove $ROOT/scripts/pre_remove.sh \
-      --after-remove $ROOT/scripts/post_remove.sh \
-      --config-files /etc/kibana/kibana.yml \
-      --template-value user=kibana \
-      --template-value group=kibana \
-      --template-value optimizeDir=/usr/share/kibana/optimize \
-      --template-value configDir=/etc/kibana \
-      --template-value pluginsDir=/usr/share/kibana/plugins \
-      --template-value dataDir=/var/lib/kibana \
-      --exclude usr/share/kibana/config \
-      --exclude usr/share/kibana/data \
-      --architecture $ARCHITECTURE_ALT_RPM \
-      --rpm-os linux \
-      $ROOT/opendistroforelasticsearch-kibana/=/usr/share/kibana/ \
-      $ROOT/opendistroforelasticsearch-kibana/config/=/etc/kibana/ \
-      $ROOT/opendistroforelasticsearch-kibana/data/=/var/lib/kibana/ \
-      $ROOT/service_templates/sysv/etc/=/etc/ \
-      $ROOT/service_templates/systemd/etc/=/etc/
+# Generating tar
+rm -rf $TARGET_DIR/*tar*
+echo "generating tar"
+tar -czf $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION-$PLATFORM-$ARCHITECTURE.tar.gz $PACKAGE_NAME
+cd $TARGET_DIR
+shasum -a 512 $PACKAGE_NAME-$OD_VERSION-$PLATFORM-$ARCHITECTURE.tar.gz > $PACKAGE_NAME-$OD_VERSION-$PLATFORM-$ARCHITECTURE.tar.gz.sha512
+shasum -a 512 -c $PACKAGE_NAME-$OD_VERSION-$PLATFORM-$ARCHITECTURE.tar.gz.sha512
+echo " CHECKSUM FILE "
+echo "$(cat $PACKAGE_NAME-$OD_VERSION-$PLATFORM-$ARCHITECTURE.tar.gz.sha512)"
+cd $ROOT
 
-      # Upload to S3
-      ls -ltr $TARGET_DIR
-      rpm_artifact=`ls $TARGET_DIR/*.rpm`
-      rpm_artifact_output=`basename $rpm_artifact | sed "s/.rpm/-$PLATFORM-$ARCHITECTURE.rpm/g"`
-      aws s3 cp $rpm_artifact s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/odfe/$rpm_artifact_output
-
-fi
-
-if [ $# -eq 0 ] || [ "$PACKAGE_TYPE" = "deb" ]; then
-  echo "generating deb"
-  fpm --force \
-      -t deb \
-      --package $TARGET_DIR/NAME-$OD_VERSION.TYPE \
-      -s dir \
-      --name $PACKAGE_NAME \
-      --description "Explore and visualize your Elasticsearch data" \
-      --version $OD_VERSION \
-      --url https://aws.amazon.com/ \
-      --vendor "Amazon Web Services, Inc." \
-      --maintainer "Opendistro Team <opendistroforelasticsearch@amazon.com>" \
-      --license "ASL 2.0" \
-      --conflicts kibana \
-      --after-install $ROOT/scripts/post_install.sh \
-      --before-install $ROOT/scripts/pre_install.sh \
-      --before-remove $ROOT/scripts/pre_remove.sh \
-      --after-remove $ROOT/scripts/post_remove.sh \
-      --config-files /etc/kibana/kibana.yml \
-      --template-value user=kibana \
-      --template-value group=kibana \
-      --template-value optimizeDir=/usr/share/kibana/optimize \
-      --template-value configDir=/etc/kibana \
-      --template-value pluginsDir=/usr/share/kibana/plugins \
-      --template-value dataDir=/var/lib/kibana \
-      --exclude usr/share/kibana/config \
-      --exclude usr/share/kibana/data \
-      --architecture $ARCHITECTURE_ALT_DEB \
-      $ROOT/opendistroforelasticsearch-kibana/=/usr/share/kibana/ \
-      $ROOT/opendistroforelasticsearch-kibana/config/=/etc/kibana/ \
-      $ROOT/opendistroforelasticsearch-kibana/data/=/var/lib/kibana/ \
-      $ROOT/service_templates/sysv/etc/=/etc/ \
-      $ROOT/service_templates/systemd/etc/=/etc/
-
-      # Upload to S3
-      ls -ltr $TARGET_DIR
-      deb_artifact=`ls $TARGET_DIR/*.deb`
-      deb_artifact_output=`basename $deb_artifact | sed "s/.deb/-$PLATFORM-$ARCHITECTURE.deb/g"`
-      aws s3 cp $deb_artifact s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/odfe/$deb_artifact_output
-
-fi
-
-if [ $# -eq 0 ] || [ "$PACKAGE_TYPE" = "tar" ]; then
-
-  # Generating tar
-  rm -rf $TARGET_DIR/*tar*
-  echo "generating tar"
-  tar -czf $TARGET_DIR/$PACKAGE_NAME-$OD_VERSION-$PLATFORM-$ARCHITECTURE.tar.gz $PACKAGE_NAME
-  cd $TARGET_DIR
-  shasum -a 512 $PACKAGE_NAME-$OD_VERSION-$PLATFORM-$ARCHITECTURE.tar.gz > $PACKAGE_NAME-$OD_VERSION-$PLATFORM-$ARCHITECTURE.tar.gz.sha512
-  shasum -a 512 -c $PACKAGE_NAME-$OD_VERSION-$PLATFORM-$ARCHITECTURE.tar.gz.sha512
-  echo " CHECKSUM FILE "
-  echo "$(cat $PACKAGE_NAME-$OD_VERSION-$PLATFORM-$ARCHITECTURE.tar.gz.sha512)"
-  cd $ROOT
-
-  # Upload to S3
-  ls -ltr $TARGET_DIR
-  tar_artifact=`ls $TARGET_DIR/*.tar.gz`
-  tar_checksum_artifact=`ls $TARGET_DIR/*.tar.gz.sha512`
-  echo "Staging destination : s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/odfe/"
-  aws s3 cp $tar_artifact s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/odfe/
-  aws s3 cp $tar_checksum_artifact s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/odfe/
-
-fi
+# Upload to S3
+ls -ltr $TARGET_DIR
+tar_artifact=`ls $TARGET_DIR/*.tar.gz`
+tar_checksum_artifact=`ls $TARGET_DIR/*.tar.gz.sha512`
+echo "Staging destination : s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/odfe/"
+aws s3 cp $tar_artifact s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/odfe/
+aws s3 cp $tar_checksum_artifact s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/odfe/
