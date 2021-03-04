@@ -5,8 +5,8 @@ on:
 #    - cron: '0 11 * * *'
   repository_dispatch:
     types: [staging-test-tar-x64]
-#  push:
-#    branches: [sreekarj_macos]
+  push:
+    branches: [sreekarj_macos]
 
 jobs:
   Test-IM-NoSec:
@@ -39,7 +39,7 @@ jobs:
           ref: ${{env.p_tag_im}}
       - name: IT
         run: |
-          ./release-tools/scripts/setup_runners_service.sh zip --es-nosec
+          ./release-tools/scripts/setup_runners_service.sh zip --es-nosec x64 macos
           export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../index-management; pwd
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
 
@@ -349,7 +349,7 @@ jobs:
           yarn kbn bootstrap
           
       - name: Start ES and Kibana
-        run: ./release-tools/scripts/setup_runners_service.sh zip --kibana-nosec
+        run: ./release-tools/scripts/setup_runners_service.sh zip --kibana-nosec x64 macos
  
       - name: run IT
         uses: cypress-io/github-action@v2.5.0
