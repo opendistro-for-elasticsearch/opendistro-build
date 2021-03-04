@@ -62,9 +62,9 @@ DOCKER_NAME_NoSec="Test-Docker-${OD_VERSION}-NoSec"
 DOCKER_NAME_KIBANA_NoSec="Test-Docker-Kibana-${OD_VERSION}-NoSec"
 
 S3_RELEASE_BASEURL=`yq eval '.urls.ODFE.releases' $MANIFEST_FILE`
-S3_RELEASE_FINAL_BUILD=`yq eval '.urls.ODFE.releases_final_build' $MANIFEST_FILE | sed 's/\///g'`
+S3_RELEASE_FINAL_BUILD=`yq eval '.urls.ODFE.releases_final_build' $MANIFEST_FILE | gsed 's/\///g'`
 S3_RELEASE_BUCKET=`echo $S3_RELEASE_BASEURL | awk -F '/' '{print $3}'`
-PLUGIN_PATH=`yq eval '.urls.ODFE.releases' $MANIFEST_FILE | sed "s/^.*$S3_RELEASE_BUCKET\///g"`
+PLUGIN_PATH=`yq eval '.urls.ODFE.releases' $MANIFEST_FILE | gsed "s/^.*$S3_RELEASE_BUCKET\///g"`
 
 #####################################################################################################
 
@@ -162,7 +162,7 @@ then
     sleep 60
     cat install.log
     kill -9 `ps -ef | grep [e]lasticsearch | awk '{print $2}'`
-    sed -i /^node.max_local_storage_nodes/d ./config/elasticsearch.yml
+    gsed -i /^node.max_local_storage_nodes/d ./config/elasticsearch.yml
     nohup ./opendistro-tar-install.sh > install.log 2>&1 &
     sleep 60
     cat install.log
@@ -193,10 +193,10 @@ then
 
   if [ "$SETUP_DISTRO" = "zip" ]
   then
-    sed -i /install_demo_configuration/d $ES_ROOT/opendistro-tar-install.sh
+    gsed -i /install_demo_configuration/d $ES_ROOT/opendistro-tar-install.sh
     $ES_ROOT/bin/elasticsearch-plugin remove opendistro_security
     ls -l $ES_ROOT/plugins
-    sed -i '/http\.port/s/^# *//' $ES_ROOT/config/elasticsearch.yml
+    gsed -i '/http\.port/s/^# *//' $ES_ROOT/config/elasticsearch.yml
   elif [ "$SETUP_DISTRO" = "docker" ]
   then
     echo "RUN /usr/share/elasticsearch/bin/elasticsearch-plugin remove opendistro_security" >> Dockerfile
@@ -271,7 +271,7 @@ then
     sleep 60
     cat install.log
     kill -9 `ps -ef | grep [e]lasticsearch | awk '{print $2}'`
-    sed -i /^node.max_local_storage_nodes/d ./config/elasticsearch.yml
+    gsed -i /^node.max_local_storage_nodes/d ./config/elasticsearch.yml
     echo "opendistro_security.unsupported.restapi.allow_securityconfig_modification: true" >> ./config/elasticsearch.yml
     nohup ./opendistro-tar-install.sh > install.log 2>&1 &
     sleep 60
@@ -314,8 +314,8 @@ then
   if [ "$SETUP_DISTRO" = "zip" ]
   then
     $KIBANA_ROOT/bin/kibana-plugin remove opendistroSecurityKibana 
-    sed -i /^opendistro_security/d $KIBANA_ROOT/config/kibana.yml
-    sed -i 's/https/http/' $KIBANA_ROOT/config/kibana.yml
+    gsed -i /^opendistro_security/d $KIBANA_ROOT/config/kibana.yml
+    gsed -i 's/https/http/' $KIBANA_ROOT/config/kibana.yml
 
     cd $ES_ROOT
     nohup ./opendistro-tar-install.sh > install.log 2>&1 &
