@@ -29,7 +29,7 @@ jobs:
           java-version: ${{ matrix.java }}
       - uses: actions/checkout@v1
       - name: Required Packages
-        run: ./release-tools/scripts/required_packages.sh
+        run: brew install yq coreutils gnu-sed
       - name: Retrieve plugin tags
         run:  echo "p_tag_im=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)" >> $GITHUB_ENV
       - name: Checkout IM
@@ -300,7 +300,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
       - name: Required Packages
-        run: ./release-tools/scripts/required_packages.sh
+        run: brew install yq coreutils gnu-sed
       - name: Retrieve plugin tags 
         run: |
           echo "p_tag_ad=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)" >> $GITHUB_ENV
