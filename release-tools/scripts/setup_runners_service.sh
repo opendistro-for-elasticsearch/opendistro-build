@@ -22,15 +22,14 @@
 if [ "$#" -lt 2 ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]
 then
   echo "Please assign atleast 2 parameters when running this script"
-  echo "Example: $0 \$SETUP_DISTRO \$SETUP_ACTION \$ARCHITECTURE (optional) \$PLATFORM (optional)"
-  echo "Example: $0 \"zip | docker | deb | rpm\" \"--es | --es-nosec | --kibana | --kibana-nosec \" \"arm64 (optional)\" \"linux | macos (optional)\""
+  echo "Example: $0 \$SETUP_DISTRO \$SETUP_ACTION \$ARCHITECTURE (optional)"
+  echo "Example: $0 \"zip | docker | deb | rpm\" \"--es | --es-nosec | --kibana | --kibana-nosec \" \"arm64 (optional)\""
   exit 1
 fi
 
 SETUP_DISTRO=$1
 SETUP_ACTION=$2
 ARCHITECTURE="x64"; if [ ! -z "$3" ]; then ARCHITECTURE=$3; fi; echo ARCHITECTURE $ARCHITECTURE
-PLATFORM="linux"; if [ ! -z "$4" ]; then PLATFORM=$4; fi; echo PLATFORM $PLATFORM
 SETUP_PACKAGES="python3 git unzip wget jq"
 if [ "$ARCHITECTURE" = "x64" ]
 then
@@ -85,7 +84,7 @@ sudo chmod -R 777 /dev/shm
 if [ "$SETUP_DISTRO" = "zip" ]
 then
   mkdir -p $ES_ROOT
-  aws s3 cp s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/odfe/$ES_PACKAGE_NAME-$PLATFORM-$ARCHITECTURE.tar.gz . --quiet; echo $?
+  aws s3 cp s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/odfe/$ES_PACKAGE_NAME-linux-$ARCHITECTURE.tar.gz . --quiet; echo $?
   tar -zxf $ES_PACKAGE_NAME-linux-$ARCHITECTURE.tar.gz -C $ES_ROOT --strip-components 1
 fi
 
@@ -249,7 +248,7 @@ then
   if [ "$SETUP_DISTRO" = "zip" ]
   then
     mkdir -p $KIBANA_ROOT
-    aws s3 cp s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/odfe/$KIBANA_PACKAGE_NAME-$OD_VERSION-$PLATFORM-$ARCHITECTURE.tar.gz . --quiet; echo $?
+    aws s3 cp s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/odfe/$KIBANA_PACKAGE_NAME-$OD_VERSION-linux-$ARCHITECTURE.tar.gz . --quiet; echo $?
     tar -zxf $KIBANA_PACKAGE_NAME-$OD_VERSION-linux-$ARCHITECTURE.tar.gz -C $KIBANA_ROOT --strip-components 1
   elif [ "$SETUP_DISTRO" = "docker" ]
   then

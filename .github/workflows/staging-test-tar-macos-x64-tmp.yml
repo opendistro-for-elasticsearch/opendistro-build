@@ -39,7 +39,7 @@ jobs:
           ref: ${{env.p_tag_im}}
       - name: IT
         run: |
-          ./release-tools/scripts/setup_runners_service.sh zip --es-nosec x64 macos
+          ./release-tools/scripts/setup_runners_service_macos.sh zip --es-nosec
           export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../index-management; pwd
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
 
@@ -349,7 +349,7 @@ jobs:
           yarn kbn bootstrap
           
       - name: Start ES and Kibana
-        run: ./release-tools/scripts/setup_runners_service.sh zip --kibana-nosec x64 macos
+        run: ./release-tools/scripts/setup_runners_service_macos.sh zip --kibana-nosec
  
       - name: run IT
         uses: cypress-io/github-action@v2.5.0

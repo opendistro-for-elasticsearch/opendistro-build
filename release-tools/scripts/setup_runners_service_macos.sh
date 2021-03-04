@@ -23,7 +23,7 @@ if [ "$#" -lt 2 ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]
 then
   echo "Please assign atleast 2 parameters when running this script"
   echo "Example: $0 \$SETUP_DISTRO \$SETUP_ACTION \$ARCHITECTURE (optional)"
-  echo "Example: $0 \"zip | docker | deb | rpm\" \"--es | --es-nosec | --kibana | --kibana-nosec \" \"arm64 (optional)\""
+  echo "Example: $0 \"zip \" \"--es | --es-nosec | --kibana | --kibana-nosec \" \"arm64 (optional)\""
   exit 1
 fi
 
@@ -43,7 +43,7 @@ else
 fi
 
 echo "install required packages"
-sudo apt install $SETUP_PACKAGES -y || sudo yum install $SETUP_PACKAGES -y
+sudo apt install $SETUP_PACKAGES -y || sudo yum install $SETUP_PACKAGES -y | brew install $SETUP_PACKAGES
 
 REPO_ROOT=`git rev-parse --show-toplevel`
 ROOT=`dirname $(realpath $0)`; cd $ROOT
@@ -84,8 +84,9 @@ sudo chmod -R 777 /dev/shm
 if [ "$SETUP_DISTRO" = "zip" ]
 then
   mkdir -p $ES_ROOT
-  aws s3 cp s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/odfe/$ES_PACKAGE_NAME-linux-$ARCHITECTURE.tar.gz . --quiet; echo $?
-  tar -zxf $ES_PACKAGE_NAME-linux-$ARCHITECTURE.tar.gz -C $ES_ROOT --strip-components 1
+  echo "s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/odfe/$ES_PACKAGE_NAME-macos-$ARCHITECTURE.tar.gz"
+  aws s3 cp s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/odfe/$ES_PACKAGE_NAME-macos-$ARCHITECTURE.tar.gz . --quiet; echo $?
+  tar -zxf $ES_PACKAGE_NAME-macos-$ARCHITECTURE.tar.gz -C $ES_ROOT --strip-components 1
 fi
 
 if [ "$SETUP_DISTRO" = "docker" ]
@@ -248,8 +249,9 @@ then
   if [ "$SETUP_DISTRO" = "zip" ]
   then
     mkdir -p $KIBANA_ROOT
-    aws s3 cp s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/odfe/$KIBANA_PACKAGE_NAME-$OD_VERSION-linux-$ARCHITECTURE.tar.gz . --quiet; echo $?
-    tar -zxf $KIBANA_PACKAGE_NAME-$OD_VERSION-linux-$ARCHITECTURE.tar.gz -C $KIBANA_ROOT --strip-components 1
+    echo "s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/odfe/$KIBANA_PACKAGE_NAME-$OD_VERSION-macos-$ARCHITECTURE.tar.gz"
+    aws s3 cp s3://$S3_RELEASE_BUCKET/${PLUGIN_PATH}${OD_VERSION}/odfe/$KIBANA_PACKAGE_NAME-$OD_VERSION-macos-$ARCHITECTURE.tar.gz . --quiet; echo $?
+    tar -zxf $KIBANA_PACKAGE_NAME-$OD_VERSION-macos-$ARCHITECTURE.tar.gz -C $KIBANA_ROOT --strip-components 1
   elif [ "$SETUP_DISTRO" = "docker" ]
   then
     echo "FROM opendistroforelasticsearch/opendistroforelasticsearch-kibana:$OD_VERSION" >> Dockerfile.kibana
