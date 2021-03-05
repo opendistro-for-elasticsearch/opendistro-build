@@ -9,11 +9,14 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v1
+      - name: Required Packages
+        run: ./release-tools/scripts/required_packages.sh
 
       - name: Getting OD version
         run: |
-          OD_VERSION=`./bin/version-info --od`
+          OD_VERSION=`./release-tools/scripts/version-info.sh --od`
           echo "od_version=$OD_VERSION" >> $GITHUB_ENV
+
       - name: Required Packages
         run: ./release-tools/scripts/required_packages.sh    
       - name: Set AMI from private to public in all regions
@@ -26,7 +29,7 @@ jobs:
           aws configure set aws_access_key_id ${{ secrets.AWS_EC2_ACCESS_KEY_ID }}
           aws configure set aws_secret_access_key ${{ secrets.AWS_EC2_SECRET_ACCESS_KEY }}
           aws configure set region us-east-1
-          aws configure set cli_pager ""
+          export AWS_PAGER=""
          
           REGIONS_LIST=`aws ec2 describe-regions --query 'Regions[].RegionName[]' --output text`
           for region_name in $REGIONS_LIST
