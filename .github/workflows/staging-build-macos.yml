@@ -5,8 +5,8 @@ on:
 #    - cron: '0 12 * * *'
   repository_dispatch:
     types: [staging-build-macos]
-#  push:
-#    branches: [sreekarj_macos]
+  push:
+    branches: [sreekarj_macos]
 
 jobs:
   build-es-artifacts-x64:
