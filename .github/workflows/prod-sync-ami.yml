@@ -3,9 +3,6 @@ name: Sync ami artifacts to Prod
 on: 
   repository_dispatch:
     types: [prod-sync-ami]
-  push:
-    branches:
-      - "ami=fix"
 
 jobs:
   Sync-AMI-Prod:
@@ -42,9 +39,8 @@ jobs:
             aws configure list | grep region | awk '{print $2}'
             
             echo "Making AMI Public in region (${region_name}): Open Distro for Elasticsearch-${{ env.od_version }}"
-            # AMI_IMAGE_ID=`aws ec2 describe-images --filters "Name=name,Values=Open Distro for Elasticsearch-${{ env.od_version }}*" --query 'Images[*].{ID:ImageId}' --output text`
-            # aws ec2 modify-image-attribute --image-id "${AMI_IMAGE_ID}" --launch-permission "Add=[{Group=all}]"
-            echo worked
+            AMI_IMAGE_ID=`aws ec2 describe-images --filters "Name=name,Values=Open Distro for Elasticsearch-${{ env.od_version }}*" --query 'Images[*].{ID:ImageId}' --output text`
+            aws ec2 modify-image-attribute --image-id "${AMI_IMAGE_ID}" --launch-permission "Add=[{Group=all}]"
           done
 
           echo "AMI has been published / set to public on all regions"
