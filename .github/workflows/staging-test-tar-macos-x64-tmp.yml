@@ -353,6 +353,8 @@ jobs:
  
       - name: run IT
         uses: cypress-io/github-action@v2
+        env:
+          CYPRESS_CACHE_FOLDER: "~/.cache/Cypress"
         with:
           working-directory: kibana/plugins/anomaly-detection-kibana-plugin
           command: yarn cy:run --config baseurl=http://localhost:5601
