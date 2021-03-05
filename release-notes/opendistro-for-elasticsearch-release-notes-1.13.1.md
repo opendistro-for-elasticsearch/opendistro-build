@@ -1,10 +1,10 @@
 # Open Distro for Elasticsearch 1.13.1 Release Notes
 
 ## Release Highlights
-Open Distro for Elasticsearch 1.13.0 shipped without the Performance Analyzer active in TAR and Docker formats. Additionally, the security plugin included in 1.13.0 threw errors on _cat/health calls and introduced a performance regression when compared to 1.12. Version 1.13.1 was released on March 4th, 2021 to re-enable Performance Analyzer as well as resolve the error and the performance regression in the security plugin.
+Open Distro for Elasticsearch 1.13.0 was shipped without the Performance Analyzer active in TAR and Docker formats. Additionally, the security plugin included in 1.13.0 threw errors on _cat/health calls and introduced a performance regression when compared to 1.12.0. Version 1.13.1 was released on March 4th, 2021 to re-enable Performance Analyzer as well as resolve the error and the performance regression in the security plugin.
 
 ## Release Details
-Open Distro for Elasticsearch 1.13.0 includes the following bug fixes and maintenance updates.
+Open Distro for Elasticsearch 1.13.1 includes the following bug fixes and maintenance updates.
 
 ## BUG FIXES
 
