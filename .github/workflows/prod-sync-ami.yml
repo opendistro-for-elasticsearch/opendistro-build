@@ -32,7 +32,7 @@ jobs:
           aws configure set aws_access_key_id ${{ secrets.AWS_EC2_ACCESS_KEY_ID }}
           aws configure set aws_secret_access_key ${{ secrets.AWS_EC2_SECRET_ACCESS_KEY }}
           aws configure set region us-east-1
-          aws configure set cli_pager=
+          export AWS_PAGER=""
          
           REGIONS_LIST=`aws ec2 describe-regions --query 'Regions[].RegionName[]' --output text`
           for region_name in $REGIONS_LIST
@@ -42,8 +42,9 @@ jobs:
             aws configure list | grep region | awk '{print $2}'
             
             echo "Making AMI Public in region (${region_name}): Open Distro for Elasticsearch-${{ env.od_version }}"
-            AMI_IMAGE_ID=`aws ec2 describe-images --filters "Name=name,Values=Open Distro for Elasticsearch-${{ env.od_version }}*" --query 'Images[*].{ID:ImageId}' --output text`
-            aws ec2 modify-image-attribute --image-id "${AMI_IMAGE_ID}" --launch-permission "Add=[{Group=all}]"
+            # AMI_IMAGE_ID=`aws ec2 describe-images --filters "Name=name,Values=Open Distro for Elasticsearch-${{ env.od_version }}*" --query 'Images[*].{ID:ImageId}' --output text`
+            # aws ec2 modify-image-attribute --image-id "${AMI_IMAGE_ID}" --launch-permission "Add=[{Group=all}]"
+            echo worked
           done
 
           echo "AMI has been published / set to public on all regions"
