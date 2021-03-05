@@ -5,7 +5,7 @@ on:
     types: [prod-sync-ami]
   push:
     branches:
-      - "ami-fix"
+      - "ami=fix"
 
 jobs:
   Sync-AMI-Prod:
