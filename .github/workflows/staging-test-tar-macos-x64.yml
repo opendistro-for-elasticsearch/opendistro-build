@@ -1,10 +1,10 @@
-name: Test TAR Artifacts X64
+name: Test TAR Artifacts macOS X64
 
 on:
 #  schedule:
 #    - cron: '0 11 * * *'
   repository_dispatch:
-    types: [staging-test-tar-x64]
+    types: [staging-test-tar-macos-x64]
 
 jobs:
   Test-IM-NoSec:
@@ -27,7 +27,7 @@ jobs:
           java-version: ${{ matrix.java }}
       - uses: actions/checkout@v1
       - name: Required Packages
-        run: ./release-tools/scripts/required_packages.sh
+        run: brew install yq coreutils gnu-sed
       - name: Retrieve plugin tags
         run:  echo "p_tag_im=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management)" >> $GITHUB_ENV
       - name: Checkout IM
@@ -37,7 +37,7 @@ jobs:
           ref: ${{env.p_tag_im}}
       - name: IT
         run: |
-          ./release-tools/scripts/setup_runners_service.sh zip --es-nosec
+          ./release-tools/scripts/setup_runners_service_macos.sh --es-nosec x64
           export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../index-management; pwd
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
 
@@ -61,7 +61,7 @@ jobs:
           java-version: ${{ matrix.java }}
       - uses: actions/checkout@v1
       - name: Required Packages
-        run: ./release-tools/scripts/required_packages.sh
+        run: brew install yq coreutils gnu-sed
       - name: Retrieve plugin tags
         run:  echo "p_tag_alerting=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)" >> $GITHUB_ENV
       - name: Checkout Alerting
@@ -71,7 +71,7 @@ jobs:
           ref: ${{env.p_tag_alerting}}
       - name: IT
         run: |
-          ./release-tools/scripts/setup_runners_service.sh zip --es-nosec
+          ./release-tools/scripts/setup_runners_service_macos.sh --es-nosec x64
           export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../alerting/alerting; pwd
           ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
 
@@ -95,7 +95,7 @@ jobs:
           java-version: ${{ matrix.java }}
       - uses: actions/checkout@v1
       - name: Required Packages
-        run: ./release-tools/scripts/required_packages.sh
+        run: brew install yq coreutils gnu-sed
       - name: Retrieve plugin tags
         run:  echo "p_tag_sql=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)" >> $GITHUB_ENV
       - name: Checkout SQL
@@ -105,7 +105,7 @@ jobs:
           ref: ${{env.p_tag_sql}}
       - name: IT
         run: |
-          ./release-tools/scripts/setup_runners_service.sh zip --es-nosec
+          ./release-tools/scripts/setup_runners_service_macos.sh --es-nosec x64
           export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../sql; pwd
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
           
@@ -129,7 +129,7 @@ jobs:
           java-version: ${{ matrix.java }}
       - uses: actions/checkout@v1
       - name: Required Packages
-        run: ./release-tools/scripts/required_packages.sh
+        run: brew install yq coreutils gnu-sed
       - name: Retrieve plugin tags
         run:  echo "p_tag_knn=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/k-NN)" >> $GITHUB_ENV
       - name: Checkout k-NN
@@ -139,7 +139,7 @@ jobs:
           ref: ${{env.p_tag_knn}}
       - name: IT
         run: |
-          ./release-tools/scripts/setup_runners_service.sh zip --es-nosec
+          ./release-tools/scripts/setup_runners_service_macos.sh --es-nosec x64
           export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../k-NN; pwd
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
           
@@ -163,7 +163,7 @@ jobs:
           java-version: ${{ matrix.java }}
       - uses: actions/checkout@v1
       - name: Required Packages
-        run: ./release-tools/scripts/required_packages.sh
+        run: brew install yq coreutils gnu-sed
       - name: Retrieve plugin tags
         run:  echo "p_tag_ad=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)" >> $GITHUB_ENV
       - name: Checkout anomaly-detection
@@ -173,7 +173,7 @@ jobs:
           ref: ${{env.p_tag_ad}}
       - name: IT
         run: |
-          ./release-tools/scripts/setup_runners_service.sh zip --es-nosec
+          ./release-tools/scripts/setup_runners_service_macos.sh --es-nosec x64
           export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../anomaly-detection; pwd
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest"
 
@@ -197,7 +197,7 @@ jobs:
           java-version: ${{ matrix.java }}
       - uses: actions/checkout@v1
       - name: Required Packages
-        run: ./release-tools/scripts/required_packages.sh
+        run: brew install yq coreutils gnu-sed
       - name: Retrieve plugin tags
         run:  echo "p_tag_sql=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)" >> $GITHUB_ENV
       - name: Checkout SQL
@@ -207,7 +207,7 @@ jobs:
           ref: ${{env.p_tag_sql}}
       - name: IT
         run: |
-          ./release-tools/scripts/setup_runners_service.sh zip --es
+          ./release-tools/scripts/setup_runners_service_macos.sh --es x64
           export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../sql; pwd
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin
   
@@ -231,7 +231,7 @@ jobs:
           java-version: ${{ matrix.java }}
       - uses: actions/checkout@v1
       - name: Required Packages
-        run: ./release-tools/scripts/required_packages.sh
+        run: brew install yq coreutils gnu-sed
       - name: Retrieve plugin tags
         run:  echo "p_tag_ad=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)" >> $GITHUB_ENV
       - name: Checkout anomaly-detection
@@ -241,7 +241,7 @@ jobs:
           ref: ${{env.p_tag_ad}}
       - name: IT
         run: |
-          ./release-tools/scripts/setup_runners_service.sh zip --es
+          ./release-tools/scripts/setup_runners_service_macos.sh --es x64
           export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../anomaly-detection; pwd
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest" -Dhttps=true -Duser=admin -Dpassword=admin
   
@@ -261,7 +261,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
       - name: Required Packages
-        run: ./release-tools/scripts/required_packages.sh
+        run: brew install yq coreutils gnu-sed
       - name: Retrieve plugin tags 
         run:  echo "p_tag_alerting=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)" >> $GITHUB_ENV
 
@@ -277,7 +277,7 @@ jobs:
 
       - name: IT
         run: |
-          ./release-tools/scripts/setup_runners_service.sh zip --es
+          ./release-tools/scripts/setup_runners_service_macos.sh --es x64
           export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../alerting/alerting; pwd
           ls -ltr
           ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin -Dsecurity=true
@@ -298,7 +298,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
       - name: Required Packages
-        run: ./release-tools/scripts/required_packages.sh
+        run: brew install yq coreutils gnu-sed
       - name: Retrieve plugin tags 
         run: |
           echo "p_tag_ad=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)" >> $GITHUB_ENV
@@ -347,13 +347,13 @@ jobs:
           yarn kbn bootstrap
           
       - name: Start ES and Kibana
-        run: ./release-tools/scripts/setup_runners_service.sh zip --kibana-nosec
+        run: ./release-tools/scripts/setup_runners_service_macos.sh --kibana-nosec x64
  
       - name: run IT
-        uses: cypress-io/github-action@v2.5.0
-        with:
-          working-directory: kibana/plugins/anomaly-detection-kibana-plugin
-          command: yarn cy:run --config baseurl=http://localhost:5601
+        run: |
+          cd ./kibana/plugins/anomaly-detection-kibana-plugin
+          yarn add cypress --dev
+          yarn cy:run --config baseurl=http://localhost:5601
     
   Test-SQL-KIBANA-NoSec:
     runs-on: macos-latest
@@ -371,7 +371,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
       - name: Required Packages
-        run: ./release-tools/scripts/required_packages.sh
+        run: brew install yq coreutils gnu-sed
       - name: Retrieve plugin tags 
         run: |
           echo "p_tag_sql_kibana=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)" >> $GITHUB_ENV
@@ -433,16 +433,16 @@ jobs:
 
       - name: Start ES and Kibana
         run: |
-          ./release-tools/scripts/setup_runners_service.sh zip --kibana-nosec
+          ./release-tools/scripts/setup_runners_service_macos.sh --kibana-nosec x64
           echo "load the indices"
           curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/sql/master/integ-test/src/test/resources/accounts.json | curl -s -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/accounts/_bulk?pretty' --data-binary @- > /dev/null 2>&1
           curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/sql/master/integ-test/src/test/resources/employee_nested.json | curl -s -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/employee_nested/_bulk?pretty' --data-binary @- > /dev/null 2>&1
  
       - name: run IT
-        uses: cypress-io/github-action@v2.5.0
-        with:
-          working-directory: kibana/plugins/workbench
-          command: npx cypress run
+        run: |
+          cd ./kibana/plugins/workbench
+          npx cypress install
+          npx cypress run
 
   Test-Kibana-Notebooks-NoSec:
     runs-on: macos-latest
@@ -461,7 +461,7 @@ jobs:
           aws-region: us-east-1
 
       - name: Install required packages
-        run: release-tools/scripts/required_packages.sh
+        run: brew install yq coreutils gnu-sed
 
       - name: Retrieve plugin tags 
         run: |
@@ -512,13 +512,13 @@ jobs:
 
       - name: Start ES and Kibana
         run: |
-          release-tools/scripts/setup_runners_service.sh zip --kibana-nosec 
+          release-tools/scripts/setup_runners_service_macos.sh --kibana-nosec x64
 
       - name: Run IT
-        uses: cypress-io/github-action@v2.5.0
-        with:
-          working-directory: kibana/plugins/kibana-notebooks
-          command: npx cypress run
+        run: |
+          cd ./kibana/plugins/kibana-notebooks
+          npx cypress install
+          npx cypress run
 
   Test-Alerting-Kibana-NoSec:
     runs-on: macos-latest
@@ -537,7 +537,7 @@ jobs:
           aws-region: us-east-1
 
       - name: Required Packages
-        run: release-tools/scripts/required_packages.sh
+        run: brew install yq coreutils gnu-sed
 
       - name: Retrieve plugin tags 
         run: |
@@ -586,13 +586,13 @@ jobs:
           yarn kbn bootstrap
           
       - name: Start ES and Kibana
-        run: release-tools/scripts/setup_runners_service.sh zip --kibana-nosec
+        run: release-tools/scripts/setup_runners_service_macos.sh --kibana-nosec x64
 
       - name: Run Cypress tests
-        uses: cypress-io/github-action@v2
-        with:
-          working-directory: kibana/plugins/alerting-kibana-plugin
-          command: yarn run cypress run
+        run: |
+          cd ./kibana/plugins/alerting-kibana-plugin
+          yarn add cypress --dev
+          yarn run cypress run
 
   Test-AD-KIBANA:
     runs-on: macos-latest
@@ -610,7 +610,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
       - name: Required Packages
-        run: ./release-tools/scripts/required_packages.sh
+        run: brew install yq coreutils gnu-sed
       - name: Retrieve plugin tags 
         run: |
           echo "p_tag_ad=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)" >> $GITHUB_ENV
@@ -659,13 +659,13 @@ jobs:
           yarn kbn bootstrap
           
       - name: Start ES and Kibana
-        run: ./release-tools/scripts/setup_runners_service.sh zip --kibana
+        run: ./release-tools/scripts/setup_runners_service_macos.sh --kibana x64
  
       - name: run IT
-        uses: cypress-io/github-action@v2.5.0
-        with:
-          working-directory: kibana/plugins/anomaly-detection-kibana-plugin
-          command: yarn cy:run-with-security --config baseurl=http://localhost:5601
+        run: |
+          cd ./kibana/plugins/anomaly-detection-kibana-plugin
+          yarn add cypress --dev
+          yarn cy:run-with-security --config baseurl=http://localhost:5601
 
   Test-SEC-KIBANA:
     runs-on: macos-latest
@@ -683,7 +683,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
       - name: Required Packages
-        run: ./release-tools/scripts/required_packages.sh
+        run: brew install yq coreutils gnu-sed
       - name: Retrieve plugin tags 
         run: |
           echo "p_tag_sec_kibana=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/security-kibana-plugin)" >> $GITHUB_ENV
@@ -732,7 +732,7 @@ jobs:
           yarn kbn bootstrap --oss
           
       - name: Start ES and Kibana
-        run: release-tools/scripts/setup_runners_service.sh zip --kibana
+        run: release-tools/scripts/setup_runners_service_macos.sh --kibana x64
  
       - name: Run IT
         run: |
