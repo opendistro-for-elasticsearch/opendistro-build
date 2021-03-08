@@ -29,15 +29,13 @@ jobs:
       run: ./release-tools/scripts/required_packages.sh
 
     - name: Build macOS
-      env:
-        install4j_license: ${{ secrets.INSTALL4J_LICENSE }}
-      run: ./elasticsearch/macos/opendistro-macos-build.sh macos x64
+      run: ./elasticsearch/macos/opendistro-macos-build.sh x64
        
 
 
   build-kibana-artifacts-x64:
     name: Build macOS KIBANA Artifacts x64
-    runs-on: macos-latest
+    runs-on: macos-10.15
     steps:
       - uses: actions/checkout@v1
       - name: Configure AWS Credentials
@@ -49,4 +47,4 @@ jobs:
       - name: Required Packages
         run: brew install yq coreutils gnu-sed
       - name: Build Kibana
-        run: ./kibana/macos/opendistro-kibana-build.sh tar macos x64
+        run: ./kibana/macos/opendistro-macos-kibana-build.sh x64

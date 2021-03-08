@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License").
 # You may not use this file except in compliance with the License.
@@ -13,7 +13,8 @@
 # express or implied. See the License for the specific language governing
 # permissions and limitations under the License.
 
-ES_HOME=`dirname $(realpath $0)`; cd $ES_HOME
+FULL_PATH="$(cd "$(dirname $0)" && pwd)/$(basename $0)"
+ES_HOME=`dirname $FULL_PATH`; cd $ES_HOME
 ES_KNN_LIB_DIR=$ES_HOME/plugins/opendistro-knn/knn-lib
 ##Security Plugin
 bash $ES_HOME/plugins/opendistro_security/tools/install_demo_configuration.sh -y -i -s
@@ -43,7 +44,7 @@ echo "done plugins"
 
 ##Check KNN lib existence in ES TAR distribution
 echo "Checking kNN library"
-FILE=`ls $ES_KNN_LIB_DIR/libKNNIndex*.so`
+FILE=`ls $ES_KNN_LIB_DIR/libKNNIndex*.jnilib`
 if test -f "$FILE"; then
     echo "FILE EXISTS $FILE"
 else
@@ -56,7 +57,7 @@ if echo "$OSTYPE" | grep -qi "darwin"; then
         echo "KNN lib path has been set"
     else
         export JAVA_LIBRARY_PATH=$JAVA_LIBRARY_PATH:$ES_KNN_LIB_DIR
-        echo "KNN lib path not found, set new path"
+        echo "KNN lib path not found, new path has been set"
         echo $JAVA_LIBRARY_PATH
     fi
 else
@@ -64,7 +65,7 @@ else
         echo "KNN lib path has been set"
     else
         export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ES_KNN_LIB_DIR
-        echo "KNN lib path not found, set new path"
+        echo "KNN lib path not found, new path has been set"
         echo $LD_LIBRARY_PATH
     fi
 fi
