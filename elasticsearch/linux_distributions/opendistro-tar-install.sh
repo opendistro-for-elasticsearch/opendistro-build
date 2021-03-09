@@ -16,7 +16,7 @@
 ES_HOME=`dirname $(realpath $0)`; cd $ES_HOME
 ES_KNN_LIB_DIR=$ES_HOME/plugins/opendistro-knn/knn-lib
 ##Security Plugin
-bash $ES_HOME/plugins/opendistro_security/tools/install_demo_configuration.sh -y -i -s
+bash $ES_HOME/plugins/opendistro-security/tools/install_demo_configuration.sh -y -i -s
 
 ##Perf Plugin
 chmod 755 $ES_HOME/plugins/opendistro-performance-analyzer/pa_bin/performance-analyzer-agent

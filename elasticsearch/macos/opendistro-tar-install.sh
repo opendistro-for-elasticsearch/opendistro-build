@@ -17,7 +17,7 @@ FULL_PATH="$(cd "$(dirname $0)" && pwd)/$(basename $0)"
 ES_HOME=`dirname $FULL_PATH`; cd $ES_HOME
 ES_KNN_LIB_DIR=$ES_HOME/plugins/opendistro-knn/knn-lib
 ##Security Plugin
-bash $ES_HOME/plugins/opendistro_security/tools/install_demo_configuration.sh -y -i -s
+bash $ES_HOME/plugins/opendistro-security/tools/install_demo_configuration.sh -y -i -s
 
 ##Perf Plugin
 chmod 755 $ES_HOME/plugins/opendistro-performance-analyzer/pa_bin/performance-analyzer-agent

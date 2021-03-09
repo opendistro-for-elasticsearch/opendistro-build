@@ -85,7 +85,7 @@ fi
 if [[ -d "/usr/share/elasticsearch/plugins/opendistro_security" && "$DISABLE_INSTALL_DEMO_CONFIG" != "true" ]]; then
     # Install Demo certifactes for Security Plugin and update the elasticsearch.yml
     # file to use those certificates.
-    /usr/share/elasticsearch/plugins/opendistro_security/tools/install_demo_configuration.sh -y -i -s
+    /usr/share/elasticsearch/plugins/opendistro-security/tools/install_demo_configuration.sh -y -i -s
 fi
 
 if [[ -d "/usr/share/elasticsearch/plugins/opendistro-performance-analyzer" ]]; then
