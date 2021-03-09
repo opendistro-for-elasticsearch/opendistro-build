@@ -110,7 +110,7 @@ if [ "$SETUP_ACTION" = "--es-nosec" ] || [ "$SETUP_ACTION" = "--kibana-nosec" ]
 then
   echo "remove es security"
   gsed -i /install_demo_configuration/d $ES_ROOT/opendistro-tar-install.sh
-  $ES_ROOT/bin/elasticsearch-plugin remove opendistro_security
+  $ES_ROOT/bin/elasticsearch-plugin remove opendistro-security
   ls -l $ES_ROOT/plugins
   gsed -i '/http\.port/s/^# *//' $ES_ROOT/config/elasticsearch.yml
 fi
