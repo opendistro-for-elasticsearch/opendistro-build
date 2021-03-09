@@ -1,0 +1,50 @@
+name: Build macOS using tar artifacts
+
+on:
+#  schedule:
+#    - cron: '0 12 * * *'
+  repository_dispatch:
+    types: [staging-build-macos]
+
+jobs:
+  build-es-artifacts-x64:
+    name: Build macOS ES Artifacts X64
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Set Up JDK
+      uses: actions/setup-java@v1
+      with:
+        java-version: 14
+
+    - name: Required Packages
+      run: ./release-tools/scripts/required_packages.sh
+
+    - name: Build macOS
+      run: ./elasticsearch/macos/opendistro-macos-build.sh x64
+       
+
+
+  build-kibana-artifacts-x64:
+    name: Build macOS KIBANA Artifacts x64
+    runs-on: macos-10.15
+    steps:
+      - uses: actions/checkout@v1
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Required Packages
+        run: brew install yq coreutils gnu-sed
+      - name: Build Kibana
+        run: ./kibana/macos/opendistro-macos-kibana-build.sh x64

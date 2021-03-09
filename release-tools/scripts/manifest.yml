@@ -15,14 +15,14 @@ urls:
     linux_arm64: https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-7.10.2-linux-aarch64.tar.gz
     windows_x64: https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-7.10.2-windows-x86_64.zip
     windows_arm64: 
-    macos_x64:
+    macos_x64: https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-7.10.2-darwin-x86_64.tar.gz
     macos_arm64:
   KIBANA:
     linux_x64: https://artifacts.elastic.co/downloads/kibana/kibana-oss-7.10.2-linux-x86_64.tar.gz
     linux_arm64: https://artifacts.elastic.co/downloads/kibana/kibana-oss-7.10.2-linux-aarch64.tar.gz
     windows_x64: https://artifacts.elastic.co/downloads/kibana/kibana-oss-7.10.2-windows-x86_64.zip
     windows_arm64: 
-    macos_x64:
+    macos_x64: https://artifacts.elastic.co/downloads/kibana/kibana-oss-7.10.2-darwin-x86_64.tar.gz
     macos_arm64:
   ODFE:
     prod: s3://artifacts.opendistroforelasticsearch.amazon.com/
