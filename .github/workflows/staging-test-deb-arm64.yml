@@ -5,8 +5,6 @@ on:
 #    - cron: '15 12 * * *'
   repository_dispatch:
     types: [staging-test-deb-arm64]
-  push:
-    branches: [sreekarj_security]
 
 jobs:
   Provision-Runners:
