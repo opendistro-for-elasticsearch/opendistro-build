@@ -5,8 +5,8 @@ on:
 #    - cron: '0 11 * * *'
   repository_dispatch:
     types: [staging-test-tar-arm64]
-#  push:
-#    branches: [sreekarj_security]
+  push:
+    branches: [sreekarj_security]
 
 jobs:
   plugin-availability:
