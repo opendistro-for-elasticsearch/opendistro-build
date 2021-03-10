@@ -6,55 +6,70 @@ on:
       - "async"
 
 jobs:
-  Get-versions:
-    name: Get-versions
+  Provision-Runners:
+    name: Provision-Runners
     runs-on: ubuntu-18.04
-    outputs:
-      es_version: ${{ env.es_version }}
-      od_version: ${{ env.od_version }}
-      p_tag_async: ${{ env.p_tag_async }}
     steps:
       - uses: actions/checkout@v1
-      - name: Get all versions and tags
-        run: |
-          release-tools/scripts/required_packages.sh
-          echo "es_version=$(release-tools/scripts/version-info.sh --es)" >> $GITHUB_ENV
-          echo "od_version=$(release-tools/scripts/version-info.sh --od)" >> $GITHUB_ENV
-          echo "p_tag_async=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/asynchronous-search)" >> $GITHUB_ENV
-
-  Test-Async-NoSec:
-    needs: [Get-versions]
-    runs-on: windows-2019
-    name: Test-Async-NoSec
-    strategy:
-      fail-fast: false
-      matrix:
-        java: [14]
-    steps:
-      - uses: actions/checkout@v1
-
-      - uses: actions/checkout@v1
-        with:
-           repository: opendistro-for-elasticsearch/asynchronous-search
-           ref: ${{needs.Get-versions.outputs.p_tag_async}}
-
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-
-      - name: Set Up JDK ${{ matrix.java }}
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.java }}
-       
-      - name: RUN ES and Async IntegTest
+          aws-access-key-id: ${{ secrets.AWS_EC2_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_EC2_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
+      - name: AWS Cli Processing
         run: |
-          release-tools\scripts\setup_runners_service_windows.ps1 --es-nosec ${{needs.Get-versions.outputs.od_version}}
-          $ErrorActionPreference = 'SilentlyContinue'
-          echo running tests
-          cd ..\asynchronous-search
-          dir
-          ./gradlew.bat integTest -D tests.rest.cluster=localhost:9200 -D tests.cluster=localhost:9200 -D tests.clustername=es-integrationtest --stacktrace          
+          #!/bin/bash
+          # Please add comma at the end of the RUNNERS strings
+          # Don't add space after commas
+          # RUNNERS="odfe-rpm-im-nosec-arm64,odfe-rpm-alerting-nosec-arm64,odfe-rpm-sql-nosec-arm64,odfe-rpm-knn-nosec-arm64,odfe-rpm-ad-nosec-arm64,"
+          # RUNNERS+="odfe-rpm-sql-arm64,odfe-rpm-ad-arm64,odfe-rpm-alerting-arm64,"
+          # RUNNERS+="odfe-rpm-ad-kibana-nosec-arm64,odfe-rpm-sql-kibana-nosec-arm64,"
+          # RUNNERS+="odfe-rpm-ad-kibana-arm64,odfe-rpm-sec-kibana-arm64,odfe-rpm-kibana-nb-nosec-arm64"
+          RUNNERS="odfe-rpm-async-arm64"
+          release-tools/scripts/setup_runners.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }} ami-0ef0c96643bbd01f2
+
+  Test-Async-NoSec:
+    needs: [Provision-Runners]
+    name: Test-Async-NoSec
+    runs-on: [self-hosted, Linux, ARM64, odfe-rpm-async-arm64]
+    steps:
+      - uses: actions/checkout@v1
+      - name: Required Packages
+        run: release-tools/scripts/required_packages.sh
+      - name: Retrieve plugin tags
+        run: echo "p_tag_async=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/asynchronous-search)" >> $GITHUB_ENV
+      - uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/asynchronous-search
+          ref: ${{env.p_tag_async}}
+      - name: IT for IM NoSec
+        run: |
+          release-tools/scripts/setup_runners_service.sh rpm --es-nosec arm64
+          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../asynchronous-search; pwd
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
+
+  CleanUp-Runners:
+    needs: [Test-Async-NoSec]
+    if: always()
+    name: CleanUp-Runners
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v1
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_EC2_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_EC2_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
+      - name: AWS Cli Processing
+        run: |
+          #!/bin/bash
+          # Please add comma at the end of the RUNNERS strings
+          # Don't add space after commas
+          # RUNNERS="odfe-rpm-im-nosec-arm64,odfe-rpm-alerting-nosec-arm64,odfe-rpm-sql-nosec-arm64,odfe-rpm-knn-nosec-arm64,odfe-rpm-ad-nosec-arm64,"
+          # RUNNERS+="odfe-rpm-sql-arm64,odfe-rpm-ad-arm64,odfe-rpm-alerting-arm64,"
+          # RUNNERS+="odfe-rpm-ad-kibana-nosec-arm64,odfe-rpm-sql-kibana-nosec-arm64,"
+          # RUNNERS+="odfe-rpm-ad-kibana-arm64,odfe-rpm-sec-kibana-arm64,odfe-rpm-kibana-nb-nosec-arm64"
+          RUNNERS="odfe-rpm-async-arm64"
+          release-tools/scripts/setup_runners.sh terminate $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
