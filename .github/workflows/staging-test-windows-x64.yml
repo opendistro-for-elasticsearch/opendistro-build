@@ -5,6 +5,8 @@ on:
 #    - cron: '0 12 * * *'
   repository_dispatch:
     types: [staging-test-windows-x64]
+  push:
+    branches: [sreekarj_security]
 
 jobs:
   Get-versions:
