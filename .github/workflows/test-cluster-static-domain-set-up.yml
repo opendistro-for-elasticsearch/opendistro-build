@@ -13,6 +13,8 @@ on:
 #    - cron: '0 13 * * *'
   repository_dispatch:
     types: [test-cluster-static-domain-set-up]
+  push:
+    branches: [sreekarj_security]
 
 jobs:
   Create-Cluster:
@@ -105,15 +107,15 @@ jobs:
               stackName=ODFE-$DISTRIBUTION_TYPE-$ARCHITECTURE-SECURITY-$SECURITY
               echo $stackName
               stack_setup $DISTRIBUTION_TYPE $SECURITY $ARCHITECTURE
-            elif ${{ github.event_name == 'schedule' }}
+            elif ${{ github.event_name == 'schedule' }} || if ${{ github.event_name == 'push' }}
             then
               # Add the ditributions and architectures in the below array. All CAPS
               ARCHITECTURE=(X64 ARM64)
               for arch in ${ARCHITECTURE[@]}; do
                   SECURITY=(ENABLE DISABLE)
                   for sec in ${SECURITY[@]}; do
-                      DISTRIBUTION_TYPE=(TAR DEB RPM)
-                      for dis in ${DISTRIBUTION_TYPE[@]}; do    
+                      DISTRIBUTION_TYPE=(TAR)
+                      for dis in ${DISTRIBUTION_TYPE[@]}; do
                         stackName=ODFE-$dis-$arch-SECURITY-$sec
                         echo "$stackName in process"
                         stack_setup $dis $sec $arch
