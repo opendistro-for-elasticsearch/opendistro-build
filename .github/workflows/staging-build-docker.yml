@@ -5,6 +5,8 @@ on:
 #    - cron: '0 12 * * *'
   repository_dispatch:
     types: [staging-build-docker]
+  push:
+    branches: [sreekarj_security]
 
 jobs:
   build-es-docker:
