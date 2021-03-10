@@ -34,6 +34,6 @@ jobs:
 
       - name: IT
         run: |
-          release-tools/scripts/setup_runners_service.sh docker --es-nosec
+          release-tools/scripts/setup_runners_service.sh deb --es-nosec
           export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../asynchronous-search; pwd
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
