@@ -5,9 +5,26 @@ on:
     branches:
       - "async"
 
-jobs: 
-  Test-Async-NoSec:
+jobs:
+  Get-versions:
+    name: Get-versions
     runs-on: ubuntu-18.04
+    outputs:
+      es_version: ${{ env.es_version }}
+      od_version: ${{ env.od_version }}
+      p_tag_async: ${{ env.p_tag_async }}
+    steps:
+      - uses: actions/checkout@v1
+      - name: Get all versions and tags
+        run: |
+          release-tools/scripts/required_packages.sh
+          echo "es_version=$(release-tools/scripts/version-info.sh --es)" >> $GITHUB_ENV
+          echo "od_version=$(release-tools/scripts/version-info.sh --od)" >> $GITHUB_ENV
+          echo "p_tag_async=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/asynchronous-search)" >> $GITHUB_ENV
+
+  Test-Async-NoSec:
+    needs: [Get-versions]
+    runs-on: windows-2019
     name: Test-Async-NoSec
     strategy:
       fail-fast: false
@@ -16,30 +33,28 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
-      - name: Install Required Packages
-        run: release-tools/scripts/required_packages.sh
-      # - name: Set up AWS Cred
-      #   uses: aws-actions/configure-aws-credentials@v1
-      #   with:
-      #     aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
-      #     aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
-      #     aws-region: us-east-1
- 
-      - name: Retrieve plugin tags 
-        run:  echo "p_tag_async=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/asynchronous-search)" >> $GITHUB_ENV
-
       - uses: actions/checkout@v1
         with:
-          repository: opendistro-for-elasticsearch/asynchronous-search
-          ref: ${{env.p_tag_async}}
+           repository: opendistro-for-elasticsearch/asynchronous-search
+           ref: ${{needs.Get-versions.outputs.p_tag_im}}
 
-      - name: Setup Java
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Set Up JDK ${{ matrix.java }}
         uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.java }}
-
-      - name: IT
+       
+      - name: RUN ES and Async IntegTest
         run: |
-          release-tools/scripts/setup_runners_service.sh docker --es-nosec
-          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../asynchronous-search; pwd
-          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
+          release-tools\scripts\setup_runners_service_windows.ps1 --es-nosec ${{needs.Get-versions.outputs.od_version}}
+          $ErrorActionPreference = 'SilentlyContinue'
+          echo running tests
+          cd ..\asynchronous-search
+          dir
+          ./gradlew.bat integTest -D tests.rest.cluster=localhost:9200 -D tests.cluster=localhost:9200 -D tests.clustername=es-integrationtest --stacktrace          
