@@ -59,7 +59,7 @@ spec:
       initContainers:
 {{- if .Values.elasticsearch.sysctl.enabled }}
       - name: init-sysctl
-        image: {{ .Values.global.registry }}/{{ .Values.elasticsearch.initContainer.image }}:{{ .Values.elasticsearch.initContainer.imageTag }}
+        image: {{ .Values.global.imageRegistry }}/{{ .Values.elasticsearch.initContainer.image }}:{{ .Values.elasticsearch.initContainer.imageTag }}
         command:
         - sysctl
         - -w
@@ -108,7 +108,7 @@ spec:
         resources:
 {{ toYaml .Values.elasticsearch.client.resources | indent 12 }}
         # Official Image from Open Distro Team
-        image: {{ .Values.global.registry }}/{{ .Values.elasticsearch.image }}:{{ .Values.elasticsearch.imageTag }}
+        image: {{ .Values.global.imageRegistry }}/{{ .Values.elasticsearch.image }}:{{ .Values.elasticsearch.imageTag }}
         imagePullPolicy: {{ .Values.elasticsearch.imagePullPolicy | default "Always" | quote }}
         ports:
         - containerPort: 9200
