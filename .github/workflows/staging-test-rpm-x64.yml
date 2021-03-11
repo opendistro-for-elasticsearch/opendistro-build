@@ -25,7 +25,7 @@ jobs:
           # Don't add space after commas
           RUNNERS="odfe-rpm-im-nosec-x64,odfe-rpm-alerting-nosec-x64,odfe-rpm-sql-nosec-x64,odfe-rpm-knn-nosec-x64,odfe-rpm-ad-nosec-x64,"
           RUNNERS+="odfe-rpm-sql-x64,odfe-rpm-ad-x64,odfe-rpm-alerting-x64,"
-          RUNNERS+="odfe-rpm-ad-kibana-nosec-x64,odfe-rpm-sql-kibana-nosec-x64,"
+          RUNNERS+="odfe-rpm-ad-kibana-nosec-x64,odfe-rpm-sql-kibana-nosec-x64,odfe-rpm-async-nosec-x64,"
           RUNNERS+="odfe-rpm-ad-kibana-x64,odfe-rpm-sec-kibana-x64,odfe-rpm-kibana-nb-nosec-x64,odfe-rpm-alerting-kibana-nosec-x64"
           release-tools/scripts/setup_runners.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }} ami-0bd968fea932935f4
 
@@ -148,6 +148,30 @@ jobs:
           release-tools/scripts/setup_runners_service.sh rpm --es-nosec
           export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../anomaly-detection; pwd
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest"
+
+  Test-Async-NoSec:
+    needs: [Provision-Runners]
+    name: Test-Async-NoSec
+    runs-on: [self-hosted, Linux, X64, odfe-rpm-async-nosec-x64]
+    steps:
+      - uses: actions/checkout@v1
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 14
+      - name: Required Packages
+        run: release-tools/scripts/required_packages.sh
+      - name: Retrieve plugin tags
+        run: echo "p_tag_async=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/asynchronous-search)" >> $GITHUB_ENV
+      - uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/asynchronous-search
+          ref: ${{env.p_tag_async}}
+      - name: IT for IM NoSec
+        run: |
+          release-tools/scripts/setup_runners_service.sh rpm --es-nosec
+          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../asynchronous-search; pwd
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
 
   Test-SQL:
     needs: [Provision-Runners]
@@ -679,7 +703,7 @@ jobs:
           yarn test:jest_server
 
   CleanUp-Runners:
-    needs: [Test-IM-NoSec, Test-ALERTING-NoSec, Test-SQL-NoSec, Test-KNN-NoSec, Test-AD-NoSec, Test-SQL, Test-AD, Test-ALERTING, Test-AD-KIBANA-NoSec, Test-SQL-KIBANA-NoSec, Test-AD-KIBANA, Test-SEC-KIBANA, Test-Kibana-Notebooks-NoSec, Test-Alerting-Kibana-NoSec]
+    needs: [Test-IM-NoSec, Test-ALERTING-NoSec, Test-SQL-NoSec, Test-KNN-NoSec, Test-AD-NoSec, Test-SQL, Test-AD, Test-ALERTING, Test-AD-KIBANA-NoSec, Test-SQL-KIBANA-NoSec, Test-AD-KIBANA, Test-SEC-KIBANA, Test-Kibana-Notebooks-NoSec, Test-Alerting-Kibana-NoSec, Test-Async-NoSec]
     if: always()
     name: CleanUp-Runners
     runs-on: ubuntu-18.04
@@ -698,7 +722,7 @@ jobs:
           # Don't add space after commas
           RUNNERS="odfe-rpm-im-nosec-x64,odfe-rpm-alerting-nosec-x64,odfe-rpm-sql-nosec-x64,odfe-rpm-knn-nosec-x64,odfe-rpm-ad-nosec-x64,"
           RUNNERS+="odfe-rpm-sql-x64,odfe-rpm-ad-x64,odfe-rpm-alerting-x64,"
-          RUNNERS+="odfe-rpm-ad-kibana-nosec-x64,odfe-rpm-sql-kibana-nosec-x64,"
+          RUNNERS+="odfe-rpm-ad-kibana-nosec-x64,odfe-rpm-sql-kibana-nosec-x64,odfe-rpm-async-nosec-x64,"
           RUNNERS+="odfe-rpm-ad-kibana-x64,odfe-rpm-sec-kibana-x64,odfe-rpm-kibana-nb-nosec-x64,odfe-rpm-alerting-kibana-nosec-x64"
           release-tools/scripts/setup_runners.sh terminate $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
 
