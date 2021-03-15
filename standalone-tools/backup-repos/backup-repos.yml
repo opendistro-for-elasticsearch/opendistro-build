@@ -1,0 +1,56 @@
+repositories:
+  opendistro-for-elasticsearch:
+    - alerting
+    - alerting-kibana-plugin
+    - anomaly-detection
+    - anomaly-detection-kibana-plugin
+    - asynchronous-search
+    - common-utils
+    - cross-cluster-replication
+    - data-prepper
+    - elasticsearch-oss
+    - eui-charts-oss
+    - index-management
+    - index-management-kibana-plugin
+    - job-scheduler
+    - k-NN
+    - kibana-notebooks
+    - kibana-oss
+    - kibana-reports
+    - kibana-visualizations
+    - logviewer-kibana-plugin
+    - notifications
+    - odfe-cli
+    - odfe-es-exporter
+    - odfe-learning-to-rank
+    - opendistro-build
+    - opendistro-infra
+    - performance-analyzer
+    - performance-analyzer-rca
+    - perftop
+    - pipe-processing-language
+    - rally
+    - rally-tracks
+    - sample-code
+    - search
+    - search-jna-build
+    - search-mocksocket
+    - search-oss
+    - search-securemock
+    - security
+    - security-integration-tests
+    - security-kibana-plugin
+    - security-rally-tracks
+    - sql
+    - sql-cli
+    - sql-workbench
+    - trace-analytics
+    - website
+    - website-oss
+    - webui-oss
+    - .github
+  opendistro:
+    - for-elasticsearch
+    - for-elasticsearch-docs
+    - .github
+destination: github.com.opendistro-for-elasticsearch.backup
