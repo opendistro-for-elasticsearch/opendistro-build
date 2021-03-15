@@ -3,7 +3,7 @@ entries:
   opendistro-es:
   - apiVersion: v1
     appVersion: 1.13.1
-    created: "2021-03-15T15:34:53.900188531+01:00"
+    created: "2021-03-15T15:37:34.508010993+01:00"
     description: Open Distro for Elasticsearch
     digest: 1cbe33742e4b7c8a1c666ed91b087a751fb42be189d578ab14e454231859d8c6
     kubeVersion: ^1.10.0-0
@@ -16,6 +16,6 @@ entries:
     sources:
     - https://pages.git.viasat.com/ATG/charts
     urls:
-    - https://raw.githubusercontent.com/obmondo/opendistro-build/main/helm/opendistro-es/opendistro-es/opendistro-es-1.13.1.tgz
+    - https://raw.githubusercontent.com/obmondo/opendistro-build/main/helm/opendistro-es/opendistro-es-1.13.1.tgz
     version: 1.13.1
-generated: "2021-03-15T15:34:53.898696497+01:00"
+generated: "2021-03-15T15:37:34.505761644+01:00"
