@@ -72,6 +72,7 @@ jobs:
         run: |
           echo "kibana_node_version=$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV
           echo "kibana_yarn_version=$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV   
+        shell: bash 
       
       - name: Setup node
         uses: actions/setup-node@v1
