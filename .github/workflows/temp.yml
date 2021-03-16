@@ -53,7 +53,8 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: opendistro-for-elasticsearch/alerting-kibana-plugin
-          ref: ${{needs.Get-versions.outputs.p_tag_alerting_kibana}}
+          # ref: ${{needs.Get-versions.outputs.p_tag_alerting_kibana}}
+          ref: main
           path: kibana/plugins/alerting-kibana-plugin
       
       - name: Setup Java
@@ -91,3 +92,4 @@ jobs:
           dir
           cd ./kibana/plugins/alerting-kibana-plugin
           yarn run cypress run --env security_enabled=true
+
