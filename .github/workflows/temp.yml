@@ -69,7 +69,7 @@ jobs:
           yarn kbn bootstrap
           
       - name: Start ES and Kibana
-        run: release-tools/scripts/setup_runners_service.sh zip --kibana
+        run: release-tools/scripts/setup_runners_service.sh docker --kibana
  
       - name: Run Cypress tests
         uses: cypress-io/github-action@v2
