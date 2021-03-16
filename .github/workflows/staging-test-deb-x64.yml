@@ -696,9 +696,9 @@ jobs:
           cd ./kibana/plugins/opendistro_security
           yarn test:jest_server
 
-  Test-Alerting-Kibana-Sec:
+  Test-Alerting-Kibana:
       runs-on: [ubuntu-18.04]
-      name: Test-Alerting-Kibana-Sec
+      name: Test-Alerting-Kibana
       strategy:
         fail-fast: false
         matrix:

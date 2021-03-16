@@ -730,10 +730,10 @@ jobs:
           yarn test:jest_server
 
 
-  Test-Alerting-Kibana-Sec:
+  Test-Alerting-Kibana:
     needs: [Get-versions]
-    runs-on: windows-latest
-    name: Test-Alerting-Kibana-Sec
+    runs-on: windows-2019
+    name: Test-Alerting-Kibana
     strategy:
       fail-fast: false
       matrix:
