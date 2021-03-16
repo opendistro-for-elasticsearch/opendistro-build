@@ -82,3 +82,4 @@ jobs:
           cd kibana/plugins/alerting-kibana-plugin
           yarn add cypress --dev
           yarn run cypress run --env security_enabled=true
+          
