@@ -21,6 +21,12 @@ jobs:
       - name: Required Packages
         run: release-tools/scripts/required_packages.sh
 
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
       - name: Retrieve plugin tags 
         run: |
           echo "p_tag_alerting_kibana=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting-kibana-plugin)" >> $GITHUB_ENV
@@ -69,7 +75,7 @@ jobs:
           yarn kbn bootstrap
           
       - name: Start ES and Kibana
-        run: release-tools/scripts/setup_runners_service.sh docker --kibana
+        run: release-tools/scripts/setup_runners_service.sh zip --kibana
  
       - name: Run Cypress tests
         uses: cypress-io/github-action@v2
