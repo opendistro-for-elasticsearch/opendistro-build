@@ -163,6 +163,38 @@ jobs:
           export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../anomaly-detection; pwd
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest"
 
+  Test-Async-NoSec:
+    runs-on: [ubuntu-18.04]
+    name: Test-Async-NoSec
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [14]
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Install Required Packages
+        run: release-tools/scripts/required_packages.sh
+ 
+      - name: Retrieve plugin tags 
+        run:  echo "p_tag_async=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/asynchronous-search)" >> $GITHUB_ENV
+
+      - uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/asynchronous-search
+          ref: ${{env.p_tag_async}}
+
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+
+      - name: IT
+        run: |
+          release-tools/scripts/setup_runners_service.sh deb --es-nosec
+          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../asynchronous-search; pwd
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
+
   Test-SQL:
     runs-on: [ubuntu-18.04]
     name: Test-SQL
