@@ -21,6 +21,7 @@ jobs:
       p_tag_kib_nb: ${{env.p_tag_kib_nb}}
       p_tag_sec_kibana: ${{env.p_tag_sec_kibana}}
       p_tag_alerting_kibana: ${{env.p_tag_alerting_kibana}}
+      p_tag_async: ${{env.p_tag_async}}
     steps:
       - uses: actions/checkout@v1
       - name: Get all versions and tags
@@ -36,6 +37,7 @@ jobs:
           echo "p_tag_kib_nb=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/kibana-notebooks)" >> $GITHUB_ENV
           echo "p_tag_sec_kibana=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/security-kibana-plugin)" >> $GITHUB_ENV
           echo "p_tag_alerting_kibana=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting-kibana-plugin)" >> $GITHUB_ENV
+          echo "p_tag_async=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/asynchronous-search)" >> $GITHUB_ENV
 
   Test-IM-NoSec:
     needs: [Get-versions]
@@ -185,6 +187,43 @@ jobs:
           dir
           .\gradlew.bat integTest -D tests.rest.cluster=localhost:9200 -D tests.cluster=localhost:9200 -D tests.clustername="es-integrationtest"
 
+  Test-Async-NoSec:
+    needs: [Get-versions]
+    runs-on: windows-2019
+    name: Test-Async-NoSec
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [14]
+    steps:
+      - uses: actions/checkout@v1
+
+      - uses: actions/checkout@v1
+        with:
+           repository: opendistro-for-elasticsearch/asynchronous-search
+           ref: ${{needs.Get-versions.outputs.p_tag_async}}
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Set Up JDK ${{ matrix.java }}
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+       
+      - name: RUN ES and Async IntegTest
+        run: |
+          release-tools\scripts\setup_runners_service_windows.ps1 --es-nosec ${{needs.Get-versions.outputs.od_version}}
+          $ErrorActionPreference = 'SilentlyContinue'
+          echo running tests
+          cd ..\asynchronous-search
+          dir
+          ./gradlew.bat integTest -D tests.rest.cluster=localhost:9200 -D tests.cluster=localhost:9200 -D tests.clustername=es-integrationtest --stacktrace          
+  
   Test-SQL:
     needs: [Get-versions]
     runs-on: windows-2019
