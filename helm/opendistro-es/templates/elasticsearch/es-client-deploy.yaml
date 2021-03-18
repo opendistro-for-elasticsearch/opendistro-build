@@ -70,11 +70,17 @@ spec:
 {{- if .Values.elasticsearch.extraInitContainers }}
 {{ toYaml .Values.elasticsearch.extraInitContainers| indent 6 }}
 {{- end }}
+{{- with .Values.elasticsearch.securityContext }}
+      securityContext:
+{{ toYaml . | indent 8 }}
+{{- end }}
       containers:
       - name: elasticsearch
         securityContext:
+{{- if .Values.elasticsearch.sys_chroot.enabled }}
           capabilities:
             add: ["SYS_CHROOT"]
+{{- end }}
         env:
         - name: cluster.name
           value: {{ .Values.global.clusterName }}

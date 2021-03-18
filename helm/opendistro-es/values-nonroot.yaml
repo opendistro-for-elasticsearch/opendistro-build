@@ -141,8 +141,10 @@ kibana:
 global:
   clusterName: elasticsearch
 
+  ## Do not create psp for non-root, as this is a cluster scoped resource
+  ## and we want this to work in namespace-scoped tenancy models
   psp:
-    create: true
+    create: false
 
   rbac:
     enabled: true
@@ -182,10 +184,10 @@ elasticsearch:
 
 
   ## securityContext to apply to the pod. Allows for running as non-root
-  securityContext: {}
-  #  fsGroup: 1000
-  #  runAsUser: 1000
-  #  runAsGroup: 1000
+  securityContext:
+    fsGroup: 1000
+    runAsUser: 1000
+    runAsGroup: 1000
 
   extraEnvs: []
 
@@ -210,16 +212,16 @@ elasticsearch:
   ## Set optimal sysctl's. This requires privilege. Can be disabled if
   ## the system has already been preconfigured.
   sysctl:
-    enabled: true
+    enabled: false
 
   ## Give SYS_CHROOT cap to ES pods. This might not be neccesary
   sys_chroot:
-    enabled: true
+    enabled: false
 
   ## init container to chown the mount volume. not neccesary if setting a
   ## fsGroup in the securityContext
   fixmount:
-    enabled: true
+    enabled: false
 
   ssl:
     ## TLS is mandatory for the transport layer and can not be disabled
