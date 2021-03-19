@@ -35,8 +35,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: opendistro-for-elasticsearch/odfe-cli
-#          ref: ${{env.p_tag_cli}}
-          ref: main
+          ref: v${{env.p_tag_cli}}
       - name: IT
         env:
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
