@@ -82,7 +82,7 @@ spec:
 {{ toYaml . | indent 8 }}
     {{- end }}
       serviceAccountName: {{ template "opendistro-es.elasticsearch.serviceAccountName" . }}
-{{- with .Values.elasticsearch.securityContext }}
+{{- with .Values.elasticsearch.securityContextCustom }}
       securityContext:
 {{ toYaml . | indent 8 }}
 {{- end }}

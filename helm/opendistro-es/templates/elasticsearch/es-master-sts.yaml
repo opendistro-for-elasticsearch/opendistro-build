@@ -85,7 +85,7 @@ spec:
 {{- if .Values.elasticsearch.master.extraInitContainers }}
 {{ toYaml .Values.elasticsearch.master.extraInitContainers| indent 6 }}
 {{- end }}
-{{- with .Values.elasticsearch.securityContext }}
+{{- with .Values.elasticsearch.securityContextCustom }}
       securityContext:
 {{ toYaml . | indent 8 }}
 {{- end }}
