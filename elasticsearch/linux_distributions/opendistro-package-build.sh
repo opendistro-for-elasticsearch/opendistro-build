@@ -166,7 +166,7 @@ if [ $# -eq 0 ] || [ "$PACKAGE_TYPE" = "rpm" ]; then
       --config-files /etc/elasticsearch/elasticsearch.yml \
       --template-value user=elasticsearch \
       --template-value group=elasticsearch \
-#      --template-value optimizeDir=/usr/share/elasticsearch/optimize \
+      --template-value optimizeDir=/usr/share/elasticsearch/optimize \
       --template-value configDir=/etc/elasticsearch \
       --template-value pluginsDir=/usr/share/elasticsearch/plugins \
       --template-value dataDir=/var/lib/elasticsearch \
