@@ -38,7 +38,7 @@ PLUGINS=`$REPO_ROOT/release-tools/scripts/plugins-info.sh elasticsearch-plugins 
 PLUGINS_ARRAY=( $PLUGINS )
 PLUGIN_PATH=`yq eval '.urls.ODFE.releases' $MANIFEST_FILE | sed "s/^.*$S3_RELEASE_BUCKET\///g"`
 PACKAGE_NAME="opendistroforelasticsearch"
-WORK_DIR="${PACKAGE_NAME}-${OD_VERSION}"
+WORK_DIR="${PACKAGE_NAME}"
 TARGET_DIR="$ROOT/target"
 basedir="${ROOT}/$WORK_DIR/plugins"
 
