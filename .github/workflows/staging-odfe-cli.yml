@@ -5,6 +5,8 @@ on:
 #    - cron: '0 12 * * *'
   repository_dispatch:
     types: [staging-odfe-cli]
+  push:
+    branches: [sreekarj_odfecli]
 
 jobs:
   Test-ODFE-CLI:
@@ -35,8 +37,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: opendistro-for-elasticsearch/odfe-cli
-#          ref: ${{env.p_tag_cli}}
-          ref: main
+          ref: v${{env.p_tag_cli}}
       - name: IT
         env:
           DOCKER_USER: ${{ secrets.DOCKER_USER }}

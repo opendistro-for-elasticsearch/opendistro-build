@@ -295,7 +295,7 @@ plugins:
   - 
     plugin_basename: opendistro-odfe-cli
     plugin_git: opendistro-for-elasticsearch/odfe-cli
-    plugin_version: 1.0.0
+    plugin_version: 1.1.0
     plugin_build:
     plugin_spec: [linux_x64_zip,linux_arm64_zip,macos_x64_zip,windows_x64_zip,windows_x86_zip]
     plugin_category: elasticsearch-clients
