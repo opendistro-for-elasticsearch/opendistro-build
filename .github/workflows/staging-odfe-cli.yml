@@ -5,8 +5,6 @@ on:
 #    - cron: '0 12 * * *'
   repository_dispatch:
     types: [staging-odfe-cli]
-  push:
-    branches: [sreekarj_odfecli]
 
 jobs:
   Test-ODFE-CLI:
