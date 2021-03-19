@@ -170,8 +170,6 @@ if [ $# -eq 0 ] || [ "$PACKAGE_TYPE" = "rpm" ]; then
       --template-value configDir=/etc/elasticsearch \
       --template-value pluginsDir=/usr/share/elasticsearch/plugins \
       --template-value dataDir=/var/lib/elasticsearch \
-      --exclude usr/share/elasticsearch/config \
-      --exclude usr/share/elasticsearch/data \
       --architecture $ARCHITECTURE_ALT_RPM \
       --rpm-os linux \
       $ROOT/opendistroforelasticsearch/=/usr/share/elasticsearch/ \
