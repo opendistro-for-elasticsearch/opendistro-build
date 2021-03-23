@@ -40,9 +40,9 @@ jobs:
       - name: IT
         run: |
           ./release-tools/scripts/setup_runners_service.sh zip --es-nosec
-          echo "opendistro.destination.host.deny_list: [\"10.0.0.0/8\", \"127.0.0.1\"]" >> \
-          ./release-tools/scripts/odfe-testing/opendistroforelasticsearch*/config/elasticsearch.yml
-          cat ./release-tools/scripts/odfe-testing/opendistroforelasticsearch*/config/elasticsearch.yml
+#          echo "opendistro.destination.host.deny_list: [\"10.0.0.0/8\", \"127.0.0.1\"]" >> \
+#          ./release-tools/scripts/odfe-testing/opendistroforelasticsearch*/config/elasticsearch.yml
+#          cat ./release-tools/scripts/odfe-testing/opendistroforelasticsearch*/config/elasticsearch.yml
           export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../alerting/alerting; pwd
           ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
 
