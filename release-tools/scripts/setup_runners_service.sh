@@ -126,6 +126,7 @@ then
   echo "path.repo: [\"$PWD/snapshots\"]" >> $ES_ROOT/config/elasticsearch.yml
   # Increase the number of allowed script compilations. The SQL integ tests use a lot of scripts.
   echo "script.context.field.max_compilations_rate: 1000/1m" >> $ES_ROOT/config/elasticsearch.yml
+  echo "opendistro.destination.host.deny_list: [\"10.0.0.0/8\", \"127.0.0.1\"]" >> $ES_ROOT/config/elasticsearch.yml
 elif [ "$SETUP_DISTRO" = "docker" ]
 then
   echo "FROM opendistroforelasticsearch/opendistroforelasticsearch:$OD_VERSION" >> Dockerfile
@@ -133,6 +134,7 @@ then
   echo "RUN echo \"path.repo: [\\\"/usr/share/elasticsearch\\\"]\" >> /usr/share/elasticsearch/config/elasticsearch.yml" >> Dockerfile
   # Increase the number of allowed script compilations. The SQL integ tests use a lot of scripts.
   echo "RUN echo \"script.context.field.max_compilations_rate: 1000/1m\" >> /usr/share/elasticsearch/config/elasticsearch.yml" >> Dockerfile
+  echo "RUN echo \"opendistro.destination.host.deny_list: [\"10.0.0.0/8\", \"127.0.0.1\"]\" >> /usr/share/elasticsearch/config/elasticsearch.yml" >> Dockerfile
   docker build -t odfe-http:security -f Dockerfile .
   sleep 5
   docker run -d -p 9200:9200 -d -p 9600:9600 -e "discovery.type=single-node" --name $DOCKER_NAME odfe-http:security
@@ -149,6 +151,7 @@ else
   sudo sed -i /^node.max_local_storage_nodes/d /etc/elasticsearch/elasticsearch.yml
   # Increase the number of allowed script compilations. The SQL integ tests use a lot of scripts.
   sudo echo "script.context.field.max_compilations_rate: 1000/1m" | sudo tee -a /etc/elasticsearch/elasticsearch.yml > /dev/null
+  sudo echo "opendistro.destination.host.deny_list: [\"10.0.0.0/8\", \"127.0.0.1\"]" | sudo tee -a /etc/elasticsearch/elasticsearch.yml > /dev/null
   sudo echo "opendistro_security.unsupported.restapi.allow_securityconfig_modification: true" | sudo tee -a /etc/elasticsearch/elasticsearch.yml > /dev/null
 fi
 
