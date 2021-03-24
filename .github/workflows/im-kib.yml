@@ -72,6 +72,9 @@ jobs:
       - name: Get node and yarn versions
         id: node_yarn_versions
         run: |
+          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
+          . ~/.nvm/nvm.sh
+          nvm install node
           echo "kibana_node_version=$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV
           echo "kibana_yarn_version=$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV   
       
