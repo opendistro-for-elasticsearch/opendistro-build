@@ -79,7 +79,7 @@ jobs:
           yarn kbn bootstrap
       - name: Start ES and Kibana
         run: |
-          release-tools/scripts/setup_runners_service.sh deb --kibana
+          release-tools/scripts/setup_runners_service.sh deb --kibana-nosec
           echo "load the indices"
           curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/kibana-visualizations/main/gantt-chart/.cypress/utils/jaeger-sample.json | curl -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/jaeger/_bulk?pretty' --data-binary @-
           curl -X POST "localhost:5601/api/saved_objects/index-pattern/jaeger"  -H 'kbn-xsrf: true' -H 'Content-Type: application/json' -d '{ "attributes": { "title": "jaeger" } }'
@@ -89,3 +89,9 @@ jobs:
         with:
           working-directory: kibana/plugins/gantt-chart
           command: npx cypress run
+
+      - uses: actions/upload-artifact@v1
+        if: always()
+        with:
+          name: cypress-videos
+          path: kibana/plugins/gantt-chart/.cypress/videos/
