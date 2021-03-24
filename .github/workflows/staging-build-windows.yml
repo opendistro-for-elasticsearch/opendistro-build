@@ -6,7 +6,6 @@ on:
   repository_dispatch:
     types: [staging-build-windows]
 
-
 jobs:
   build-es-artifacts-x64:
     name: Build Windows ES Artifacts X64
