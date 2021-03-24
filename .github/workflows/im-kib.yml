@@ -22,12 +22,12 @@ jobs:
           #!/bin/bash
           # Please add comma at the end of the RUNNERS strings
           # Don't add space after commas
-          RUNNERS="odfe-rpm-im-kibana-nosec-x64"
+          RUNNERS="odfe-rpm-im-kibana-x64"
           release-tools/scripts/setup_runners.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }} ami-0bd968fea932935f4
           
   Test-IM-Kibana:
     needs: [Provision-Runners]
-    runs-on: [self-hosted, Linux, X64, odfe-rpm-im-kibana-nosec-x64]
+    runs-on: [self-hosted, Linux, X64, odfe-rpm-im-kibana-x64]
     name: Test-IM-Kibana
     strategy:
       fail-fast: false
@@ -96,13 +96,13 @@ jobs:
           yarn kbn bootstrap
           
       - name: Start ES and Kibana
-        run: release-tools/scripts/setup_runners_service.sh rpm --kibana-nosec
+        run: release-tools/scripts/setup_runners_service.sh rpm --kibana
 
       - name: Run Cypress tests
         uses: cypress-io/github-action@v2
         with:
           working-directory: kibana/plugins/index-management-kibana-plugin
-          command: yarn run cypress run
+          command: yarn run cypress run --env security_enabled=true
 
   CleanUp-Runners:
     needs: [Test-IM-Kibana]
@@ -122,5 +122,5 @@ jobs:
           #!/bin/bash
           # Please add comma at the end of the RUNNERS strings
           # Don't add space after commas
-          RUNNERS="odfe-rpm-im-kibana-nosec-x64"
+          RUNNERS="odfe-rpm-im-kibana-x64"
           release-tools/scripts/setup_runners.sh terminate $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
