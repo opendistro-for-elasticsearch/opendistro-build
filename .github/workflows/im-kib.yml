@@ -1,0 +1,82 @@
+name: Test IM kibana with and without security
+
+on:
+  push:
+    branches:
+      - im-kibana
+
+jobs:
+  Test-IM-Kibana-NoSec:
+    runs-on: ubuntu-18.04
+    name: Test-IM-Kibana-NoSec
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [14]
+    steps:
+      - uses: actions/checkout@v1
+      - name: Set up AWS Cred
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Required Packages
+        run: release-tools/scripts/required_packages.sh
+
+      - name: Retrieve plugin tags 
+        run: |
+          echo "p_tag_im_kibana=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/index-management-kibana-plugin)" >> $GITHUB_ENV
+          echo "es_version=$(release-tools/scripts/version-info.sh --es)" >> $GITHUB_ENV
+      - name: Checkout Kibana
+        uses: actions/checkout@v2
+        with:
+          repository: opendistro-for-elasticsearch/kibana-oss
+          ref: ${{env.es_version}}
+          token: ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
+          path: kibana  
+
+      - uses: actions/checkout@v2
+        with:
+          repository: opendistro-for-elasticsearch/index-management-kibana-plugin
+          # ref: ${{env.p_tag_im_kibana}}
+          ref: main
+          path: kibana/plugins/index-management-kibana-plugin
+      
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+      
+      - name: Get node and yarn versions
+        id: node_yarn_versions
+        run: |
+          echo "kibana_node_version=$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV
+          echo "kibana_yarn_version=$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV   
+      
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{env.kibana_node_version}}
+          registry-url: 'https://registry.npmjs.org'
+      
+      - name: Install correct yarn version for Kibana
+        run: |
+          npm uninstall -g yarn
+          echo "Installing yarn ${{ env.kibana_yarn_version }}"
+          npm i -g yarn@${{ env.kibana_yarn_version }}
+      
+      - name: Bootstrap the plugin
+        run: |
+          cd ./kibana/plugins/index-management-kibana-plugin
+          yarn kbn bootstrap
+          
+      - name: Start ES and Kibana
+        run: release-tools/scripts/setup_runners_service.sh zip --kibana-nosec
+
+      - name: Run Cypress tests
+        uses: cypress-io/github-action@v2
+        with:
+          working-directory: kibana/plugins/index-management-kibana-plugin
+          command: yarn run cypress run
