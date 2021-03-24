@@ -73,10 +73,10 @@ jobs:
           yarn kbn bootstrap
           
       - name: Start ES and Kibana
-        run: release-tools/scripts/setup_runners_service.sh deb --kibana
+        run: release-tools/scripts/setup_runners_service.sh deb --kibana-nosec
 
       - name: Run Cypress tests
         uses: cypress-io/github-action@v2
         with:
           working-directory: kibana/plugins/index-management-kibana-plugin
-          command: yarn run cypress run --env security_enabled=true
+          command: yarn run cypress run
