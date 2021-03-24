@@ -6,8 +6,28 @@ on:
       - im-kibana
 
 jobs:
-  Test-IM-Kibana:
+  Provision-Runners:
+    name: Provision-Runners
     runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v1
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_EC2_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_EC2_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
+      - name: AWS Cli Processing
+        run: |
+          #!/bin/bash
+          # Please add comma at the end of the RUNNERS strings
+          # Don't add space after commas
+          RUNNERS="odfe-rpm-im-kibana-nosec-x64"
+          release-tools/scripts/setup_runners.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }} ami-0bd968fea932935f4
+          
+  Test-IM-Kibana:
+    needs: [Provision-Runners]
+    runs-on: [self-hosted, Linux, X64, odfe-rpm-im-kibana-nosec-x64]
     name: Test-IM-Kibana
     strategy:
       fail-fast: false
@@ -73,10 +93,31 @@ jobs:
           yarn kbn bootstrap
           
       - name: Start ES and Kibana
-        run: release-tools/scripts/setup_runners_service.sh deb --kibana-nosec
+        run: release-tools/scripts/setup_runners_service.sh rpm --kibana-nosec
 
       - name: Run Cypress tests
         uses: cypress-io/github-action@v2
         with:
           working-directory: kibana/plugins/index-management-kibana-plugin
           command: yarn run cypress run
+
+  CleanUp-Runners:
+    needs: [Test-IM-Kibana]
+    if: always()
+    name: CleanUp-Runners
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v1
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_EC2_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_EC2_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
+      - name: AWS Cli Processing
+        run: |
+          #!/bin/bash
+          # Please add comma at the end of the RUNNERS strings
+          # Don't add space after commas
+          RUNNERS="odfe-rpm-im-kibana-nosec-x64"
+          release-tools/scripts/setup_runners.sh terminate $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
