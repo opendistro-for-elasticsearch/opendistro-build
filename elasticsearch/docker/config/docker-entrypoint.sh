@@ -4,16 +4,10 @@ set -e
 # Files created by OpenDistroForElasticsearch should always be group writable too
 umask 0002
 
-run_as_other_user_if_needed() {
-    if [[ "$(id -u)" == "0" ]]; then
-        # If running as root, drop to specified UID and run command
-        exec chroot --userspec=1000 / "${@}"
-    else
-        # Either we are running in Openshift with random uid and are a member of the root group
-        # or with a custom --user
-        exec "${@}"
-    fi
-}
+if [[ "$(id -u)" == "0" ]]; then
+    echo "Elasticsearch cannot run as root. Please start your container as another user."
+    exit 1
+fi
 
 # Parse Docker env vars to customize Elasticsearch
 #
@@ -52,13 +46,6 @@ done < <(env)
 # will run in.
 export ES_JAVA_OPTS="-Des.cgroups.hierarchy.override=/ $ES_JAVA_OPTS"
 
-if [[ "$(id -u)" == "0" ]]; then
-    # If requested and running as root, mutate the ownership of bind-mounts
-    if [[ -n "$TAKE_FILE_OWNERSHIP" ]]; then
-        chown -R 1000:0 /usr/share/elasticsearch/{data,logs}
-    fi
-fi
-
 # TODO: Replace supervisord with something else so we can certify the docker image (https://docs.docker.com/docker-hub/publish/certify-images/ says supervisord is forbidden)
 #if [[ -d "/usr/share/elasticsearch/plugins/opendistro-performance-analyzer" ]]; then
 #    CLK_TCK=`/usr/bin/getconf CLK_TCK`
@@ -72,4 +59,4 @@ fi
 #    fi
 #fi
 
-run_as_other_user_if_needed /usr/share/elasticsearch/bin/elasticsearch "${es_opts[@]}"
+/usr/share/elasticsearch/bin/elasticsearch "${es_opts[@]}"
