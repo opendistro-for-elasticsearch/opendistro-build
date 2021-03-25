@@ -1,9 +1,9 @@
 name: Test Gantt-chart
 
 on:
-  push:
-    branches:
-      - "gantt-chart"
+  # push:
+  #   branches:
+  #     - "gantt-chart"
  
 jobs:
 
