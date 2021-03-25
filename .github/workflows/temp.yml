@@ -103,7 +103,7 @@ jobs:
           yarn kbn bootstrap
       - name: Start ES and Kibana
         run: |
-          release-tools/scripts/setup_runners_service.sh deb --kibana-nosec
+          release-tools/scripts/setup_runners_service.sh rpm --kibana-nosec
           echo "load the indices"
           curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/kibana-visualizations/main/gantt-chart/.cypress/utils/jaeger-sample.json | curl -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/jaeger/_bulk?pretty' --data-binary @-
           curl -X POST "localhost:5601/api/saved_objects/index-pattern/jaeger"  -H 'kbn-xsrf: true' -H 'Content-Type: application/json' -d '{ "attributes": { "title": "jaeger" } }'
