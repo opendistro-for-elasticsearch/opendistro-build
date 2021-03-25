@@ -6,30 +6,9 @@ on:
       - "gantt-chart"
  
 jobs:
-
-  Provision-Runners:
-    name: Provision-Runners
-    runs-on: ubuntu-18.04
-    steps:
-      - uses: actions/checkout@v1
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_EC2_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_EC2_SECRET_ACCESS_KEY }}
-          aws-region: us-west-2
-      - name: AWS Cli Processing
-        run: |
-          #!/bin/bash
-          # Please add comma at the end of the RUNNERS strings
-          # Don't add space after commas
-          RUNNERS="odfe-rpm-gantt-chart-nosec-x64"
-          release-tools/scripts/setup_runners.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }} ami-0bd968fea932935f4
-
   Test-Gantt-Chart-NoSec:
-    needs: [Provision-Runners]
+    runs-on: [ubuntu-18.04]
     name: Test-Gantt-Chart-NoSec
-    runs-on: [self-hosted, Linux, X64, odfe-rpm-gantt-chart-nosec-x64]
     strategy:
       fail-fast: false
       matrix:
@@ -74,9 +53,6 @@ jobs:
       - name: Get node and yarn versions
         id: node_yarn_versions
         run: |
-          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
-          . ~/.nvm/nvm.sh
-          nvm install node
           echo "kibana_node_version=$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV
           echo "kibana_yarn_version=$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV   
       
@@ -95,15 +71,16 @@ jobs:
       - name: Bootstrap the plugin
         run: |
           cd ./kibana/plugins
-          ls -ltr
           cp -rp kibana-visualizations/gantt-chart/ .
           rm -rf kibana-visualizations/
           cd gantt-chart
-          ls -ltr
           yarn kbn bootstrap
+          echo "npx version here is:"
+          npx --version
+
       - name: Start ES and Kibana
         run: |
-          release-tools/scripts/setup_runners_service.sh rpm --kibana-nosec
+          release-tools/scripts/setup_runners_service.sh deb --kibana-nosec
           echo "load the indices"
           curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/kibana-visualizations/main/gantt-chart/.cypress/utils/jaeger-sample.json | curl -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/jaeger/_bulk?pretty' --data-binary @-
           curl -X POST "localhost:5601/api/saved_objects/index-pattern/jaeger"  -H 'kbn-xsrf: true' -H 'Content-Type: application/json' -d '{ "attributes": { "title": "jaeger" } }'
@@ -113,34 +90,6 @@ jobs:
         with:
           working-directory: kibana/plugins/gantt-chart
           command: npx cypress run
-
-      - uses: actions/upload-artifact@v1
-        if: always()
-        with:
-          name: cypress-videos
-          path: kibana/plugins/gantt-chart/.cypress/videos/
-
-  CleanUp-Runners:
-    needs: [Test-Gantt-Chart-NoSec]  
-    if: always()
-    name: CleanUp-Runners
-    runs-on: ubuntu-18.04
-    steps:
-      - uses: actions/checkout@v1
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_EC2_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_EC2_SECRET_ACCESS_KEY }}
-          aws-region: us-west-2
-      - name: AWS Cli Processing
-        run: |
-          #!/bin/bash
-          # Please add comma at the end of the RUNNERS strings
-          # Don't add space after commas
-          RUNNERS="odfe-rpm-gantt-chart-nosec-x64"
-          release-tools/scripts/setup_runners.sh terminate $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
-
 
   # Test-Kibana-Reports-NoSec:
   #   runs-on: [ubuntu-18.04]
