@@ -1,0 +1,7 @@
+cluster.name: docker-cluster
+
+# Bind to all interfaces because we don't know what IP address Docker will assign to us.
+network.host: 0.0.0.0
+
+# Setting network.host to a non-loopback address enables the annoying bootstrap checks. "Single-node" mode disables them again.
+discovery.type: single-node
