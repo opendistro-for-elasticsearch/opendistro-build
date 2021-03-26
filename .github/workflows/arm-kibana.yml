@@ -28,7 +28,7 @@ jobs:
           release-tools/scripts/setup_runners.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }} ami-0ef0c96643bbd01f2
       - name: Retrieve public ip
         run: |
-          echo "es_ip=$(aws ec2 describe-instances --filter "Name=tag:Name,Values=$RUNNERS" --profile testing --region us-west-2  --query 'Reservations[*].Instances[*].{PublicIpAddress:PublicIpAddress}' --output text)" >> $GITHUB_ENV
+          echo "es_ip=$(aws ec2 describe-instances --filter "Name=tag:Name,Values=$RUNNERS" --query 'Reservations[*].Instances[*].{PublicIpAddress:PublicIpAddress}' --output text)" >> $GITHUB_ENV
           echo ${{env.es_ip}}
 
   Set-up-es-and-kibana:
