@@ -10,7 +10,7 @@ jobs:
     name: Provision-ARM64-Runners
     runs-on: ubuntu-18.04
     outputs:
-      pub_ip: ${{env.es_ip}}
+      pub_ip: ${{env.pub_ip}}
     steps:
       - uses: actions/checkout@v1
       - name: Configure AWS Credentials
@@ -28,10 +28,6 @@ jobs:
           release-tools/scripts/setup_runners.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }} ami-0ef0c96643bbd01f2
       - name: Retrieve public ip
         run: echo "pub_ip=$(aws ec2 describe-instances --filter "Name=tag:Name,Values=odfe-gantt-kibana-arm64" --query 'Reservations[*].Instances[*].{PrivateIpAddress:PrivateIpAddress}' --output text)" >> $GITHUB_ENV
-      - name: Echo 
-        run: |
-          echo "Env is:" 
-          echo ${{ env.pub_ip }}
 
   Provision-X64-Runners:
     name: Provision-X64-Runners
@@ -72,7 +68,7 @@ jobs:
           
 
   Test-Gantt-Chart-NoSec:
-    needs: [Provision-ARM64-Runners, Provision-X64-Runners]
+    needs: [Provision-ARM64-Runners, Provision-X64-Runners, Set-up-es-and-kibana]
     name: Test-Gantt-Chart-NoSec
     runs-on: [self-hosted, Linux, X64, odfe-x64]
     strategy:
@@ -146,6 +142,7 @@ jobs:
           cd gantt-chart
           ls -ltr
           yarn kbn bootstrap
+          echo ${{needs.Provision-ARM64-Runners.outputs.pub_ip}}
 
       - name: Load indices
         run: |
