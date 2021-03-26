@@ -1,6 +1,7 @@
 name: Test Gantt-chart
 
 on:
+  repository_dispatch
   # push:
   #   branches:
   #     - "gantt-chart"

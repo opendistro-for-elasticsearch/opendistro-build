@@ -28,10 +28,10 @@ jobs:
       #     release-tools/scripts/setup_runners.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }} ami-0ef0c96643bbd01f2
       - name: Retrieve public ip
         run: |
-          # es_ip=$(aws ec2 describe-instances --filter "Name=tag:Name,Values=odfe-ad-kibana-arm64" --query 'Reservations[*].Instances[*].{PublicIpAddress:PublicIpAddress}' --output text)
-          echo "es_ip=$(aws ec2 describe-instances --filter "Name=tag:Name,Values=odfe-ad-kibana-arm64" --query 'Reservations[*].Instances[*].{PublicIpAddress:PublicIpAddress}' --output text)" >> $GITHUB_ENV
+          es_ip=$(aws ec2 describe-instances --filter "Name=tag:Name,Values=odfe-ad-kibana-arm64" --query 'Reservations[*].Instances[*].{PublicIpAddress:PublicIpAddress}' --output text)
+          echo "pub_ip=$es_ip" >> $GITHUB_ENV
           # echo $es_ip
-          echo ${{ env.es_ip }}
+          echo ${{ env.pub_ip }}
 
   # Set-up-es-and-kibana:
   #   needs: [Provision-Runners]
