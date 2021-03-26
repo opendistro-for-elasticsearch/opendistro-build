@@ -6,44 +6,44 @@ on:
       - "gantt-chart"
 
 jobs:
-  Provision-ARM64-Runners:
-    name: Provision-ARM64-Runners
-    runs-on: ubuntu-18.04
-    outputs:
-      pub_ip: ${{env.es_ip}}
-    steps:
-      - uses: actions/checkout@v1
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_EC2_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_EC2_SECRET_ACCESS_KEY }}
-          aws-region: us-west-2
-      # - name: AWS Cli Processing
-      #   run: |
-      #     #!/bin/bash
-      #     # Please add comma at the end of the RUNNERS strings
-      #     # Don't add space after commas
-      #     RUNNERS="odfe-gantt-kibana-arm64"
-      #     release-tools/scripts/setup_runners.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }} ami-0ef0c96643bbd01f2
-      - name: Retrieve public ip
-        run: echo "pub_ip=$(aws ec2 describe-instances --filter "Name=tag:Name,Values=odfe-gantt-kibana-arm64" --query 'Reservations[*].Instances[*].{PrivateIpAddress:PrivateIpAddress}' --output text)" >> $GITHUB_ENV
-      - name: Echo 
-        run: |
-          echo "Env is:" 
-          echo ${{ env.pub_ip }}
+  # Provision-ARM64-Runners:
+  #   name: Provision-ARM64-Runners
+  #   runs-on: ubuntu-18.04
+  #   outputs:
+  #     pub_ip: ${{env.es_ip}}
+  #   steps:
+  #     - uses: actions/checkout@v1
+  #     - name: Configure AWS Credentials
+  #       uses: aws-actions/configure-aws-credentials@v1
+  #       with:
+  #         aws-access-key-id: ${{ secrets.AWS_EC2_ACCESS_KEY_ID }}
+  #         aws-secret-access-key: ${{ secrets.AWS_EC2_SECRET_ACCESS_KEY }}
+  #         aws-region: us-west-2
+  #     # - name: AWS Cli Processing
+  #     #   run: |
+  #     #     #!/bin/bash
+  #     #     # Please add comma at the end of the RUNNERS strings
+  #     #     # Don't add space after commas
+  #     #     RUNNERS="odfe-gantt-kibana-arm64"
+  #     #     release-tools/scripts/setup_runners.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }} ami-0ef0c96643bbd01f2
+  #     - name: Retrieve public ip
+  #       run: echo "pub_ip=$(aws ec2 describe-instances --filter "Name=tag:Name,Values=odfe-gantt-kibana-arm64" --query 'Reservations[*].Instances[*].{PrivateIpAddress:PrivateIpAddress}' --output text)" >> $GITHUB_ENV
+  #     - name: Echo 
+  #       run: |
+  #         echo "Env is:" 
+  #         echo ${{ env.pub_ip }}
 
-  Provision-X64-Runners:
-    name: Provision-X64-Runners
-    runs-on: ubuntu-18.04
-    steps:
-      - uses: actions/checkout@v1
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_EC2_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_EC2_SECRET_ACCESS_KEY }}
-          aws-region: us-west-2
+  # Provision-X64-Runners:
+  #   name: Provision-X64-Runners
+  #   runs-on: ubuntu-18.04
+  #   steps:
+  #     - uses: actions/checkout@v1
+  #     - name: Configure AWS Credentials
+  #       uses: aws-actions/configure-aws-credentials@v1
+  #       with:
+  #         aws-access-key-id: ${{ secrets.AWS_EC2_ACCESS_KEY_ID }}
+  #         aws-secret-access-key: ${{ secrets.AWS_EC2_SECRET_ACCESS_KEY }}
+  #         aws-region: us-west-2
       # - name: AWS Cli Processing
       #   run: |
       #     #!/bin/bash
@@ -71,116 +71,116 @@ jobs:
   #       run: release-tools/scripts/setup_runners_service.sh rpm --kibana-nosec arm64
           
 
-  Test-Gantt-Chart-NoSec:
-    needs: [Provision-ARM64-Runners, Provision-X64-Runners]
-    name: Test-Gantt-Chart-NoSec
-    runs-on: [self-hosted, Linux, X64, odfe-x64]
-    strategy:
-      fail-fast: false
-      matrix:
-        java: [14]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up AWS Cred
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-
-      - name: Install required Packages
-        run: release-tools/scripts/required_packages.sh
-
-      - name: Retrieve plugin tags 
-        run: |
-          echo "p_tag_gantt_chart=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/kibana-visualizations)" >> $GITHUB_ENV
-          echo "es_version=$(release-tools/scripts/version-info.sh --es)" >> $GITHUB_ENV
-          
-      - name: Checkout Kibana
-        uses: actions/checkout@v2
-        with:
-          repository: opendistro-for-elasticsearch/kibana-oss
-          ref: ${{env.es_version}}
-          token: ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
-          path: kibana
-           
-      - uses: actions/checkout@v2
-        with:
-          repository: opendistro-for-elasticsearch/kibana-visualizations
-          # ref: ${{env.p_tag_gantt_chart}}
-          ref: main
-          path: kibana/plugins/kibana-visualizations
-      
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.java }}
-      
-      - name: Get node and yarn versions
-        id: node_yarn_versions
-        run: |
-          echo "kibana_node_version=$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV
-          echo "kibana_yarn_version=$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV   
-      
-      - name: Setup node
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{env.kibana_node_version}}
-          registry-url: 'https://registry.npmjs.org'
-      
-      - name: Install correct yarn version for Kibana
-        run: |
-          npm uninstall -g yarn
-          echo "Installing yarn ${{ env.kibana_yarn_version }}"
-          npm i -g yarn@${{ env.kibana_yarn_version }}
-      
-      - name: Bootstrap the plugin
-        run: |
-          cd ./kibana/plugins
-          ls -ltr
-          cp -rp kibana-visualizations/gantt-chart/ .
-          rm -rf kibana-visualizations/
-          cd gantt-chart
-          ls -ltr
-          yarn kbn bootstrap
-
-      - name: Load indices
-        run: |
-          # release-tools/scripts/setup_runners_service.sh rpm --kibana-nosec
-          echo "load the indices"
-          curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/kibana-visualizations/main/gantt-chart/.cypress/utils/jaeger-sample.json | curl -H 'Content-Type: application/x-ndjson' -XPOST '${{needs.Provision-ARM64-Runners.outputs.pub_ip}}:9200/jaeger/_bulk?pretty' --data-binary @-
-          curl -X POST "${{needs.Provision-ARM64-Runners.outputs.pub_ip}}:5601/api/saved_objects/index-pattern/jaeger"  -H 'kbn-xsrf: true' -H 'Content-Type: application/json' -d '{ "attributes": { "title": "jaeger" } }'
- 
-      - name: run IT
-        uses: cypress-io/github-action@v2.5.0
-        with:
-          working-directory: kibana/plugins/gantt-chart
-          command: npx cypress run --env kibana=${{needs.Provision-ARM64-Runners.outputs.pub_ip}}:5601
-
-      - uses: actions/upload-artifact@v1
-        if: always()
-        with:
-          name: cypress-videos
-          path: kibana/plugins/gantt-chart/.cypress/videos/
-
-  # CleanUp-Runners:
-  #   # needs: [Test-IM-NoSec, Test-ALERTING-NoSec, Test-SQL-NoSec, Test-KNN-NoSec, Test-AD-NoSec, Test-SQL, Test-AD, Test-ALERTING, Test-AD-KIBANA-NoSec, Test-SQL-KIBANA-NoSec, Test-AD-KIBANA, Test-SEC-KIBANA, Test-Kibana-Notebooks-NoSec, Test-Alerting-Kibana-NoSec, Test-Alerting-Kibana, Test-Async-NoSec]
-  #   needs: [Test-Gantt-Chart-NoSec]
-  #   if: always()
-  #   name: CleanUp-Runners
-  #   runs-on: ubuntu-18.04
+  # Test-Gantt-Chart-NoSec:
+  #   needs: [Provision-ARM64-Runners, Provision-X64-Runners]
+  #   name: Test-Gantt-Chart-NoSec
+  #   runs-on: [self-hosted, Linux, X64, odfe-x64]
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       java: [14]
   #   steps:
-  #     - uses: actions/checkout@v1
-  #     - name: Configure AWS Credentials
+  #     - uses: actions/checkout@v2
+  #     - name: Set up AWS Cred
   #       uses: aws-actions/configure-aws-credentials@v1
   #       with:
-  #         aws-access-key-id: ${{ secrets.AWS_EC2_ACCESS_KEY_ID }}
-  #         aws-secret-access-key: ${{ secrets.AWS_EC2_SECRET_ACCESS_KEY }}
-  #         aws-region: us-west-2
-  #     - name: AWS Cli Processing
+  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #         aws-region: us-east-1
+
+  #     - name: Install required Packages
+  #       run: release-tools/scripts/required_packages.sh
+
+  #     - name: Retrieve plugin tags 
   #       run: |
-  #         #!/bin/bash
-  #         # Please add comma at the end of the RUNNERS strings
-  #         # Don't add space after commas
-  #         RUNNERS="odfe-gantt-kibana-arm64"
-  #         release-tools/scripts/setup_runners.sh terminate $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
+  #         echo "p_tag_gantt_chart=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/kibana-visualizations)" >> $GITHUB_ENV
+  #         echo "es_version=$(release-tools/scripts/version-info.sh --es)" >> $GITHUB_ENV
+          
+  #     - name: Checkout Kibana
+  #       uses: actions/checkout@v2
+  #       with:
+  #         repository: opendistro-for-elasticsearch/kibana-oss
+  #         ref: ${{env.es_version}}
+  #         token: ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
+  #         path: kibana
+           
+  #     - uses: actions/checkout@v2
+  #       with:
+  #         repository: opendistro-for-elasticsearch/kibana-visualizations
+  #         # ref: ${{env.p_tag_gantt_chart}}
+  #         ref: main
+  #         path: kibana/plugins/kibana-visualizations
+      
+  #     - name: Setup Java
+  #       uses: actions/setup-java@v1
+  #       with:
+  #         java-version: ${{ matrix.java }}
+      
+  #     - name: Get node and yarn versions
+  #       id: node_yarn_versions
+  #       run: |
+  #         echo "kibana_node_version=$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV
+  #         echo "kibana_yarn_version=$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV   
+      
+  #     - name: Setup node
+  #       uses: actions/setup-node@v1
+  #       with:
+  #         node-version: ${{env.kibana_node_version}}
+  #         registry-url: 'https://registry.npmjs.org'
+      
+  #     - name: Install correct yarn version for Kibana
+  #       run: |
+  #         npm uninstall -g yarn
+  #         echo "Installing yarn ${{ env.kibana_yarn_version }}"
+  #         npm i -g yarn@${{ env.kibana_yarn_version }}
+      
+  #     - name: Bootstrap the plugin
+  #       run: |
+  #         cd ./kibana/plugins
+  #         ls -ltr
+  #         cp -rp kibana-visualizations/gantt-chart/ .
+  #         rm -rf kibana-visualizations/
+  #         cd gantt-chart
+  #         ls -ltr
+  #         yarn kbn bootstrap
+
+  #     - name: Load indices
+  #       run: |
+  #         # release-tools/scripts/setup_runners_service.sh rpm --kibana-nosec
+  #         echo "load the indices"
+  #         curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/kibana-visualizations/main/gantt-chart/.cypress/utils/jaeger-sample.json | curl -H 'Content-Type: application/x-ndjson' -XPOST '${{needs.Provision-ARM64-Runners.outputs.pub_ip}}:9200/jaeger/_bulk?pretty' --data-binary @-
+  #         curl -X POST "${{needs.Provision-ARM64-Runners.outputs.pub_ip}}:5601/api/saved_objects/index-pattern/jaeger"  -H 'kbn-xsrf: true' -H 'Content-Type: application/json' -d '{ "attributes": { "title": "jaeger" } }'
+ 
+  #     - name: run IT
+  #       uses: cypress-io/github-action@v2.5.0
+  #       with:
+  #         working-directory: kibana/plugins/gantt-chart
+  #         command: npx cypress run --env kibana=${{needs.Provision-ARM64-Runners.outputs.pub_ip}}:5601
+
+  #     - uses: actions/upload-artifact@v1
+  #       if: always()
+  #       with:
+  #         name: cypress-videos
+  #         path: kibana/plugins/gantt-chart/.cypress/videos/
+
+  CleanUp-Runners:
+    # needs: [Test-IM-NoSec, Test-ALERTING-NoSec, Test-SQL-NoSec, Test-KNN-NoSec, Test-AD-NoSec, Test-SQL, Test-AD, Test-ALERTING, Test-AD-KIBANA-NoSec, Test-SQL-KIBANA-NoSec, Test-AD-KIBANA, Test-SEC-KIBANA, Test-Kibana-Notebooks-NoSec, Test-Alerting-Kibana-NoSec, Test-Alerting-Kibana, Test-Async-NoSec]
+    # needs: [Test-Gantt-Chart-NoSec]
+    if: always()
+    name: CleanUp-Runners
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v1
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_EC2_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_EC2_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
+      - name: AWS Cli Processing
+        run: |
+          #!/bin/bash
+          # Please add comma at the end of the RUNNERS strings
+          # Don't add space after commas
+          RUNNERS="odfe-gantt-kibana-arm64,odfe-x64"
+          release-tools/scripts/setup_runners.sh terminate $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
