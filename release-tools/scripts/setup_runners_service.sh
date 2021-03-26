@@ -149,6 +149,8 @@ else
   sudo chmod 777 /etc/elasticsearch/elasticsearch.yml
   sudo sed -i '/path.logs/a path.repo: ["/home/repo"]' /etc/elasticsearch/elasticsearch.yml
   sudo sed -i /^node.max_local_storage_nodes/d /etc/elasticsearch/elasticsearch.yml
+  sudo echo "network.host: 127.0.0.1" | sudo tee -a /etc/elasticsearch/elasticsearch.yml > /dev/null
+  sudo echo "http.host: 0.0.0.0" | sudo tee -a /etc/elasticsearch/elasticsearch.yml > /dev/null
   # Increase the number of allowed script compilations. The SQL integ tests use a lot of scripts.
   sudo echo "script.context.field.max_compilations_rate: 1000/1m" | sudo tee -a /etc/elasticsearch/elasticsearch.yml > /dev/null
   sudo echo "opendistro.destination.host.deny_list: [\"10.0.0.0/8\", \"127.0.0.1\"]" | sudo tee -a /etc/elasticsearch/elasticsearch.yml > /dev/null
@@ -260,6 +262,7 @@ then
     sleep 5
   else
     sudo apt install $KIBANA_PACKAGE_NAME=$OD_VERSION* -y || sudo yum install $KIBANA_PACKAGE_NAME-$OD_VERSION -y
+    sudo echo "server.host : 0.0.0.0" >> /etc/kibana/kibana.yml
   fi
 fi
 
@@ -287,7 +290,6 @@ then
     docker run -d --name $DOCKER_NAME_KIBANA --network="host" odfe-kibana-http:security
     docker ps
   else
-    echo "server.host : 0.0.0.0" >> /etc/kibana/kibana.yml
     sudo systemctl restart elasticsearch.service
     sudo systemctl restart kibana.service
   fi
