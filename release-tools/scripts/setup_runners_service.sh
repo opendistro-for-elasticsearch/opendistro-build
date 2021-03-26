@@ -287,6 +287,7 @@ then
     docker run -d --name $DOCKER_NAME_KIBANA --network="host" odfe-kibana-http:security
     docker ps
   else
+    echo "server.host : 0.0.0.0" >> /etc/kibana/kibana.yml
     sudo systemctl restart elasticsearch.service
     sudo systemctl restart kibana.service
   fi
