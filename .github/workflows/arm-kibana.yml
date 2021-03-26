@@ -24,7 +24,7 @@ jobs:
           #!/bin/bash
           # Please add comma at the end of the RUNNERS strings
           # Don't add space after commas
-          RUNNERS="odfe-rpm-ad-kibana-nosec-arm64"
+          RUNNERS="odfe-rpm-ad-kibana-arm64"
           release-tools/scripts/setup_runners.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }} ami-0ef0c96643bbd01f2
       - name: Retrieve public ip
         run: |
@@ -33,7 +33,7 @@ jobs:
 
   Set-up-es-and-kibana:
     needs: [Provision-Runners]
-    runs-on: [self-hosted, Linux, ARM64, odfe-rpm-ad-kibana-nosec-arm64]
+    runs-on: [self-hosted, Linux, ARM64, odfe-rpm-ad-kibana-arm64]
     name: Set-up-es-and-kibana
     steps:
       - uses: actions/checkout@v1
@@ -136,5 +136,5 @@ jobs:
           #!/bin/bash
           # Please add comma at the end of the RUNNERS strings
           # Don't add space after commas
-          RUNNERS="odfe-rpm-ad-kibana-nosec-arm64"
+          RUNNERS="odfe-rpm-ad-kibana-arm64"
           release-tools/scripts/setup_runners.sh terminate $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
