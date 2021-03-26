@@ -6,8 +6,8 @@ on:
       - "gantt-chart"
 
 jobs:
-  Provision-Runners:
-    name: Provision-Runners
+  Provision-ARM64-Runners:
+    name: Provision-ARM64-Runners
     runs-on: ubuntu-18.04
     outputs:
       pub_ip: ${{env.es_ip}}
@@ -24,18 +24,37 @@ jobs:
           #!/bin/bash
           # Please add comma at the end of the RUNNERS strings
           # Don't add space after commas
-          RUNNERS="odfe-ad-kibana-arm64"
+          RUNNERS="odfe-gantt-kibana-arm64"
           release-tools/scripts/setup_runners.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }} ami-0ef0c96643bbd01f2
       - name: Retrieve public ip
-        run: echo "pub_ip=$(aws ec2 describe-instances --filter "Name=tag:Name,Values=odfe-ad-kibana-arm64" --query 'Reservations[*].Instances[*].{PublicIpAddress:PublicIpAddress}' --output text)" >> $GITHUB_ENV
+        run: echo "pub_ip=$(aws ec2 describe-instances --filter "Name=tag:Name,Values=odfe-gantt-kibana-arm64" --query 'Reservations[*].Instances[*].{PrivateIpAddress:PrivateIpAddress}' --output text)" >> $GITHUB_ENV
       - name: Echo 
         run: |
           echo "Env is:" 
           echo ${{ env.pub_ip }}
 
+  Provision-X64-Runners:
+    name: Provision-X64-Runners
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v1
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_EC2_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_EC2_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
+      - name: AWS Cli Processing
+        run: |
+          #!/bin/bash
+          # Please add comma at the end of the RUNNERS strings
+          # Don't add space after commas
+          RUNNERS="odfe-x64"
+          release-tools/scripts/setup_runners.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }} ami-0bd968fea932935f4
+
   Set-up-es-and-kibana:
-    needs: [Provision-Runners]
-    runs-on: [self-hosted, Linux, ARM64, odfe-ad-kibana-arm64]
+    needs: [Provision-ARM64-Runners]
+    runs-on: [self-hosted, Linux, ARM64, odfe-gantt-kibana-arm64]
     name: Set-up-es-and-kibana
     steps:
       - uses: actions/checkout@v1
@@ -53,9 +72,9 @@ jobs:
           
 
   Test-Gantt-Chart-NoSec:
-    needs: [Provision-Runners, Set-up-es-and-kibana]
+    needs: [Provision-ARM64-Runners, Provision-X64-Runners, Set-up-es-and-kibana]
     name: Test-Gantt-Chart-NoSec
-    runs-on: [ubuntu-latest]
+    runs-on: [self-hosted, Linux, X64, odfe-x64]
     strategy:
       fail-fast: false
       matrix:
@@ -129,14 +148,14 @@ jobs:
         run: |
           # release-tools/scripts/setup_runners_service.sh rpm --kibana-nosec
           echo "load the indices"
-          curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/kibana-visualizations/main/gantt-chart/.cypress/utils/jaeger-sample.json | curl -H 'Content-Type: application/x-ndjson' -XPOST '${{needs.Provision-Runners.outputs.pub_ip}}:9200/jaeger/_bulk?pretty' --data-binary @-
-          curl -X POST "${{needs.Provision-Runners.outputs.pub_ip}}:5601/api/saved_objects/index-pattern/jaeger"  -H 'kbn-xsrf: true' -H 'Content-Type: application/json' -d '{ "attributes": { "title": "jaeger" } }'
+          curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/kibana-visualizations/main/gantt-chart/.cypress/utils/jaeger-sample.json | curl -H 'Content-Type: application/x-ndjson' -XPOST '${{needs.Provision-ARM64-Runners.outputs.pub_ip}}:9200/jaeger/_bulk?pretty' --data-binary @-
+          curl -X POST "${{needs.Provision-ARM64-Runners.outputs.pub_ip}}:5601/api/saved_objects/index-pattern/jaeger"  -H 'kbn-xsrf: true' -H 'Content-Type: application/json' -d '{ "attributes": { "title": "jaeger" } }'
  
       - name: run IT
         uses: cypress-io/github-action@v2.5.0
         with:
           working-directory: kibana/plugins/gantt-chart
-          command: npx cypress run --env kibana=${{needs.Provision-Runners.outputs.pub_ip}}:5601
+          command: npx cypress run --env kibana=${{needs.Provision-ARM64-Runners.outputs.pub_ip}}:5601
 
       - uses: actions/upload-artifact@v1
         if: always()
@@ -163,5 +182,5 @@ jobs:
           #!/bin/bash
           # Please add comma at the end of the RUNNERS strings
           # Don't add space after commas
-          RUNNERS="odfe-ad-kibana-arm64"
+          RUNNERS="odfe-gantt-kibana-arm64"
           release-tools/scripts/setup_runners.sh terminate $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
