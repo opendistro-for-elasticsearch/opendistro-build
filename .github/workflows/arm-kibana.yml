@@ -29,7 +29,8 @@ jobs:
       - name: Retrieve public ip
         run: |
           es_ip=$(aws ec2 describe-instances --filter "Name=tag:Name,Values=odfe-ad-kibana-arm64" --query 'Reservations[*].Instances[*].{PublicIpAddress:PublicIpAddress}' --output text)
-          echo "pub_ip=$(aws ec2 describe-instances --filter "Name=tag:Name,Values=odfe-ad-kibana-arm64" --query 'Reservations[*].Instances[*].{PublicIpAddress:PublicIpAddress}' --output text)" >> $GITHUB_ENV
+          # echo "pub_ip=$(aws ec2 describe-instances --filter "Name=tag:Name,Values=odfe-ad-kibana-arm64" --query 'Reservations[*].Instances[*].{PublicIpAddress:PublicIpAddress}' --output text)" >> $GITHUB_ENV
+          echo "pub_ip=$es_ip" >> $GITHUB_ENV
           echo "Es ip is: " $es_ip
           echo "Env is:" ${{ env.pub_ip }}
 
