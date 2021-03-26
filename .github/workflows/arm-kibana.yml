@@ -31,7 +31,7 @@ jobs:
           es_ip=$(aws ec2 describe-instances --filter "Name=tag:Name,Values=odfe-ad-kibana-arm64" --query 'Reservations[*].Instances[*].{PublicIpAddress:PublicIpAddress}' --output text)
           echo "pub_ip=$es_ip" >> $GITHUB_ENV
           # echo $es_ip
-          echo ${{ env.pub_ip }}
+          echo "Env is:" ${{ env.pub_ip }}
 
   # Set-up-es-and-kibana:
   #   needs: [Provision-Runners]
