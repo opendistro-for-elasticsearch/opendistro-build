@@ -19,13 +19,13 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_EC2_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_EC2_SECRET_ACCESS_KEY }}
           aws-region: us-west-2
-      # - name: AWS Cli Processing
-      #   run: |
-      #     #!/bin/bash
-      #     # Please add comma at the end of the RUNNERS strings
-      #     # Don't add space after commas
-      #     RUNNERS="odfe-ad-kibana-arm64"
-      #     release-tools/scripts/setup_runners.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }} ami-0ef0c96643bbd01f2
+      - name: AWS Cli Processing
+        run: |
+          #!/bin/bash
+          # Please add comma at the end of the RUNNERS strings
+          # Don't add space after commas
+          RUNNERS="odfe-ad-kibana-arm64"
+          release-tools/scripts/setup_runners.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }} ami-0ef0c96643bbd01f2
       - name: Retrieve public ip
         run: echo "pub_ip=$(aws ec2 describe-instances --filter "Name=tag:Name,Values=odfe-ad-kibana-arm64" --query 'Reservations[*].Instances[*].{PublicIpAddress:PublicIpAddress}' --output text)" >> $GITHUB_ENV
       - name: Echo 
@@ -47,7 +47,6 @@ jobs:
         run: |
           echo "es_version_kibana=$(release-tools/scripts/version-info.sh --es)" >> $GITHUB_ENV
           echo "p_tag_ad_kibana=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)" >> $GITHUB_ENV
-
 
       - name: Start ES and Kibana
         run: release-tools/scripts/setup_runners_service.sh rpm --kibana-nosec arm64
@@ -126,12 +125,12 @@ jobs:
           ls -ltr
           yarn kbn bootstrap
 
-      # - name: Load indices
-      #   run: |
-      #     # release-tools/scripts/setup_runners_service.sh rpm --kibana-nosec
-      #     echo "load the indices"
-      #     curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/kibana-visualizations/main/gantt-chart/.cypress/utils/jaeger-sample.json | curl -H 'Content-Type: application/x-ndjson' -XPOST '${{needs.Provision-Runners.outputs.pub_ip}}:9200/jaeger/_bulk?pretty' --data-binary @-
-      #     curl -X POST "${{needs.Provision-Runners.outputs.pub_ip}}:5601/api/saved_objects/index-pattern/jaeger"  -H 'kbn-xsrf: true' -H 'Content-Type: application/json' -d '{ "attributes": { "title": "jaeger" } }'
+      - name: Load indices
+        run: |
+          # release-tools/scripts/setup_runners_service.sh rpm --kibana-nosec
+          echo "load the indices"
+          curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/kibana-visualizations/main/gantt-chart/.cypress/utils/jaeger-sample.json | curl -H 'Content-Type: application/x-ndjson' -XPOST '${{needs.Provision-Runners.outputs.pub_ip}}:9200/jaeger/_bulk?pretty' --data-binary @-
+          curl -X POST "${{needs.Provision-Runners.outputs.pub_ip}}:5601/api/saved_objects/index-pattern/jaeger"  -H 'kbn-xsrf: true' -H 'Content-Type: application/json' -d '{ "attributes": { "title": "jaeger" } }'
  
       - name: run IT
         uses: cypress-io/github-action@v2.5.0
