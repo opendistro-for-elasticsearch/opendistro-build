@@ -6,27 +6,27 @@ on:
       - "gantt-chart"
 
 jobs:
-  # Provision-Runners:
-  #   name: Provision-Runners
-  #   runs-on: ubuntu-18.04
-  #   steps:
-  #     - uses: actions/checkout@v1
-  #     - name: Configure AWS Credentials
-  #       uses: aws-actions/configure-aws-credentials@v1
-  #       with:
-  #         aws-access-key-id: ${{ secrets.AWS_EC2_ACCESS_KEY_ID }}
-  #         aws-secret-access-key: ${{ secrets.AWS_EC2_SECRET_ACCESS_KEY }}
-  #         aws-region: us-west-2
-  #     - name: AWS Cli Processing
-  #       run: |
-  #         #!/bin/bash
-  #         # Please add comma at the end of the RUNNERS strings
-  #         # Don't add space after commas
-  #         RUNNERS="odfe-rpm-ad-kibana-nosec-arm64"
-  #         release-tools/scripts/setup_runners.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }} ami-0ef0c96643bbd01f2
+  Provision-Runners:
+    name: Provision-Runners
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v1
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_EC2_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_EC2_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
+      - name: AWS Cli Processing
+        run: |
+          #!/bin/bash
+          # Please add comma at the end of the RUNNERS strings
+          # Don't add space after commas
+          RUNNERS="odfe-rpm-ad-kibana-nosec-arm64"
+          release-tools/scripts/setup_runners.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }} ami-0ef0c96643bbd01f2
 
   Set-up-es-and-kibana:
-    # needs: [Provision-Runners]
+    needs: [Provision-Runners]
     runs-on: [self-hosted, Linux, ARM64, odfe-rpm-ad-kibana-nosec-arm64]
     outputs:
       es_ip: ${{env.es_ip}}
@@ -44,7 +44,7 @@ jobs:
 
 
       - name: Start ES and Kibana
-        run: release-tools/scripts/setup_runners_service.sh rpm --kibana-nosec arm64
+        run: release-tools/scripts/setup_runners_service.sh rpm --kibana arm64
 
       - name: Retrieve ip
         run: echo "es_ip=$(hostname -I | awk '{print $1}')" >> $GITHUB_ENV
@@ -109,9 +109,6 @@ jobs:
         run: |
           cd ./kibana/plugins/anomaly-detection-kibana-plugin
           yarn kbn bootstrap
-          
-      - name: Start ES and Kibana
-        run: release-tools/scripts/setup_runners_service.sh deb --kibana
           
       - name: run IT
         uses: cypress-io/github-action@v2.5.0
