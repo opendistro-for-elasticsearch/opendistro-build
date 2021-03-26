@@ -65,6 +65,7 @@ spec:
         securityContext:
           privileged: true
 {{- end }}
+{{- if .Values.elasticsearch.fixmount.enabled }}
       - name: fixmount
         command: [ 'sh', '-c', 'chown -R 1000:1000 /usr/share/elasticsearch/data' ]
         image: {{ .Values.global.imageRegistry }}/{{ .Values.elasticsearch.initContainer.image }}:{{ .Values.elasticsearch.initContainer.imageTag }}
@@ -72,6 +73,7 @@ spec:
           - mountPath: /usr/share/elasticsearch/data
             name: data
             subPath: {{ .Values.elasticsearch.data.persistence.subPath }}
+{{- end }}
 {{- if .Values.elasticsearch.extraInitContainers }}
 {{ toYaml .Values.elasticsearch.extraInitContainers| indent 6 }}
 {{- end }}
@@ -80,11 +82,17 @@ spec:
 {{ toYaml . | indent 8 }}
     {{- end }}
       serviceAccountName: {{ template "opendistro-es.elasticsearch.serviceAccountName" . }}
+{{- with .Values.elasticsearch.securityContextCustom }}
+      securityContext:
+{{ toYaml . | indent 8 }}
+{{- end }}
       containers:
       - name: elasticsearch
         securityContext:
+{{- if .Values.elasticsearch.sys_chroot.enabled }}
           capabilities:
             add: ["SYS_CHROOT"]
+{{- end }}
         env:
         - name: cluster.name
           value: {{ .Values.global.clusterName }}
