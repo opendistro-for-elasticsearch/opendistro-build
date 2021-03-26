@@ -6,110 +6,115 @@ on:
       - "gantt-chart"
 
 jobs:
-  Provision-Runners:
-    name: Provision-Runners
-    runs-on: ubuntu-18.04
+  # Provision-Runners:
+  #   name: Provision-Runners
+  #   runs-on: ubuntu-18.04
+  #   steps:
+  #     - uses: actions/checkout@v1
+  #     - name: Configure AWS Credentials
+  #       uses: aws-actions/configure-aws-credentials@v1
+  #       with:
+  #         aws-access-key-id: ${{ secrets.AWS_EC2_ACCESS_KEY_ID }}
+  #         aws-secret-access-key: ${{ secrets.AWS_EC2_SECRET_ACCESS_KEY }}
+  #         aws-region: us-west-2
+  #     - name: AWS Cli Processing
+  #       run: |
+  #         #!/bin/bash
+  #         # Please add comma at the end of the RUNNERS strings
+  #         # Don't add space after commas
+  #         RUNNERS="odfe-rpm-ad-kibana-nosec-arm64"
+  #         release-tools/scripts/setup_runners.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }} ami-0ef0c96643bbd01f2
+
+  Set-up-es-and-kibana:
+    # needs: [Provision-Runners]
+    runs-on: [self-hosted, Linux, ARM64, odfe-rpm-ad-kibana-nosec-arm64]
+    outputs:
+      es_ip: ${{env.es_ip}}
+    name: Set-up-es-and-kibana
     steps:
       - uses: actions/checkout@v1
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_EC2_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_EC2_SECRET_ACCESS_KEY }}
-          aws-region: us-west-2
-      - name: AWS Cli Processing
+
+      - name: Required Packages
+        run: release-tools/scripts/required_packages.sh
+
+      - name: Retrieve plugin tags
         run: |
-          #!/bin/bash
-          # Please add comma at the end of the RUNNERS strings
-          # Don't add space after commas
-          RUNNERS="odfe-rpm-ad-kibana-nosec-arm64"
-          release-tools/scripts/setup_runners.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }} ami-0ef0c96643bbd01f2
-
-  # Set-up-es-and-kibana:
-  #   needs: [Provision-Runners]
-  #   runs-on: [self-hosted, Linux, ARM64, odfe-rpm-ad-kibana-nosec-arm64]
-  #   name: Set-up-es-and-kibana
-  #   steps:
-  #     - uses: actions/checkout@v1
-
-  #     - name: Required Packages
-  #       run: release-tools/scripts/required_packages.sh
-
-  #     - name: Retrieve plugin tags
-  #       run: |
-  #         echo "es_version_kibana=$(release-tools/scripts/version-info.sh --es)" >> $GITHUB_ENV
-  #         echo "p_tag_ad_kibana=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)" >> $GITHUB_ENV
+          echo "es_version_kibana=$(release-tools/scripts/version-info.sh --es)" >> $GITHUB_ENV
+          echo "p_tag_ad_kibana=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)" >> $GITHUB_ENV
 
 
-  #     - name: Start ES and Kibana
-  #       run: release-tools/scripts/setup_runners_service.sh rpm --kibana-nosec arm64
+      - name: Start ES and Kibana
+        run: release-tools/scripts/setup_runners_service.sh rpm --kibana-nosec arm64
 
-  #     - name: Retrieve ip
-
-  # Test-AD-KIBANA:
-  #   runs-on: [ubuntu-18.04]
-  #   name: Test-AD-KIBANA
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       java: [14]
-  #   steps:
-  #     - uses: actions/checkout@v1
-  #     - name: Required Packages
-  #       run: ./release-tools/scripts/required_packages.sh
-
-  #     - name: Retrieve plugin tags 
-  #       run: |
-  #         echo "p_tag_ad=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)" >> $GITHUB_ENV
-  #         echo "es_version=$(release-tools/scripts/version-info.sh --es)" >> $GITHUB_ENV
+      - name: Retrieve ip
+        run: echo "es_ip=$(hostname -I | awk '{print $1}')" >> $GITHUB_ENV
           
-  #     - name: Checkout Kibana
-  #       uses: actions/checkout@v2
-  #       with:
-  #         repository: opendistro-for-elasticsearch/kibana-oss
-  #         ref: ${{env.es_version}}
-  #         token: ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
-  #         path: kibana
+
+  Test-AD-KIBANA:
+    needs: [Set-up-es-and-kibana]
+    runs-on: [ubuntu-18.04]
+    name: Test-AD-KIBANA
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [14]
+    steps:
+      - uses: actions/checkout@v1
+      - name: Required Packages
+        run: ./release-tools/scripts/required_packages.sh
+
+      - name: Retrieve plugin tags 
+        run: |
+          echo "p_tag_ad=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)" >> $GITHUB_ENV
+          echo "es_version=$(release-tools/scripts/version-info.sh --es)" >> $GITHUB_ENV
+          
+      - name: Checkout Kibana
+        uses: actions/checkout@v2
+        with:
+          repository: opendistro-for-elasticsearch/kibana-oss
+          ref: ${{env.es_version}}
+          token: ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
+          path: kibana
            
-  #     - uses: actions/checkout@v2
-  #       with:
-  #         repository: opendistro-for-elasticsearch/anomaly-detection-kibana-plugin
-  #         ref: ${{env.p_tag_ad}}
-  #         path: kibana/plugins/anomaly-detection-kibana-plugin
+      - uses: actions/checkout@v2
+        with:
+          repository: opendistro-for-elasticsearch/anomaly-detection-kibana-plugin
+          ref: ${{env.p_tag_ad}}
+          path: kibana/plugins/anomaly-detection-kibana-plugin
       
-  #     - name: Setup Java
-  #       uses: actions/setup-java@v1
-  #       with:
-  #         java-version: ${{ matrix.java }}
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
       
-  #     - name: Get node and yarn versions
-  #       id: node_yarn_versions
-  #       run: |
-  #         echo "kibana_node_version=$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV
-  #         echo "kibana_yarn_version=$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV   
+      - name: Get node and yarn versions
+        id: node_yarn_versions
+        run: |
+          echo "kibana_node_version=$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV
+          echo "kibana_yarn_version=$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV   
       
-  #     - name: Setup node
-  #       uses: actions/setup-node@v1
-  #       with:
-  #         node-version: ${{env.kibana_node_version}}
-  #         registry-url: 'https://registry.npmjs.org'
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{env.kibana_node_version}}
+          registry-url: 'https://registry.npmjs.org'
       
-  #     - name: Install correct yarn version for Kibana
-  #       run: |
-  #         npm uninstall -g yarn
-  #         echo "Installing yarn ${{ env.kibana_yarn_version }}"
-  #         npm i -g yarn@${{ env.kibana_yarn_version }}     
+      - name: Install correct yarn version for Kibana
+        run: |
+          npm uninstall -g yarn
+          echo "Installing yarn ${{ env.kibana_yarn_version }}"
+          npm i -g yarn@${{ env.kibana_yarn_version }}     
       
-  #     - name: Bootstrap the plugin
-  #       run: |
-  #         cd ./kibana/plugins/anomaly-detection-kibana-plugin
-  #         yarn kbn bootstrap
+      - name: Bootstrap the plugin
+        run: |
+          cd ./kibana/plugins/anomaly-detection-kibana-plugin
+          yarn kbn bootstrap
           
-  #     - name: Start ES and Kibana
-  #       run: release-tools/scripts/setup_runners_service.sh deb --kibana
+      - name: Start ES and Kibana
+        run: release-tools/scripts/setup_runners_service.sh deb --kibana
           
-  #     - name: run IT
-  #       uses: cypress-io/github-action@v2.5.0
-  #       with:
-  #         working-directory: kibana/plugins/anomaly-detection-kibana-plugin
-  #         command: yarn cy:run-with-security --config baseurl=http://localhost:5601
+      - name: run IT
+        uses: cypress-io/github-action@v2.5.0
+        with:
+          working-directory: kibana/plugins/anomaly-detection-kibana-plugin
+          command: yarn cy:run-with-security --config baseurl=${{needs.Set-up-es-and-kibana.outputs.es_ip}}:5601
