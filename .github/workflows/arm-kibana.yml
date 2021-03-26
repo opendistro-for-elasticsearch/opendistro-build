@@ -137,7 +137,7 @@ jobs:
         uses: cypress-io/github-action@v2.5.0
         with:
           working-directory: kibana/plugins/gantt-chart
-          command: npx cypress run --env elasticsearch=52.33.240.64:9200, kibana=52.33.240.64:5601
+          command: npx cypress run --env kibana=52.33.240.64:5601
 
       - uses: actions/upload-artifact@v1
         if: always()
