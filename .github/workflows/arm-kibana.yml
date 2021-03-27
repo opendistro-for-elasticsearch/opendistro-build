@@ -6,11 +6,11 @@ on:
       - "gantt-chart"
 
 jobs:
-  Provision-ARM64-Runners:
-    name: Provision-ARM64-Runners
+  Provision-Runners:
+    name: Provision-Runners
     runs-on: ubuntu-18.04
     outputs:
-      pub_ip: ${{env.pub_ip}}
+      es_ip: ${{env.es_ip}}
     steps:
       - uses: actions/checkout@v1
       - name: Configure AWS Credentials
@@ -24,33 +24,14 @@ jobs:
           #!/bin/bash
           # Please add comma at the end of the RUNNERS strings
           # Don't add space after commas
-          RUNNERS="odfe-gantt-kibana-arm64"
+          RUNNERS="odfe-ad-kibana-arm64"
           release-tools/scripts/setup_runners.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }} ami-0ef0c96643bbd01f2
       - name: Retrieve public ip
-        run: echo "pub_ip=$(aws ec2 describe-instances --filter "Name=tag:Name,Values=odfe-gantt-kibana-arm64" --query 'Reservations[*].Instances[*].{PrivateIpAddress:PrivateIpAddress}' --output text)" >> $GITHUB_ENV
-
-  Provision-X64-Runners:
-    name: Provision-X64-Runners
-    runs-on: ubuntu-18.04
-    steps:
-      - uses: actions/checkout@v1
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_EC2_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_EC2_SECRET_ACCESS_KEY }}
-          aws-region: us-west-2
-      - name: AWS Cli Processing
-        run: |
-          #!/bin/bash
-          # Please add comma at the end of the RUNNERS strings
-          # Don't add space after commas
-          RUNNERS="odfe-x64"
-          release-tools/scripts/setup_runners.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }} ami-0bd968fea932935f4
-
+        run: echo "es_ip=$(aws ec2 describe-instances --filter "Name=tag:Name,Values=odfe-ad-kibana-arm64" --query 'Reservations[*].Instances[*].{PublicIpAddress:PublicIpAddress}' --output text)" >> $GITHUB_ENV
+        
   Set-up-es-and-kibana:
-    needs: [Provision-ARM64-Runners]
-    runs-on: [self-hosted, Linux, ARM64, odfe-gantt-kibana-arm64]
+    needs: [Provision-Runners]
+    runs-on: [self-hosted, Linux, ARM64, odfe-ad-kibana-arm64]
     name: Set-up-es-and-kibana
     steps:
       - uses: actions/checkout@v1
@@ -63,14 +44,15 @@ jobs:
           echo "es_version_kibana=$(release-tools/scripts/version-info.sh --es)" >> $GITHUB_ENV
           echo "p_tag_ad_kibana=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection-kibana-plugin)" >> $GITHUB_ENV
 
+
       - name: Start ES and Kibana
         run: release-tools/scripts/setup_runners_service.sh rpm --kibana-nosec arm64
           
 
   Test-Gantt-Chart-NoSec:
-    needs: [Provision-ARM64-Runners, Provision-X64-Runners, Set-up-es-and-kibana]
+    needs: [Provision-Runners, Set-up-es-and-kibana]
     name: Test-Gantt-Chart-NoSec
-    runs-on: [self-hosted, Linux, X64, odfe-x64]
+    runs-on: [ubuntu-latest]
     strategy:
       fail-fast: false
       matrix:
@@ -115,9 +97,6 @@ jobs:
       - name: Get node and yarn versions
         id: node_yarn_versions
         run: |
-          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
-          . ~/.nvm/nvm.sh
-          nvm install node
           echo "kibana_node_version=$(node -p "(require('./kibana/package.json').engines.node).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV
           echo "kibana_yarn_version=$(node -p "(require('./kibana/package.json').engines.yarn).match(/[.0-9]+/)[0]")" >> $GITHUB_ENV   
       
@@ -142,20 +121,18 @@ jobs:
           cd gantt-chart
           ls -ltr
           yarn kbn bootstrap
-          echo ${{needs.Provision-ARM64-Runners.outputs.pub_ip}}
-
       - name: Load indices
         run: |
           # release-tools/scripts/setup_runners_service.sh rpm --kibana-nosec
           echo "load the indices"
-          curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/kibana-visualizations/main/gantt-chart/.cypress/utils/jaeger-sample.json | curl -H 'Content-Type: application/x-ndjson' -XPOST '${{needs.Provision-ARM64-Runners.outputs.pub_ip}}:9200/jaeger/_bulk?pretty' --data-binary @-
-          curl -X POST "${{needs.Provision-ARM64-Runners.outputs.pub_ip}}:5601/api/saved_objects/index-pattern/jaeger"  -H 'kbn-xsrf: true' -H 'Content-Type: application/json' -d '{ "attributes": { "title": "jaeger" } }'
+          curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/kibana-visualizations/main/gantt-chart/.cypress/utils/jaeger-sample.json | curl -H 'Content-Type: application/x-ndjson' -XPOST '${{needs.Provision-Runners.outputs.es_ip}}:9200/jaeger/_bulk?pretty' --data-binary @-
+          curl -X POST "${{needs.Provision-Runners.outputs.es_ip}}:5601/api/saved_objects/index-pattern/jaeger"  -H 'kbn-xsrf: true' -H 'Content-Type: application/json' -d '{ "attributes": { "title": "jaeger" } }'
  
       - name: run IT
         uses: cypress-io/github-action@v2.5.0
         with:
           working-directory: kibana/plugins/gantt-chart
-          command: npx cypress run --env kibana=${{needs.Provision-ARM64-Runners.outputs.pub_ip}}:5601
+          command: npx cypress run --env kibana=${{needs.Provision-Runners.outputs.es_ip}}:5601
 
       - uses: actions/upload-artifact@v1
         if: always()
@@ -164,6 +141,7 @@ jobs:
           path: kibana/plugins/gantt-chart/.cypress/videos/
 
   CleanUp-Runners:
+    # needs: [Test-IM-NoSec, Test-ALERTING-NoSec, Test-SQL-NoSec, Test-KNN-NoSec, Test-AD-NoSec, Test-SQL, Test-AD, Test-ALERTING, Test-AD-KIBANA-NoSec, Test-SQL-KIBANA-NoSec, Test-AD-KIBANA, Test-SEC-KIBANA, Test-Kibana-Notebooks-NoSec, Test-Alerting-Kibana-NoSec, Test-Alerting-Kibana, Test-Async-NoSec]
     needs: [Test-Gantt-Chart-NoSec]
     if: always()
     name: CleanUp-Runners
@@ -181,5 +159,5 @@ jobs:
           #!/bin/bash
           # Please add comma at the end of the RUNNERS strings
           # Don't add space after commas
-          RUNNERS="odfe-gantt-kibana-arm64,odfe-x64"
+          RUNNERS="odfe-ad-kibana-arm64"
           release-tools/scripts/setup_runners.sh terminate $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }}
