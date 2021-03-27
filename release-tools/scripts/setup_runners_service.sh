@@ -262,7 +262,7 @@ then
     sleep 5
   else
     sudo apt install $KIBANA_PACKAGE_NAME=$OD_VERSION* -y || sudo yum install $KIBANA_PACKAGE_NAME-$OD_VERSION -y
-    sudo echo "server.host : 0.0.0.0" >> /etc/kibana/kibana.yml
+    sudo echo "server.host : 0.0.0.0" | sudo tee -a /etc/kibana/kibana.yml > /dev/null
   fi
 fi
 
