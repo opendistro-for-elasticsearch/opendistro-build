@@ -124,7 +124,7 @@ jobs:
       - name: Load indices
         run: |
           # release-tools/scripts/setup_runners_service.sh rpm --kibana-nosec
-          echo "load the indices"
+          echo "load the indices into ${{needs.Provision-Runners.outputs.es_ip}}"
           curl -s https://raw.githubusercontent.com/opendistro-for-elasticsearch/kibana-visualizations/main/gantt-chart/.cypress/utils/jaeger-sample.json | curl -H 'Content-Type: application/x-ndjson' -XPOST '${{needs.Provision-Runners.outputs.es_ip}}:9200/jaeger/_bulk?pretty' --data-binary @-
           curl -X POST "${{needs.Provision-Runners.outputs.es_ip}}:5601/api/saved_objects/index-pattern/jaeger"  -H 'kbn-xsrf: true' -H 'Content-Type: application/json' -d '{ "attributes": { "title": "jaeger" } }'
  
