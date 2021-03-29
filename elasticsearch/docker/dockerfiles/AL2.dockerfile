@@ -21,13 +21,11 @@
 
 FROM amazonlinux:2 AS build
 
-ARG ODFE_VERSION
-ARG BUILD_DATE
-ARG UID=1000
-ARG GID=1000
-
 # Install the tools we need: tar and gzip to unpack the ODFE tarball, and shadow-utils to give us `groupadd` and `useradd`.
 RUN yum install -y tar gzip shadow-utils
+
+ARG UID=1000
+ARG GID=1000
 
 # Create an elasticsearch user, group, and directory
 RUN groupadd -g $GID elasticsearch && \
@@ -64,6 +62,9 @@ ENTRYPOINT ["/usr/share/elasticsearch/docker-entrypoint.sh"]
 CMD ["eswrapper"]
 
 # Label
+ARG ODFE_VERSION
+ARG BUILD_DATE
+
 LABEL org.label-schema.schema-version="1.0" \
   org.label-schema.name="opendistroforelasticsearch" \
   org.label-schema.version="$ODFE_VERSION" \
