@@ -1,5 +1,4 @@
 #!/bin/bash
-set -e
 
 # Files created by OpenDistroForElasticsearch should always be group writable too
 umask 0002
@@ -46,17 +45,39 @@ done < <(env)
 # will run in.
 export ES_JAVA_OPTS="-Des.cgroups.hierarchy.override=/ $ES_JAVA_OPTS"
 
-# TODO: Replace supervisord with something else so we can certify the docker image (https://docs.docker.com/docker-hub/publish/certify-images/ says supervisord is forbidden)
-#if [[ -d "/usr/share/elasticsearch/plugins/opendistro-performance-analyzer" ]]; then
-#    CLK_TCK=`/usr/bin/getconf CLK_TCK`
-#    ES_JAVA_OPTS="-Dclk.tck=$CLK_TCK -Djdk.attach.allowAttachSelf=true $ES_JAVA_OPTS"
-#    if [[ -d "/usr/share/elasticsearch/performance-analyzer-rca" ]]; then
-#        ES_JAVA_OPTS="-Djava.security.policy=file:///usr/share/elasticsearch/performance-analyzer-rca/pa_config/es_security.policy $ES_JAVA_OPTS"
-#        /usr/bin/supervisord -c /usr/share/elasticsearch/performance-analyzer-rca/pa_config/supervisord.conf
-#    else
-#        ES_JAVA_OPTS="-Djava.security.policy=file:///usr/share/elasticsearch/plugins/opendistro-performance-analyzer/pa_config/es_security.policy $ES_JAVA_OPTS"
-#        /usr/bin/supervisord -c /usr/share/elasticsearch/plugins/opendistro-performance-analyzer/pa_config/supervisord.conf
-#    fi
-#fi
 
-/usr/share/elasticsearch/bin/elasticsearch "${es_opts[@]}"
+# Start up the elasticsearch and performance analyzer agent processes.
+# When either of them halts, this script exits, or we receive a SIGTERM or SIGINT signal then we want to kill both these processes.
+
+function terminateProcesses {
+    if kill -0 $ES_PID >& /dev/null; then
+        echo "Killing elasticsearch process $ES_PID"
+        kill -TERM $ES_PID
+        wait $ES_PID
+    fi
+    if kill -0 $PA_PID >& /dev/null; then
+        echo "Killing performance analyzer process $PA_PID"
+        kill -TERM $PA_PID
+        wait $PA_PID
+    fi
+}
+
+# Enable job control so we receive SIGCHLD when a child process terminates
+set -m
+
+# Make sure we terminate the child processes in the event of us received TERM (e.g. "docker container stop"), INT (e.g. ctrl-C), EXIT (this script terminates for an unexpected reason), or CHLD (one of the processes terminated unexpectedly)
+trap terminateProcesses TERM INT EXIT CHLD
+
+# Start elasticsearch
+/usr/share/elasticsearch/bin/elasticsearch "${es_opts[@]}" &
+ES_PID=$!
+
+# Start performance analyzer agent
+ES_HOME=/usr/share/elasticsearch /usr/share/elasticsearch/bin/performance-analyzer-agent-cli &
+PA_PID=$!
+
+# Wait for the child processes to terminate
+wait $ES_PID
+echo "Elasticsearch exited with code $?"
+wait $PA_PID
+echo "Performance analyzer exited with code $?"
