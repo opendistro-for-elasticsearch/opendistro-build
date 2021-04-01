@@ -39,8 +39,8 @@ plugins:
   - 
     plugin_basename: opendistro-sql
     plugin_git: opendistro-for-elasticsearch/sql
-    plugin_version: 1.13.0.0
-    plugin_build: 37
+    plugin_version: 1.13.2.0
+    plugin_build: 41
     plugin_spec: [noplatform_noarch_zip,noplatform_noarch_deb,noplatform_noarch_rpm]
     plugin_category: elasticsearch-plugins
     release_candidate: true
@@ -99,8 +99,8 @@ plugins:
   - 
     plugin_basename: opendistro-index-management
     plugin_git: opendistro-for-elasticsearch/index-management
-    plugin_version: 1.13.1.0
-    plugin_build: 15
+    plugin_version: 1.13.2.0
+    plugin_build: 16
     plugin_spec: [noplatform_noarch_zip,noplatform_noarch_deb,noplatform_noarch_rpm]
     plugin_category: elasticsearch-plugins
     release_candidate: true
@@ -171,8 +171,8 @@ plugins:
   - 
     plugin_basename: opendistroQueryWorkbenchKibana
     plugin_git: opendistro-for-elasticsearch/sql
-    plugin_version: 1.13.0.0
-    plugin_build: 31
+    plugin_version: 1.13.2.0
+    plugin_build: 34
     plugin_spec: [noplatform_noarch_zip]
     plugin_category: kibana-plugins
     release_candidate: true
@@ -221,8 +221,8 @@ plugins:
   - 
     plugin_basename: opendistroNotebooksKibana
     plugin_git: opendistro-for-elasticsearch/kibana-notebooks
-    plugin_version: 1.13.0.0
-    plugin_build: 11
+    plugin_version: 1.13.2.0
+    plugin_build: 14
     plugin_spec: [noplatform_noarch_zip]
     plugin_category: kibana-plugins
     release_candidate: true
@@ -241,8 +241,8 @@ plugins:
   - 
     plugin_basename: opendistroReportsKibana
     plugin_git: opendistro-for-elasticsearch/kibana-reports
-    plugin_version: 1.13.0.0
-    plugin_build: 18
+    plugin_version: 1.13.2.0
+    plugin_build: 21
     plugin_spec: [linux_x64_zip,linux_arm64_zip,windows_x64_zip]
     plugin_category: kibana-plugins
     release_candidate: true
@@ -253,8 +253,8 @@ plugins:
   - 
     plugin_basename: opendistroTraceAnalyticsKibana
     plugin_git: opendistro-for-elasticsearch/trace-analytics
-    plugin_version: 1.13.0.0
-    plugin_build: 
+    plugin_version: 1.13.2.0
+    plugin_build: 11
     plugin_spec: [noplatform_noarch_zip]
     plugin_category: kibana-plugins
     release_candidate: true
