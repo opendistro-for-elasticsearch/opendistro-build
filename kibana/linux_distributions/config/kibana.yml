@@ -31,3 +31,4 @@ newsfeed.enabled: false
 telemetry.optIn: false
 telemetry.enabled: false
 security.showInsecureClusterWarning: false
+map.includeElasticMapsService: false
