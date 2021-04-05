@@ -3,8 +3,6 @@ name: Build ODFE AMI
 on:
   repository_dispatch:
     types: [staging-build-ami]
-  push:
-    branches: [sreekarj_ami]
     
 jobs:
   build:
@@ -45,5 +43,5 @@ jobs:
         echo "base image for $arch_type : $latest_base_image_id"
         export RPM_package_version=$OD_version
         export AMI_name="Open Distro for Elasticsearch-$OD_version-$arch_type-`date +"%D-%H.%M.%S"`"
-        #python elasticsearch/AMI/main.py
+        python elasticsearch/AMI/main.py
         done
