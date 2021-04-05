@@ -42,7 +42,7 @@ jobs:
           --filters "Name=architecture,Values=$arch_type"  "Name=name,Values=amzn2-ami-hvm-*-$arch_type-gp2"\
           --query 'sort_by(Images, &CreationDate)[-1].[ImageId]' --output 'text'`
         export base_image_id=$latest_base_image_id 
-        echo $latest_base_image_id
+        echo "base image for $arch_type : $latest_base_image_id"
         export RPM_package_version=$OD_version
         export AMI_name="Open Distro for Elasticsearch-$OD_version-$arch_type-`date +"%D-%H.%M.%S"`"
         #python elasticsearch/AMI/main.py
