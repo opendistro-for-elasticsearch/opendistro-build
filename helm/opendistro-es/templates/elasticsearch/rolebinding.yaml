@@ -27,4 +27,18 @@ subjects:
 - kind: ServiceAccount
   name: {{ template "opendistro-es.elasticsearch.serviceAccountName" . }}
   namespace: {{ .Release.Namespace }}
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: {{ template "opendistro-es.fullname" . }}-elastic-clusterrolebinding
+  namespace: default
+subjects:
+  - kind: User
+    name: system:serviceaccount:default:{{ template "opendistro-es.elasticsearch.serviceAccountName" . }}
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: get-nodes
+  apiGroup: rbac.authorization.k8s.io
 {{- end }}
