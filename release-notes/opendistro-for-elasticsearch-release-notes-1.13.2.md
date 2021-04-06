@@ -14,6 +14,9 @@ Open Distro for Elasticsearch 1.13.2 includes the following features, bug fixes 
 
 ## BUG FIXES
 
+### Index Management
+* Correcting rollup rewriting logic in field caps filter for cross cluster search and introducing a setting to prevent the rewrite if not desired. ([#422](https://github.com/opendistro-for-elasticsearch/index-management/pull/422))
+
 ### Release Engineering
 * Make sure replicas matches in values.yaml and README. Thanks @yardenshoham ([#686](https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/686))
 * Indentation bug fix in values.yaml : Security Configuration. Thanks @mdiver ([#688](https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/688))
