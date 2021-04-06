@@ -34,22 +34,14 @@ jobs:
     
         
         # please check this during the new release, are we getting the latest ami id
-        if [ "$os" == "amazonLinux" ];
-        then
+        for arch_type in x86_64 arm64;
+        do
           latest_base_image_id=`aws ec2 describe-images --owners amazon\
-          --filters "Name=architecture,Values=x86_64"  "Name=name,Values=amzn2-ami-hvm-*-x86_64-gp2"\
+          --filters "Name=architecture,Values=$arch_type"  "Name=name,Values=amzn2-ami-hvm-*-$arch_type-gp2"\
           --query 'sort_by(Images, &CreationDate)[-1].[ImageId]' --output 'text'`
-        elif [ "$os" == "ubuntu" ];
-        then
-          latest_base_image_id=`aws ec2 describe-images --owners 099720109477\
-          --filters "Name=architecture,Values=x86_64"  "Name=name,Values=ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*"\
-          --query 'sort_by(Images, &CreationDate)[-1].[ImageId]' --output 'text'`
-        else
-          echo "$os os is not yet supported"
-          exit 128
-        fi
-
         export base_image_id=$latest_base_image_id 
+        echo "base image for $arch_type : $latest_base_image_id"
         export RPM_package_version=$OD_version
-        export AMI_name="Open Distro for Elasticsearch-$OD_version-`date +"%D-%H.%M.%S"`"
+        export AMI_name="Open Distro for Elasticsearch-$OD_version-$arch_type-`date +"%D-%H.%M.%S"`"
         python elasticsearch/AMI/main.py
+        done
