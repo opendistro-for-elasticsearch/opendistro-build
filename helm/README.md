@@ -629,7 +629,7 @@ The following table lists the configurable parameters of the opendistro elastics
 | `elasticsearch.extraVolumeMounts`                         | Array of extra volume mounts to be added                                                                                                                 | `[]`                                                                    |
 | `elasticsearch.extraInitContainers`                       | Array of extra init containers                                                                                                                           | `[]`                                                                    |
 | `elasticsearch.enableShardAllocationAwareness`            | Awareness of allocation of shards by zone                                                                                                                | `false`                                                                 |
-| `elasticsearch.forcedAllocationAwareness`                 | Forced awareness of allocation of shards                                                                                                                 | `false`                                                                 |
+| `elasticsearch.forcedAllocationAwareness`                 | Forced awareness of allocation of shards. This will only become active when `enableShardAllocationAwareness` is enabled                                  | `false`                                                                 |
 
 ## Acknowledgements
 * [Kalvin Chau](https://github.com/kalvinnchau) (Software Engineer - Viasat) for all his help with the Kubernetes internals, certs, and debugging
