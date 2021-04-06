@@ -39,6 +39,7 @@ RUN tar -xzf /tmp/elasticsearch/odfe.tgz -C /usr/share/elasticsearch --strip-com
 COPY log4j2.properties /usr/share/elasticsearch/config/
 COPY elasticsearch.yml /usr/share/elasticsearch/config/
 COPY docker-entrypoint.sh /usr/share/elasticsearch/
+COPY performance-analyzer.properties /usr/share/elasticsearch/plugins/opendistro-performance-analyzer/pa_config/
 
 # TODO: Temporary, until we get changes to opendistro-tar-install.sh built into ODFE
 # Once https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/697 is built into the next version of ODFE and we have a tarball we can delete the next three lines
