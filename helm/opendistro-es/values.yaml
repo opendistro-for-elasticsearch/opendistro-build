@@ -12,7 +12,7 @@
 # permissions and limitations under the License.
 
 kibana:
-  enabled: false
+  enabled: true
   image: amazon/opendistro-for-elasticsearch-kibana
   imageTag: 1.13.1
   ## Specifies the image pull policy. Can be "Always" or "IfNotPresent" or "Never".
