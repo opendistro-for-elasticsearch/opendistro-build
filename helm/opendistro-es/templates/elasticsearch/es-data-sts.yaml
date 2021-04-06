@@ -74,6 +74,25 @@ spec:
             name: data
             subPath: {{ .Values.elasticsearch.data.persistence.subPath }}
 {{- end }}
+{{ if .Values.elasticsearch.enableShardAllocationAwareness }}
+      - name: get-zone
+        image: {{ .Values.global.imageRegistry }}/bskim45/helm-kubectl-jq
+        env:
+          - name: NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+        volumeMounts:
+          - mountPath: /tmpConfig
+            name: tmp
+        command:
+          - bash
+          - -c
+          - |
+            set -ex
+            ZONE=$(kubectl get node $NODE_NAME -o json | jq -r '.metadata.labels["failure-domain.beta.kubernetes.io/zone"]'); 
+            echo $ZONE > /tmpConfig/es-zone
+{{- end }}
 {{- if .Values.elasticsearch.extraInitContainers }}
 {{ toYaml .Values.elasticsearch.extraInitContainers| indent 6 }}
 {{- end }}
@@ -92,6 +111,14 @@ spec:
 {{- if .Values.elasticsearch.sys_chroot.enabled }}
           capabilities:
             add: ["SYS_CHROOT"]
+{{- end }}
+{{ if .Values.elasticsearch.enableShardAllocationAwareness }}
+        command:
+          - bash
+          - -c
+          - |
+            set -ex
+            env "node.attr.zone=$(</tmpConfig/es-zone)" /usr/local/bin/docker-entrypoint.sh eswrapper
 {{- end }}
         env:
         - name: cluster.name
@@ -145,6 +172,10 @@ spec:
 {{ toYaml . | indent 10 }}
     {{- end }}
         volumeMounts:
+{{ if .Values.elasticsearch.enableShardAllocationAwareness }}
+        - name: tmp
+          mountPath: /tmpConfig
+{{- end }}
         - mountPath: /usr/share/elasticsearch/data
           name: data
           subPath: {{ .Values.elasticsearch.data.persistence.subPath }}
@@ -198,6 +229,10 @@ spec:
 {{ toYaml .Values.elasticsearch.extraVolumeMounts | indent 8 }}
 {{- end }}
       volumes:
+{{ if .Values.elasticsearch.enableShardAllocationAwareness }}
+      - name: tmp
+        emptyDir: { }
+{{- end }}
       - name: config
         secret:
           secretName: {{ template "opendistro-es.fullname" . }}-es-config

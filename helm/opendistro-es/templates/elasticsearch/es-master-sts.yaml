@@ -79,6 +79,29 @@ spec:
             name: data
             subPath: {{ .Values.elasticsearch.master.persistence.subPath }}
 {{- end }}
+{{ if .Values.elasticsearch.enableShardAllocationAwareness }}
+      - name: get-zone
+        image: {{ .Values.global.imageRegistry }}/bskim45/helm-kubectl-jq
+        env:
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+        volumeMounts:
+          - mountPath: /tmpConfig
+            name: tmp
+        command:
+          - bash
+          - -c
+          - |
+            set -ex
+            ZONE=$(kubectl get node $NODE_NAME -o json | jq -r '.metadata.labels["failure-domain.beta.kubernetes.io/zone"]'); 
+            echo $ZONE > /tmpConfig/es-zone
+{{ if .Values.elasticsearch.forcedAllocationAwareness }}
+            ZONES=$(kubectl get node -o json | jq -r '.items[].metadata.labels["failure-domain.beta.kubernetes.io/zone"]' | sort -u | paste -d, -s)
+            echo $ZONES > /tmpConfig/es-zones
+{{- end }}
+{{- end }}
 {{- if .Values.elasticsearch.extraInitContainers }}
 {{ toYaml .Values.elasticsearch.extraInitContainers| indent 6 }}
 {{- end }}
@@ -95,6 +118,21 @@ spec:
         securityContext:
           capabilities:
             add: ["SYS_CHROOT"]
+{{- end }}
+{{ if .Values.elasticsearch.enableShardAllocationAwareness }}
+        command:
+          - bash
+          - -cx
+          - |
+            set -ex
+{{ if .Values.elasticsearch.forcedAllocationAwareness }}
+            CONFIG_FILE=config/elasticsearch.yml
+            CONFIG_FILE_BACKUP=config/elasticsearch.yml.backup
+            mv $CONFIG_FILE $CONFIG_FILE_BACKUP
+            echo cluster.routing.allocation.awareness.force.zone.values: $(</tmpConfig/es-zones) >> $CONFIG_FILE_BACKUP
+            mv $CONFIG_FILE_BACKUP $CONFIG_FILE
+{{- end }}
+            env "node.attr.zone=$(</tmpConfig/es-zone)" /usr/local/bin/docker-entrypoint.sh eswrapper
 {{- end }}
         env:
         - name: cluster.name
@@ -141,6 +179,10 @@ spec:
               resource: limits.cpu
         - name: ES_JAVA_OPTS
           value: {{ .Values.elasticsearch.master.javaOpts }}
+{{ if .Values.elasticsearch.enableShardAllocationAwareness }}
+        - name: cluster.routing.allocation.awareness.attributes
+          value: zone
+{{- end }}
 {{- if .Values.elasticsearch.extraEnvs }}
 {{ toYaml .Values.elasticsearch.extraEnvs | indent 8 }}
 {{- end }}
@@ -171,6 +213,10 @@ spec:
         - containerPort: 9650
           name: rca
         volumeMounts:
+{{ if .Values.elasticsearch.enableShardAllocationAwareness }}
+        - name: tmp
+          mountPath: /tmpConfig
+{{- end }}
         - mountPath: /usr/share/elasticsearch/data
           name: data
           subPath: {{ .Values.elasticsearch.master.persistence.subPath }}
@@ -263,6 +309,10 @@ spec:
 {{ toYaml .Values.elasticsearch.master.extraContainers | indent 6 }}
 {{- end }}
       volumes:
+{{ if .Values.elasticsearch.enableShardAllocationAwareness }}
+      - name: tmp
+        emptyDir: {}
+{{- end }}
       - name: config
         secret:
           secretName: {{ template "opendistro-es.fullname" . }}-es-config

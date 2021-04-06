@@ -12,7 +12,7 @@
 # permissions and limitations under the License.
 
 kibana:
-  enabled: true
+  enabled: false
   image: amazon/opendistro-for-elasticsearch-kibana
   imageTag: 1.13.1
   ## Specifies the image pull policy. Can be "Always" or "IfNotPresent" or "Never".
@@ -550,6 +550,13 @@ elasticsearch:
     ## The name of the ServiceAccount to use.
     ## If not set and create is true, a name is generated using the fullname template
     name:
+
+  ## Awareness attribute that uses zone configuration when allocating shards
+  enableShardAllocationAwareness: false
+  
+  ## By default, if one location fails, Elasticsearch assigns all of the missing replica shards to the remaining locations. 
+  ## To prevent a single location from being overloaded in the event of a failure, you can set this to true
+  forcedAllocationAwareness: false
 
 
 nameOverride: ""
