@@ -8,7 +8,7 @@ Open Distro for Elasticsearch 1.13.2 includes the following features, bug fixes 
 ## FEATURES
 
 ### Release Engineering
-* Add ARM64 for AMI ([#732](https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/732))
+* Add ARM64 support for AMI ([#732](https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/732))
 * Enable Elasticsearch running as non-root without any extra capabilities or privileges. Thanks @timricese ([#703](https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/703))
 * Replace global.registry with global.imageRegistry. Thanks @yardenshoham ([#685](https://github.com/opendistro-for-elasticsearch/opendistro-build/pull/685))
 
@@ -23,7 +23,7 @@ Open Distro for Elasticsearch 1.13.2 includes the following features, bug fixes 
 ## MAINTENANCE
 
 ### Index Management
-* Bump version to 1.13.1.0 ([#427](https://github.com/opendistro-for-elasticsearch/index-management/pull/427))
+* Bump version to 1.13.2.0 ([#427](https://github.com/opendistro-for-elasticsearch/index-management/pull/427))
 
 ### SQL
 
