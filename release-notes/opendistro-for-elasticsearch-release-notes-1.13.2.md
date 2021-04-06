@@ -3,7 +3,7 @@
 ## Release Highlights
 
 ## Release Details
-Open Distro for Elasticsearch 1.13.2 includes the following bug fixes and maintenance updates.
+Open Distro for Elasticsearch 1.13.2 includes the following features, bug fixes and maintenance updates.
 
 ## FEATURES
 
