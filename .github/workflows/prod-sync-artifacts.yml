@@ -7,8 +7,6 @@ name: Sync ODFE artifacts to Prod
 on: 
   repository_dispatch:
     types: [prod-sync-artifacts]
-  push:
-    branches: [sreekarj_prodsync]
 
 jobs:
   Sync-Prod:
