@@ -27,6 +27,10 @@ Open Distro for Elasticsearch 1.13.2 includes the following bug fixes and mainte
 
 ### SQL
 
-### 
+### Kibana Reports
+
+### Kibana Notebooks
+
+### Trace Analytics
 
 
