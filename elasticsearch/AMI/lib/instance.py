@@ -16,7 +16,7 @@
 
 import logging
 import os
-
+import traceback
 import boto3
 
 from .ODFEInstaller import ODFEInstaller
@@ -73,15 +73,18 @@ class Instance:
             ec2Type="t3a.2xlarge"
         if arm64 in AMI_name:
             ec2Type="t4g.2xlarge"
-        self.instance = ec2_resource.create_instances(
-            ImageId="ami-015f1226b535bd02d",
-            MinCount=1,
-            MaxCount=1,
-            InstanceType="t4g.2xlarge",
-            KeyName=self.key_pair_name,
-            SecurityGroupIds=[security_group_id],
-            AdditionalInfo="ODFE AMI",
-        )[0]
+        try:
+            self.instance = ec2_resource.create_instances(
+                    ImageId="ami-015f1226b535bd02d",
+                    MinCount=1,
+                    MaxCount=1,
+                    InstanceType="t4g.2xlarge",
+                    KeyName=self.key_pair_name,
+                    SecurityGroupIds=[security_group_id],
+                    AdditionalInfo="ODFE AMI",
+                    )[0]
+        except:
+            traceback.print_exc()
         logging.info(f"Instance created with instance id {self.instance.instance_id}")
         self.os = os
         self.AMI_name = AMI_name

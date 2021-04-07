@@ -89,7 +89,7 @@ def AMI_builder(
             AWS_access_key_id=AWS_access_key_id,
             AWS_secret_access_key=AWS_secret_access_key,
             region_name=region_name,
-            base_image_id=base_image_id,
+            base_image_id="ami-015f1226b535bd02d",
             os=os,  # ubuntu, amazonLinux
             security_group_id=security_group_id,
             AMI_name=AMI_name,
