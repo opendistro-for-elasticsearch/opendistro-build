@@ -1,7 +1,7 @@
 # Open Distro for Elasticsearch 1.13.2 Release Notes
 
 ## Release Highlights
-Open Distro for Elasticsearch 1.13.2 is targeted to deliver Trace Analytics GA. This release also fixes an issue in ISM (Correcting rollup rewriting logic in field caps filter for cross cluster search and introducing a setting to prevent the rewrite if not desired). The ARM64 support for AMI will also be supported. 
+Open Distro for Elasticsearch 1.13.2 is targeted to deliver Trace Analytics GA. This release also fixes an issue in ISM (Correcting rollup rewriting logic in field caps filter for cross cluster search and introducing a setting to prevent the rewrite if not desired). ARM64 for AMI will also be supported. 
 
 ## Release Details
 Open Distro for Elasticsearch 1.13.2 includes the following features, bug fixes and maintenance updates.
