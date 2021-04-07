@@ -67,11 +67,15 @@ class Instance:
         self.key_pair_name = "ODFEAMIInstanceKey"
         self.key_path = self._create_key_pair()
         logging.info("Creating instance")
+        if "x86_64" in AMI_name:
+            ec2Type="t3a.2xlarge"
+        if "arm64" in AMI_name:
+            ec2Type="t4g.2xlarge"
         self.instance = ec2_resource.create_instances(
             ImageId=base_image_id,
             MinCount=1,
             MaxCount=1,
-            InstanceType="t3a.2xlarge",
+            InstanceType=ec2Type,
             KeyName=self.key_pair_name,
             SecurityGroupIds=[security_group_id],
             AdditionalInfo="ODFE AMI",
