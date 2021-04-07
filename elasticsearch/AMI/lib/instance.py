@@ -71,11 +71,12 @@ class Instance:
             ec2Type="t3a.2xlarge"
         if arm64 in self.AMI_name:
             ec2Type="t4g.2xlarge"
+        logging.info("Base image id : " + base_image_id)
         self.instance = ec2_resource.create_instances(
             ImageId=base_image_id,
             MinCount=1,
             MaxCount=1,
-            InstanceType=ec2Type,
+            InstanceType="t4g.2xlarge",
             KeyName=self.key_pair_name,
             SecurityGroupIds=[security_group_id],
             AdditionalInfo="ODFE AMI",
