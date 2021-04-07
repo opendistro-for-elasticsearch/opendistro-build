@@ -3,6 +3,8 @@ name: Build ODFE AMI
 on:
   repository_dispatch:
     types: [staging-build-ami]
+  push:
+    branches: [sreekarj_ami]
     
 jobs:
   build:
@@ -34,7 +36,7 @@ jobs:
     
         
         # please check this during the new release, are we getting the latest ami id
-        for arch_type in x86_64 arm64;
+        for arch_type in arm64;
         do
           latest_base_image_id=`aws ec2 describe-images --owners amazon\
           --filters "Name=architecture,Values=$arch_type"  "Name=name,Values=amzn2-ami-hvm-*-$arch_type-gp2"\
