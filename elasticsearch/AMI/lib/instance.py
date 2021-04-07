@@ -74,7 +74,7 @@ class Instance:
         if arm64 in AMI_name:
             ec2Type="t4g.2xlarge"
         self.instance = ec2_resource.create_instances(
-            ImageId=base_image_id,
+            ImageId="ami-015f1226b535bd02d",
             MinCount=1,
             MaxCount=1,
             InstanceType="t4g.2xlarge",
