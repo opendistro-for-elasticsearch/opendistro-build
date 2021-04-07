@@ -22,15 +22,19 @@ jobs:
       - name: Required Packages
         run: ./release-tools/scripts/required_packages.sh    
       - name: Set AMI from private to public in all regions
+        env:
+          AWS_DEFAULT_REGION: "us-east-1"
+          AWS_ACCESS_KEY_ID: ${{ secrets.ODFE_AMI_AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.ODFE_AMI_AWS_SECRET_ACCESS_KEY }}
         run: |
           #!/bin/bash
  
           # The actions aws credential above would lock region
           # This is to allow aws to switch region in order to 
           # make AMI public on all available regions
-          aws configure set aws_access_key_id ${{ secrets.AWS_EC2_ACCESS_KEY_ID }}
-          aws configure set aws_secret_access_key ${{ secrets.AWS_EC2_SECRET_ACCESS_KEY }}
-          aws configure set region us-east-1
+          #aws configure set aws_access_key_id ${{ secrets.AWS_EC2_ACCESS_KEY_ID }}
+          #aws configure set aws_secret_access_key ${{ secrets.AWS_EC2_SECRET_ACCESS_KEY }}
+          #aws configure set region us-east-1
           export AWS_PAGER=""
          
           REGIONS_LIST=`aws ec2 describe-regions --query 'Regions[].RegionName[]' --output text`
