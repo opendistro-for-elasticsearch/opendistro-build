@@ -27,6 +27,7 @@ subjects:
 - kind: ServiceAccount
   name: {{ template "opendistro-es.elasticsearch.serviceAccountName" . }}
   namespace: {{ .Release.Namespace }}
+{{ if .Values.elasticsearch.enableShardAllocationAwareness }}
 ---
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
@@ -41,4 +42,5 @@ roleRef:
   kind: ClusterRole
   name: get-nodes
   apiGroup: rbac.authorization.k8s.io
+{{- end }}
 {{- end }}

@@ -97,7 +97,7 @@ spec:
             set -ex
             ZONE=$(kubectl get node $NODE_NAME -o json | jq -r '.metadata.labels["failure-domain.beta.kubernetes.io/zone"]'); 
             echo $ZONE > /tmpConfig/es-zone
-{{ if .Values.elasticsearch.forcedAllocationAwareness }}
+{{ if and .Values.elasticsearch.forcedAllocationAwareness .Values.elasticsearch.enableShardAllocationAwareness }}
             ZONES=$(kubectl get node -o json | jq -r '.items[].metadata.labels["failure-domain.beta.kubernetes.io/zone"]' | sort -u | paste -d, -s)
             echo $ZONES > /tmpConfig/es-zones
 {{- end }}
@@ -125,7 +125,7 @@ spec:
           - -cx
           - |
             set -ex
-{{ if .Values.elasticsearch.forcedAllocationAwareness }}
+{{ if and .Values.elasticsearch.forcedAllocationAwareness .Values.elasticsearch.enableShardAllocationAwareness }}
             CONFIG_FILE=config/elasticsearch.yml
             CONFIG_FILE_BACKUP=config/elasticsearch.yml.backup
             mv $CONFIG_FILE $CONFIG_FILE_BACKUP
