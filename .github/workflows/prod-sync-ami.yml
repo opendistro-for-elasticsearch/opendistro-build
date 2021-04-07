@@ -3,6 +3,8 @@ name: Sync ami artifacts to Prod
 on: 
   repository_dispatch:
     types: [prod-sync-ami]
+  push:
+    branches: [sreekarj_ami]
 
 jobs:
   Sync-AMI-Prod:
@@ -40,11 +42,13 @@ jobs:
             
             echo "Making AMI Public in region (${region_name}): Open Distro for Elasticsearch-${{ env.od_version }}-x86_64"
             AMI_IMAGE_ID_x64=`aws ec2 describe-images --filters "Name=name,Values=Open Distro for Elasticsearch-${{ env.od_version }}-x86_64*" --query 'Images[*].{ID:ImageId}' --output text`
-            aws ec2 modify-image-attribute --image-id "${AMI_IMAGE_ID_x64}" --launch-permission "Add=[{Group=all}]"
+            echo $AMI_IMAGE_ID_x64
+            #aws ec2 modify-image-attribute --image-id "${AMI_IMAGE_ID_x64}" --launch-permission "Add=[{Group=all}]"
             
             echo "Making AMI Public in region (${region_name}): Open Distro for Elasticsearch-${{ env.od_version }}-arm64"
             AMI_IMAGE_ID_arm64=`aws ec2 describe-images --filters "Name=name,Values=Open Distro for Elasticsearch-${{ env.od_version }}-arm64*" --query 'Images[*].{ID:ImageId}' --output text`
-            aws ec2 modify-image-attribute --image-id "${AMI_IMAGE_ID_arm64}" --launch-permission "Add=[{Group=all}]"
+            echo $AMI_IMAGE_ID_arm64
+            #aws ec2 modify-image-attribute --image-id "${AMI_IMAGE_ID_arm64}" --launch-permission "Add=[{Group=all}]"
           done
 
           echo "AMI has been published / set to public on all regions"
