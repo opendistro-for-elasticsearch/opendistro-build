@@ -81,7 +81,7 @@ spec:
 {{- end }}
 {{ if .Values.elasticsearch.enableShardAllocationAwareness }}
       - name: get-zone
-        image: {{ .Values.global.imageRegistry }}/bskim45/helm-kubectl-jq
+        image: {{ .Values.global.imageRegistry }}/juntezhang/kubectl-jq
         env:
             - name: NODE_NAME
               valueFrom:
