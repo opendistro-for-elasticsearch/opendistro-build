@@ -24,6 +24,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
 spec:
   serviceName: {{ template "opendistro-es.fullname" . }}-data-svc
+  podManagementPolicy: {{ .Values.elasticsearch.data.podManagementPolicy }}
   replicas: {{ .Values.elasticsearch.data.replicas }}
   selector:
     matchLabels:

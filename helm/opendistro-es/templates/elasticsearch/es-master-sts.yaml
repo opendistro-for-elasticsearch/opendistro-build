@@ -23,6 +23,7 @@ metadata:
   name: {{ template "opendistro-es.fullname" . }}-master
   namespace: {{ .Release.Namespace }}
 spec:
+  podManagementPolicy: {{ .Values.elasticsearch.master.podManagementPolicy }}
   replicas: {{ .Values.elasticsearch.master.replicas }}
   selector:
     matchLabels:

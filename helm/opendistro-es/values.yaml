@@ -245,6 +245,7 @@ elasticsearch:
     enabled: true
     replicas: 1
     updateStrategy: "RollingUpdate"
+    podManagementPolicy: "OrderedReady"
 
     ## Enable persistence using Persistent Volume Claims
     ## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
@@ -322,6 +323,7 @@ elasticsearch:
       enabled: true
     replicas: 1
     updateStrategy: "RollingUpdate"
+    podManagementPolicy: "OrderedReady"
 
     ## Enable persistence using Persistent Volume Claims
     ## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
