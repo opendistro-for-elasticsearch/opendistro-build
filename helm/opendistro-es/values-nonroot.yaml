@@ -174,7 +174,7 @@ elasticsearch:
     #The following option simplifies securityConfig by using a single secret and specifying the respective secrets in the corresponding files instead of creating different secrets for config,internal users, roles, roles mapping and tenants
     #Note that this is an alternative to the above secrets and shouldn't be used if the above secrets are used
     config:
-       securityConfigSecret:
+       securityConfigSecret: security-configs-secret
        data: {}
         # config.yml: |-
         # internal_users.yml: |-
