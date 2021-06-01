@@ -28,9 +28,9 @@ kibana:
   #  requests:
   #    cpu: 500m
   #    memory: 512Mi
-  readinessProbe: []
-  livenessProbe: []
-  startupProbe: []
+  readinessProbe: {}
+  livenessProbe: {}
+  startupProbe: {}
 
   elasticsearchAccount:
     secret: ""
@@ -286,13 +286,13 @@ elasticsearch:
     podDisruptionBudget:
       enabled: false
       minAvailable: 1
-    readinessProbe: []
+    readinessProbe: {}
     livenessProbe:
       tcpSocket:
         port: transport
       initialDelaySeconds: 60
       periodSeconds: 10
-    startupProbe: []
+    startupProbe: {}
     nodeSelector: {}
     tolerations: []
     ## Anti-affinity to disallow deploying client and master nodes on the same worker node
@@ -363,13 +363,13 @@ elasticsearch:
     podDisruptionBudget:
       enabled: false
       minAvailable: 1
-    readinessProbe: []
+    readinessProbe: {}
     livenessProbe:
       tcpSocket:
         port: transport
       initialDelaySeconds: 60
       periodSeconds: 10
-    startupProbe: []
+    startupProbe: {}
     nodeSelector: {}
     tolerations: []
     ## Anti-affinity to disallow deploying client and master nodes on the same worker node
@@ -435,13 +435,13 @@ elasticsearch:
     podDisruptionBudget:
       enabled: false
       minAvailable: 1
-    readinessProbe: []
+    readinessProbe: {}
     livenessProbe:
       tcpSocket:
         port: transport
       initialDelaySeconds: 60
       periodSeconds: 10
-    startupProbe: []
+    startupProbe: {}
     nodeSelector: {}
     tolerations: []
     ## Weighted anti-affinity to disallow deploying client node to the same worker node as master node
