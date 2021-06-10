@@ -136,6 +136,7 @@ kibana:
     name:
 
   podAnnotations: {}
+  podAdditionalLabels: {}
 
 
 global:
@@ -304,6 +305,7 @@ elasticsearch:
     #          matchLabels:
     #            role: master
     podAnnotations: {}
+    podAdditionalLabels: {}
 
     extraInitContainers: []
     # - name: do-something
@@ -383,6 +385,7 @@ elasticsearch:
     #            matchLabels:
     #              role: data
     podAnnotations: {}
+    podAdditionalLabels: {}
 
   client:
     enabled: true
@@ -455,6 +458,7 @@ elasticsearch:
     #            matchLabels:
     #              role: client
     podAnnotations: {}
+    podAdditionalLabels: {}
 
   config: {}
     ## Example Config

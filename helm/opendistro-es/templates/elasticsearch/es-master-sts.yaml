@@ -36,6 +36,9 @@ spec:
       labels:
 {{ include "opendistro-es.labels.standard" . | indent 8 }}
         role: master
+        {{- if .Values.elasticsearch.master.podAdditionalLabels }}
+        {{- toYaml .Values.elasticsearch.master.podAdditionalLabels | nindent 8 }}
+        {{- end }}
       annotations:
         {{/* This forces a restart if the secret config has changed */}}
         {{- if .Values.elasticsearch.config }}

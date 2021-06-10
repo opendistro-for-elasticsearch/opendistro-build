@@ -32,6 +32,9 @@ spec:
       labels:
 {{ include "opendistro-es.labels.standard" . | indent 8 }}
         role: kibana
+        {{- if .Values.kibana.podAdditionalLabels }}
+        {{- toYaml .Values.kibana.podAdditionalLabels | nindent 8 }}
+        {{- end }}
       annotations:
         {{/* This forces a restart if the secret config has changed */}}
         {{- if .Values.kibana.config }}
