@@ -19,21 +19,21 @@ Due to the uniqueness of different users environments, this chart aims to cater 
 
 ## TL;DR
 ```
-❯ helm package .
-❯ helm install opendistro-es-1.13.2.tgz --name opendistro-es
+❯ helm repo add opendistro-build https://opendistro-for-elasticsearch.github.io/opendistro-build
+❯ helm install opendistro-es opendistro-build/opendistro-es
 ```
 
 ## Installing the Chart
 To install the chart with the release name `my-release`:
 
-`❯ helm install --name my-release opendistro-es-1.13.2.tgz`
+`❯ helm install opendistro-es opendistro-build/opendistro-es`
 
 The command deploys OpenDistro Kibana and Elasticsearch with its associated components (data statefulsets, masters, clients) on the Kubernetes cluster in the default configuration.
 
 ## Uninstalling the Chart
-To delete/uninstall the chart with the release name `my-release`:
+To delete/uninstall the chart with the release name `opendistro-es`:
 ```
-❯ helm delete --name opendistro-es
+❯ helm del opendistro-es
 ```
 
 ### Notes About Default Installation
