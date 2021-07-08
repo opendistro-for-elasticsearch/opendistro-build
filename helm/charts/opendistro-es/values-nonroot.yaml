@@ -73,7 +73,6 @@ kibana:
       existingCertSecretRootCASubPath: elk-rest-root-ca.pem
 
 
-
   configDirectory: "/usr/share/kibana/config"
   certsDirectory: "/usr/share/kibana/certs"
 
@@ -113,7 +112,6 @@ kibana:
 
     # opendistro_security.cookie.secure: true
     # opendistro_security.cookie.password: ${COOKIE_PASS}
-
 
 
   ## Node labels for pod assignment
@@ -171,8 +169,8 @@ elasticsearch:
     rolesSecret:
     rolesMappingSecret:
     tenantsSecret:
-    #The following option simplifies securityConfig by using a single secret and specifying the respective secrets in the corresponding files instead of creating different secrets for config,internal users, roles, roles mapping and tenants
-    #Note that this is an alternative to the above secrets and shouldn't be used if the above secrets are used
+    # The following option simplifies securityConfig by using a single secret and specifying the respective secrets in the corresponding files instead of creating different secrets for config,internal users, roles, roles mapping and tenants
+    # Note that this is an alternative to the above secrets and shouldn't be used if the above secrets are used
     config:
        securityConfigSecret:
        data: {}
