@@ -18,7 +18,7 @@ description: 'Open Distro for Elasticsearch'
 engine: gotpl
 kubeVersion: ^1.10.0-0
 maintainers:
-- email: derek.heldt-werle@viasat.com
+- email: derek.dhw@gmail.com
   name: Derek Heldt-Werle
 - email: kalvin.chau@viasat.com
   name: Kalvin Chau
