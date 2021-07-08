@@ -11,19 +11,19 @@
 # express or implied. See the License for the specific language governing
 # permissions and limitations under the License.
 
-# @formatter:off
-{{- if and .Values.global.rbac.enabled .Values.kibana.enabled }}
-apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: Role
-metadata:
-  name: {{ template "opendistro-es.kibana.serviceAccountName" . }}
-  namespace: {{ .Release.Namespace }}
-  labels:
-{{ include "opendistro-es.labels.standard" . | indent 4 }}
-rules:
-- apiGroups: ['extensions']
-  resources: ['podsecuritypolicies']
-  verbs:     ['use']
-  resourceNames:
-  - {{ template "opendistro-es.fullname" . }}-psp
-{{- end }}
+apiVersion: v1
+# Open Distro for Elasticsearch version
+appVersion: 1.13.2
+description: 'Open Distro for Elasticsearch'
+engine: gotpl
+kubeVersion: ^1.10.0-0
+maintainers:
+- email: derek.heldt-werle@viasat.com
+  name: DerekHeldtWerle
+- email: kalvin.chau@viasat.com
+  name: kalvinnchau
+name: opendistro-es
+sources:
+- https://pages.git.viasat.com/ATG/charts
+# Chart version
+version: 1.13.2
