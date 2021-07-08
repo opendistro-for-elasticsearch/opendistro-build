@@ -21,7 +21,7 @@ maintainers:
 - email: derek.dhw@gmail.com
   name: DerekHeldtWerle
 - email: kalvin.chau@viasat.com
-  name: Kalvin Chau
+  name: kalvinnchau
 name: opendistro-es
 sources:
 - https://pages.git.viasat.com/ATG/charts
