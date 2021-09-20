@@ -46,6 +46,10 @@ spec:
       initContainers:
 {{ toYaml .Values.kibana.extraInitContainers | indent 8 }}
 {{- end }}
+{{- with .Values.kibana.securityContextCustom }}
+      securityContext:
+{{ toYaml . | indent 8 }}
+{{- end }}
       containers:
       - env:
         - name: CLUSTER_NAME
