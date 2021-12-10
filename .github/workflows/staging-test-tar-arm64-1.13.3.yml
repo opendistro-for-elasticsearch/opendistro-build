@@ -43,9 +43,9 @@ jobs:
           #!/bin/bash
           # Please add comma at the end of the RUNNERS strings
           # Don't add space after commas
-          RUNNERS+="odfe-tar-im-nosec-arm64"
-          #RUNNERS+="odfe-tar-im-nosec-arm64,odfe-tar-alerting-nosec-arm64,odfe-tar-sql-nosec-arm64,odfe-tar-knn-nosec-arm64,odfe-tar-ad-nosec-arm64,"
-          #RUNNERS+="odfe-tar-sql-arm64,odfe-tar-ad-arm64,odfe-tar-alerting-arm64,odfe-tar-async-nosec-arm64"
+          #RUNNERS+="odfe-tar-im-nosec-arm64"
+          RUNNERS+="odfe-tar-im-nosec-arm64,odfe-tar-alerting-nosec-arm64,odfe-tar-sql-nosec-arm64,odfe-tar-knn-nosec-arm64,odfe-tar-ad-nosec-arm64,"
+          RUNNERS+="odfe-tar-sql-arm64,odfe-tar-ad-arm64,odfe-tar-alerting-arm64,odfe-tar-async-nosec-arm64"
           release-tools/scripts/setup_runners.sh run $RUNNERS ${{ secrets.ODFE_RELEASE_BOT_PUBLIC_PRIVATE_READ_WRITE_TOKEN }} ami-03f8a33a16290a84c
 
   Test-IM-NoSec:
@@ -75,222 +75,222 @@ jobs:
           export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../index-management; pwd
           ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
 
-#  Test-Alerting-NoSec:
-#    needs: [Provision-Runners]
-#    runs-on: [self-hosted, Linux, ARM64, odfe-tar-alerting-nosec-arm64]
-#    name: Test-Alerting-NoSec
-#    steps:
-#      - name: Set up AWS Cred
-#        uses: aws-actions/configure-aws-credentials@v1
-#        with:
-#          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
-#          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
-#          aws-region: us-east-1
-#      - uses: actions/checkout@v1
-#      - name: Required Packages
-#        run: ./release-tools/scripts/required_packages.sh
-#      - name: Retrieve plugin tags
-#        run:  echo "p_tag_alerting=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)" >> $GITHUB_ENV
-#      - name: Checkout Alerting
-#        uses: actions/checkout@v1
-#        with:
-#          repository: opendistro-for-elasticsearch/alerting
-#          ref: ${{env.p_tag_alerting}}
-#      - name: Integration Test
-#        run: |
-#          ./release-tools/scripts/setup_runners_service.sh zip --es-nosec arm64
-#          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../alerting/alerting; pwd
-#          ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
-#
-#  Test-SQL-NoSec:
-#    needs: [Provision-Runners]
-#    runs-on: [self-hosted, Linux, ARM64, odfe-tar-sql-nosec-arm64]
-#    name: Test-SQL-NoSec
-#    steps:
-#      - name: Set up AWS Cred
-#        uses: aws-actions/configure-aws-credentials@v1
-#        with:
-#          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
-#          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
-#          aws-region: us-east-1
-#      - uses: actions/checkout@v1
-#      - name: Required Packages
-#        run: ./release-tools/scripts/required_packages.sh
-#      - name: Retrieve plugin tags
-#        run:  echo "p_tag_sql=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)" >> $GITHUB_ENV
-#      - name: Checkout SQL
-#        uses: actions/checkout@v1
-#        with:
-#          repository: opendistro-for-elasticsearch/sql
-#          ref: ${{env.p_tag_sql}}
-#      - name: Integration Test
-#        run: |
-#          ./release-tools/scripts/setup_runners_service.sh zip --es-nosec arm64
-#          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../sql; pwd
-#          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
-#          
-#  Test-KNN-NoSec:
-#    needs: [Provision-Runners]
-#    runs-on: [self-hosted, Linux, ARM64, odfe-tar-knn-nosec-arm64]
-#    name: Test-KNN-NoSec
-#    steps:
-#      - name: Set up AWS Cred
-#        uses: aws-actions/configure-aws-credentials@v1
-#        with:
-#          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
-#          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
-#          aws-region: us-east-1
-#      - uses: actions/checkout@v1
-#      - name: Required Packages
-#        run: ./release-tools/scripts/required_packages.sh
-#      - name: Retrieve plugin tags
-#        run:  echo "p_tag_knn=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/k-NN)" >> $GITHUB_ENV
-#      - name: Checkout k-NN
-#        uses: actions/checkout@v1
-#        with:
-#          repository: opendistro-for-elasticsearch/k-NN
-#          ref: ${{env.p_tag_knn}}
-#      - name: Integration Test
-#        run: |
-#          ./release-tools/scripts/setup_runners_service.sh zip --es-nosec arm64
-#          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../k-NN; pwd
-#          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
-#          
-#  Test-AD-NoSec:
-#    needs: [Provision-Runners]
-#    runs-on: [self-hosted, Linux, ARM64, odfe-tar-ad-nosec-arm64]
-#    name: Test-AD-NoSec
-#    steps:
-#      - name: Set up AWS Cred
-#        uses: aws-actions/configure-aws-credentials@v1
-#        with:
-#          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
-#          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
-#          aws-region: us-east-1
-#      - uses: actions/checkout@v1
-#      - name: Required Packages
-#        run: ./release-tools/scripts/required_packages.sh
-#      - name: Retrieve plugin tags
-#        run:  echo "p_tag_ad=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)" >> $GITHUB_ENV
-#      - name: Checkout anomaly-detection
-#        uses: actions/checkout@v1
-#        with:
-#          repository: opendistro-for-elasticsearch/anomaly-detection
-#          ref: ${{env.p_tag_ad}}
-#      - name: Integration Test
-#        run: |
-#          ./release-tools/scripts/setup_runners_service.sh zip --es-nosec arm64
-#          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../anomaly-detection; pwd
-#          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest"
-#
-#  Test-Async-NoSec:
-#    needs: [Provision-Runners]
-#    runs-on: [self-hosted, Linux, ARM64, odfe-tar-async-nosec-arm64]
-#    name: Test-Async-NoSec
-#    steps:
-#      - name: Set up AWS Cred
-#        uses: aws-actions/configure-aws-credentials@v1
-#        with:
-#          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
-#          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
-#          aws-region: us-east-1
-#      - uses: actions/checkout@v1
-#      - name: Required Packages
-#        run: ./release-tools/scripts/required_packages.sh
-#      - name: Retrieve plugin tags
-#        run:  echo "p_tag_async=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/asynchronous-search)" >> $GITHUB_ENV
-#      - name: Checkout IM
-#        uses: actions/checkout@v1
-#        with:
-#          repository: opendistro-for-elasticsearch/asynchronous-search
-#          ref: ${{env.p_tag_async}}
-#      - name: Integration Test
-#        run: |
-#          ./release-tools/scripts/setup_runners_service.sh zip --es-nosec arm64
-#          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../asynchronous-search; pwd
-#          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
-#
-#  Test-SQL:
-#    needs: [Provision-Runners]
-#    runs-on: [self-hosted, Linux, ARM64, odfe-tar-sql-arm64]
-#    name: Test-SQL
-#    steps:
-#      - name: Set up AWS Cred
-#        uses: aws-actions/configure-aws-credentials@v1
-#        with:
-#          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
-#          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
-#          aws-region: us-east-1
-#      - uses: actions/checkout@v1
-#      - name: Required Packages
-#        run: ./release-tools/scripts/required_packages.sh
-#      - name: Retrieve plugin tags
-#        run:  echo "p_tag_sql=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/sql)" >> $GITHUB_ENV
-#      - name: Checkout SQL
-#        uses: actions/checkout@v1
-#        with:
-#          repository: opendistro-for-elasticsearch/sql
-#          ref: ${{env.p_tag_sql}}
-#      - name: Integration Test
-#        run: |
-#          ./release-tools/scripts/setup_runners_service.sh zip --es arm64
-#          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../sql; pwd
-#          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin
-#  
-#  Test-AD:
-#    needs: [Provision-Runners]
-#    runs-on: [self-hosted, Linux, ARM64, odfe-tar-ad-arm64]
-#    name: Test-AD
-#    steps:
-#      - name: Set up AWS Cred
-#        uses: aws-actions/configure-aws-credentials@v1
-#        with:
-#          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
-#          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
-#          aws-region: us-east-1
-#      - uses: actions/checkout@v1
-#      - name: Required Packages
-#        run: ./release-tools/scripts/required_packages.sh
-#      - name: Retrieve plugin tags
-#        run:  echo "p_tag_ad=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/anomaly-detection)" >> $GITHUB_ENV
-#      - name: Checkout anomaly-detection
-#        uses: actions/checkout@v1
-#        with:
-#          repository: opendistro-for-elasticsearch/anomaly-detection
-#          ref: ${{env.p_tag_ad}}
-#      - name: Integration Test
-#        run: |
-#          ./release-tools/scripts/setup_runners_service.sh zip --es arm64
-#          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../anomaly-detection; pwd
-#          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest" -Dhttps=true -Duser=admin -Dpassword=admin
-#
-#  Test-ALERTING:
-#    needs: [Provision-Runners]
-#    runs-on: [self-hosted, Linux, ARM64, odfe-tar-alerting-arm64]
-#    name: Test-ALERTING
-#    steps:
-#      - uses: actions/checkout@v1
-#      - name: Set up AWS Cred
-#        uses: aws-actions/configure-aws-credentials@v1
-#        with:
-#          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
-#          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
-#          aws-region: us-east-1
-#      - name: Required Packages
-#        run: ./release-tools/scripts/required_packages.sh
-#      - name: Retrieve plugin tags 
-#        run:  echo "p_tag_alerting=$(release-tools/scripts/plugin_tag.sh opendistro-for-elasticsearch/alerting)" >> $GITHUB_ENV
-#
-#      - uses: actions/checkout@v1
-#        with:
-#          repository: opendistro-for-elasticsearch/alerting
-#          ref: ${{env.p_tag_alerting}}
-#      - name: Integration Test
-#        run: |
-#          ./release-tools/scripts/setup_runners_service.sh zip --es arm64
-#          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../alerting/alerting; pwd
-#          ls -ltr
-#          ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin -Dsecurity=true
+  Test-Alerting-NoSec:
+    needs: [Provision-Runners]
+    runs-on: [self-hosted, Linux, ARM64, odfe-tar-alerting-nosec-arm64]
+    name: Test-Alerting-NoSec
+    steps:
+      - name: Set up AWS Cred
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - uses: actions/checkout@v1
+      - name: Required Packages
+        run: ./release-tools/scripts/required_packages.sh
+      - name: Retrieve plugin tags
+        run:  echo "p_tag_alerting=v1.13.1.0" >> $GITHUB_ENV
+      - name: Checkout Alerting
+        uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/alerting
+          ref: ${{env.p_tag_alerting}}
+      - name: Integration Test
+        run: |
+          ./release-tools/scripts/setup_runners_service.sh zip --es-nosec arm64
+          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../alerting/alerting; pwd
+          ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
+
+  Test-SQL-NoSec:
+    needs: [Provision-Runners]
+    runs-on: [self-hosted, Linux, ARM64, odfe-tar-sql-nosec-arm64]
+    name: Test-SQL-NoSec
+    steps:
+      - name: Set up AWS Cred
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - uses: actions/checkout@v1
+      - name: Required Packages
+        run: ./release-tools/scripts/required_packages.sh
+      - name: Retrieve plugin tags
+        run:  echo "p_tag_sql=v1.13.2.0" >> $GITHUB_ENV
+      - name: Checkout SQL
+        uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/sql
+          ref: ${{env.p_tag_sql}}
+      - name: Integration Test
+        run: |
+          ./release-tools/scripts/setup_runners_service.sh zip --es-nosec arm64
+          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../sql; pwd
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
+          
+  Test-KNN-NoSec:
+    needs: [Provision-Runners]
+    runs-on: [self-hosted, Linux, ARM64, odfe-tar-knn-nosec-arm64]
+    name: Test-KNN-NoSec
+    steps:
+      - name: Set up AWS Cred
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - uses: actions/checkout@v1
+      - name: Required Packages
+        run: ./release-tools/scripts/required_packages.sh
+      - name: Retrieve plugin tags
+        run:  echo "p_tag_knn=v1.13.0.0" >> $GITHUB_ENV
+      - name: Checkout k-NN
+        uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/k-NN
+          ref: ${{env.p_tag_knn}}
+      - name: Integration Test
+        run: |
+          ./release-tools/scripts/setup_runners_service.sh zip --es-nosec arm64
+          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../k-NN; pwd
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
+          
+  Test-AD-NoSec:
+    needs: [Provision-Runners]
+    runs-on: [self-hosted, Linux, ARM64, odfe-tar-ad-nosec-arm64]
+    name: Test-AD-NoSec
+    steps:
+      - name: Set up AWS Cred
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - uses: actions/checkout@v1
+      - name: Required Packages
+        run: ./release-tools/scripts/required_packages.sh
+      - name: Retrieve plugin tags
+        run:  echo "p_tag_ad=v1.13.0.0" >> $GITHUB_ENV
+      - name: Checkout anomaly-detection
+        uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/anomaly-detection
+          ref: ${{env.p_tag_ad}}
+      - name: Integration Test
+        run: |
+          ./release-tools/scripts/setup_runners_service.sh zip --es-nosec arm64
+          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../anomaly-detection; pwd
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest"
+
+  Test-Async-NoSec:
+    needs: [Provision-Runners]
+    runs-on: [self-hosted, Linux, ARM64, odfe-tar-async-nosec-arm64]
+    name: Test-Async-NoSec
+    steps:
+      - name: Set up AWS Cred
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - uses: actions/checkout@v1
+      - name: Required Packages
+        run: ./release-tools/scripts/required_packages.sh
+      - name: Retrieve plugin tags
+        run:  echo "p_tag_async=1.13.0.1" >> $GITHUB_ENV
+      - name: Checkout IM
+        uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/asynchronous-search
+          ref: ${{env.p_tag_async}}
+      - name: Integration Test
+        run: |
+          ./release-tools/scripts/setup_runners_service.sh zip --es-nosec arm64
+          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../asynchronous-search; pwd
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
+
+  Test-SQL:
+    needs: [Provision-Runners]
+    runs-on: [self-hosted, Linux, ARM64, odfe-tar-sql-arm64]
+    name: Test-SQL
+    steps:
+      - name: Set up AWS Cred
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - uses: actions/checkout@v1
+      - name: Required Packages
+        run: ./release-tools/scripts/required_packages.sh
+      - name: Retrieve plugin tags
+        run:  echo "p_tag_sql=v1.13.2.0" >> $GITHUB_ENV
+      - name: Checkout SQL
+        uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/sql
+          ref: ${{env.p_tag_sql}}
+      - name: Integration Test
+        run: |
+          ./release-tools/scripts/setup_runners_service.sh zip --es arm64
+          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../sql; pwd
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin
+  
+  Test-AD:
+    needs: [Provision-Runners]
+    runs-on: [self-hosted, Linux, ARM64, odfe-tar-ad-arm64]
+    name: Test-AD
+    steps:
+      - name: Set up AWS Cred
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - uses: actions/checkout@v1
+      - name: Required Packages
+        run: ./release-tools/scripts/required_packages.sh
+      - name: Retrieve plugin tags
+        run:  echo "p_tag_ad=1.13.0.0" >> $GITHUB_ENV
+      - name: Checkout anomaly-detection
+        uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/anomaly-detection
+          ref: ${{env.p_tag_ad}}
+      - name: Integration Test
+        run: |
+          ./release-tools/scripts/setup_runners_service.sh zip --es arm64
+          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../anomaly-detection; pwd
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest" -Dhttps=true -Duser=admin -Dpassword=admin
+
+  Test-ALERTING:
+    needs: [Provision-Runners]
+    runs-on: [self-hosted, Linux, ARM64, odfe-tar-alerting-arm64]
+    name: Test-ALERTING
+    steps:
+      - uses: actions/checkout@v1
+      - name: Set up AWS Cred
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_STAGING_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_STAGING_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Required Packages
+        run: ./release-tools/scripts/required_packages.sh
+      - name: Retrieve plugin tags 
+        run:  echo "p_tag_alerting=v1.13.1.0" >> $GITHUB_ENV
+
+      - uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/alerting
+          ref: ${{env.p_tag_alerting}}
+      - name: Integration Test
+        run: |
+          ./release-tools/scripts/setup_runners_service.sh zip --es arm64
+          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../alerting/alerting; pwd
+          ls -ltr
+          ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin -Dsecurity=true
 
   CleanUp-Runners:
     needs: [Test-IM-NoSec]
