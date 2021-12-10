@@ -1,0 +1,300 @@
+name: Test X64 Docker image
+
+on:
+#  schedule:
+#    - cron: '15 12 * * *'
+#  repository_dispatch:
+#    types: [staging-test-docker-x64]
+  push:
+    branches:
+      - odfe-1.13.3-test
+
+jobs: 
+  Test-IM-NoSec:
+    runs-on: ubuntu-18.04
+    name: Test-IM-NoSec
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [14]
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Install Required Packages
+        run: release-tools/scripts/required_packages.sh
+ 
+      - name: Retrieve plugin tags 
+        run:  echo "p_tag_im=v1.13.2.0" >> $GITHUB_ENV
+
+      - uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/index-management
+          ref: ${{env.p_tag_im}}
+
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+
+      - name: IT
+        run: |
+          release-tools/scripts/setup_runners_service.sh docker --es-nosec
+          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../index-management; pwd
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
+          
+
+  Test-ALERTING-NoSec:  
+    runs-on: ubuntu-18.04
+    name: Test-ALERTING-NoSec
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [14]
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Install Required Packages
+        run: release-tools/scripts/required_packages.sh
+
+      - name: Retrieve plugin tags 
+        run:  echo "p_tag_alerting=v1.13.1.0" >> $GITHUB_ENV
+
+      - uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/alerting
+          ref: ${{env.p_tag_alerting}}
+
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+
+      - name: IT
+        run: |
+          release-tools/scripts/setup_runners_service.sh docker --es-nosec
+          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../alerting/alerting; pwd
+          ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
+          
+  Test-SQL-NoSec:
+    runs-on: ubuntu-18.04
+    name: Test-SQL-NoSec
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [14]
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Install Required Packages
+        run: release-tools/scripts/required_packages.sh
+
+      - name: Retrieve plugin tags 
+        run:  echo "p_tag_sql=v1.13.2.0" >> $GITHUB_ENV
+
+      - uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/sql
+          ref: ${{env.p_tag_sql}}
+
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+
+      - name: IT
+        run: |
+          release-tools/scripts/setup_runners_service.sh docker --es-nosec
+          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../sql; pwd
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
+  
+  Test-KNN-NoSec:
+    runs-on: ubuntu-18.04
+    name: Test-KNN-NoSec
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [14]
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Install Required Packages
+        run: release-tools/scripts/required_packages.sh
+            
+      - name: Retrieve plugin tags 
+        run:  echo "p_tag_knn=v1.13.0.0" >> $GITHUB_ENV
+
+      - uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/k-NN
+          ref: ${{env.p_tag_knn}}
+
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+
+      - name: IT
+        run: |
+          release-tools/scripts/setup_runners_service.sh docker --es-nosec
+          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../k-NN; pwd
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
+   
+  Test-AD-NoSec:
+    runs-on: ubuntu-18.04
+    name: Test-AD-NoSec
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [14]
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Install Required Packages
+        run: release-tools/scripts/required_packages.sh
+
+      - name: Retrieve plugin tags 
+        run:  echo "p_tag_ad=v1.13.0.0" >> $GITHUB_ENV
+
+      - uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/anomaly-detection
+          ref: ${{env.p_tag_ad}}
+
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+
+      - name: IT
+        run: |
+          release-tools/scripts/setup_runners_service.sh docker --es-nosec
+          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../anomaly-detection; pwd
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest"
+
+  Test-Async-NoSec:
+    runs-on: ubuntu-18.04
+    name: Test-Async-NoSec
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [14]
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Install Required Packages
+        run: release-tools/scripts/required_packages.sh
+ 
+      - name: Retrieve plugin tags 
+        run:  echo "p_tag_async=v1.13.0.1" >> $GITHUB_ENV
+
+      - uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/asynchronous-search
+          ref: ${{env.p_tag_async}}
+
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+
+      - name: IT
+        run: |
+          release-tools/scripts/setup_runners_service.sh docker --es-nosec
+          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../asynchronous-search; pwd
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest
+
+  Test-SQL:
+    runs-on: ubuntu-18.04
+    name: Test-SQL
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [14]
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Install Required Packages
+        run: release-tools/scripts/required_packages.sh
+
+      - name: Retrieve plugin tags
+        run:  echo "p_tag_sql=v1.13.2.0" >> $GITHUB_ENV
+
+      - uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/sql
+          ref: ${{env.p_tag_sql}}
+
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+
+      - name: IT
+        run: |
+          release-tools/scripts/setup_runners_service.sh docker --es
+          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../sql; pwd
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin
+
+  Test-AD:
+    runs-on: ubuntu-18.04
+    name: Test-AD
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [14]
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Install Required Packages
+        run: release-tools/scripts/required_packages.sh
+
+      - name: Retrieve plugin tags
+        run:  echo "p_tag_ad=v1.13.0.0" >> $GITHUB_ENV
+
+      - uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/anomaly-detection
+          ref: ${{env.p_tag_ad}}
+
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+
+      - name: IT
+        run: |
+          release-tools/scripts/setup_runners_service.sh docker --es
+          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../anomaly-detection; pwd
+          ./gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername="es-integrationtest" -Dhttps=true -Duser=admin -Dpassword=admin
+
+  Test-ALERTING:
+    runs-on: ubuntu-18.04
+    name: Test-ALERTING
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [14]
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Install Required Packages
+        run: release-tools/scripts/required_packages.sh
+
+      - name: Retrieve plugin tags 
+        run:  echo "p_tag_alerting=v1.13.1.0" >> $GITHUB_ENV
+
+      - uses: actions/checkout@v1
+        with:
+          repository: opendistro-for-elasticsearch/alerting
+          ref: ${{env.p_tag_alerting}}
+
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+
+      - name: IT
+        run: |
+          release-tools/scripts/setup_runners_service.sh docker --es
+          export PATH=$JAVA_HOME:$PATH; cd $GITHUB_WORKSPACE/../alerting/alerting; pwd
+          ../gradlew integTest -Dtests.rest.cluster=localhost:9200 -Dtests.cluster=localhost:9200 -Dtests.clustername=es-integrationtest -Dhttps=true -Duser=admin -Dpassword=admin -Dsecurity=true

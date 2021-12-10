@@ -5,9 +5,9 @@ versions:
     current: 7.10.2
     next: 7.10.3
   ODFE:
-    previous: 1.13.1
-    current: 1.13.2
-    next: 1.13.3
+    previous: 1.13.2
+    current: 1.13.3
+    next: 1.13.4
 
 urls:
   ES: 
