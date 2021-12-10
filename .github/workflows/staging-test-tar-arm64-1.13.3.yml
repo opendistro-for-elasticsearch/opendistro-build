@@ -198,7 +198,7 @@ jobs:
       - name: Required Packages
         run: ./release-tools/scripts/required_packages.sh
       - name: Retrieve plugin tags
-        run:  echo "p_tag_async=1.13.0.1" >> $GITHUB_ENV
+        run:  echo "p_tag_async=v1.13.0.1" >> $GITHUB_ENV
       - name: Checkout IM
         uses: actions/checkout@v1
         with:
@@ -252,7 +252,7 @@ jobs:
       - name: Required Packages
         run: ./release-tools/scripts/required_packages.sh
       - name: Retrieve plugin tags
-        run:  echo "p_tag_ad=1.13.0.0" >> $GITHUB_ENV
+        run:  echo "p_tag_ad=v1.13.0.0" >> $GITHUB_ENV
       - name: Checkout anomaly-detection
         uses: actions/checkout@v1
         with:
