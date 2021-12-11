@@ -3,9 +3,9 @@ name: Prod Sync DATAPREPPER Artifacts
 on:
 #  repository_dispatch:
 #    types: [prod-sync-data-prepper]
-  push:
-    branches:
-      - odfe-1.13.3-test
+#  push:
+#    branches:
+#      - odfe-1.13.3-test
 
 jobs:
   sync-dataprepper-artifacts-prod:
