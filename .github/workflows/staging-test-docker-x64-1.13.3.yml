@@ -185,7 +185,7 @@ jobs:
         run: release-tools/scripts/required_packages.sh
  
       - name: Retrieve plugin tags 
-        run:  echo "p_tag_async=v1.13.0.1" >> $GITHUB_ENV
+        run:  echo "p_tag_async=v1.13.2.0" >> $GITHUB_ENV
 
       - uses: actions/checkout@v1
         with:

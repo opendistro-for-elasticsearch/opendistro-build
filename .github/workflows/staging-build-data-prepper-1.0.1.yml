@@ -5,9 +5,9 @@ on:
 #    - cron: '0 10 * * *'
 #  repository_dispatch:
 #    types: [staging-build-data-prepper]
-  push:
-    branches:
-      - odfe-1.13.3-test
+#  push:
+#    branches:
+#      - odfe-1.13.3-test
 
 jobs:
   sync-dataprepper-artifacts:
