@@ -1,6 +1,6 @@
 name: Test ARM64 TAR Artifacts
 
-on:
+#on:
 #  schedule:
 #    - cron: '0 11 * * *'
 #  repository_dispatch:

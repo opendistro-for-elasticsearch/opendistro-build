@@ -1,6 +1,6 @@
 name: Prod Sync DATAPREPPER Artifacts
 
-on:
+#on:
 #  repository_dispatch:
 #    types: [prod-sync-data-prepper]
 #  push:

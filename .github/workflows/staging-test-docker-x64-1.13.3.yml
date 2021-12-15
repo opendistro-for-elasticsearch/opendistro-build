@@ -1,6 +1,6 @@
 name: Test X64 Docker image
 
-on:
+#on:
 #  schedule:
 #    - cron: '15 12 * * *'
 #  repository_dispatch:
