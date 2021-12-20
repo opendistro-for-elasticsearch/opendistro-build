@@ -1,38 +1,38 @@
 name: Prod Sync DATAPREPPER Artifacts
 
-on:
+#on:
 #  repository_dispatch:
 #    types: [prod-sync-data-prepper]
-  push:
-    branches:
-      - odfe-1.13.3-test
+#  push:
+#    branches:
+#      - odfe-1.13.3-test
 
 jobs:
-  sync-dataprepper-artifacts-prod:
-    name: sync-dataprepper-artifacts-prod
-    runs-on: [ubuntu-18.04]
-    steps:
-    - uses: actions/checkout@v1
-
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
-
-    - name: required utilites
-      run: release-tools/scripts/required_packages.sh
-
-    - name: S3 sync artifacts
-      run: |
-        S3_URL_DATAPREPPER_STAGING=`release-tools/scripts/plugin_parser.sh opendistroforelasticsearch-data-prepper plugin_location_staging | sed 's/[][}{"]*//g' | awk -F ':' '{print $2 ":" $3}'`
-        S3_URL_DATAPREPPER_PROD=`release-tools/scripts/plugin_parser.sh opendistroforelasticsearch-data-prepper plugin_location_prod | sed 's/[][}{"]*//g' | awk -F ':' '{print $2 ":" $3}'`
-        TAG_VERSION=1.0.3
-
-        echo $TAG_VERSION
-        aws s3 sync $S3_URL_DATAPREPPER_STAGING $S3_URL_DATAPREPPER_PROD --exclude "*" --include "opendistroforelasticsearch-data-prepper-jdk-${TAG_VERSION}*" --quiet
-        aws s3 sync $S3_URL_DATAPREPPER_STAGING $S3_URL_DATAPREPPER_PROD --exclude "*" --include "opendistroforelasticsearch-data-prepper-${TAG_VERSION}*" --quiet
-        aws s3 ls $S3_URL_DATAPREPPER_PROD | grep $TAG_VERSION
-        aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/tarball/opendistroforelasticsearch-data-prepper/*"
+#  sync-dataprepper-artifacts-prod:
+#    name: sync-dataprepper-artifacts-prod
+#    runs-on: [ubuntu-18.04]
+#    steps:
+#    - uses: actions/checkout@v1
+#
+#    - name: Configure AWS Credentials
+#      uses: aws-actions/configure-aws-credentials@v1
+#      with:
+#        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#        aws-region: us-east-1
+#
+#    - name: required utilites
+#      run: release-tools/scripts/required_packages.sh
+#
+#    - name: S3 sync artifacts
+#      run: |
+#        S3_URL_DATAPREPPER_STAGING=`release-tools/scripts/plugin_parser.sh opendistroforelasticsearch-data-prepper plugin_location_staging | sed 's/[][}{"]*//g' | awk -F ':' '{print $2 ":" $3}'`
+#        S3_URL_DATAPREPPER_PROD=`release-tools/scripts/plugin_parser.sh opendistroforelasticsearch-data-prepper plugin_location_prod | sed 's/[][}{"]*//g' | awk -F ':' '{print $2 ":" $3}'`
+#        TAG_VERSION=1.0.3
+#
+#        echo $TAG_VERSION
+#        aws s3 sync $S3_URL_DATAPREPPER_STAGING $S3_URL_DATAPREPPER_PROD --exclude "*" --include "opendistroforelasticsearch-data-prepper-jdk-${TAG_VERSION}*" --quiet
+#        aws s3 sync $S3_URL_DATAPREPPER_STAGING $S3_URL_DATAPREPPER_PROD --exclude "*" --include "opendistroforelasticsearch-data-prepper-${TAG_VERSION}*" --quiet
+#        aws s3 ls $S3_URL_DATAPREPPER_PROD | grep $TAG_VERSION
+#        aws cloudfront create-invalidation --distribution-id E1VG5HMIWI4SA2 --paths "/tarball/opendistroforelasticsearch-data-prepper/*"
 
