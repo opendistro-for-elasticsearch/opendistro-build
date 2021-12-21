@@ -15,7 +15,7 @@ jobs:
     name: Test-ODFE-CLI
     strategy:
       matrix:
-        go-version: [1.14]
+        go-version: [1.16.2]
     steps:
       - name: Set up AWS Cred
         uses: aws-actions/configure-aws-credentials@v1
