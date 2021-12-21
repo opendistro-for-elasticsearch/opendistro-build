@@ -1,11 +1,11 @@
 name: Prod Sync ODFE CLI Artifacts
 
-on:
+#on:
 #  repository_dispatch:
 #    types: [prod-sync-odfe-cli]
-  push:
-    branches:
-      - odfe-1.13.3-test
+#  push:
+#    branches:
+#      - odfe-1.13.3-test
 
 jobs:
   sync-odfe-cli-artifacts-prod:
