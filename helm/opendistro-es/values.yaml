@@ -85,6 +85,7 @@ kibana:
     #  kubernetes.io/tls-acme: "true"
     labels: {}
     path: /
+    pathType: ImplementationSpecific
     hosts:
       - chart-example.local
     tls: []
@@ -419,6 +420,7 @@ elasticsearch:
       #  nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
       labels: {}
       path: /
+      pathType: ImplementationSpecific
       hosts:
         - chart-example.local
       tls: []
