@@ -13,3 +13,12 @@ If you have any questions, please join our community forum [here](https://discus
 ## Issues
 
 File any issues [here](https://github.com/opendistro-for-elasticsearch/opendistro-build/issues).
+
+## Helm releases
+
+When building a new helm chart, run these commands from top of this repo:
+```
+(cd helm; helm package opendistro-es)
+helm repo index helm/ --url https://raw.githubusercontent.com/opendistro-for-elasticsearch/opendistro-build/main/helm/
+```
+
