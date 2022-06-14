@@ -37,6 +37,12 @@ kibana:
     keyPassphrase:
       enabled: false
 
+  ## securityContext to apply to the pod. Allows for running as non-root
+  securityContextCustom: {}
+  #  fsGroup: 1000
+  #  runAsUser: 1000
+  #  runAsGroup: 1000
+
   extraEnvs: []
 
   extraVolumes: []
